@@ -13,4 +13,4 @@ pip install -y aws-parallelcluster==3.5.0 awscli
 
 echo " "
 echo " "
-source bin/daylily;
+#source bin/daylily;
