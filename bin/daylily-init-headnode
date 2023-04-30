@@ -57,7 +57,7 @@ fi;
 
 # clone daylily repo to headnode user. centos is not enabled to run the pipe by default.
 echo "...............cloning repo";
-ssh -i $pem_file  centos@$cluster_ip_address "echo 'ssh-keyscan github.com >> ~$duser/.ssh/known_hosts; mkdir -p ~$duser/projects; cd ~$duser/projects; git clone  git@github.com:iamh2o/day.git ' | sudo su - $duser"; 
+ssh -i $pem_file  centos@$cluster_ip_address "echo 'ssh-keyscan github.com >> ~$duser/.ssh/known_hosts; mkdir -p ~$duser/projects; cd ~$duser/projects; git clone  git@github.com:Daylily-Informatics/daylily.git ' | sudo su - $duser"; 
 
 echo "...............configuring daylily headnode deets";
 # init the first day environment

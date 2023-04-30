@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-ex=$1
-(mod lcwgs-clvr --config sample_data=./config/analysis_manifest.csv --jobs 1 --cores 1000  --nolock -s workflow/Snakefile glimpse seqqc multiqc_cov_aln --dag | dot -Tpng >  ~jmajor/public_html/projects/mod/dags/v0.9.9.3/$ex.DAG.png && mod lcwgs-clvr --config sample_data=./config/analysis_manifest.csv --jobs 1 --cores 1000  --nolock -s workflow/Snakefile glimpse seqqc multiqc_cov_aln --rulegraph | dot -Tpng >  ~jmajor/public_html/projects/mod/dags/v0.9.9.3/$ex.RG.png && mod lcwgs-clvr --config sample_data=./config/analysis_manifest.csv --jobs 1 --cores 1000  --nolock -s workflow/Snakefile glimpse seqqc multiqc_cov_aln --filegraph | dot -Tpng >  ~jmajor/public_html/projects/mod/dags/v0.9.9.3/$ex.fileG.png && mod lcwgs-clvr --config sample_data=./config/analysis_manifest.csv --jobs 1 --cores 1000  --nolock -s workflow/Snakefile glimpse seqqc multiqc_cov_aln --report ~jmajor/public_html/projects/mod/dags/v0.9.9.3/$ex.run.report.html )

@@ -24,7 +24,7 @@ _named in honor of Margaret Oakley Dahoff_
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\
 >
 
-<p valign="middle"><a href="https://github.com/iamh2o/day/releases/"><img src="docs/images/000000.png" valign="bottom" ></a></p>
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 
 
@@ -45,7 +45,7 @@ _named in honor of Margaret Oakley Dahoff_
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\
 >
 
-<p valign="middle"><a href="https://github.com/iamh2o/day/releases/"><img src="docs/images/000000.png" valign="bottom" ></a></p>
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 
 
@@ -73,10 +73,9 @@ _named in honor of Margaret Oakley Dahoff_
 #### Cost Tracking and Budget Enforcement
 
 
-<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\
->
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
-<p valign="middle"><a href="https://github.com/iamh2o/day/releases/"><img src="docs/images/000000.png" valign="bottom" ></a></p>
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 
 
@@ -107,7 +106,7 @@ _named in honor of Margaret Oakley Dahoff_
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
-<p valign="middle"><a href="https://github.com/iamh2o/day/releases/"><img src="docs/images/000000.png" valign="bottom" ></a></p>
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 
 
