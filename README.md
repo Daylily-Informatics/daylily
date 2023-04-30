@@ -1,5 +1,5 @@
-# <a href=https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff>DAY</a>![](https://placehold.co/60x40/ff03f3/fcf2fb?text=LILLY)
-<small>named in honor of Margaret Oakley Dahoff</small>
+# [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
+_named in honor of Margaret Oakley Dahoff_
 
 ## Multi-omics Analysis Framework ( And The $ Genome )
   > Daylily orchestrates the execution of numerous pipelines while also managing all of the tasks required to spin up, run analyses on, track costs to operate, and close down an ephemeral compute fleet. (tldr: 30x genomes complete in ~60m, with SNP fscores of XXX and EC2 costs as low as YYY)
@@ -9,11 +9,14 @@
   >  Users may choose among the pre-validated pipeline options, or may extend the framework to run custom pipelines. The Scientific workflow manager behind the scenes happens to be [snakemake](), but any workflow manager that integrates with slurm or aws batch can extend the framework.
 
   - Three validated pipelines are available. Two are comprised of fully open source tools, the third leverages hardware agnostic accelerated tools from Sentieon. The pipelines and average performance across the google brain 30x Novaseq fastqs for the 7 [giab]() samples are as follows:
- | <th style="background-color:#f8ceec">Pipeline</th> |<th style="background-color:#f8ceec">  SNP fscore </th> |<th style="background-color:#f8ceec"> INS fscore</th> |<th style="background-color:#f8ceec"> DEL fscore</th> |<th style="background-color:#f8ceec"> Indel fscore</th> |<th style="background-color:#f8ceec"> e2e walltime</th> |<th style="background-color:#f8ceec"> e2e 128vcpu instance min</th> |<th style="background-color:#f8ceec"> Avg EC2 Cost</th> |
- | :------------- | :-------------: | --------------: | :------------- | :-------------: | --------------: | :------------- | :-------------: |
- |   Sentieon BWA + DNAscope (BD) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost|
- |   BWA-MEM2 + Octopus (B2O) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost|
- |   BWA-MEM2 + Deepvariant (B2D) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost|
+ 
+ 
+ | Pipeline |   SNP fscore  |  INS fscore |  DEL fscore | Indel fscore |  e2e walltime |  e2e 128vcpu instance min | Avg EC2 Cost |
+ | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: |
+ |   Sentieon BWA + DNAscope (BD) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost |
+ |   BWA-MEM2 + Octopus (B2O) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost |
+ |   BWA-MEM2 + Deepvariant (B2D) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost |
+
 
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\
