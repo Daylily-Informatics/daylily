@@ -1,0 +1,268 @@
+#!/usr/bin/env bash
+
+touch /fsx/scratch/are_we_good_$RANDOM
+if [[ "$?" != "0" ]]; then
+    echo "   ---- WARNING----  " 1>&2
+    echo "   /scratch/ is not writable on this submit node ! " 1>&2
+    echo "   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " 1>&2
+fi
+
+if [[ $DAY_ROOT == "" || $DAY_PROFILE == "" ]]; then
+    echo "ERROR:: 'day-activate' needs to have been run prior to day-run in the shell sesssion you are in for day-run to proceed."
+    exit 33
+fi
+
+mkdir -p cluster_logs/drmaa_logs 2> /dev/null
+echo 'go' > cluster_logs/drmaa_logs/hold.please
+echo 'on' > cluster_logs/get.moving
+
+# Check if we're in the correct root
+python -c "import os; root=os.path.abspath(os.environ['DAY_ROOT']); other=os.path.abspath(os.environ['PWD']); os._exit(0) if (other.startswith(root)) else os._exit(22);"
+subcheck_stat=$?
+
+if [[ $subcheck_stat == "0" ]]; then
+    colr '   ___Awesome, you appear to be in a valid working directory___   ' "$DY_WT2" "$DY_WB1" "$DY_WS1" 1>&2
+
+    # Logging command call to PWD
+    cmd_log=$PWD/day_cmd.log
+    cmddt=$(date --iso-8601="seconds")
+    echo """CLEAR> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB:$DAY_BIOME / CMD:( $@ )""" &>>$cmd_log
+
+elif [[ $1 == "remote_mode" ]]; then
+    colr "   ___WARNING: EXECUTION OUTSIDE $DAY_ROOT ! EXPERIMENTAL___   " "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+    # Logging command call to PWD
+    cmd_log=$PWD/day_cmd.log
+    cmddt=$(date --iso-8601="seconds")
+    echo """WARN> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB:$DAY_BIOME / CMD:( $@ )""" &>>$cmd_log
+
+else
+    # Outside the expected environment. Logging to PWD
+    cmd_log=$PWD/day_cmd.log
+    cmddt=$(date --iso-8601="seconds")' >>> '"$@"
+    echo """ERROR> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB:$DAY_BIOME / CMD:( $smkcmd )""" &>>$cmd_log
+
+    echo " " 1>&2
+    echo " " 1>&2
+    colr "|||<<<
+    You are not in the correct DAY_ROOT
+
+    **>> DETECTED:     $PWD
+
+    **>> EXPECTED:     $DAY_ROOT
+
+    You are strongly encouraged to run 'day-deactivate', then day-activate from the intended analysis deployment location.  You should be set then. unless you are attempting remote_mode, then all bets are off for the moment.
+
+____________________
+---> try running : source ./bin/day_deactivate reset <      .
+___________________
+
+    >>>|||" "$DY_ET0" "$DY_EB0" "$DY_ES1" 1>&2
+    exit 44
+fi
+valid_profiles="local drmaa slurm"
+req_prof=$DAY_PROFILE
+
+#Does the profile exist # minimally need a config.yaml
+ls config/day_profiles/$req_prof/templates/config.yaml &>/dev/null
+if [[ $? == "0" ]]; then
+    echo "valid profile: $req_prof" 1>&2
+else
+    echo "
+
+      has day-activate PROFILE (mg=a local or drmaa) been run?
+
+    " 1>&2
+    #exit 67
+fi
+
+# start day
+profile_dir=$DAY_ROOT/config/day_profiles/$DAY_PROFILE/
+
+if [[ "$DAY_BIOME" == "AWSHPC" ]]; then
+
+    conda_prefix_dir="/fsx/environments/$USER/$HOSTNAME"
+    ls -1 $conda_prefix_dir > /dev/null 2>&1;
+
+    if  [[ "$?" != "0" ]]; then
+	mkcmd="mkdir -p $conda_prefix_dir"
+	echo "Attempting to create conda prefix dir: $conda_prefix_dir....." 1>&2
+	$mkcmd || echo "WARNING, command failed: $mkcmd ..." 1>&2; sleep 6;
+	sleep 3
+	chmod a+wrx /fsx/environments/$USER || echo "Warning, chmod failed to conda dir" 1>&2;
+    fi
+
+else
+
+    conda_prefix_dir="/fsx/environments/$USER/$HOSTNAME";
+    ls -1 $conda_prefix_dir > /dev/null 2>&1;
+
+    if [[ "$?" != "0" ]]; then
+	mkcmd2="mkdir -p $conda_prefix_dir";
+	echo "Attempting To Create Conda Prefix Dir: $conda_prefix_dir ...." 1>&2
+	$mkcmd2 || echo "WARNING, v2 command failed: $mkcmd2 ....." 1>&2; sleep 6;
+	sleep 3
+	chmod a+wrx /fsx/environments/$USER || echo "Warning, chmod failed to conda dir" 1>&2;
+
+    fi
+
+fi
+
+# If there are no profile config files present, create from templates. Else, skip
+profile_file_count=$(ls $profile_dir/*yaml 2>/dev/null | wc -l)
+
+if [[ ! -f "config/day_profiles/$DAY_PROFILE/rule_config_lowcov.yaml" && ! -f "config/day_profile/$DAY_PROFILE/cluster.yaml"  && ! -f "config/day_profiles/$DAY_PROFILE/rule_config.yaml" ]]; then
+    sleep 1
+
+elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -nt  "config/day_profiles/$DAY_PROFILE/rule_config_lowcov.yaml" || "config/day_profiles/$DAY_PROFILE/templates/cluster.yaml" -nt "config/day_profiles/$DAY_PROFILE/cluster.yaml" || "config/day_profiles/$DAY_PROFILE/templates/config.yaml" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/rule_config.yaml" -nt "config/day_profiles/$DAY_PROFILE/rule_config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/profile.info" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" ]]; then
+
+
+    echo " "
+    ctr="0"
+    for i in {1..54}; do
+
+	r=$(( 201 + $i ))
+	g=$(( (( $i * 4))+39 ))
+	b=$(( 54- $i   ))
+
+	rr=$(( 201 + $i ))
+        gg=$(( 0 ))
+        bb=$(( 147 + $i*2))
+
+	c=$(echo """printf %"$(( $i + 1 ))"s""")
+	x=$($c)
+	rs=$(echo "$x" | sed 's/ /\\/g')
+	if [[ "$ctr" == "2" ]]; then
+            colr   "$rs" "$r, $g, $b" "$rr, $gg, $bb" "2"
+
+	fi;
+	ctr=$(( $ctr +1 ))
+	if [[ "$ctr" == "3" ]]; then
+	    ctr="1"
+	fi
+    done;
+
+    colr -n "  =================||>" "$DY_WT0" "$DY_WB0" "$DY_ES1" && colr -n "  WARNING  " "$DY_ET0" "black" "$DY_ES0" && colr "<||=================  " "$DY_WT0" "$DY_WB0" "$DY_ES1"
+    colr "  One+ of the template config files in :               " "$DY_ET2" "$DY_EB1" "$DY_ES2"
+    colr "$profile_dir/templates" "$DY_IT0" "$DY_IB1" "$DY_IS2"
+    colr "     is newer than your active config files.           " "$DY_ET2" "$DY_EB1" "$DY_ES2"
+    colr "  You hace 2 options. 1) remove the active files  :    " "$DY_ET2" "$DY_EB1" "$DY_ES2"
+    colr "rm $profile_dir/*  " "$DY_IT0" "$DY_IB1" "$DY_IS2"
+
+    colr "    so the new template files can be copied there. Or  " "$DY_ET2" "$DY_EB1" "$DY_ES2"
+    colr "    2) Keep the active local copies.  You may touch    " "$DY_ET2" "$DY_EB1" "$DY_ES2"
+    colr "    them to avoid this error:                          " "$DY_ET2" "$DY_EB1" "$DY_ES2"
+    colr "touch $profile_dir/*.yaml " "$DY_IT0" "$DY_IB1" "$DY_IS2"
+    colr "     will keep the files and avoid this warning/block. " "$DY_ET2" "$DY_EB1" "$DY_ES2"
+    echo " "
+    echo " "
+
+    exit 331;
+
+else
+    colr "Your config files in $profile_dir are newer than the templates, all clear----===||> go." "$DY_WT1" "$DY_WB2" "$DY_WS1 " 1>2
+    sleep 1
+fi;
+
+if [[ $profile_file_count == "0" ]]; then
+    er=0
+    colr -n " > >> >>> " "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
+    colr "COPYING TEMPLATE FILES TO ACTIVE CONFIG FILES IN $profile_dir - none detected" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
+    sleep 2
+    ccmmddc="cp $profile_dir/templates/*yaml $profile_dir/ || (echo \"ERROR COPYING $?\" && exit 33)"
+
+    cp $profile_dir/templates/*yaml $profile_dir/ || (echo "ERROR COPYING $?" && exit 33)
+    err=$?
+
+    re_safe_mgr=$(echo $DAY_ROOT | sed "s/\//\\\\\//g;")
+    day_cfg='perl -pi -e "s/.DAY_ROOT\/c/'$re_safe_mgr'\/c/g;" '$profile_dir/*yaml
+
+    # I have no idea why the command will not run w/out this bizarre approach.....
+    echo $day_cfg | bash
+    if [[ $err != "0" || $? != "0" ]]; then
+        exit 48    fi
+     fi
+
+    # add profile name to all templated BASENAME_REGSUB locations
+    bn=$(basename $profile_dir | sed 's/-/\\\-/g')
+    prof_regsub='perl -pi -e "s/BASENAME_REGSUB/'$bn'/g;" '$profile_dir/*yaml
+    echo "$prof_regsub" | bash
+    if [[ $err != "0" || $? != "0" ]]; then
+        exit 48
+    fi
+
+
+    u=$USER
+    sing_regsub='perl -pi -e "s/USER_REGSUB/'$u'/g;" '$profile_dir/*yaml
+    echo "$sing_regsub" | bash
+    if [[ $err != "0" || $? != "0" ]]; then
+        exit 48
+    fi
+
+    hn=$HOSTNAME
+    hregsub='perl -pi -e "s/HOSTNAME/'$hn'/g;" '$profile_dir/*.yaml
+    echo "$hregsub" | bash
+    if [[ $err != "0" || $? != "0" ]]; then
+        exit 48
+    fi
+
+else
+    colr "CONFIG FILES DETECTED IN $profile_dir. Leaving Untouched." "$DY_IT0" "$DY_IB0" "$DY_IS1i" 1>&2
+fi
+
+if [[ $? != "0" ]]; then
+    colr "AN ERROR OCCURRED- apologies there is no further elaboration." "$DY_ET1" "$DY_EB1" "f"1>&2
+    exit 49
+fi
+
+# Dont run snakemake, just run for the sake of genereating the profile config files from the profile  templates
+if [[ $1 == "justinit" ]]; then
+    exit 0
+fi
+
+# This ensures the snakedir is unlocked after a crash or successful exit 0
+trap '(snakemake --unlock --profile $DAY_ROOT/config/day_profiles/$DAY_PROFILE  &>> ./unlock_fails.log ) & ' EXIT
+
+if [[ $1 == "--help" || $1 == "-h" || $@ == "" || $1 == "help" ]]; then
+
+    colr  "_DAY PROFILE: for day-run to work, you will need to have run day-activate [PROFILENAME] in the shell session prior to runng day-run. This configures snakemake and the packages to be run appropriately for the environment." "$DY_WB0" "$DY_IB2" "$DY_WS2" 1>&2
+    colr "__SPECIFY SAMPLES: By default a tiny sample set will be used if no samplesheets are provided or detected. It is recommended to create you samplesheet and save it to config/ as analysis_manifest.csv, this will be autodetected and used if present. You may also specify any named sample sheet with '--config samples=mysamps.csv'which take priority over a detected config/analysis_manifest.csv file. But the --config pattern leaves a less clear audit trail and not preferred. If config/analysis_manifest.csv and --config samples=file.csv are not detected,  the test data sample sheet will run otherwise. NOTE::: day-run will print a blue info alert on the terminal before building the dag informing you what sample sheet is being used." "$DY_WB0" "$DY_IB22" "$DY_WS2" 1>&2
+    colr "___TARGETS (aka, pipelines): day is not a pipeline, but a collection of modularized tools which connect to produce results as dictated by the target requested. 'day-run targets' will describe the available targets."  "$DY_WB0" "$DY_IB2" "$DY_WS2"  1>&2
+    colr "____tip: add ' --dry-run or -n ' to day-run before running any target to see the execution plan, but not actually run anything.  This is useful to confirm what you expect to run is in fact running, and VERY valuable when you are re-starting a stopped/failed run, or running a new target where others have been executed previously." "$DY_WB0" "$DY_IB2" "$DY_WS2" 1>&2
+
+    colr "_____Examples (all will use the autodetected sample sheet, or the test samplesheet):
+> source mginit
+> day-activate lcwgs-drmaa
+
+> day-run --dry-run multiqc_lcwgs   # Will not run the target, but report what would be generated.  Using the test data, or the data in config/analysis_manifest.csv if detected
+
+> day-run multiqc-final_wgs --rulegraph | dot -Tpng > dag.png # Visualize the rules to be run.   use '--dag' to print the same info at the sample level.  This will also not execute the target.
+
+> day multiqc-final_wgs --dry-run --config glimpse='{"call_chrms":[21,22]}' glimpse  # Will run the glimpse imputation pipeline only on chrm 21,22 from the default sample sheet  !remove --dry-run to actually do work. Also, an example of sending nested config values to the rules.yaml
+
+> day-run targets --config warn_err_sleep=6 # Quick summary of targets avail to run, setting warning message sleep time from default 2s to 6s
+
+> day-deactivate # to clear your analysis environment.  Note-  if you attempt to run day-run outside the expected DAY_ROOT tree, it will alert you of the fact and prompt you to run this command." "$DY_WB0" "$DY_IB2" "$DY_WS2" 1>&2
+    exit 2
+fi
+
+
+
+# Log the formulated snakemake call
+snakecmd=$(echo "snakemake --profile=config/day_profiles/$DAY_PROFILE/ $@ ")
+cmd_log=$PWD/day_cmd.log
+cmddt=$(date --iso-8601="seconds")
+echo """SMK> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB:$DAY_BIOME / CMD:( $snakecmd )""" &>> $cmd_log
+
+# Then run the snamemake cmd
+echo "$snakecmd" 1>&2
+export ret_code=111
+
+$snakecmd
+ret_code=$?
+
+echo "$ret_code" > "ret_code.txt"
+
+echo "___" 1>&2
+
+echo "RETURN CODE: $ret_code" 1>&2
+exit $ret_code

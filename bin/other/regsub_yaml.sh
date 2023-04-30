@@ -1,0 +1,1 @@
+cat ~/.config/daylily/cluster_init_values.txt | parallel 'k=$(echo {} | cut -d "=" -f 1) && v=$(echo {} | cut -d "=" -f 2 |  perl -p -e "s/\//\\\\\//g;" ); vv=$(echo $v | perl -p -e "s/\:/\\\\\:/g;"); perl -pi -e "s/$k/$vv/g"  ~/.config/daylily/daylily_default_cluster.yaml ;'

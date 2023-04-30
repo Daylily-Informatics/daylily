@@ -1,0 +1,11 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - intel
+  - defaults
+dependencies:
+  - bedtools
+  - htslib
+  - perl

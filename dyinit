@@ -1,0 +1,89 @@
+ #!/bin/echo "this script should only be sourced"
+
+export DAY_PROJECT="daylily-prd"
+
+if [[ "$1" == "" ]]; then
+   export UNO1="1"
+elif [[ "$1" == "AWSPC" || "$1" == "OTHER" ]]; then
+   sleep 1
+else
+   echo 'this takes one argument OTHER or AWSPC, ARCH64 not stable/supported'
+   return 3;
+fi
+export DAY_BIOME=AWSPC  # $1
+export DAY_ROOT=$PWD
+
+export SENTIEON_TMPDIR='/fsx/scratch'
+export SENTIEON_LICENSE='/fsx/SAVEME_ANA/etc/Daylily_Informatics_eval.lic'
+export SENTIEON_INSTALL_DIR='/fsx/SAVEME_ANA/bin/sentieon-genomics-202112.06/'
+export PATH="$PATH:$SENTIEON_INSTALL_DIR/bin/"
+
+if [[ "$ORIG_PATH" == "" ]]; then
+    export ORIG_PATH=$PATH
+fi
+
+
+ls ./dyinit > /dev/null 2>&1
+if [[ "$?" != "0" ]]; then
+    echo "ERROR:: you must source dyinit from the same directory it resides in with the argument OTHER or AWSPC"
+    return 11
+fi
+
+post_strip=$(echo $SHELL | perl -pe 's/bash//g;')
+source config/cli/colr_themes.sh 
+
+if [[ $ORIG_PS1 == "" ]]; then
+    export ORIG_PS1="$PS1"
+fi
+
+if [[ $SHELL == "$post_strip" ]]; then
+    echo "   ---------------=== warning ===--------------- "
+    echo "day has only been tested running in bash. "
+    echo "...It's not likely to run in other shells- except possibly "
+    echo " zsh.  I'm not going to override your shell (which would "
+    echo " be a little rude), but am suggesting you jump into a bash "
+    echo " shell and rerun this init script.  It looks like the current "
+    echo " shell is $SHELL. "
+    sleep 4
+
+fi
+
+export PATH=$PATH:$PWD/bin/:.
+
+source bin/tabcomp.bash
+
+alias day-activate="source bin/day_activate"
+alias day-deactivate="source bin/day_deactivate"
+alias day-build="source bin/day_build"
+alias day-run="bin/day_run"
+alias dy-a="source bin/day_activate"
+alias dy-b="source bin/day_build"
+alias dy-d="source bin/day_deactivate"
+alias dy-r="bin/day_run"
+
+
+if [[ "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
+    hlp=$(cat docs/markdown/cli_help_brief.md )
+    which colr > /dev/null 2>&1
+    if [[ "$?" == "0" ]]; then
+        colr """$hlp""" "floralwhite" "midnightblue" "b"
+    else
+	echo $hlp
+    fi;
+    return 0
+fi
+
+
+echo "
+
+DAY CLI is active, next up, activate an analysis environment.  At the moment, you're probalby using local, so you'd run 'dy-a local'.  
+
+To deactivate, run 'dy-d' or 'dy-d reset' if you're feeling hardcore, or if dy-d seemed to not do anything useful.
+
+run dyinit -h  or  dy-h for quick help
+
+"
+
+
+
+return 0

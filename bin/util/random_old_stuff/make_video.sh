@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/usr/local/bin/gource --font-size 32 --log-format git -s .5  -c 1.5  -filename-time 2 --user-scale 0.6 --font-file /usr/share/doc/restic/html/_static/fonts/Inconsolata-Bold.ttf  -a .5  --date-format %Y::%m::%d --title DAY_begun_Aug8-Progress_Through_Oct11 --bloom-multiplier 1.1 --bloom-intensity .7  --key --dir-name-depth 1 --dir-font-size 21 --file-font-size 13 --caption-size 13 --no-vsync --multi-sampling --font-size 32 --colour-images -e 1 -r 60 --highlight-dirs --hash-seed 3773 --caption-duration 9 -i 10 --viewport 1600x970 --file-filter .*.pyc --file-filter .*\~ --file-filter .*done --file-filter .*.Rhistory --file-filter .*gdf

@@ -1,0 +1,15 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - intel
+  - defaults
+dependencies:
+  - python==3.10
+  - pip
+  - bedtools
+  - htslib
+  - pip:
+    - numpy==1.22.3
+    - dysgu==1.3.10

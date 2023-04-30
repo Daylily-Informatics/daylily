@@ -1,0 +1,48 @@
+max_table_rows: 1600
+
+num_datasets_plot_limit: 12
+
+decimalPoint_format: "."
+thousandsSep_format: ","
+
+extra_fn_clean_trim:
+  - ".R1"
+  - ".R2"
+  - ".kat.hist.json"
+  - ".kat.gcp.json"
+  - "_md"
+  - ".sent.mrkdup.sort"
+
+extra_fn_clean_exts:
+  - type: "truncate"
+    pattern: "_md"
+
+extra_fn_clean_exts:
+  - type: remove
+    pattern: _md
+
+# Mosdepoth
+exclude_contigs:
+  - "*_alt"
+  - "*_decoy"
+  - "*_random"
+  - "chrUn*"
+  - "HLA*"
+  - "chrM"
+  - "MT"
+  - "chrEBV"
+
+mosdepth_config:
+  show_excluded_debug_logs: True
+
+
+
+show_hide_buttons:
+  - Unclassifed
+  - Undetermined
+show_hide_mode:
+  - show_re
+  - show_re
+show_hide_patterns:
+  - Unclassified.*
+  - Undetermined.*

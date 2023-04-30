@@ -1,0 +1,15 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - intel
+  - defaults
+dependencies:
+  - samtools>=1.11
+  - bwa-mem2
+  - pigz
+  - biobambam
+  - seqkit
+  - seqfu
+  - sambamba

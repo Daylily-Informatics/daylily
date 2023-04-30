@@ -1,0 +1,4 @@
+channels:
+  - bioconda
+dependencies:
+  - dysgu==1.3.16

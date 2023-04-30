@@ -1,0 +1,10 @@
+#!/bin/python
+
+import sys
+import os
+
+ibed=sys.argv[1]
+c="echo this is our bed "+ibed+" > ./jjjj.k"
+os.system(c)
+sb=ibed.split("/")[-2]
+print(sb)

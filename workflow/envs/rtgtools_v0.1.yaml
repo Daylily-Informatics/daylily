@@ -1,0 +1,18 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - intel
+  - defaults
+dependencies:
+  - rtg-tools=3.12.1
+  - parallel
+  - bcftools
+  - python=3.7
+  - pip
+  - pandas
+  - htslib
+  - fd-find
+  - pip:
+      - pyvcf3

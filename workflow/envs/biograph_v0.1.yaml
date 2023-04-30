@@ -1,0 +1,12 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - intel
+  - defaults
+dependencies:
+    - python
+    - pip
+    - pip:
+      - git+https://github.com/Illumina/Gauchian.git@v1.0.2

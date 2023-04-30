@@ -1,0 +1,78 @@
+# Daylily Headnode Configure
+
+duser="daylily";
+
+echo "clusters detected:";
+pcluster list-clusters | grep clusterName;
+echo " ";
+
+echo "Enter your cluster name:";
+read cluster_name;
+
+cluster_ip_address=$(pcluster describe-cluster-instances -n $cluster_name | grep publicIpAddress | perl -p -e 's/[ |\"|\,]//g;' | cut -d ':' -f 2);
+
+
+echo "A";
+echo "Cluster $cluster name is $cluster_ip_address.";
+echo " ";
+echo " ";
+echo "Detected PEM files:";
+ls -1 ~/.ssh/*pem;
+
+echo "Enter the full absolute path to your PEM file";
+
+pem_file=$1;
+if [[ "$1" != "" ]];
+    echo "setting pem file to $1";
+else
+    read pem_file;
+fi;
+
+ssh -i $pem_file centos@$cluster_ip_address "sudo useradd $duser" ;
+ssh -i $pem_file centos@$cluster_ip_address "sudo passwd --stdin $duser <<< 'passw0rd'" ;
+ssh -i $pem_file centos@$cluster_ip_address echo """ssh-keygen -q -t rsa -f ~$duser/.ssh/id_rsa -N \'\' <<< $'\ny'  | sudo su - $duser""";
+
+sleep 1;
+echo 'You must have a github account, and access to the daylily repo. The daylily user public ssh key must be stored as a new valid ssh key in github: https://github.com/settings/keys. If logged in to github, click New SSH Key, name the key whatever, leave key type set to Authentication Key, and paste the following string into the Key field.  There should be no linebreaks in the key string.';
+echo " ";
+ssh -i $pem_file centos@$cluster_ip_address "echo 'head ~$duser/.ssh/id_rsa.pub' | sudo su - $duser " ;
+
+echo " ";
+echo " ";
+
+echo "The above string is your ssh key. Enter is now, and type yes to continue once the key is saved.";
+read cont;
+
+# Way to auto register the key...
+#not working... more annoying than the above approach?
+#curl -H "Authorization: token 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" --data '{"title":"test-key-jem","key":"$git_key"}' https://api.github.com/user/keys
+
+if [[ "$cont" == "yes" || "$cont" == "y" ]]; then
+    echo "continuing to headnode config.";
+    sleep 2;
+else
+    echo "exiting";
+    return 1;
+fi;
+
+# clone daylily repo to headnode user. centos is not enabled to run the pipe by default.
+echo "...............cloning repo";
+ssh -i $pem_file  centos@$cluster_ip_address "echo 'ssh-keyscan github.com >> ~$duser/.ssh/known_hosts; mkdir -p ~$duser/projects; cd ~$duser/projects; git clone  git@github.com:iamh2o/day.git ' | sudo su - $duser"; 
+
+echo "...............configuring daylily headnode deets";
+# init the first day environment
+ssh -i $pem_file centos@$cluster_ip_address "echo 'cd ~$duser/projects/day; source dyinit && source  config/day/day_env_installer.sh DAY;' | sudo su - $duser" ;
+
+echo "................running a simple help test of daylily remotely";
+# Run simple help test
+ssh -t -i $pem_file centos@$cluster_ip_address "echo 'bash -c cd ~$duser/projects/day && source dyinit && dy-a local && dy-r help' | sudo su - $duser" ;
+
+
+echo " ";
+echo " ";
+echo "You may now ssh into the headnode with : ssh -i $pem_file centos@$cluster_ip_address ";
+echo " ... once logged in, run : sudo su - daylily ";
+echo " ...... then as daylily run: cd projects/day && source dyinit && dy-a local && dy-r help ";
+echo " .........";;
+echo "et voila, fin.";
+

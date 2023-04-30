@@ -1,0 +1,5 @@
+#DAY.COMPUTEenv.ANALYTIStunedFOR
+terminal_abbreviation:\[\e[36;1m\][Dslu]\[\e[0m\]
+env_var_val:slurm
+active:true
+env_script:config/day/env.sh

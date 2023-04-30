@@ -1,0 +1,50 @@
+FROM condaforge/mambaforge:latest
+LABEL io.github.snakemake.containerized="true"
+LABEL io.github.snakemake.conda_env_hash="4f57563e7b653fd7ad7fcc0c65e1ce7cfb6e9b3c41c6395de03cf63291da4b01"
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+
+RUN apt-get update && apt-get install -y wget
+RUN apt-get install -y tzdata 
+RUN apt install -y software-properties-common
+RUN add-apt-repository -y ppa:apptainer/ppa
+RUN apt update
+RUN apt install -y apptainer
+
+
+# Step 1: Stage DAY conda environment
+
+# Conda environment:
+#   source: ./DAY.yaml
+#   prefix: DAY
+#--
+#channels:
+#  - conda-forge
+#  - bioconda
+#  - anaconda
+#  - defaults
+#dependencies:
+#  - snakemake==7.25.0
+#  - pandas==1.5.3
+#  - python
+#  - ipython
+#  - perl
+#  - yappi
+#  - snakedeploy
+#  - snakefmt
+#  - networkx
+#  - yamllint
+#  - pip
+#    - drmaa
+#    - docopt
+#    - colr
+#    - chromedriver-binary-auto
+#    - rgbw-colorspace-converter
+
+RUN mkdir -p /conda-envs/daylily_v0.1.0
+COPY config/day/DAY.yaml /conda-envs/daylily_v0.1.0/environment.yaml
+
+RUN mamba env create -n DAY --file /conda-envs/daylily_v0.1.0/environment.yaml && \
+    mamba clean --all -y

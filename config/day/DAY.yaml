@@ -1,0 +1,32 @@
+---
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - defaults
+dependencies:
+  - snakemake==7.25.0
+  - pandas==1.5.3
+  - python
+  - ipython
+  - perl
+  - yappi
+  - snakedeploy
+  - snakefmt
+  - networkx
+  - yamllint
+  - pip
+  - rclone
+  - parallel
+  - seqfu
+  - seqkit
+  - pygraphviz
+  - glances
+  - tabix
+  - fd-find
+  - pip:
+    - drmaa
+    - docopt
+    - colr
+    - chromedriver-binary-auto
+    - rgbw-colorspace-converter

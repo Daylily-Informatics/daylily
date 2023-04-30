@@ -1,0 +1,6 @@
+max_table_rows: 1600
+
+num_datasets_plot_limit: 12
+
+decimalPoint_format: "."
+thousandsSep_format: ","
