@@ -18,13 +18,13 @@ rule collect_rules_benchmark_data:
     input:
         f"{MDIR}logs/report_components_aggregated.done",
     output:
-        f"{MDIR}other_reports/rules_{{ru}}_{{ex}}_benchmarkdata_mqc.tsv",
+        f"{MDIR}other_reports/rules_benchmarkdata_mqc.tsv",
     params:
         cluster_sample="rules_benchmark_collect",
         working_file=f"{MDIR}reports/benchmarks_summary.tsv",
         ref_code=config["genome_build"],
     log:
-        f"{MDIR}other_reports/logs/{{ru}}_{{ex}}_benchmarks_summary.log",
+        f"{MDIR}other_reports/logs/rules_benchmarks_summary.log",
     container: None
     shell:
         "bin/util/benchmarks/collect_day_benchmark_data.sh {params.ref_code} > {log};"
@@ -71,11 +71,11 @@ rule aggregate_report_components:
 
 rule multiqc_final_wgs:  # TARGET: the big report
     input:
-        f"{MDIR}other_reports/rules_{{ru}}_{{ex}}_benchmarkdata_mqc.tsv",
+        f"{MDIR}other_reports/rules_benchmarkdata_mqc.tsv",
     output:
-        f"{MDIRreportsd}DAY_{{ru}}_{{ex}}_final_multiqc_hcwgs.html",
+        f"{MDIR}reports/DAY_final_multiqc_hcwgs.html",
     benchmark:
-        f"{MDIR}benchmarks/{{ru}}_{{ex}}_all.final_multiqc.bench.tsv"
+        f"{MDIR}benchmarks/DAY_all.final_multiqc.bench.tsv"
     threads: config["multiqc"]["threads"]
     priority: 50
     params:
@@ -99,8 +99,8 @@ rule multiqc_final_wgs:  # TARGET: the big report
         ref=config["ref_code"],
         mgroot=os.environ['DAY_ROOT'],
     log:
-        a=f"{MDIRreportsd}logs/{{ru}}_{{ex}}_mqc_fin_a.log",
-        b=f"{MDIRreportsd}logs/{{ru}}_{{ex}}mqc_fin_b.log",
+        a=f"{MDIR}reports/logs/all__mqc_fin_a.log",
+        b=f"{MDIR}reports/logs/all_mqc_fin_b.log",
     conda:
         config["multiqc"]["final"]["env_yaml"]
     shell:
@@ -131,4 +131,4 @@ def get_fin_mqc(wildcards):
 
 rule produce_multiqc_final_wgs:  # TARGET : Generated All WGS Reports
     input:
-        expand(MDIRreportsd + "DAY_{ru}_{ex}_final_multiqc_hcwgs.html", ru=RU, ex=EX)
+        MDIR+ "reports/DAY_final_multiqc_hcwgs.html"
