@@ -1,8 +1,10 @@
 # [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
 _named in honor of Margaret Oakley Dahoff_
 
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
+
 ## Multi-omics Analysis Framework ( And The $ Genome )
-  > Daylily orchestrates the execution of numerous pipelines while also managing all of the tasks required to spin up, run analyses on, track costs to operate, and close down an ephemeral compute fleet. (tldr: 30x genomes complete in ~60m, with SNP fscores of XXX and EC2 costs as low as YYY)
+  > Daylily orchestrates the execution of numerous pipelines while also managing all of the tasks required to spin up, run analyses on, track costs to operate, and close down an ephemeral compute fleet. ( *tldr: 30x genomes complete in ~60m, with SNP fscores of XXX and EC2 costs as low as YYY* )
 
 
 ### Use Cases: Performance, Fscores, Costs
