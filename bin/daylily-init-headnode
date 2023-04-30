@@ -40,7 +40,7 @@ ssh -i $pem_file centos@$cluster_ip_address "echo 'head ~$duser/.ssh/id_rsa.pub'
 echo " ";
 echo " ";
 
-echo "The above string is your ssh key. Enter is now, and type yes to continue once the key is saved.";
+echo "The above string(not including the timestamp. double click on the key string and it should all select) is your ssh key to save in github. Enter it now in your github settings->gpg&ssh keys.  Once saved in github, please type 'yes' to continue.";
 read cont;
 
 # Way to auto register the key...
@@ -61,11 +61,11 @@ ssh -i $pem_file  centos@$cluster_ip_address "echo 'ssh-keyscan github.com >> ~$
 
 echo "...............configuring daylily headnode deets";
 # init the first day environment
-ssh -i $pem_file centos@$cluster_ip_address "echo 'cd ~$duser/projects/day; source dyinit && source  config/day/day_env_installer.sh DAY;' | sudo su - $duser" ;
+ssh -i $pem_file centos@$cluster_ip_address "echo 'cd ~$duser/projects/daylily; source dyinit && source  config/day/day_env_installer.sh DAY;' | sudo su - $duser" ;
 
 echo "................running a simple help test of daylily remotely";
 # Run simple help test
-ssh -t -i $pem_file centos@$cluster_ip_address "echo 'bash -c cd ~$duser/projects/day && source dyinit && dy-a local && dy-r help' | sudo su - $duser" ;
+ssh -t -i $pem_file centos@$cluster_ip_address "echo 'bash -c cd ~$duser/projects/daylily && source dyinit && dy-a local && dy-r help' | sudo su - $duser" ;
 
 
 echo " ";
