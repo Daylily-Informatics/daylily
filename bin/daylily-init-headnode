@@ -22,7 +22,7 @@ ls -1 ~/.ssh/*pem;
 echo "Enter the full absolute path to your PEM file";
 
 pem_file=$1;
-if [[ "$1" != "" ]];
+if [[ "$1" != "" ]]; then
     echo "setting pem file to $1";
 else
     read pem_file;
