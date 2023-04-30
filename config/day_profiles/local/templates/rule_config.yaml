@@ -46,6 +46,11 @@ active_aligners:
 #    - sent:
 #          mkdup: dppl
 
+# env JEMALLOC_CONF="oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4" LD_PRELOAD=resources/lib/libjemalloc.so.1
+
+# env  MIMALLOC_RESERVE_HUGE_OS_PAGES=1 MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/lib/libmimalloc.so
+#
+
 # #######  FASTQ PREP
 
 prep_input_sample_files:
@@ -122,7 +127,7 @@ bwa_mem2a_aln_sort:
     benchmark_runs: 0
     softclip_alts: " -Y "
     ld_preload: "  "
-    cmd: "  resources/bwa-mem2/bwa-mem2 "  
+    cmd: " env JEMALLOC_CONF="oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4" LD_PRELOAD=resources/lib/libjemalloc.so.1  resources/bwa-mem2/bwa-mem2 "  
     K: "  -K 1260000000 "
     glances: " "
     k: " -k 19 "

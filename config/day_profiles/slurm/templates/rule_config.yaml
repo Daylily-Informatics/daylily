@@ -47,6 +47,11 @@ active_aligners:
 
 # #######  FASTQ PREP
 
+# env JEMALLOC_CONF="oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4" LD_PRELOAD=resources/lib/libjemalloc.so.1
+
+# env  MIMALLOC_RESERVE_HUGE_OS_PAGES=1 MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/lib/libmimalloc.so
+# 
+
 prep_input_sample_files:
     source_read_method: " ln -s  "
 
