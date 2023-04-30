@@ -30,6 +30,9 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
       bwa_mem_index_meme_b:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_meme_b/human_1kg_v37.fasta
+      bwa_mem2_scale:
+        class: file_no_suffix_star
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta
       rtg_tools_genome:
         class: dir_plus
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.sdf/
