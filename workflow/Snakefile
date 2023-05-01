@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 # resource scopes for running via slurm
 resource_scopes:
     gpus="local",
