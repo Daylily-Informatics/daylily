@@ -37,7 +37,7 @@ active_s_v_callers:
 
 # #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
 active_aligners:
-    - bwa2a:
+    - bwa2b:
           mkdup: dppl
 #    - bwa2a:
 #          mkdup: sent
@@ -144,7 +144,7 @@ bwa_mem2ert_aln_sort:
     lib: " "
     ld_p re: " " 
     ldpre: " "
-    cmd: " resources/numa/numactl --cpunodebind=0,1 --membind=0,1  resources/ert/bwa-mem2 "  #resources/numa/numactl --interleave all env LD_PRELOAD=resources/lib/libjemalloc.so.1    resources/ert/bwa-mem2  "  
+    cmd: " JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  resources/ert/bwa-mem2 "  #resources/numa/numactl --interleave all env LD_PRELOAD=resources/lib/libjemalloc.so.1    resources/ert/bwa-mem2  "  
     K: " -K 602400000 "  # -K 750900000150   "  # -K 250000000 -K 150000000=1M/2s
     glances: " "
     k: " -k 19 "
