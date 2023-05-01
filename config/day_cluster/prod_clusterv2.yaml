@@ -44,7 +44,7 @@ Scheduling:
           Instances:
             - InstanceType: m5.24xlarge  # 96/384 4.6,1.6
             - InstanceType: m5d.metal  # 96/384  5.4,1.6
-            - InstanceType: c5.24xlarge 96/192  4,1.6
+            - InstanceType: c5.24xlarge  # 96/192  4,1.6
             - InstanceType: m5.metal  # 96/384  4,1.8
             - InstanceType: c5d.metal  # 96/192  4.6,2  
           MinCount: 0
