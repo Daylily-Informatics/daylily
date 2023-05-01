@@ -73,14 +73,14 @@ rule multiqc_final_wgs:  # TARGET: the big report
     input:
         f"{MDIR}other_reports/rules_benchmarkdata_mqc.tsv",
     output:
-        f"{MDIR}reports/DAY_final_multiqc_hcwgs.html",
+        f"{MDIR}reports/DAY_final_multiqc.html",
     benchmark:
         f"{MDIR}benchmarks/DAY_all.final_multiqc.bench.tsv"
     threads: config["multiqc"]["threads"]
     priority: 50
     params:
         odir2=MDIRreportsd,
-        fnamef=f"DAY_{RU[0]}_{EX[0]}_final_multiqc_hcwgs.html",
+        fnamef=f"DAY_final_multiqc.html",
         macro_cfg=config["multiqc"]["config_yaml"],
         micro_cfg=config["multiqc"]["final"]["config_yaml"],
         name_cfg=config["multiqc_sampname_cfg"],
@@ -131,4 +131,4 @@ def get_fin_mqc(wildcards):
 
 rule produce_multiqc_final_wgs:  # TARGET : Generated All WGS Reports
     input:
-        MDIR+ "reports/DAY_final_multiqc_hcwgs.html"
+        MDIR+ "reports/DAY_final_multiqc.html"
