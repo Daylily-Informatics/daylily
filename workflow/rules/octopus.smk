@@ -259,6 +259,7 @@ rule octopus:
         huref=config["supporting_files"]["files"]["octopus"]["huref"]["name"],
         skr=config['supporting_files']['files']['ucsc']['build_gaps']['name'],
         brt=" --bad-regon-tolerance NORMAL " if "brt" not in config["octopus"] else config["octopus"]["brt"],  
+        ld_pre=config['octopus']['ld_pre'],
         mdir=MDIR,
         ploidy=" ", # get_ploidy,
         refcall=" ",
@@ -269,47 +270,19 @@ rule octopus:
         model_posterior=" ",  #--model-posterior ALL ",
     shell:
         """
-        # Quick Hack to back off some crash causingflags if there is a fail X
-        set +euo pipefail;
-
         export BRTOL="NORMAL";  
-        set -euo pipefail;
 
-        # First time around, override the decreased sensitivity flags
-        export variable_args=' ';
-
-        if [[ "{resources.attempt_n}" == "1" ]]; then
-            # First time around, override the decreased sensitivity flags
-            export variable_args=" {params.addl_options} ";
-        else
-            # For now test setting this dynamically.
-            export BRTOL="LOW";
-            echo 'SENSITIVITY DOWNGRADE: {params.ochrm_mod}' >> {log};
-        fi;
-
+        export variable_args=" {params.addl_options} ";
 
         midel="{params.max_idel_err}";
         mhap="{params.max_haplotypes}";
 
-        export oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
-
-        ri=tmp/$RANDOM$RANDOM;
-        mkdir -p ./$ri;
-
         BRTL=" --bad-region-tolerance $BRTOL ";
         echo MOP {params.max_open_read_files};
-        #  --threads {params.ts} 
 
-        threads_flag=' --threads {threads} ';
-        if [[ '{params.ts}' == '32' || '{params.ts}' == '16' || '{params.ts}' == '64' || '{params.ts}' == '96' ]]; then
-            # Octopus will,  when --threads is specified with no value, use all avail cores better then if you limit to a set amount
-            export threads_flag=" --threads ";  
-        fi;
-        threads_flag=' --threads {threads} ';
         threads_flag=' --threads  ';
 
-
-        ocmd="octopus --very-fast  -T $oochrm_mod $threads_flag     --reference {params.huref} --temp-directory-prefix $ri         --reads {input.b}  $midel  $mhap  --annotations {params.anno}   --forest-model {params.fm}  --sequence-error-model {params.em}  {params.min_for_qual}   {params.tm} --skip-regions-file {params.skr}  $BRTL  {params.tgt_working_mem} $variable_args --max-open-read-files {params.mor} ";
+        ocmd=" {params.ld_pre} octopus --very-fast  -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}  $midel  $mhap  --annotations {params.anno}   --forest-model {params.fm}  --sequence-error-model {params.em}  {params.min_for_qual}   {params.tm} --skip-regions-file {params.skr}  $BRTL  {params.tgt_working_mem} $variable_args --max-open-read-files {params.mor} ";
         
         echo $ocmd 1&>2 > ocmd.log;
 
