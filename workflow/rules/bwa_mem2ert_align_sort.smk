@@ -19,8 +19,7 @@ rule bwa_mem2ert_aln_sort:
         f2=getR2s,  # method defined in fastp.smk
     output:
         bami=MDIR + "{sample}/align/bwa2b/{sample}.bwa2b.sort.bam.bai",
-        bamo=touch(MDIR + "{sample}/align/bwa2b/{sample}.bwa2b.sort.bam"),
-        samo=temp(MDIR + "{sample}/align/bwa2b/{sample}.bwa2b.samo"),
+        bamo=MDIR + "{sample}/align/bwa2b/{sample}.bwa2b.sort.bam",
     priority: 49
     resources:
         threads=config["bwa_mem2ert_aln_sort"]["threads"],
@@ -69,9 +68,6 @@ rule bwa_mem2ert_aln_sort:
         mkdir -p $tdir;
         epocsec=$(date +'%s');
         {params.lib}
-
-        touch {output.samo};
-
 
         #echo "INSTID: " >> {log};
         #wget -q -O - http://169.254.169.254/latest/meta-data/instance-id >> {log};
