@@ -73,8 +73,8 @@ Scheduling:
         - Name: v16xl
           Instances:
             - InstanceType: c5.18xlarge  # 72/144 3,1
-	    - InstanceType: r5.16xlarge  # 64/512  4,1.1
-	    - InstanceType: c5d.18xlarge  # 72/144 3,1.1
+            - InstanceType: r5.16xlarge  # 64/512  4,1.1
+            - InstanceType: c5d.18xlarge  # 72/144 3,1.1
           MinCount: 0
           MaxCount: 12
           Networking:
@@ -102,7 +102,7 @@ Scheduling:
           Instances:
             - InstanceType: r5b.8xlarge  # 32/256  2,0.7
             - InstanceType: m5.8xlarge  # 32/128  1.5,0.7
-	    - InstanceType: r5.8xlarge  # 32/256  2,0.5
+            - InstanceType: r5.8xlarge  # 32/256  2,0.5
             - InstanceType: r5d.8xlarge  # 32/256   2.3,0.8
           MinCount: 0
           MaxCount: 12
@@ -132,9 +132,9 @@ Scheduling:
             - InstanceType: r5b.4xlarge  # 16/128  1.2,0.6
             - InstanceType: r5dn.4xlarge  # 16/128  1.3,0.5
             - InstanceType: r5n.4xlarge  # 16/128  1.1,0.6
-	    - InstanceType: m5.4xlarge  # 16/64  1.4, 0.4
-	    - InstanceType: m5d.4xlarge # 16/64  0.9,0.5
-	    - InstanceType: r5d.4xlarge # 16/128 1.2,0.5
+            - InstanceType: m5.4xlarge  # 16/64  1.4, 0.4
+            - InstanceType: m5d.4xlarge # 16/64  0.9,0.5
+            - InstanceType: r5d.4xlarge # 16/128 1.2,0.5
           MinCount: 0
           MaxCount: 8
           Networking:
@@ -193,8 +193,8 @@ Scheduling:
             - InstanceType: r6i.32xlarge  # 128/1024  8.0,4.42
             - InstanceType: r6i.metal  # 128/1024  8.0,2.4
             - InstanceType: r6in.32xlarge  # 128/1024 11.1,5.7
-	    - InstanceType: r6in.metal  # 128/1024  11,4.6
-	    - InstanceType: r6idn.metal  # 128/1024 12.5,4.6
+            - InstanceType: r6in.metal  # 128/1024  11,4.6
+            - InstanceType: r6idn.metal  # 128/1024 12.5,4.6
             - InstanceType: r6idn.32xlarge  # 128/1024  12.5,4.6
             - InstanceType: r6id.32xlarge  # 128/1024 9.6,3.11
             - InstanceType: r6id.metal  # 128/1024 9.6,4.9
