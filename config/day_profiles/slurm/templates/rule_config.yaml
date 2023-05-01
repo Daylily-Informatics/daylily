@@ -412,7 +412,7 @@ sentieon:
     env_yaml: "../envs/sentieon_v0.1.yaml"
     glances: " "
     mask_regions: " "
-    numactl: " LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  "  
+    numactl: "  JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  "  
     metrics_threads: 128
     partition: "i128-6"
     sort_thread_mem: "10G"
