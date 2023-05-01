@@ -41,7 +41,7 @@ echo "-> Do you have the S3 buckets created as described in the docs? [y to proc
 read done_s3;
 
 echo $done_s3
-if [[ "$done_s3" == "y" || "$done_s3" == "Y" ]]; then
+if [[ "$done_s3" == "y" || "$done_s3" == "Y" || "$done_s3" == "yes" ]]; then
     sleep 0.2
 else
     echo 'exiting...';
@@ -119,8 +119,9 @@ pcver=$(pcluster version | grep 'version' | cut -d '"' -f 4);
 if [[ "$pcver" == "3.5.0" ]]; then
     echo "pcluster version $pcver detected.";
 else
-    echo "pcluster version ~= 3.5.0 !!!, FOUND: $pcver";
-    return 1;
+    echo "WARNING::: pcluster version ~= 3.5.0 !!!, FOUND: $pcver";
+    echo "if this is >  3.5.0, you should be OK, but daylily is tested on 3.5.0.";
+    sleep 7;
 fi;
 sleep 0.4;
 
