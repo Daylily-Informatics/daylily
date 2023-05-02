@@ -57,11 +57,14 @@
   2. bbbb
 
 ### Monitoring a DEC
-  1. Cloudwatch dashboard created for each DEC.
-    - [Cloudwatch Dashboard](xxxx)
+  1. A [Cloudwatch dashboard](https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards:) created for each DEC. A few screenshots:
+    - ![](../../docs/images/assets/DEC_cw_a.png)
+    - ![](../../docs/images/assets/DEC_cw_b.png)
+    - ![](../../docs/images/assets/DEC_cw_c.png)
   2. Costs
     - To create [Cost Explorer]() reports by tag, you need to `activate` the DEC cost tracking tags. [Follow these instructions](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/activating-tags.html).
-    - Once done, this can take 24hrs to activate. Reports may then be faceted by tag & tag value.
+    - Once done, this can take 24hrs to activate. Reports may then be faceted by tag & tag value. Here is an example costs breakdown report:
+    - ![](../../docs/images/assets/DEC_cost_tag.png)
 
 ### Shutting Down a DEC
   - DECs may be created on demand in roughly 20m.  Depending on your needs, the DEC will probably be shutdown when not needed. To do so, follow these steps:
