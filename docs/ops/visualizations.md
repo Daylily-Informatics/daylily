@@ -19,8 +19,7 @@ Generate DAGs of the worflow target you are running.
 # Snakemake Report
 Snakemake will generate a report when a job has completed that visualizes the rules executed, and the runtime stats per executed rule.
   - `dy-r produce_snv_concordances --report ./smk_report.html`
-  produces w/the test data in the slurm profile:
-  ![](../../docs/reports/smk_report.html)
+  produces w/the test data in the slurm profile [this report.gz](../../docs/reports/smk_report.html.gz).
   
 # QC Reports!
 Daylily will generate exhaustive QC reports for samples run in the same batch. When an analysis_manifest specifies multiple samples, and the kitchen sink pipeline is run, the final step will produce the following multiqc report.
