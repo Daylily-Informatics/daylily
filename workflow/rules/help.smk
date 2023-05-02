@@ -218,24 +218,77 @@ localrules:
     help,
 
 rule help:
-    conda:
-        "../envs/vanilla_v0.1.yaml"
+    container: None
     params:
         c=get_ccmd(),
     shell:
         """
-        {params.c} '##### DAY HELP                                                    ' "$DY_IT2" "$DY_IB2" "$DY_IS2" 1>&2;
-        {params.c} '     /-----------------------------------------------------------------' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2;
-        echo 'Welcome to mod-pipes.  There are several targets you can choose (consider a target a sub-pipeline) and are brieflyt described below.  For more detail see the github README and DAGs.  If no target is specified, the longest DAG will be calculated and run (which is mod). To run a specific target, just name them at the very end of the  snakemake command string.
-        A few example calls can be found in the etc/EXAMPLES dir.'  1>&2;
-        echo ' ' 1>&2;
-        echo  '    Available targets are:'  1>&2;
-        {params.c} '''{tgts}''' "$DY_WT2" "$DY_WB2"  1>&2;
-        {params.c} '#### CONFIG  & SAMPLES                                                     ' '"$DY_WT2" "$DY_WB2" "$DY_WS1" 1>&2;
-        {params.c} '   /----------------------------------------------------------------- ' "$DY_IT0" "$DY_IB0" "$DY_IS0"  1>&2;
-        echo  ' ';
-        echo 'Please see the README for instructions on how to build a DAY conda env, as well as how to create a sample sheet.  If you have an env built and created a samplesheet or want to use the test data, this would run a quick test:  source mginit && mod-activate local && mod-run seqqc;   ' 1>&2;
-        exit 0 ;
+        {params.c} '##### DY-CLI HELP                                                    ' "$DY_IT2" "$DY_IB2" "$DY_IS2" 1>&2;
+        {params.c} '
+/-----------------------------------------------------------------------------' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2;
+        {params.c} 'Welcome to daylily. 
+More complete docs can be found here: 
+     https://github.com/Daylily-Informatics/daylily/blob/main/docs/README.md .
+     
+
+       ========================================================================
+       The dy- cli has 4 functions:
+             first, initialize it: `source dyinit`  # Must be run to 
+                                                      access the dy-cli 
+                                   *NOTE*, the dy- commands all support 
+                                    tab completion !!
+             - dy-: `dy-<tab>(choose from b,a,d,r)  # see below
+             - build: `dy-b BUILD`  # This is executed 1x per new user on a 
+                          headnode, should be run during installation 
+                          generally do not need to run build. 
+             - activate: `dy-a <tab>(local|slurm)`  # Activate the local 
+                          or slurm daylily executor environment
+             - deactivate: `dy-d reset`  # deactivate and clear the dy-cli env
+             - run:  `dy-r <tab>(list of supported daylily TARGETS, aka rules)
+                          -<tab>(list of all, and I mean ALL, snakemake flags)
+       ========================================================================
+       + Important snakemake arguments (all optional):
+         - `-n` == dryrun, generates an execution plan, but runs no commands.  
+              Good practice to run with -n before pulling the trigger.
+         - `-p` == print shell commands, pretty much always include this one
+         - `--rerun-triggers mtime` == this will calculate an execution plan 
+              only re-running rules which have parent files timestamps are 
+              newer than children.  w/out this, snakemake cohsiders not only 
+              timestamps, but edits to config files, source data changes, code 
+              changes, environment changes... and will re-run agressively.  
+              ! Always run with -n before you attempt to re-run, or add, 
+              analysis to an existing results directory.  You can easily 
+              erase a lot of work if not careful.
+         - `-h` == snakemake help... `--help` == snakemake exhaustive help
+         - `--rerun-incomplete` == if rerunning a workflow which failed 
+              ungracefully, snakemake will not proceed unless this flag is 
+              set so it can cleanup  the incomplete results subdirs.
+         - `--jobs n` == limit the snakemake scheduler to only running `n` jobs at once.
+         - `--config key=value` == override config set in config files, or 
+              pass in new config. `value` may be json to allow setting nested 
+              yaml properties. Most common use would be to specify the docker 
+              container to run all environments in: 
+              --config use_container=docker://daylilyinformatics/daylily:v0.1.0
+         - `--report FILENAME.html` == produce a summary report of the workflow
+         - `--dag|--rulegraph|--filegraph` == use as follows to produce 
+              various graph visualizations of the TARGET being asked for: 
+              `dy-r produce_deduplicated_bams --rulegraph | dot -Tpng > rg.png`
+       ========================================================================
+                + TARGETS (which are snakemake rules that are a terminal point
+                      in the larger DAG of rules). A few common ones:
+                   - produce_deduplicated_bams == will run the specified 
+                      aligner(s) and the specified dup marker (only one ddup 
+                      presently can run at a time). aligners, ddupers, 
+                      SNV&SV(multiple of each of these allowed) callers are 
+                      all configured in the: 
+                       config/day_profles/{{local,slurm}}/rule_config.yaml
+                   - produce_snv_concordances == runs all specified 
+                      aligners/SV callers and produces a concordance report 
+                      for each aligner+SVcaller+sample (in the other_reports 
+                      dir)
+                   - produce_final_multiqc_wgs == runs everything and produces 
+                      the big final MQC report in the `reports` dir.' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2 ;
+       {params.c} '   /----------------------------------------------------------------- ' "$DY_IT0" "$DY_IB0" "$DY_IS0"  1>&2;
         """
 
 
