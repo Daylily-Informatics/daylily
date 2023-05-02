@@ -7,7 +7,7 @@ To create a daylily ephemeral cluster (DEC), these pre-requisites must be comple
   4. Sufficent AWS Spot Quota Allowance
   5. AWS VPC, Public/Private Subnet IDs
   6. AWS Cost Tracking Tagging Policy ARN
-  7. A new S3 Bucket 
+  7. A New S3 Bucket With The Daylily Refs and Cluster Cfg Data Copied To It
 
   > With the above info, you will be able to create as many DECs as your AWS quotas allow. 
   > *These resources only need to be created this one time*.
