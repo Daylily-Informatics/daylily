@@ -35,3 +35,11 @@ Defined as:
   - Can this code be reasonably expected to still run in 1, 5, 10 years? ( packaging and well defined hardware specs are needed )
   - Is there sufficent logging and observability to debug problems when they arise?
   - Can costs be allocated by project to all resources required to produce these analyses? Are cost reports easy to produce? Can budgets be set by project?
+  
+### Clinical Applications In Mind
+  - Daylily has been built with the needs of clinical users in mind. To this end, concordance analysis is automated and flexible. 
+    - Users may specify, per-sample, a bed region to analyze and truth vcf & a concordance report ( broken down by: SNPts, SNPtv, INS, DEL, Indel) will automatically be produced. Further, the pipelines daylily has formalized all come with full analysis results, concordance reports, and the tools to reproduce these results in your own hands.
+  - Genome builds `b37`, `hg38` are both supported. `T2T` is in testing.
+  
+### Managed Analysis, or Run Yourself
+  > Daylily can offer a managed analysis service, or license the code for use in your own compute environment ( free with registration at daylily@daylilyinformatics.com for personal/academic use, for commercial uses contact daylily@daylilyinformatics.com ).
