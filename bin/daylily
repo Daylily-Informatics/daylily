@@ -109,8 +109,8 @@ aver=$(aws --version | cut -d ' ' -f 1 | sed 's/aws\-cli\///g');
 if [[ "$aver" == "1.27.92" ]]; then
     echo 'aws cli version 1.27.92 detected.';
 else
-    echo "aws version != 1.27.92 !!!, FOUND: $aver";
-    return 1;
+    echo "aws version != 1.27.92 !!!, FOUND: $aver .. cconsider installing expected version if problems are encountered.";
+    sleep 5;
 fi;
 
 echo "... checking pcluster version";
