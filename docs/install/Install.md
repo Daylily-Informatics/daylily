@@ -9,7 +9,7 @@
     4. Sufficent AWS Spot Quota Allowance
     5. AWS VPC, Public/Private Subnet IDs
     6. AWS Cost Tracking Tagging Policy ARN
-    7. A new S3 Bucket
+    7. A new S3 Bucket With The Daylily Ref & Cfg Data Copied To It
   - With the above in hand, you are ready to move on (in the region `us-west-2`!) to initializing a DEC.
 
 ## Initializing a DEC
