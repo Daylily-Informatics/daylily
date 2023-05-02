@@ -13,7 +13,7 @@ To create a daylily ephemeral cluster (DEC), these pre-requisites must be comple
   > *These resources only need to be created this one time*.
 
 
-## Github Account & Stored Local id_rsa.pub
+## Local SSH Key Stored With Github Account
   - Create you local ssh key if you have not done so already.
   ```bash
 ssh-keygen 
