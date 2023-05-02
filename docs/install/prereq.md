@@ -68,7 +68,47 @@ Enter same passphrase again:
     > You only have one chance to download this key. If you do not do so, or loose the file, you will need to create a new `PEM`.
 
 ### AWS Quotas
+  - Be sure you are in the `us-west-2` region when checking quotas.
   - In order to create the DEC, you must have appropriate quota allowances from AWS to run the required on-demand and spot instances.  Minimally you need to be able to run 1 on-demand instance of the `5` generation instance type, and be allowed to run at least 128 vCPUs on spot instances.
     > **Note**
     > **128** is the bare minimum to run daylily.  This will only allow 1 alignment to run at a time.  A reccomended 1028 vCPU quota will allow 8 alignments to run in parallel.  If you wish to parallelize further, be sure to have the quota allowances and tweak the [cluster config yaml](../../config/day_cluster/prod_cluster.yaml) to increase the max instances allowed in the [i128-6 queue](https://github.com/Daylily-Informatics/daylily/blob/7fa0cd522db3bb0a7c8b548981d70ccac273b69d/config/day_cluster/prod_cluster.yaml#L184).
+  - Visit the [AWS Quotas Dashboard](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/ec2/quotas).
+    - Confirm your quotas for `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` are >= 128 _in the screenshot below, they are set at 1345_.
+      ![](../../docs/images/assets/day_aws_service_quotas.png)
+    - To request an increase, click the quota link, then on the detail page click `request quota increase`. Fill out the request, and check back for the decision.
 
+### Stack Creation For: VPC, Public/Private Subnets & Budget + Cost Tracking Policy
+  - Daylily integrates fine grained [cost tracking by configurable project tags](https://aws.amazon.com/blogs/compute/using-cost-allocation-tags-with-aws-parallelcluster/). Further, you may set budget caps for each tag to block jobs when a given budget is exceeded.  Resources tagged with the appopriate tags will appear in the cost explorer by tag value.  This will allow you to track expenditures by project tag. To do so, a policy must be created. 
+      > Example Hourly Cost Tracking Report:
+    ![](../../docs/images/assets/xxx)
+  - In addition daylily requires a *VPC* enclosing a *public subnet* and a *private subnet*. The cost tracking policy, along with these networks and VPC are created using [this template](https://github.com/aws-samples/aws-parallelcluster-cost-allocation-tags/blob/master/pcluster_env.yml) via the [AWS Stack Formation Dashboard](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks). To create this stack:
+    1. Visit [this template](https://github.com/aws-samples/aws-parallelcluster-cost-allocation-tags/blob/master/pcluster_env.yml), and click `download raw file` as `pcluster_env.yaml`.
+    2. From the [stack dashboard](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks), click `create stack` in the upper right.
+    3. Choose `with new resources`.
+    4. Select `Template is ready`.
+    5. Select `Upload a template file`, select the `pcluster_env.yaml` file you previously downloaded, click `Next`.
+    6. Enter a `Stack name`, ie: _stack-daylily-cost-tracking_
+    7. Under parameters, enter `daylily` as the `EnvironmentName`.
+    8. Leave the PrivateSubnetCIDR, PublicSubnetCIDR and VpcCIDR alone unless you know what you are doing.
+    9. Click `Next`
+    10. Do not edit anything on the next page, click `Next`.
+    11. On the `Review STACKNAME` page, scroll to the bottom and `check the acknowledgement box`, then click `Submit`.
+    12. The stack will take a few moments to create... sit tight.  Eventually, it will succeed and you will want to visit the stack detail page to extract the aws identifiers for the VPC, public+private subnets, and the arn for the tagging policy.  Something like this:
+        ![](../../docs/images/assets/stack_out.png)
+       > **Note** 
+       > You will require these 4 IDs to run the DEC init process. 
+
+## A S3 Bucket With The Appropriate Daylily Reference Data & DEC Config Scripts
+  - When a DEC is spun up, a [Fsx](https://docs.aws.amazon.com/fsx/index.html) filesystem is mounted to the head node, and too all compute node which are created.  The Fsx filesystem mirrors the files stored in the S3 bucket which you specify during the init. Fsx is a filesystem optimized for HPC uses, and can handle thousands of concurrent access hosts at a time. 
+  - Your bucket needs to be in the same region as the stack just created, us-west-2.  You will need to copy the daylily reference data from the daylily hosted bucket to the bucket you plan to use for your DECs.  The files imported from S3 to the Fsx system will be read only.  New files written to the Fsx filesystem *must* be explicitly exported back to this S3 bucket, which is done via cli command or via the [Fsx dashboard](https://us-west-2.console.aws.amazon.com/fsx/) for each filesystem, each export will create a new top level directory in this S3 bucket named `FSXLusterTIMESTAMP`.
+  - *COPY THE DAYLILY REFERENCE AND CONFIG DIRECTORIES*
+    - This command should do the trick `aws s3 cp s3://daylily-references/ s3:/YOURBUCKET/ --recursive --request-payer requester --progress` <-- contact me at john@daylilyinformatics.com if this does not work for you.
+    - You'll end up with two directories in YOURBUCKET, `data` and `cluster_boot_config`.  In the `data` directory, create a directory called `sample_input_data`.  You will save your fastq data to subdirectories in this folder, and when creating sample sheets refeerence the files w/in this folder as `/fsx/data/sample_input_data/RUN_FOLDER_NAME/*fq.gz`.  When you save data to this S3 folder, it will become available to the Fsx filesystems which mount this bucket.  It is advised that once sample data is procecssed, it is moved outside the `data` top level directory so it is not consuming space on the Fsx filesystem.
+    - On the Fsx filesystem each DEC node mounts, results will be saved to an `analysis_results` directory, the contents of which will be mirrored back to S3 each time you trigger the Fsx export.
+      > **Warning**
+      > This is very important.  The movement of analysis_results back to S3 is not (yet) automated, nor is the deletion of the DEC.  When an analysis batch is complete, depending on your expected incoming data, it may make sense to delete the DEC until it is needed again.  Letting it sit idle costs the head node and Fsx costs- presently clocking in ~$3/hr. *BEFORE* you delete the DEC, be sure to visit the [Fsx dashboard](https://us-west-2.console.aws.amazon.com/fsx/) and export the `analysis_results` folder to S3.  Once this export is complete, it is save to delete the DEC.
+   - The s3 bucket you create may be used repeatedly, read: you do not need to copy the daylily-reference bucket more than this first time.  It is up to you to actively manage the `sample_input_data` and exported `analysis_results` directories.  If you have odd cluster failures, a first thing to check is the space left on Fsx: `df -h /fsx`.  If the created volume needs to be larger, you can set larger sizes via the [SharedStorage](https://github.com/Daylily-Informatics/daylily/blob/bee80581ad77f0d1754ca62a408f6953131f91c9/config/day_cluster/prod_cluster.yaml#L251) section of the cluster config yaml.  Also consider changing from `SCRATCH` type drives to `PERSISTENT` (the latter may be expanded as needed, and backed up outside the export to S3).
+ - Ok, save this new S3 bucket name for use in the daylily init, ie: `s3::/your-new-bucket`.
+
+## Move On To DEC Init
+  - [DEC INIT](../../Install.md)
