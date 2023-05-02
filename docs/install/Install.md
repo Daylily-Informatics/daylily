@@ -110,14 +110,14 @@
   dy-a local
   
   # run the included test data
-  dy-r produce_snv_concordancesq -p -n # the -n runs a dryrun, its good form to run any command with this flag first.
+  dy-r produce_snv_concordances -p -n # the -n runs a dryrun, its good form to run any command with this flag first.
   ```
   - The output of this command will print the commands and execution plan (which will run locally) and will look like this:
   ![](../../docs/images/assets/DEC_execution_plan.png)
   
   - To run locallly, re-run the previous command minus the `-n`:
   ```bash
-  dy-r produce_snv_concordancesq -p 
+  dy-r produce_snv_concordances -p 
   ```
   - This will run a small test data set (~0.01x WGS) on the 16core headnode.  Execution will take ~5min in general. The first time the headnode runs daylily, requested environments will need to be built (only the for the first job for each new DEC). This will add ~5m to the first job.
 
@@ -130,7 +130,7 @@
   dy-a slurm
   
   # dry run
-  dy-r produce_snv_concordancesq -p -n
+  dy-r produce_snv_concordances -p -n
   
   # run
   dy-r produce_snv_concordancesq -p 
