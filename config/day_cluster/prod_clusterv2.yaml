@@ -72,8 +72,7 @@ Scheduling:
       ComputeResources:
         - Name: v16xl
           Instances:
-            - InstanceType: c5.18xlarge  # 72/144 3,1
-            - InstanceType: r5.16xlarge  # 64/512  4,1.1
+            - InstanceType: c5.18xlarge  # 72/144 3,1            
             - InstanceType: c5d.18xlarge  # 72/144 3,1.1
           MinCount: 0
           MaxCount: 12
@@ -217,28 +216,6 @@ Scheduling:
             EnableWriteAccess: False
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
-    - Name: a192-6
-      CapacityType: SPOT
-      AllocationStrategy: capacity-optimized
-      ComputeResources:
-        - Name: v48xl
-          Instances:
-            - InstanceType: r6a.48xlarge  # 192/1536 4.3 
-            - InstanceType: r6a.metal  # 192/1536
-            - InstanceType: c6a.metal # 192/384
-            - InstanceType: c6a.48xlarge  # 192/384
-            - InstanceType: m6a.metal # 192/768
-            - InstanceType: m6a.48xlarge # 192/768
-          MinCount: 0
-          MaxCount: 8
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: true
-      Networking:
-        SubnetIds:
-          - REGSUB_PRIVATE_SUBNET
 Monitoring:
   Logs:
     CloudWatch:
