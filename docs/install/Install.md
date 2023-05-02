@@ -143,6 +143,8 @@ cd /fsx/analysis_results/daylily/test
 bin/helpers/watch_slurm.sh  
 ```
 
+   ![](../../docs/images/assets/DEC_watch_slurm.png)
+
 ### Monitoring a DEC
 #### A [Cloudwatch dashboard](https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards:) created for each DEC. A few screenshots:
 
