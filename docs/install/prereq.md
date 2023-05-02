@@ -24,7 +24,7 @@ Enter same passphrase again:
     - After logging in to [github](www.github.com), go to the [settings](https://github.com/settings/profile)->[ssh and gpg keys](https://github.com/settings/keys).
     - Click `New SSH Key`.
     - Give the key a unique name, and paste your id_rsa.pub key into the `Key` textarea.
-    ![](docs/images/assets/git_ssh_key.png)
+    ![x](../../docs/images/assets/git_ssh_key.png)
     - Click `Add SSH Key`.
   - You're all set for now with adding ssh keys to github.
 
