@@ -265,13 +265,8 @@ echo "TESTING The $target_conf  with a cluster creation dry-run";
 
 pcluster create-cluster -n $cluster_name -c $target_conf --dryrun true;
 
-if [[ "$?" != "0" ]]; then
-    echo "Your cluster conf file >$target_conf< would not create a valid cluster. Please confirm it exists, and looks like the template cluster file in config/day_cluster/default.yaml";
-    retun 1;
-fi;
 
-
-echo " "
+echo " .... did the cluster dry run return succcess? If so: "
 echo " "
 echo "READY TO CREATE CLUSTER $cluster_name? [yes | no ]"
 
