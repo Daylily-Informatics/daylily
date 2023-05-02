@@ -64,7 +64,7 @@
   2. Costs
     - To create [Cost Explorer]() reports by tag, you need to `activate` the DEC cost tracking tags. [Follow these instructions](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/activating-tags.html).
     - Once done, this can take 24hrs to activate. Reports may then be faceted by tag & tag value. Here is an example costs breakdown report:
-    - ![](../../docs/images/assets/DEC_cost_tag.png)
+    - ![](../../docs/images/assets/day_aws_tagged_costs_by_hour_project.png)
 
 ### Shutting Down a DEC
   - DECs may be created on demand in roughly 20m.  Depending on your needs, the DEC will probably be shutdown when not needed. To do so, follow these steps:
