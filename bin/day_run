@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-touch /fsx/scratch/are_we_good_$RANDOM
-if [[ "$?" != "0" ]]; then
-    echo "   ---- WARNING----  " 1>&2
-    echo "   /scratch/ is not writable on this submit node ! " 1>&2
-    echo "   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " 1>&2
-fi
 
 if [[ $DAY_ROOT == "" || $DAY_PROFILE == "" ]]; then
     echo "ERROR:: 'day-activate' needs to have been run prior to day-run in the shell sesssion you are in for day-run to proceed."
