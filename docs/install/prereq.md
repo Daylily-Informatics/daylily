@@ -67,3 +67,8 @@ Enter same passphrase again:
     > **Note**
     > You only have one chance to download this key. If you do not do so, or loose the file, you will need to create a new `PEM`.
 
+### AWS Quotas
+  - In order to create the DEC, you must have appropriate quota allowances from AWS to run the required on-demand and spot instances.  Minimally you need to be able to run 1 on-demand instance of the `5` generation instance type, and be allowed to run at least 128 vCPUs on spot instances.
+    > **Note**
+    > **128** is the bare minimum to run daylily.  This will only allow 1 alignment to run at a time.  A reccomended 1028 vCPU quota will allow 8 alignments to run in parallel.  If you wish to parallelize further, be sure to have the quota allowances and tweak the [cluster config yaml](../../config/day_cluster/prod_cluster.yaml) to increase the max instances allowed in the `i128-6` queue.
+
