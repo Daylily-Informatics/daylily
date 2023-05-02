@@ -1,6 +1,6 @@
 # Daylily Design
 
-  > Daylily was designed to be a framework to easily run, and compare multi-omic tools. Rather than one pipeline, it treats each tool as a node in a DAG, abstracting each class of tool (aligner, bam sorter, duplicate marking, SNV/SV calling, and numerous QC tools) so they may run in a combinatorial fashion. This abstraction allows for clear, and well organized, benchmarking of tools in isolation and in combination with appropriate up/downstream tooling.
+  > Daylily was designed to be a framework to easily run, and compare multi-omic tools. Rather than one pipeline, it treats each tool as a node in a DAG, abstracting each class of tool (aligner, bam sorter, duplicate marking, SNV/SV calling, and numerous QC tools) so they may run in a combinatorial fashion. This abstraction allows for clear, and well organized, benchmarking of tools in isolation and in combination with appropriate up/downstream tooling. Once a set of tools is found useful as a _pipeline_, it can be formalized and a fully versioned, down to hardware being executed on, definition of the pipeline can be released which will neatly satisfy internal quality and external regulatory requirements.
 
 ## Design Principles
 
