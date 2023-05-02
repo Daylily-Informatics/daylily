@@ -48,8 +48,8 @@
         11. The `ARN` for the tagging policy created w/the subnets and VPC.
       6. If the cluster config dry-run was successful, enter 'yes' when asked if you wish to create the cluster.  The AWS Cloudformation Stack will be created and will take ~15min to complete. The script will poll until it is done.
         
-        > ie: ![](../../docs/images/assets/DEC_build.png)
-        > via the stack AWS dashboard: ![](../../docs/images/assets/DEC_stack.png)  
+         ie: ![](../../docs/images/assets/DEC_build.png)
+         via the stack AWS dashboard: ![](../../docs/images/assets/DEC_stack.png)  
       7. Once the DEC has completed successfully, you will be asked to enter the cluster-name entered earlier.  This cluster will then have it's head node prepared for use.  Once this step is complete, the cluster may be used!
 
 ### Accessing and Testing Your DEC
