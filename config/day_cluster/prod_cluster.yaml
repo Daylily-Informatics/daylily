@@ -195,37 +195,8 @@ Scheduling:
             - InstanceType: r6idn.32xlarge  # 128/1024  12.5,5.2
             - InstanceType: r6id.32xlarge  # 128/1024 9.6,3.11
             - InstanceType: r6id.metal  # 128/1024 9.6,3.11
-          MinCount: 0
-          MaxCount: 8
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: true
-      Networking:
-        SubnetIds:
-          - REGSUB_PRIVATE_SUBNET
-      CustomActions:
-        OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install.sh
-      Iam:
-        S3Access:
-          - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
-        AdditionalIamPolicies:
-          - Policy: REGSUB_S3_IAM_POLICY
-    - Name: a192-6
-      CapacityType: SPOT
-      AllocationStrategy: capacity-optimized
-      ComputeResources:
-        - Name: v48xl
-          Instances:
-            - InstanceType: r6a.48xlarge  # 192/1536 4.3 
-            - InstanceType: r6a.metal  # 192/1536
-            - InstanceType: c6a.metal # 192/384
-            - InstanceType: c6a.48xlarge  # 192/384
-            - InstanceType: m6a.metal # 192/768
-            - InstanceType: m6a.48xlarge # 192/768
+            - InstanceType: i4i.metal  # 128/1024  11,3.3
+            - InstanceType: i4i.32xlarge  #128/1024 11,4.2
           MinCount: 0
           MaxCount: 8
           Networking:
