@@ -224,8 +224,7 @@ rule help:
     shell:
         """
         {params.c} '##### DY-CLI HELP                                                    ' "$DY_IT2" "$DY_IB2" "$DY_IS2" 1>&2;
-        {params.c} '
-/-----------------------------------------------------------------------------' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2;
+        {params.c} '/-----------------------------------------------------------------------------' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2;
         {params.c} 'Welcome to daylily. 
 More complete docs can be found here: 
      https://github.com/Daylily-Informatics/daylily/blob/main/docs/README.md .
@@ -263,7 +262,8 @@ More complete docs can be found here:
          - `--rerun-incomplete` == if rerunning a workflow which failed 
               ungracefully, snakemake will not proceed unless this flag is 
               set so it can cleanup  the incomplete results subdirs.
-         - `--jobs n` == limit the snakemake scheduler to only running `n` jobs at once.
+         - `--jobs n` == limit the snakemake scheduler to only running 
+              `n` jobs at once.
          - `--config key=value` == override config set in config files, or 
               pass in new config. `value` may be json to allow setting nested 
               yaml properties. Most common use would be to specify the docker 
@@ -287,8 +287,9 @@ More complete docs can be found here:
                       for each aligner+SVcaller+sample (in the other_reports 
                       dir)
                    - produce_final_multiqc_wgs == runs everything and produces 
-                      the big final MQC report in the `reports` dir.' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2 ;
-       {params.c} '   /----------------------------------------------------------------- ' "$DY_IT0" "$DY_IB0" "$DY_IS0"  1>&2;
+                      the big final MQC report in the `reports` dir.                              - help == prints this help msg.' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2 ;
+       {params.c} '/----------------------------------------------------------\
+-------------------' "$DY_IT2" "$DY_IB2" "$DY_IS2"  1>&2;
         """
 
 
