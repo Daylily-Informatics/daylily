@@ -55,7 +55,7 @@
       7. Once the DEC has completed successfully, you will move to the final config of the head node and be asked:
         8.  to enter the cluster name from the displayed list.
         9.  to answer yes to adding the newly created ip address to your known hosts.
-        10. A ssh key is created for the daylily user on the headnode, and is displayed to you.  You must now go to [github ssh and gpg keys](https://github.com/settings/keys) and enter this ssh key as a new key in your list of keys. This is the same process as described [here](prereq.md).  Once the key is saved, type `yes` and hit enter.
+        10. A ssh key is created for the daylily user on the headnode, and is displayed to you.  You must now go to [github ssh and gpg keys](https://github.com/settings/keys) and enter this ssh key as a new key in your list of keys. This is the same process as described [here](https://github.com/Daylily-Informatics/daylily/blob/main/docs/install/prereq.md#local-ssh-key-stored-with-github-account).  Once the key is saved, type `yes` and hit enter.
         11. The daylily user on the headnode will now have the final configuration executed.  This will take a few moments.  Once complete, you are ready to use the DEC. It will exit with the following output:
      
     ```bash
