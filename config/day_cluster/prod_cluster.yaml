@@ -106,8 +106,8 @@ Scheduling:
             - InstanceType: r5b.8xlarge  # 32/256  2,1
             - InstanceType: r5dn.8xlarge  # 32/256  3,1
             - InstanceType: r5n.8xlarge  # 32/256   2,1
-            - InstanceType: r5.8xlarge  # 32/256  2,0.5
-            - InstanceType: r5d.8xlarge	  # 32/256  2,0.8
+            - InstanceType: r5.8xlarge  # 32/256  2,.5
+            - InstanceType: r5d.8xlarge # 32/256  2,.8
           MinCount: 0
           MaxCount: 6
           Networking:
@@ -203,7 +203,6 @@ Scheduling:
             - InstanceType: r6idn.32xlarge  # 128/1024  12.5,5.2
             - InstanceType: r6id.32xlarge  # 128/1024 9.6,4.5
             - InstanceType: r6id.metal  # 128/1024 9.6,3.11
-<<<<<<< HEAD
           MinCount: 0
           MaxCount: 8
           Networking:
@@ -231,10 +230,6 @@ Scheduling:
           Instances:
             - InstanceType: c5.18xlarge  # 72/144 3,1
             - InstanceType: c5d.18xlarge  # 72/144 3,1.1
-=======
-            - InstanceType: i4i.metal  # 128/1024  11,3.3
-            - InstanceType: i4i.32xlarge  #128/1024 11,4.2
->>>>>>> 9fac1c1093e885daf3a8733531fef8192824444c
           MinCount: 0
           MaxCount: 8
           Networking:
