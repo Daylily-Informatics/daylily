@@ -1,5 +1,18 @@
 # Daylily Pre-requisites
 
+To create a daylily ephemeral cluster (DEC), these pre-requisites must be completed one time only.  Once done with these pre-req's, you'll have the 6 components necessary to run the [DEC initialization](../../Install.md):
+  1. Github SSH Key Authorized
+  2. AWS CLI Credentials
+  3. AWS PEM File
+  4. Sufficent AWS Spot Quota Allowance
+  5. AWS VPC, Public/Private Subnet IDs
+  6. AWS Cost Tracking Tagging Policy ARN
+  7. A new S3 Bucket 
+
+  > With the above info, you will be able to create as many DECs as your AWS quotas allow. 
+  > *These resources only need to be created this one time*.
+
+
 ## Github Account & Stored Local id_rsa.pub
   - Create you local ssh key if you have not done so already.
   ```bash
@@ -31,8 +44,10 @@ Enter same passphrase again:
 
 ## AWS Console Stuff
 
+
 ### Regions
   - Please create all resources in the us-west-2 (Oregon) region.  This may be changed, but all instructions will assume this region. If you choose a different region, make sure all EC2 instance types used in the daylily ephemeral cluster (DEC) config are also available... or edit out the ones which are not (but it will be easier to stick with us-west-2 for now).
+
 
 ### Key Pair
 - Daylily will locally utilize the [aws cli](https://docs.aws.amazon.com/cli/index.html) and [aws parallelcluster cli](https://docs.aws.amazon.com/parallelcluster/latest/ug/commands-v3.html) to create a DEC. 
@@ -51,6 +66,7 @@ Enter same passphrase again:
     > You only have one chance to save these keys. If you do not do so, or loose them, you will need to create a new keys.
 - Save your `access key` and `secret access key` for latter, the aws cli will ask for them when you first are prompted to use it.
 
+
 ### PEM File
   - As with the AWS credential keys, a `PEM` file will be needed to create and access the headnode of the DEC. 
     > **Note**
@@ -67,6 +83,7 @@ Enter same passphrase again:
     > **Note**
     > You only have one chance to download this key. If you do not do so, or loose the file, you will need to create a new `PEM`.
 
+
 ### AWS Quotas
   - Be sure you are in the `us-west-2` region when checking quotas.
   - In order to create the DEC, you must have appropriate quota allowances from AWS to run the required on-demand and spot instances.  Minimally you need to be able to run 1 on-demand instance of the `5` generation instance type, and be allowed to run at least 128 vCPUs on spot instances.
@@ -76,6 +93,7 @@ Enter same passphrase again:
     - Confirm your quotas for `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` are >= 128 _in the screenshot below, they are set at 1345_.
       ![](../../docs/images/assets/day_aws_service_quotas.png)
     - To request an increase, click the quota link, then on the detail page click `request quota increase`. Fill out the request, and check back for the decision.
+
 
 ### Stack Creation For: VPC, Public/Private Subnets & Budget + Cost Tracking Policy
   - Daylily integrates fine grained [cost tracking by configurable project tags](https://aws.amazon.com/blogs/compute/using-cost-allocation-tags-with-aws-parallelcluster/). Further, you may set budget caps for each tag to block jobs when a given budget is exceeded.  Resources tagged with the appopriate tags will appear in the cost explorer by tag value.  This will allow you to track expenditures by project tag. To do so, a policy must be created. 
@@ -98,10 +116,11 @@ Enter same passphrase again:
        > **Note** 
        > You will require these 4 IDs to run the DEC init process. 
 
+
 ## A S3 Bucket With The Appropriate Daylily Reference Data & DEC Config Scripts
   - When a DEC is spun up, a [Fsx](https://docs.aws.amazon.com/fsx/index.html) filesystem is mounted to the head node, and too all compute node which are created.  The Fsx filesystem mirrors the files stored in the S3 bucket which you specify during the init. Fsx is a filesystem optimized for HPC uses, and can handle thousands of concurrent access hosts at a time. 
   - Your bucket needs to be in the same region as the stack just created, us-west-2.  You will need to copy the daylily reference data from the daylily hosted bucket to the bucket you plan to use for your DECs.  The files imported from S3 to the Fsx system will be read only.  New files written to the Fsx filesystem *must* be explicitly exported back to this S3 bucket, which is done via cli command or via the [Fsx dashboard](https://us-west-2.console.aws.amazon.com/fsx/) for each filesystem, each export will create a new top level directory in this S3 bucket named `FSXLusterTIMESTAMP`.
-  - *COPY THE DAYLILY REFERENCE AND CONFIG DIRECTORIES*
+  - *COPY THE DAYLILY REFERENCE AND CONFIG DIRECTORIES* -- the daylily-references bucket has all of the reference data and indexes necessary to run vs both `b37` and `hg38`.
     - This command should do the trick `aws s3 cp s3://daylily-references/ s3:/YOURBUCKET/ --recursive --request-payer requester --progress` <-- contact me at john@daylilyinformatics.com if this does not work for you.
     - You'll end up with two directories in YOURBUCKET, `data` and `cluster_boot_config`.  In the `data` directory, create a directory called `sample_input_data`.  You will save your fastq data to subdirectories in this folder, and when creating sample sheets refeerence the files w/in this folder as `/fsx/data/sample_input_data/RUN_FOLDER_NAME/*fq.gz`.  When you save data to this S3 folder, it will become available to the Fsx filesystems which mount this bucket.  It is advised that once sample data is procecssed, it is moved outside the `data` top level directory so it is not consuming space on the Fsx filesystem.
     - On the Fsx filesystem each DEC node mounts, results will be saved to an `analysis_results` directory, the contents of which will be mirrored back to S3 each time you trigger the Fsx export.
@@ -112,5 +131,6 @@ Enter same passphrase again:
    - The s3 bucket you create may be used repeatedly, read: you do not need to copy the daylily-reference bucket more than this first time.  It is up to you to actively manage the `sample_input_data` and exported `analysis_results` directories.  If you have odd cluster failures, a first thing to check is the space left on Fsx: `df -h /fsx`.  If the created volume needs to be larger, you can set larger sizes via the [SharedStorage](https://github.com/Daylily-Informatics/daylily/blob/bee80581ad77f0d1754ca62a408f6953131f91c9/config/day_cluster/prod_cluster.yaml#L251) section of the cluster config yaml.  Also consider changing from `SCRATCH` type drives to `PERSISTENT` (the latter may be expanded as needed, and backed up outside the export to S3).
  - Ok, save this new S3 bucket name for use in the daylily init, ie: `s3::/your-new-bucket`.
 
-## Move On To DEC Init
+
+## Move On To DEC Initialization !
   - [DEC INITIALIZE](../../Install.md)
