@@ -1,5 +1,5 @@
 # Structural Variant Callers
-Daylily runs 4 SV callers. Benchmarks coming soon.
+Daylily runs 5 SV callers. Benchmarks coming soon.
 
 ## [Manta](https://github.com/Illumina/manta)
 
