@@ -17,7 +17,7 @@ Defined as:
   - Documented
   
 ### Process & End User Aware
-  > The process which produces the input data for daylily is critically important to the output analysis quality. Further, the analysis daylily performs is not only calling variants, but also producing batch QC reports which are invaluable to monitoring lab process health over time and serving as QC and debugging information on a per-batch viewpoint.  The consumers of these analyses are not only bioinformaticans, but Scientists processing samples, automation engineers, IT personel, technicians, operations staff, among others.  Daylily organizes results in a clear and accessible fashion so as to be of utility to all consumers of these workflows.
+  > The analysis daylily performs is not only calling variants, but also producing batch QC reports which are invaluable to monitoring lab process health over time and providing QC and debugging information on a per-batch and per-sample basis.  The consumers of these analyses are not only bioinformaticans, but Scientists processing samples, automation engineers, IT personel, technicians, operations staff, among others.  Daylily organizes results in a clear and accessible fashion so as to be of utility to all consumers of these workflows outputs.
   
 ### Usability, Speed & Cost Conscious
   > Informatics tools are notoriously challenging to run efficently. Daylily began from the bottom and worked upwards, fretting about speed & cost at every step. To get the best performance out of informatics tools, it is important to understand the compute environments these tools will be running. Questions to ask:
