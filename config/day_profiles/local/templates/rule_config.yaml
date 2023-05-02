@@ -3,7 +3,7 @@ analysis_manifest: .test_data/data/0.01xwgs_HG002.samplesheet.csv
 unit_test: false
 profile_name: local
 valid_biome: AWSPC
-genome_build: "hg38"
+genome_build: "b37"
 
 
 #### Default Resources
