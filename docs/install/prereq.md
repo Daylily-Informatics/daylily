@@ -34,7 +34,7 @@ Enter same passphrase again:
   ```
   
   - Save Key To github.
-    - After logging in to [github](www.github.com), go to the [settings](https://github.com/settings/profile)->[ssh and gpg keys](https://github.com/settings/keys).
+    - After logging in to [github](http://www.github.com), go to the [settings](https://github.com/settings/profile)->[ssh and gpg keys](https://github.com/settings/keys).
     - Click `New SSH Key`.
     - Give the key a unique name, and paste your id_rsa.pub key into the `Key` textarea.
     ![x](../../docs/images/assets/git_ssh_key.png)
