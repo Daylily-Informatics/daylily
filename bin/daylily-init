@@ -24,6 +24,9 @@ conda activate DAYCLI
 pip install --no-input aws-parallelcluster==3.5.0 awscli==1.27.123 
 pip install Flask==2.2.3  # Needed for pcluster bug
 
+parallel --citation <<< "will cite
+"
+
 echo " "
 echo "MOVING ON TO DEC CREATION "
 sleep 5
