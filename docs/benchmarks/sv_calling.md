@@ -8,3 +8,6 @@ Daylily runs 4 SV callers. Benchmarks coming soon.
 ## [Dysgu](https://github.com/kcleal/dysgu)
 
 ## [Svaba](https://github.com/walaj/svaba)
+
+## [Octopus](https://github.com/luntergroup/octopus)
+  > In addition to being a SNV caller, Octopus excels at calling smaller SVs as well.
