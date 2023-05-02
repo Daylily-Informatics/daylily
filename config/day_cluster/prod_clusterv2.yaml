@@ -190,12 +190,12 @@ Scheduling:
         - Name: v32xl
           Instances:
             - InstanceType: r6i.32xlarge  # 128/1024  8.0,4.42
-            - InstanceType: r6i.metal  # 128/1024  8.0,2.4
+            - InstanceType: r6i.metal  # 128/1024  8.0,4.5
             - InstanceType: r6in.32xlarge  # 128/1024 11.1,5.7
             - InstanceType: r6in.metal  # 128/1024  11,4.6
             - InstanceType: r6idn.metal  # 128/1024 12.5,4.6
             - InstanceType: r6idn.32xlarge  # 128/1024  12.5,4.6
-            - InstanceType: r6id.32xlarge  # 128/1024 9.6,3.11
+            - InstanceType: r6id.32xlarge  # 128/1024 9.6,4.6
             - InstanceType: r6id.metal  # 128/1024 9.6,4.9
           MinCount: 0
           MaxCount: 8
