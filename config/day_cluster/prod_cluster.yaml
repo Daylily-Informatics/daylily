@@ -197,7 +197,7 @@ Scheduling:
             - InstanceType: i4i.metal  # 128/1024  11,3.3 
             - InstanceType: i4i.32xlarge  #128/1024 11,4.2
             - InstanceType: r6i.metal  # 128/1024  8.0,4
-            - InstanceType: r6in,metal  # 128/1024 11,5.7
+            - InstanceType: r6in.metal  # 128/1024 11,5.7
             - InstanceType: r6in.32xlarge  # 128/1024 11.1,5.7
             - InstanceType: r6idn.metal # 128/1024  12.5,5.2
             - InstanceType: r6idn.32xlarge  # 128/1024  12.5,5.2
