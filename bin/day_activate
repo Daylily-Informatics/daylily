@@ -10,7 +10,7 @@ gold_profiles/$DAY_PROFILE/*"
 fi 
 
 if [[ "$1" == "" ]]; then
-    . mginit
+    . dyinit
 fi
 envi=$1
 
@@ -41,7 +41,7 @@ else
     
     **>> EXPECTED:     $DAY_ROOT
 
-    You are strongly encouraged to run 'day-deactivate', then 'source mginit && day-activate' from the intended analysis deployment directory.
+    You are strongly encouraged to run 'day-deactivate', then 'source dyinit && day-activate' from the intended analysis deployment directory.
 
     **>> DETECTED:     $PWD
 
@@ -110,7 +110,7 @@ then
     # Something is not right....?
     echo ""
     echo ""
-    echo "DAY_ROOT is not set.  Have you executed 'source mginit'? Or re-run with -h"
+    echo "DAY_ROOT is not set.  Have you executed 'source dyinit'? Or re-run with -h"
     ret_code=2
 
     if [[ "$1" == "h" || "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
@@ -170,7 +170,7 @@ if [[ "$c" == "" ]]; then
         echo "    SUCCESS!   But you seem to be missing the pkg colr, just attempted to add it."
     else
         echo " ---==]]>>>>> ERROR !!!!!!!!!!! "
-        echo " Returned with code $ex_code, try running a test 'day-activate local; day-run  -c 3 -j 2 sleep ' otherwise day-deactivate; bash; source mginit; day-activate local;   If you have a 'colr not found error, pip may not have completed sucessfully, try:  'conda activate DAY; pip install --no-input -i https://pypi.org/simple --extra-index-url https://pypi.org/simple  chromedriver-binary-auto   rgbw-colorspace-converter  colr docopt snakemake pandas xmltodict wrapt
+        echo " Returned with code $ex_code, try running a test 'day-activate local; day-run  -c 3 -j 2 sleep ' otherwise day-deactivate; bash; source dyinit; day-activate local;   If you have a 'colr not found error, pip may not have completed sucessfully, try:  'conda activate DAY; pip install --no-input -i https://pypi.org/simple --extra-index-url https://pypi.org/simple  chromedriver-binary-auto   rgbw-colorspace-converter  colr docopt snakemake pandas xmltodict wrapt
 	  "
         return 22
     fi
@@ -196,7 +196,7 @@ if [[ "$ret_code" != "0" ]]; then
     colr "|       ! \ " "turquoise" "debianred" "f"
     colr "|_________/  " "turquoise" "debianred" "f"
     colr "Something went awry. Check the README for alternate install instructuions. Else, ping JEM. ret code was $ret_code" "orangered" "black" "b"
-    echo "Have you run day_build?  If so this is worth a shot:'bin/day_deactivate reset; source mginit; day-activate local;'"
+    echo "Have you run day_build?  If so this is worth a shot:'bin/day_deactivate reset; source dyinit; day-activate local;'"
     return 0
 else
    colr "       _______ GREAT SUCCESS _______       " "$DY_IT0" "$DY_IB0" "$DY_IS1"
@@ -205,8 +205,6 @@ else
    bin/day_run justinit
 
 fi;
-
-#fi
 
 return 0
 

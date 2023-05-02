@@ -69,7 +69,7 @@ if [[ $? == "0" ]]; then
 else
     echo "
 
-      has day-activate PROFILE (mg=a local or drmaa) been run?
+      has day-activate PROFILE (dy-a local or drmaa) been run?
 
     " 1>&2
     #exit 67
@@ -230,7 +230,7 @@ if [[ $1 == "--help" || $1 == "-h" || $@ == "" || $1 == "help" ]]; then
     colr "____tip: add ' --dry-run or -n ' to day-run before running any target to see the execution plan, but not actually run anything.  This is useful to confirm what you expect to run is in fact running, and VERY valuable when you are re-starting a stopped/failed run, or running a new target where others have been executed previously." "$DY_WB0" "$DY_IB2" "$DY_WS2" 1>&2
 
     colr "_____Examples (all will use the autodetected sample sheet, or the test samplesheet):
-> source mginit
+> source dyinit
 > day-activate lcwgs-drmaa
 
 > day-run --dry-run multiqc_lcwgs   # Will not run the target, but report what would be generated.  Using the test data, or the data in config/analysis_manifest.csv if detected
