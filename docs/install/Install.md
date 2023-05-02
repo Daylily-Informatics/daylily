@@ -52,11 +52,100 @@
          
          You may also monitor progress via the [AWS stack](https://us-west-2.console.aws.amazon.com/cloudformation/) dashboard. ie:
          via the stack AWS dashboard: ![](../../docs/images/assets/DEC_stack.png)  
-      7. Once the DEC has completed successfully, you will be asked to enter the cluster-name entered earlier.  This cluster will then have it's head node prepared for use.  Once this step is complete, the cluster may be used!
+      7. Once the DEC has completed successfully, you will move to the final config of the head node and be asked:
+        8.  to enter the cluster name from the displayed list.
+        9.  to answer yes to adding the newly created ip address to your known hosts.
+        10. A ssh key is created for the daylily user on the headnode, and is displayed to you.  You must now go to [github ssh and gpg keys](https://github.com/settings/keys) and enter this ssh key as a new key in your list of keys. This is the same process as described [here](prereq.md).  Once the key is saved, type `yes` and hit enter.
+        11. The daylily user on the headnode will now have the final configuration executed.  This will take a few moments.  Once complete, you are ready to use the DEC. It will exit with the following output:
+     
+    ```bash
+    You may now ssh into the headnode with : ssh -i /Users/$USERNAME/.ssh/$PEMNAME.pem centos@$IP-ADDRESS 
+    ... once logged in, run : sudo su - daylily 
+    ...... then as daylily run: cd projects/daylily; source dyinit; dy-a local && dy-r help 
+    ```
+       
+   - note: you should not run daylily from ~ for production, but create a new subdir in `/fsx/analysis_results/daylily`.
+
 
 ### Accessing and Testing Your DEC
-  1. xxx
-  2. bbbb
+  1. Determine your DEC public headnode IP address
+  
+  ```bash
+  conda activate DAYCLI
+  pcluster list-clusters
+  
+  # confirm your cluster is active, copy name
+  pcluster describe-cluster-instances -n YOUR-CLUSTER-NAME
+  
+  # the json string will have a public IP key-value, copy the IP
+  ssh -i ~/.ssh/PEMFILENAME.pem centos@IP-ADDRESS
+  
+  # you will now be logged into the cluster.
+  
+  # confirm the cluster compute fleet is waiting and ready
+  sinfo
+  
+  # change to the daylily user
+  sudo su daylily
+  ```
+  
+  2. Strongly Advised: Use `screen` or `tmux`
+  ```bash
+  tmux new -s day-analysis
+  ```
+  
+  3. Run the built in test data
+  ```bash
+  
+  # make an analysis sub-dir
+  mkdir -p /fsx/analysis_results/daylily/test
+  cd /fsx/analysis_results/daylily/test
+  
+  # clone the daylily repo
+  git clone git@github.com:Daylily-Informatics/daylily.git
+  cd daylily
+
+  # source dy-cli
+  source dyinit
+  
+  # activate the local profile
+  dy-a local
+  
+  # run the included test data
+  dy-r produce_snv_concordances -p -n # the -n runs a dryrun, its good form to run any command with this flag first.
+  ```
+  - The output of this command will print the commands and execution plan (which will run locally) and will look like this:
+  ![](../../docs/images/assets/DEC_execution_plan.png)
+  
+  - To run locallly, re-run the previous command minus the `-n`:
+  ```bash
+  dy-r produce_snv_concordances -p 
+  ```
+  - This will run a small test data set (~0.01x WGS) on the 16core headnode.  Execution will take ~5min in general. The first time the headnode runs daylily, requested environments will need to be built (only the for the first job for each new DEC). This will add ~5m to the first job.
+
+  3. To run this test data launching cluster jobs via slurm:
+  ```bash
+  # if you have already run the local test, clear the results directory
+  rm -rf results .snakemake logs
+  
+  # activate the slurm profile
+  dy-a slurm
+  
+  # dry run
+  dy-r produce_snv_concordances -p -n
+  
+  # run
+  dy-r produce_snv_concordancesq -p 
+
+  ```
+4. daylily will now run the same jobs as it had locally, but now via compute nodes it will spin up. Configuring new nodes can take several minutes depending on the spot market, etc. Once configured, the run time will be very quick.  You can monitor the DEC via the [cloudwatch dashboard](https://us-west-2.console.aws.amazon.com/cloudformation/) or with the `squeue` and `sinfo` commands, which are wrapped up in:  
+```bash
+# in a new terminal
+cd /fsx/analysis_results/daylily/test
+bin/helpers/watch_slurm.sh  
+```
+
+   ![](../../docs/images/assets/DEC_watch_slurm.png)
 
 ### Monitoring a DEC
 #### A [Cloudwatch dashboard](https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards:) created for each DEC. A few screenshots:
@@ -66,7 +155,7 @@
    - ![](../../docs/images/assets/DEC_cw_c.png)
 #### Costs
 
-   - To create [Cost Explorer]() reports by tag, you need to `activate` the DEC cost tracking tags. [Follow these instructions](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/activating-tags.html).
+   - To create [Cost Explorer](https://us-east-1.console.aws.amazon.com/cost-management/) reports by tag, you need to `activate` the DEC cost tracking tags. [Follow these instructions](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/activating-tags.html).
    - Once done, this can take 24hrs to activate. Reports may then be faceted by tag & tag value. Here is an example costs breakdown report:
    - ![](../../docs/images/assets/day_aws_tagged_costs_by_hour_project.png)
 
