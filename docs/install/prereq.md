@@ -1,6 +1,6 @@
 # Daylily Pre-requisites
 
-To create a daylily ephemeral cluster (DEC), these pre-requisites must be completed one time only.  Once done with these pre-req's, you'll have the 6 components necessary to run the [DEC initialization](../../Install.md):
+To create a daylily ephemeral cluster (DEC), these pre-requisites must be completed one time only.  Once done with these pre-req's, you'll have the 6 components necessary to run the [DEC initialization](Install.md):
   1. Github SSH Key Authorized
   2. AWS CLI Credentials
   3. AWS PEM File
@@ -133,4 +133,4 @@ Enter same passphrase again:
 
 
 ## Move On To DEC Initialization !
-  - [DEC INITIALIZE](../../Install.md)
+  - [DEC INITIALIZE](Install.md)
