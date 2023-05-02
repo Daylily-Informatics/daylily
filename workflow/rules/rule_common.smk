@@ -10,6 +10,9 @@ import shutil
 
 ## TODO: sweep through this thing and prune out the no longer needed/experimental stuff
 
+ec2=os.popen('echo "EC2instance:$(bin/helpers/get_ec2_type.sh)"').readline().rstrip()
+print(ec2, file=sys.stderr)
+
 EX = [""]
 RU = [""]
 # ##### these are globally avail, but  make the linters freak out b/c it's hidden from them by snakemake, quieting the complaints.
