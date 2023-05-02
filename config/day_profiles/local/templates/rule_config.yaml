@@ -329,7 +329,7 @@ octopus:
     octo_chrms:  "1~0-30028082,19,20-21" 
     anno: " AD ADP AF AFB ARF BQ CRF DP FRF GC GQ MC MF MQ MQ0 QD GQD QUAL SB STRL STRP SMQ SB DC NC PP MP "
     cmd: " resources/octopus/octopus-skylakeavx512 "
-    ld_preload: " "  # " env MIMALLOC_RESET_DELAY=750ms MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1 MIMALLOC_LARGE_OS_PAGES=1 MIMALLOC_USE_NUMA_NODES=2 MIMALLOC_RESERVE_HUGE_OS_PAGES=0   env LD_PRELOAD=$PWD/resources/libs/libmimalloc.so "
+    ld_pre: " "  # " env MIMALLOC_RESET_DELAY=750ms MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1 MIMALLOC_LARGE_OS_PAGES=1 MIMALLOC_USE_NUMA_NODES=2 MIMALLOC_RESERVE_HUGE_OS_PAGES=0   env LD_PRELOAD=$PWD/resources/libs/libmimalloc.so "
     brt: " --bad-region-tolerance NORMAL "
     err_model: "PCR-FREE.NOVASEQ"
     max_idel_err: " --max-indel-errors 37 "  # 36   ##  12 for test 36 prod
