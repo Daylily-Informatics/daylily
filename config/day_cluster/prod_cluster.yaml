@@ -22,6 +22,8 @@ HeadNode:
   CustomActions:
     OnNodeConfigured:
       Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install.sh
+      Args:
+        - REGSUB_S3_BUCKET_NAME
   Iam:
     S3Access:
       - BucketName: REGSUB_S3_BUCKET_NAME  # daylily-ref

@@ -1,6 +1,6 @@
 # Daylily Headnode Configure
 
-duser="daylily";
+duser="centos";
 
 echo "clusters detected:";
 pcluster list-clusters | grep clusterName;
@@ -28,19 +28,20 @@ else
     read pem_file;
 fi;
 
-ssh -i $pem_file centos@$cluster_ip_address "sudo useradd $duser" ;
-ssh -i $pem_file centos@$cluster_ip_address "sudo passwd --stdin $duser <<< 'passw0rd'" ;
-ssh -i $pem_file centos@$cluster_ip_address echo """ssh-keygen -q -t rsa -f ~$duser/.ssh/id_rsa -N \'\' <<< $'\ny'  | sudo su - $duser""";
+# Removed, running everything from the centos user for simplicity.  This was when using a daylily user.
+# ssh -i $pem_file centos@$cluster_ip_address "sudo useradd $duser" ;
+# ssh -i $pem_file centos@$cluster_ip_address "sudo passwd --stdin $duser <<< 'passw0rd'" ;
+# ssh -i $pem_file centos@$cluster_ip_address echo """ssh-keygen -q -t rsa -f ~$duser/.ssh/id_rsa -N \'\' <<< $'\ny'  | sudo su - $duser""";
 
-sleep 1;
-echo 'You must have a github account, and access to the daylily repo. The daylily user public ssh key must be stored as a new valid ssh key in github: https://github.com/settings/keys. If logged in to github, click New SSH Key, name the key whatever, leave key type set to Authentication Key, and paste the following string into the Key field.  There should be no linebreaks in the key string.';
+
+echo 'You must have a github account, and access to the daylily repo. The centos user public ssh key must be stored as a new valid ssh key in github: https://github.com/settings/keys. If logged in to github, click New SSH Key, name the key whatever, leave key type set to Authentication Key, and paste the following string into the Key field.  There should be no linebreaks in the key string.';
 echo " ";
 ssh -i $pem_file centos@$cluster_ip_address "echo 'head ~$duser/.ssh/id_rsa.pub' | sudo su - $duser " ;
 
 echo " ";
 echo " ";
 
-echo "The above string(not including the timestamp. double click on the key string and it should all select) is your ssh key to save in github. Enter it now in your github settings->gpg&ssh keys.  Once saved in github, please type 'yes' to continue.";
+echo "The above string(not including the timestamp) is your public ssh key. Double click on the key string and it should all select w/out linebreaks. Save this ssh key in your github->settings->ssh and gpg keys->New SSH Key.  Once you have saved this on github, please type 'yes' to proceed.";
 read cont;
 
 # Way to auto register the key...
@@ -71,8 +72,8 @@ ssh -t -i $pem_file centos@$cluster_ip_address "echo 'bash -c cd ~$duser/project
 echo " ";
 echo " ";
 echo "You may now ssh into the headnode with : ssh -i $pem_file centos@$cluster_ip_address ";
-echo " ... once logged in, run : sudo su - daylily ";
-echo " ...... then as daylily run: cd projects/daylily; source dyinit; dy-a local && dy-r help ";
+echo " ... once logged in, ";
+echo " ...... as centos run: cd ~/projects/daylily; source dyinit; dy-a local && dy-r help ";
 echo " .........";
 echo "et voila, fin.";
 
