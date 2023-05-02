@@ -58,11 +58,11 @@
         10. A ssh key is created for the daylily user on the headnode, and is displayed to you.  You must now go to [github ssh and gpg keys](https://github.com/settings/keys) and enter this ssh key as a new key in your list of keys. This is the same process as described [here](prereq.md).  Once the key is saved, type `yes` and hit enter.
         11. The daylily user on the headnode will now have the final configuration executed.  This will take a few moments.  Once complete, you are ready to use the DEC. It will exit with the following output:
      
-        ```bash
-        You may now ssh into the headnode with : ssh -i /Users/$USERNAME/.ssh/$PEMNAME.pem centos@$IP-ADDRESS 
-        ... once logged in, run : sudo su - daylily 
-        ...... then as daylily run: cd projects/daylily; source dyinit; dy-a local && dy-r help 
-       ```
+    ```bash
+    You may now ssh into the headnode with : ssh -i /Users/$USERNAME/.ssh/$PEMNAME.pem centos@$IP-ADDRESS 
+    ... once logged in, run : sudo su - daylily 
+    ...... then as daylily run: cd projects/daylily; source dyinit; dy-a local && dy-r help 
+    ```
        
    - note: you should not run daylily from ~ for production, but create a new subdir in `/fsx/analysis_results/daylily`.
 
