@@ -21,7 +21,8 @@ Defined as:
   
 ### Speed and Cost Conscious (aka- be aware of your hardware)
   > Informatics tools are notoriously challenging to run efficently. Daylily began from the bottom and worked upwards, fretting about speed & cost at every step. To get the best performance out of informatics tools, it is important to understand in which compute environments these tools will be running. Questions to ask:
-    - Can a tool be re-compiled (say, with the intel compiler) to better run on modern intel hardware ( supporting the AVX-512 instruction set)? Suprisingly often, the answer is yes!
+
+  - Can a tool be re-compiled (say, with the intel compiler) to better run on modern intel hardware ( supporting the AVX-512 instruction set)? Suprisingly often, the answer is yes!
     - Is disk I/O an issue?  
       - Can the underlying disk be changed? 
       - Can I/O burden be reduced (by leveraging pip'ing between processes, or process substitution)?
