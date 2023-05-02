@@ -1,4 +1,15 @@
+
+export PATH=$PATH:/opt/homebrew/bin/
 echo "installing daylily CLI"
+
+which brew
+if [[ "$?" == "0" ]]; then
+    echo "brew detected";
+else 
+    echo "Installing brew, you'll be prompted for your sudo pw"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi;
+
 brew install conda
 
 conda init
@@ -9,8 +20,10 @@ conda activate
 conda install -y -c conda-forge mamba
 mamba create -y -n DAYCLI -c conda-forge python parallel
 conda activate DAYCLI
-pip install -y aws-parallelcluster==3.5.0 awscli
+pip install --no-input aws-parallelcluster==3.5.0 awscli
 
 echo " "
-echo " "
-#source bin/daylily;
+echo "MOVING ON TO DEC CREATION "
+sleep 5
+
+source bin/daylily;
