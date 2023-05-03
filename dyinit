@@ -1,7 +1,7 @@
  #!/bin/echo "this script should only be sourced"
 
 
-export DAY_PROJECT="daylily-dev"
+export DAY_PROJECT="sent_b37"
 
 
 if [[ "$1" == "" ]]; then
