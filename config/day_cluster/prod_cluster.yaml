@@ -51,7 +51,7 @@ Scheduling:
             - InstanceType: r5b.metal  # 96/768  7,2
             - InstanceType: r5b.24xlarge  # 96/768  7,2
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 17
           Networking:
             PlacementGroup:
               Enabled: false
@@ -81,7 +81,7 @@ Scheduling:
             - InstanceType: r5.16xlarge  # 64/512 4,1
             - InstanceType: r5d.16xlarge # 64/512 4.6,2.1
           MinCount: 0
-          MaxCount: 8
+          MaxCount: 16
           Networking:
             PlacementGroup:
               Enabled: false
@@ -111,7 +111,7 @@ Scheduling:
             - InstanceType: r5.8xlarge  # 32/256  2,.5
             - InstanceType: r5d.8xlarge # 32/256  2,.8
           MinCount: 0
-          MaxCount: 6
+          MaxCount: 12
           Networking:
             PlacementGroup:
               Enabled: false
@@ -141,7 +141,7 @@ Scheduling:
             - InstanceType: r5d.4xlarge  # 16/128
             - InstanceType: r5.4xlarge  # 16/128
           MinCount: 0
-          MaxCount: 8
+          MaxCount: 16
           Networking:
             PlacementGroup:
               Enabled: false
@@ -171,7 +171,7 @@ Scheduling:
             - InstanceType: r5n.2xlarge  #  8/64
             - InstanceType: r5d.2xlarge  #  8/64
           MinCount: 0
-          MaxCount: 8
+          MaxCount: 16
           Networking:
             PlacementGroup:
               Enabled: false
@@ -206,7 +206,7 @@ Scheduling:
             - InstanceType: r6id.32xlarge  # 128/1024 9.6,4.5
             - InstanceType: r6id.metal  # 128/1024 9.6,3.11
           MinCount: 0
-          MaxCount: 8
+          MaxCount: 15
           Networking:
             PlacementGroup:
               Enabled: false
