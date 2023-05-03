@@ -28,7 +28,7 @@ rule collect_rules_benchmark_data:
     container: None
     shell:
         "bin/util/benchmarks/collect_day_benchmark_data.sh {params.ref_code} > {log};"
-        "cp {params.working_file} {output} > {log};"
+        "python bin/util/benchmarks/split_bench_rule_col.py {params.working_file} {output} > {log};"
 
 
 localrules:
