@@ -40,7 +40,7 @@ rule bwa_mem2ert_aln_sort:
         benchmark_runs=config["bwa_mem2ert_aln_sort"]["softclip_alts"],
         softclip_alts=config["bwa_mem2ert_aln_sort"]["softclip_alts"],
         bwa_mem2b_cmd=config["bwa_mem2ert_aln_sort"]["cmd"],
-        k=config["bwa_mem2ert_aln_sort"]["k"],
+        k=get_bwa_kmer_size,
         K=config["bwa_mem2ert_aln_sort"]["K"],
         sort_thread_mem=config["bwa_mem2ert_aln_sort"]["sort_thread_mem"],
         huref=config["supporting_files"]["files"]["huref"]["bwa_mem_index_fast"]["name"],
@@ -68,13 +68,6 @@ rule bwa_mem2ert_aln_sort:
         mkdir -p $tdir;
         epocsec=$(date +'%s');
         {params.lib}
-
-        #echo "INSTID: " >> {log};
-        #wget -q -O - http://169.254.169.254/latest/meta-data/instance-id >> {log};
-        #echo "INSTTYPE: " >> {log};
-        #wget -q -O - http://169.254.169.254/latest/meta-data/instance-type >> {log};
-
-
 
         unset LD_PRELOAD;
 
