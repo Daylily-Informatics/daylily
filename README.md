@@ -25,11 +25,22 @@ _named in honor of Margaret Oakley Dahoff_
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 
+
+
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
+
 # Very General Components Overview
 
   > Before even getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserve special thanks.
   
 ![daylily_birds_eye](https://user-images.githubusercontent.com/4713659/236047382-eaf16b83-dffa-4c25-8c84-a2960607bfff.png)
+
+
+
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 ## Some Bioinformatics Bits, Big Picture
 
@@ -53,6 +64,9 @@ _named in honor of Margaret Oakley Dahoff_
 ## [Daylily Design Principles](docs/ops/design_principles.md)
   > Daylily was built while drawing on over 20 years of experience in clinical genomics and informatics. [These](docs/ops/design_principles.md) principles were kept front and center while building this framework.
 
+
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 ## Some Bioinformatics Bits, Brass Tacks
 
