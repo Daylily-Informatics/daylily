@@ -37,7 +37,7 @@ else
     echo "... parallel found";
 fi;
 
-echo "-> Do you have the S3 buckets created as described in the docs? [y to proceed | n to cancel]:";
+echo "-> Do you have the: tag arnID, public subnet, private subnet, path to PEM file, S3 bucket url which were created as described in the prereq docs? [y to proceed | n to cancel]:";
 read done_s3;
 
 echo $done_s3
