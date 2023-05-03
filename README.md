@@ -47,11 +47,11 @@ _named in honor of Margaret Oakley Dahoff_
    [MQC](docs/images/assets/MQC_example.html)
 
 ### Performance Tuning
-  > A significant amount of time was spent exploring tools, finding which environments they operated best within, and so on. I plan to use the [daylily blog]([)](https://daylily-informatics.github.io/) to discuss some of the neat insigts I was granted during this process.
+  > A significant amount of time was spent exploring tools, finding which environments they operated best within, and so on. I plan to use the [daylily blog](https://daylily-informatics.github.io/) to discuss some of the neat insigts I was granted during this process.
 
 
 ## [Daylily Design Principles](docs/ops/design_principles.md)
-  > Daylily was built while drawing on over 20 years of experience in clinical genomics and informatics. [These](docs/ops/design_principles.md) principles front and center while building this framework.
+  > Daylily was built while drawing on over 20 years of experience in clinical genomics and informatics. [These](docs/ops/design_principles.md) principles were kept front and center while building this framework.
 
 
 ## Some Bioinformatics Bits, Brass Tacks
