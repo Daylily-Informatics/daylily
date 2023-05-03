@@ -19,7 +19,9 @@ _named in honor of Margaret Oakley Dahoff_
 
 ## A Managed Service
 
-  > Daylily Informatics offers a managed service where, depending on the analyses and TAT desired, you pay a per-sample fee for results produced from the data you submit.  The interface to send and receive data can be as straight forward as a properly permissioned S3 bucket where new fastqs are picked up, and soon afterwards, results are returned to the same bucket. Observability around sample/batch analysis progress will allow you to know the status of your samples. Please contact [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91) for further information.
+  > Daylily Informatics offers a managed service where, depending on the analyses and TAT desired, you pay a per-sample fee for results produced from the data you submit.  The interface to send and receive data can be as straight forward as a properly permissioned S3 bucket where new fastqs are picked up, and soon afterwards, results are returned to the same bucket. Observability around sample/batch analysis progress will allow you to know the status of your samples. 
+  
+  > Please contact [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91) for further information.
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 
