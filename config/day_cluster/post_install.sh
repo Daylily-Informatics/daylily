@@ -18,11 +18,17 @@
 
 . "/etc/parallelcluster/cfnconfig"
 
-bucket="daylily-working"  # change this bucket name to the name of your working bucket
+bucket="$1"  # specified in the cluster yaml, bucket-name, no s3:// prefix
 
 
 mkdir -p /tmp/jobs
 chmod -R a+wrx /tmp/jobs
+
+
+echo "vm.nr_hugepages=2048" >> /etc/sysctl.conf
+echo "vm.hugetlb_shm_group=27" >> /etc/sysctl.conf
+sysctl -p
+
 
 # for singularity
 useradd -u 1002 daylily
@@ -310,7 +316,20 @@ sudo mkdir /bin/DCVserv
 sudo mv /bin/dcv* /bin/DCVserv/
 kill -9 $(sudo lsof -i :8443 | tail -n 1 | perl -p -e 's/(^.*)( +)(.*)( +)(centos|root)(.*)( +.*)/$3/g;')
 
-nohup rclone --addr 0.0.0.0:8443 serve -L http ./ > /tmp/rclone.log 2>&1 &
+
+mkdir -p /fsx/analysis_results/daylily/
+mkdir -p /fsx/analysis_results/centos/
+
+chmod -R a+wrx /fsx/analysis_results
+
+mkdir -p /fsx/resources/environments/conda
+mkdir -p /fsx/resources/environments/containers
+chmod -R a+wrx /fsx/resources
+
+mkdir -p /fsx/environments/
+chmod -R a+wrx /fsx/environments
+
+# nohup rclone --addr 0.0.0.0:8443 serve -L http ./ > /tmp/rclone.log 2>&1 &
 
 touch /tmp/$HOSTNAME.postinstallcomplete 
 echo DONE
