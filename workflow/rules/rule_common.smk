@@ -535,3 +535,53 @@ def ret_mod_chrm(ret_str):
             ret_str =  "MT" + ret_str[2:]
 
     return ret_str
+
+
+## Method to wrap the bwa fastq reader with seqtk to subsample
+# if a subsample_pct column is present in the sample sheet, return the back end of the process substitution
+# whcih will do the subsampling
+def get_subsample_head_tail(sample_id):
+    ss_head = ""
+    ss_tail = ""
+    raisable = False
+    try:
+        ss_pct = samples.loc[(sample_id), "subsample_pct"][0]
+        if ss_pct in ["", "na", 0, "0", None, "None"]:
+            pass  # no subsampling requested
+        else:
+            ss_pct_float = 1000.1
+            try:
+                ss_pct_float = float(ss_pct)
+            except Exception as e:
+                raisable = True
+                raise (e)
+
+            if ss_pct_float > 1.0 or ss_pct_float < 0.0:
+                raisable = True
+                raise Exception(
+                    "ERROR:::: NO SUBSAMPLING WILL BE EXECUTED::: you must specify a float from 0.0-1.0"
+                )
+            else:
+                ss_head = f" <( seqkit sample --line-width=0 --quiet --rand-seed=7  --seq-type=dna --proportion={ss_pct_float}  "
+                ss_tail = " ) "
+
+    except Exception as e:
+        if raisable:
+            print(
+                "Samplesheet Error with subsample_pct column ---- \n\n", file=sys.stderr
+            )
+            raise (e)
+        else:
+            pass
+
+    return (ss_head, ss_tail)
+
+
+def get_subsample_head(wildcards):
+    return get_subsample_head_tail(wildcards.sample)[0]
+
+def get_subsample_tail(wildcards):
+    return get_subsample_head_tail(wildcards.sample)[1]
+
+def get_samp_name(wildcards):
+    return wildcards.sample

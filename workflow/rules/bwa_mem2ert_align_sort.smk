@@ -57,8 +57,9 @@ rule bwa_mem2ert_aln_sort:
         rgcn="CenterName",  # center name
         rgpg="bwamem2ERT",  #program  ^^^ the Read Group Info is super important for several gatk core tools.  There is a library which will extract this info from the read names if we go full fancy.
         ld_p=" ",
-        ldpre=config['bwa_mem2ert_aln_sort']['ldpre'],  
-        piped_align=config["bwa_mem2ert_aln_sort"]['piped_align'],
+        ldpre=config['bwa_mem2ert_aln_sort']['ldpre'],
+        subsample_head=get_subsample_head,
+        subsample_tail=get_subsample_tail,
     conda:
         config["bwa_mem2ert_aln_sort"]["env_yaml"]
     shell:
@@ -75,8 +76,8 @@ rule bwa_mem2ert_aln_sort:
            -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
             {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  \
             -Z {params.huref} \
-            <( unpigz -c -q -- {input.f1} )  \
-            <( unpigz -c  -q -- {input.f2} )  \
+            {params.subsample_head} <( unpigz -c -q -- {input.f1} )   {params.subsample_tail} \
+            {params.subsample_head} <( unpigz -c  -q -- {input.f2} )  {params.subsample_tail}  \
             |  samtools sort -l 0  -m {params.sort_thread_mem}   \
             -@  {params.sort_threads} -T $tdir -O SAM - \
             |  samtools view -b -1  -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};
