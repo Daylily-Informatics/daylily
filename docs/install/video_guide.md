@@ -1,10 +1,10 @@
 # Video Clips Of The Steps To Create A DEC
 
-## A
+## Prerequisite Overview & First Step
 
 https://user-images.githubusercontent.com/4713659/235873199-441c6952-de60-4c9d-9214-1c72e067a33f.mov
 
-## B
+## 
 
 https://user-images.githubusercontent.com/4713659/235873986-fae57d0e-66bd-4c3d-89e3-77ac34586374.mov
 
