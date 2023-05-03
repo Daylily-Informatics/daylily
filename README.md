@@ -4,14 +4,24 @@ _named in honor of Margaret Oakley Dahoff_
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 
-<video width="320" height="240" controls>
-  <source src="http://daylilyinformatics.com:8081/assets/DEC_pa.m4v" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+# daylily is:
 
+## A Free Multi-omics Analysis Framework 
 
-## Multi-omics Analysis Framework ( And The $ Genome )
-  > Daylily orchestrates the execution of numerous pipelines while also managing all of the tasks required to spin up, run analyses on, track costs to operate, and close down an ephemeral compute fleet. ( *tldr: 30x genomes complete in ~60m, with SNP fscores of XXX and EC2 costs as low as YYY* )
+### (in <1hr : a $5 EC2 30x genome / a slightly more sensitive 30x genome for $10) && exhaustive QC reporting, SV callers, perf monitoring, cost reporting... 
+
+  > Daylily connects and automates all of the systems necessary to run omic analysis reproducibly, reliablay and at massive scale in the cloud. All you need is a laptop and access to an AWS console. After a [~90m installation](docc/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. The code is open source and free to use! I am also absoutely available for consulting services to integrate daylily, migrate pipelines into this framework, or optimize existing pipelines.
+
+## A Managed Service
+
+  > Daylily offers a managed service where, depending on the analysis and TAT desired, you pay a per-sample fee for results produced by data you provide.  The interface to send sample data to daylily and for daylily to return results can be as straight forward as a properly permissioned S3 bucket. Observability around sample/batch analysis progress will allow you to know when to expect results. Contact daylily@daylilyinformatics.com for further information.
+
+# Very General Design Overview
+
+  [daylily_birds_eye.pdf](https://github.com/Daylily-Informatics/daylily/files/11390618/daylily_birds_eye.pdf)
+
+## 
+
 
 
 ### Use Cases: Performance, Fscores, Costs
