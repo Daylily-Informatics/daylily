@@ -8,23 +8,52 @@ _named in honor of Margaret Oakley Dahoff_
 
 ## A Free Multi-omics Analysis Framework 
 
-### (in <1hr : a $5 EC2 30x genome / a slightly more sensitive 30x genome for $10) && exhaustive QC reporting, SV callers, perf monitoring, cost reporting... 
+### in <1hr, 30x fastq.gz->SNV.vcf for as little as $3.50  _PLUS_ SNV/SV calling at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
-  > Daylily connects and automates all of the systems necessary to run omic analysis reproducibly, reliablay and at massive scale in the cloud. All you need is a laptop and access to an AWS console. After a [~90m installation](docc/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. The code is open source and free to use! I am also absoutely available for consulting services to integrate daylily, migrate pipelines into this framework, or optimize existing pipelines.
+  > Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliablay and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docc/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
+  > This code is open source and free to use(excepting the fastest pipline)! I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
+  > [Daylily Informatics](http://daylilyinformatics.com/) is available for consulting services to integrate daylily into your operations, migrate pipelines into this framework, or optimize existing pipelines.
 
 ## A Managed Service
 
-  > Daylily offers a managed service where, depending on the analysis and TAT desired, you pay a per-sample fee for results produced by data you provide.  The interface to send sample data to daylily and for daylily to return results can be as straight forward as a properly permissioned S3 bucket. Observability around sample/batch analysis progress will allow you to know when to expect results. Contact daylily@daylilyinformatics.com for further information.
+  > Daylily Informatics offers a managed service where, depending on the analyses and TAT desired, you pay a per-sample fee for results produced from the data you submit.  The interface to send and receive data can be as straight forward as a properly permissioned S3 bucket where new fastqs are picked up, and soon afterwards, results are returned to the same bucket. Observability around sample/batch analysis progress will allow you to know the status of your samples. Please contact [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91) for further information.
 
-# Very General Design Overview
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
+
+# Very General Components Overview
+
+  > Before even getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserve special thanks.
 
   [daylily_birds_eye.pdf](https://github.com/Daylily-Informatics/daylily/files/11390618/daylily_birds_eye.pdf)
+  
 
-## 
+## Some Bioinformatics Bits, Big Picture
+
+### The DAG For 1 Sample Running Through The `BWA-MEM2ert+Doppelmark+Deepvariant+Manta+TIDDIT+Dysgu+Svaba+QCforDays` Pipeline
+
+   ![](docs/images/assets/ks_rg.png)
+   
+   - The above is actually a compressed view of the jobs managed for a sample moving through this pipeline. This view is of the dag which properly reflects parallelized jobs.... think UFO.
+   
+     ![](docs/images/assets/ks_dag.png)
+   
+
+#### Final Batch QC Report Produced 
+  > this report is generated running the google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.
+   [MQC](docs/images/assets/MQC_example.html)
+
+### Performance Tuning
+  > A significant amount of time was spent exploring tools, finding which environments they operated best within, and so on. I plan to use the [daylily blog]([)](https://daylily-informatics.github.io/) to discuss some of the neat insigts I was granted during this process.
 
 
+## [Daylily Design Principles](docs/ops/design_principles.md)
+  > Daylily was built while drawing on over 20 years of experience in clinical genomics and informatics. [These](docs/ops/design_principles.md) principles front and center while building this framework.
 
-### Use Cases: Performance, Fscores, Costs
+
+## Some Bioinformatics Bits, Brass Tacks
+
+
+### 3 Pipelines: Performance, Fscores, Costs
   >  Users may choose among the pre-validated pipeline options, or may extend the framework to run custom pipelines. The Scientific workflow manager behind the scenes happens to be [snakemake](), but any workflow manager that integrates with slurm or aws batch can extend the framework.
 
   - Three validated pipelines are available. Two are comprised of fully open source tools, the third leverages hardware agnostic accelerated tools from Sentieon. The pipelines and average performance across the google brain 30x Novaseq fastqs for the 7 [giab]() samples are as follows:
@@ -43,20 +72,6 @@ _named in honor of Margaret Oakley Dahoff_
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
-
-
-### Daylily Design Considerations
-
-#### Reproducibility (Sustainability, Portability, etc)
-  > This framework fully embraces [these ideals](), and by wrapping snakemake in a similarly opinionated codebase, the hope is that these omic analysis tools will be approachable by a wider audience.
-    - Daylily and it's components are thoroughly [versioned](docs/more/versioning.md), allowing for complete replication of analysis environments and results.
-    - IMAGE of Entire Pipeline
-
-#### Validation Ready
-  > Informed by the requirements of running a CLIA & CAP accredited diagnostic lab, daylily will automatically produce concordance reports for arbitrary samples within the bed footprint you specify. Further, [exhaustive QC metrics]() are normalized so as to be painless to work with.
-
-#### Meaningful Quality Metrics
-  - CCCCC
 
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\
@@ -88,7 +103,7 @@ _named in honor of Margaret Oakley Dahoff_
   >Picture and  list of tools
 
 #### Cost Tracking and Budget Enforcement
-
+  >x
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
@@ -96,30 +111,6 @@ _named in honor of Margaret Oakley Dahoff_
 
 
 
-# Getting Started
-
-## Consulting
-  - Depending on the level of integration, daylily should be able to be deployed and running in your environment in a matter of days.  The basic integration looks approximately like the figure below. Additionally, I am available for custom pipeline development, migration and optimization. Please contact daylily@daylilyinformatics.com if consulting services are of interest.
-    - IMAGE
-
-## Straightforward [Licensing]() 
-  *With* registration (email to daylily@daylilyinformatics.com):
-    - free for personal and academic use.
-    - nominal fee for pre-commercial use.
-    - fee for commercial use.
-    - appropriate citation if publications generated results using daylily.
-    - The code is otherwise available under the GNPXXX liscence ([see liscence](LICENSE)).
-
-
-## Installation
-
-### Prerequisites
-  - a
-  - b
-
-
-## Extending
-  - more to come
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
