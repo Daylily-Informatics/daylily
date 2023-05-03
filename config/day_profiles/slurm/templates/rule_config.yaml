@@ -165,7 +165,7 @@ deepvariant:
     partition: "i128-6"  # "i128-6"
     mem_mb: "800000"
     deep_chrms: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
-    numa: " "  # resources/numa/numactl --cpunodebind=0,1 --membind=0,1 "
+    numa: " JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  " 
 
 duphold:
     threads: 16

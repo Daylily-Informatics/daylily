@@ -15,6 +15,9 @@
 ## Initializing a DEC
   > Install is tested from a MAC using zsh only.  This should also work from linux w/homebrew (or hack the install script to install the few brew installed deps). Edit the init script and swap zsh for bash if you prefer.
 
+### To Watch This Install Process In (near) Real Time
+  > [Check out these video clips](video_guide.md)
+
 ### Clone daylily 
   > Your ssh keys should be stored to github as described in the [prerequisite instructions](prereq.md).
   ```bash
