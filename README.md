@@ -1,10 +1,13 @@
 # [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
 _named in honor of Margaret Oakley Dahoff_
 
+
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 
-
-http://daylilyinformatics.com:8081/assets/DEC_pa.m4v
+<video width="320" height="240" controls>
+  <source src="http://daylilyinformatics.com:8081/assets/DEC_pa.m4v" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 
 ## Multi-omics Analysis Framework ( And The $ Genome )
