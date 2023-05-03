@@ -1,6 +1,8 @@
  #!/bin/echo "this script should only be sourced"
 
-export DAY_PROJECT="bwa2a_b37"
+
+export DAY_PROJECT="daylily-dev"
+
 
 if [[ "$1" == "" ]]; then
    export UNO1="1"
