@@ -31,7 +31,7 @@ _named in honor of Margaret Oakley Dahoff_
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
-# Very General Components Overview
+# General Components Overview
 
   > Before even getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserve special thanks.
   
