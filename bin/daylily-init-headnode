@@ -73,7 +73,7 @@ echo " ";
 echo " ";
 echo "You may now ssh into the headnode with : ssh -i $pem_file centos@$cluster_ip_address ";
 echo " ... once logged in, ";
-echo " ...... as centos run: cd ~/projects/daylily; source dyinit; dy-a local && dy-r help ";
+echo " ...... as centos run: cd ~/projects/daylily; source dyinit; source bin/day_activate local ; dy-r help ";
 echo " .........";
 echo "et voila, fin.";
 
