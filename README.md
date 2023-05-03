@@ -8,7 +8,7 @@ _named in honor of Margaret Oakley Dahoff_
 
 ## A Free Multi-omics Analysis Framework 
 
-### FQ to SNVvcf for as little as $3.50 and in under 1 hour, parallelizable to thousannds of genomes an hour
+### 30x FQ to SNVvcf for as little as $3.50 and in under 1 hour, scalable to thousannds of genomes an hour
 #### _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
   > Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliablay and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
