@@ -54,7 +54,7 @@ Scheduling:
           MaxCount: 17
           Networking:
             PlacementGroup:
-              Enabled: false
+              Enabled: true
           Efa:
             Enabled: false
       Networking:
@@ -84,7 +84,7 @@ Scheduling:
           MaxCount: 16
           Networking:
             PlacementGroup:
-              Enabled: false
+              Enabled: true
           Efa:
             Enabled: false
       Networking:
@@ -114,7 +114,7 @@ Scheduling:
           MaxCount: 12
           Networking:
             PlacementGroup:
-              Enabled: false
+              Enabled: true
           Efa:
             Enabled: false
       Networking:
@@ -144,7 +144,7 @@ Scheduling:
           MaxCount: 16
           Networking:
             PlacementGroup:
-              Enabled: false
+              Enabled: true
           Efa:
             Enabled: false
       Networking:
@@ -174,7 +174,7 @@ Scheduling:
           MaxCount: 16
           Networking:
             PlacementGroup:
-              Enabled: false
+              Enabled: true
           Efa:
             Enabled: false
       Networking:
@@ -209,7 +209,7 @@ Scheduling:
           MaxCount: 12
           Networking:
             PlacementGroup:
-              Enabled: false
+              Enabled: true
           Efa:
             Enabled: true
       Networking:
@@ -236,7 +236,7 @@ Scheduling:
           MaxCount: 8
           Networking:
             PlacementGroup:
-              Enabled: false
+              Enabled: true
           Efa:
             Enabled: false
       Networking:
