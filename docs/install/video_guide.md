@@ -13,24 +13,24 @@ https://user-images.githubusercontent.com/4713659/235873986-fae57d0e-66bd-4c3d-8
 
 https://user-images.githubusercontent.com/4713659/235874160-c3d66a58-4dd6-45cd-81e5-853179d9e9aa.mov
 
-## Providing Details To Complete Init Stage 2.a
+## Providing Details To Complete Init, Stage 2.a
 
 
 https://user-images.githubusercontent.com/4713659/235874326-31a773b0-be4c-4012-be67-e4cda0efbb9d.mov
 
-## Providing Details To Complete Init Stage 2.b
+## Providing Details To Complete Init, Stage 2.b
 
 https://user-images.githubusercontent.com/4713659/235874541-d671d1c7-f8c0-4771-b87d-891b7e42c87f.mov
 
-## F
+## Completing Init, Stage 3
 
 https://user-images.githubusercontent.com/4713659/235874676-d86e323c-86cb-4d5b-9c36-fe268cd9173e.mov
 
-## G
+## Log Into The New Headnode And Run A Command
 
 https://user-images.githubusercontent.com/4713659/235874864-09e21d67-2fa4-42a1-bf28-de397b6d8f7b.mov
 
-## H
+## Closing The Loop
 
 https://user-images.githubusercontent.com/4713659/235875117-b7c42f5e-3922-4d93-a6c0-e7ae2728634b.mov
 
