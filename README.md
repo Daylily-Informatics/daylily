@@ -1,6 +1,6 @@
 # DAYLILY
 
-## A Free, Fast(~60m) & Frugal($3.5 EC2) Multi-omics Analysis Framework 
+## A Free, Fast(~60m) & Frugal($3.5 EC2) Multi-omics Analysis 
 - 30x FQ to SNVvcf at $3.50 EC2 costs, completes in ~60m & process thousannds of genomes an hour
   - _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
   - Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliablay and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
