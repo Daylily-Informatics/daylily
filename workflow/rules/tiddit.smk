@@ -8,8 +8,6 @@
 # paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5521161/
 
 
-localrules: tiddit,
-
 rule tiddit:
     input:
         bamo=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
