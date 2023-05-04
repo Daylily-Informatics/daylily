@@ -1,4 +1,6 @@
-b37/
+```bash
+
+{b37,hg38}/
 ├── RIH0_ANA0-HG002_DBC0_0
 │   ├── align
 │   │   ├── bwa2a
@@ -10,7 +12,6 @@ b37/
 │   │   │   │   ├── mosdepth
 │   │   │   │   ├── norm_cov_eveness
 │   │   │   │   ├── picard
-│   │   │   │   │   └── picard
 │   │   │   │   └── qmap
 │   │   │   └── snv
 │   │   │       ├── deep
@@ -33,7 +34,6 @@ b37/
 │   │       │   ├── goleft
 │   │       │   ├── norm_cov_eveness
 │   │       │   ├── picard
-│   │       │   │   └── picard
 │   │       │   └── qmap
 │   │       └── snv
 │   │           ├── deep
@@ -53,3 +53,4 @@ b37/
 │       └── fastp
 ├── other_reports
 └── reports
+```
