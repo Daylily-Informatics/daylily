@@ -56,7 +56,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 
 ## Some Bioinformatics Bits, Brass Tacks
 
-### 3 Pipelines: Performance, Fscores, Costs
+### Three Pipelines: Performance, Fscores, Costs
   >  Users may choose among the pre-validated pipeline options, or may extend the framework to run custom pipelines. The Scientific workflow manager behind the scenes happens to be [snakemake](), but any workflow manager that integrates with slurm or aws batch can extend the framework.
 
   - Three validated pipelines are available. Two are comprised of fully open source tools, the third leverages hardware agnostic accelerated tools from Sentieon. The pipelines and average performance across the google brain 30x Novaseq fastqs for the 7 [giab]() samples are as follows:
@@ -80,7 +80,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 ### Daylily Framework, More
 
 #### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8081/components/daylily_qc_reports/reports/DAY_final_multiqc.html)
-> This report is generated running the google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
+> Batch comprised of google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
 
 ![](docs/images/assets/day_qc_1.png)
 
@@ -88,8 +88,10 @@ The system is designed to be robust, secure, auditable, and should only take a m
     
     
 ### [Consistent + Easy To Navigate Results Directory & File Structure](/docs/ops/dir_and_file_scheme.md)
-  > IMG OF TREE HERE
-
+   - A visualization of just the directories (minus log dirs) created by daylily
+    _b37 shown, hg38 is supported as well_
+    [![](docs/images/assets/datlily_tree.png)](docs/ops/tree.md)
+     - [with files](docs/ops/tree_full.png)     
     
 ### [Automated Concordance Analysis Table](http://daylilyinformatics.com:8081/components/daylily_qc_reports/other_reports/giabhcr_concordance_mqc.tsv)
   > Reported fasceted by: SNPts, SNPtv, INS>0-<51, DEL>0-51, Indel>0-<51.
