@@ -14,7 +14,7 @@ HeadNode:
     Port: 8443
   LocalStorage:
     RootVolume:
-      Size: 500
+      Size: 675
       VolumeType: gp3
       DeleteOnTermination: false
     EphemeralVolume:
