@@ -25,7 +25,7 @@
 
   > Before even getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserve special thanks.
   
-![daylily_birds_eye](https://user-images.githubusercontent.com/4713659/236047382-eaf16b83-dffa-4c25-8c84-a2960607bfff.png)
+![DEC_components_v2](https://user-images.githubusercontent.com/4713659/236144817-d9b26d68-f50b-423b-8e46-410b05911b12.png)
 
   - TO ADD: Image of the flow of sample data->daylily->retrurn results.
 
