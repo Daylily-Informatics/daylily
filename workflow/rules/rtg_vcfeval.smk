@@ -48,7 +48,7 @@ if len(CONCORDANCE_SAMPLES.keys()) > 0:
         log:
             MDIR
             + "{sx}/align/{alnr}/snv/{snv}/concordance/logs/{sx}.{alnr}.{snv}.concordance.log",
-        benchmark:  MDIR+ "{sx}/align/{alnr}/snv/{snv}/concordance/logs/{sx}.{alnr}.{snv}.concordance.bench.tsv",
+        benchmark:  MDIR+ "{sx}/benchmarks/{sx}.{alnr}.{snv}.concordance.bench.tsv",
         threads: config['rtg_vcfeval']['threads']
         resources:
             vcpu=config['rtg_vcfeval']['threads'],
