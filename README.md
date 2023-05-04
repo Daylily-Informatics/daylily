@@ -1,14 +1,14 @@
-# [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
+# DAYLILY
 
-<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
+## A Free, Fast(~60m) & Frugal(~$3.5 EC2) Multi-omics Analysis Framework 
+> 30x FQ to SNVvcf at $3.50 EC2 costs, complete ~60m & process thousannds of genomes an hour
+_PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
-## A Free Multi-omics Analysis Framework 
+---
+* Note *
+Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliablay and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
+---
 
-### 30x FQ to SNVvcf at $3.50 EC2 costs, complete ~60m & process thousannds of genomes an hour
-##### _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
-
-  > Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliablay and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
-  
   > This code is open source and free to use(excepting the fastest pipline)! I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
   
   > [Daylily Informatics](http://daylilyinformatics.com/) is available for consulting services to integrate daylily into your operations, migrate pipelines into this framework, or optimize existing pipelines.
@@ -140,5 +140,7 @@
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
+
+# [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
 
 _named in honor of Margaret Oakley Dahoff_
