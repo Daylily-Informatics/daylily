@@ -27,7 +27,10 @@
   
 ![DEC_components_v2](https://user-images.githubusercontent.com/4713659/236144817-d9b26d68-f50b-423b-8e46-410b05911b12.png)
 
-  - TO ADD: Image of the flow of sample data->daylily->retrurn results.
+# Managed Genomics Analysis Service
+The system is designed to be robust, secure, auditable, and should only take a matter of days to stand up. The data flow is as follows:
+
+![daylily_managed_service](https://user-images.githubusercontent.com/4713659/236186668-6ea2ec81-9fe4-4549-8ed0-6fcbd4256dd4.png)
 
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
