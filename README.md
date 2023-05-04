@@ -1,15 +1,11 @@
 # [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
-_named in honor of Margaret Oakley Dahoff_
-
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 
-# daylily is:
-
 ## A Free Multi-omics Analysis Framework 
 
-### 30x FQ to SNVvcf for as little as $3.50 and in under 1 hour, scalable to thousannds of genomes an hour
-#### _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
+### 30x FQ to SNVvcf at $3.50 EC2 costs, complete ~60m & process thousannds of genomes an hour
+##### _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
   > Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliablay and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
   
@@ -99,29 +95,23 @@ _named in honor of Margaret Oakley Dahoff_
 
 
 
-### Daylily Framework Details
-#### SNV Calling Pipelines (validated)
-##### Sentieon BWA + DNAscope (BD)
-  > Picture and list of tools
+### Daylily Framework, Further Details
 
-##### BWA-MEM2 + Octopus (B2O)
-  > Picture and	list of	tools
+#### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8081/components/daylily_qc_reports/reports/DAY_final_multiqc.html)
+  > Partial view of html report, #1
+    ![](docs/images/assets/day_qc_1.png)
+    
+  > Partial view of html report, #2
+    ![](docs/images/assets/day_qc_2.png)
 
-##### BWA-MEM2 + Deepvariant (B2D)
-  >Picture and	list of	tools
-
-#### QC Tools & Reports
+#### [Performance Monitoring Reports]()
   >Picture and  list of tools
 
+#### [Observability w/CloudWatch Dashboard)[https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#]
+  > Add Example IMG
 
-#### Performance Monitoring Reports
-  >Picture and  list of tools
-
-#### Observability
-  >Picture and  list of tools
-
-#### Cost Tracking and Budget Enforcement
-  >x
+#### [Cost Tracking and Budget Enforcement])(https://aws.amazon.com/blogs/compute/using-cost-allocation-tags-with-aws-parallelcluster/)
+  > ![](https://d2908q01vomqb2.cloudfront.net/1b6453892473a467d07372d45eb05abc2031647a/2020/07/23/Billing-console-projects-grouping.png)
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
@@ -139,3 +129,5 @@ _named in honor of Margaret Oakley Dahoff_
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
+
+_named in honor of Margaret Oakley Dahoff_
