@@ -11,7 +11,8 @@
   > [Daylily Informatics](http://daylilyinformatics.com/) is available for consulting services to integrate daylily into your operations, migrate pipelines into this framework, or optimize existing pipelines. [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91)
 
 ## Managed Analysis Service
-- Daylily Informatics offers a managed service where, depending on the analyses and TAT desired, you pay a per-sample fee for results produced from the data you submit.  The interface to send and receive data can be as straight forward as a properly permissioned S3 bucket where new fastqs are picked up, and soon afterwards, results are returned to the same bucket. Observability around sample/batch analysis progress will allow you to know the status of your samples. 
+- Daylily Informatics offers a managed genomic analysis service where, depending on the analyses and TAT desired, you pay a per-sample fee for daylily to run the desired analysis.
+- The gist of the standard deployment can be reviewed [here](). 
   
 - Please contact [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91) for further information.
 
