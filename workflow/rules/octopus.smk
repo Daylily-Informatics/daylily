@@ -282,6 +282,8 @@ rule octopus:
 
         threads_flag=' --threads  ';
 
+        export APPTAINER_HOME=/fsx/scratch;
+
         ocmd=" {params.ld_pre} octopus --very-fast  -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}  $midel  $mhap  --annotations {params.anno}   --forest-model {params.fm}  --sequence-error-model {params.em}  {params.min_for_qual}   {params.tm} --skip-regions-file {params.skr}  $BRTL  {params.tgt_working_mem} $variable_args --max-open-read-files {params.mor} ";
         
         echo $ocmd 1&>2 > ocmd.log;

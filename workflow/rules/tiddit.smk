@@ -36,6 +36,7 @@ rule tiddit:
         "docker://daylilyinformatics/tiddit:2.12.0"
     shell:
         """
+        export APPTAINER_HOME=/fsx/scratch;
         set +euo pipefail;
         rm -rf {output.stub}* || echo rmFailedTiddit;  # verging on overkill cleanup for restarts
         mkdir -p "$( dirname {output.vcf} )/logs"  ;

@@ -81,6 +81,7 @@ rule deepvariant:
             dchr={params.cpre}{params.dchrm};
         fi;
 
+        export APPTAINER_HOME=/fsx/scratch;
         echo 'DCHRM: $dchr';
         export LD_LIBRARY_PATH=resources/lib/;
         {params.numa} \
