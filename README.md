@@ -2,7 +2,7 @@
 
 ## A Free, Fast(~60m) & Frugal($3.5 EC2) Multi-omics Analysis
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
-- 30x FQ to SNVvcf at $3.50 EC2 costs, completes in ~60m & process thousannds of genomes an hour
+30x FQ to SNVvcf at $3.50 EC2 costs, completes in ~60m & process thousannds of genomes an hour
 
 - _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
