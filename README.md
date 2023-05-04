@@ -27,7 +27,7 @@
   
 ![daylily_birds_eye](https://user-images.githubusercontent.com/4713659/236047382-eaf16b83-dffa-4c25-8c84-a2960607bfff.png)
 
-
+  - TO ADD: Image of the flow of sample data->daylily->retrurn results.
 
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
@@ -80,7 +80,7 @@
     ![](docs/images/assets/day_qc_2.png)
     
     
-### Consistent + Easy To Navigate Results Directory & File Structure.
+### [Consistent + Easy To Navigate Results Directory & File Structure](/docs/ops/dir_and_file_scheme.md)
   > IMG OF TREE HERE
 
     
@@ -104,6 +104,24 @@
   
   
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
+
+# DOCUMENTATION (WIP)
+
+## [Installation](docs/install/Install.md)
+
+## [Cost Tagging](docs/ops/cost_tagging.md)
+
+## [DEC Config](docs/ops/config.md)
+
+## [dy-CLI](docs/ops/dycli.md)
+
+## [Analysis Manifest](docs/ops/analysis_manifest.md)
+
+## [Batch Quality Control](docs/ops/batch_quality_control.md)
+
+## [Visualizations](docs/ops/visualizations.md)
+
+## [Running Tests](docs/ops/tests.md)
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
