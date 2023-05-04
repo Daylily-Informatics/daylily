@@ -53,7 +53,7 @@
   > this report is generated running the google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.
    [MQC](docs/images/assets/MQC_example.html)
 
-### Performance Tuning
+### Performance Monitoring
   > A significant amount of time was spent exploring tools, finding which environments they operated best within, and so on. I plan to use the [daylily blog](https://daylily-informatics.github.io/) to discuss some of the neat insigts I was granted during this process.
 
 
@@ -103,22 +103,33 @@
     
   > Partial view of html report, #2
     ![](docs/images/assets/day_qc_2.png)
+    
+### Consistent + Easy To Navigate Results Directory & File Organization.
+  > IMG OF TREE HERE
+
+    
+### [Automated Concordance Analysis Table](http://daylilyinformatics.com:8081/components/daylily_qc_reports/other_reports/giabhcr_concordance_mqc.tsv)
+  > Reported fasceted by: SNPts, SNPtv, INS>0-<51, DEL>0-51, Indel>0-<51.
+  > Generated when the correct info is set in the analysis_manifest.
+
 
 #### [Performance Monitoring Reports]()
-  >Picture and  list of tools
+  > Picture and  list of tools
 
 #### [Observability w/CloudWatch Dashboard)[https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#]
-  > Add Example IMG
+  > ![](docs/images/assets/cloudwatch.png)
+  > ![](/docs/images/assets.cloudwatch_2.png)
+  > ![](/docs/images/assets.cloudwatch3.png)
 
 #### [Cost Tracking and Budget Enforcement])(https://aws.amazon.com/blogs/compute/using-cost-allocation-tags-with-aws-parallelcluster/)
   > ![](https://d2908q01vomqb2.cloudfront.net/1b6453892473a467d07372d45eb05abc2031647a/2020/07/23/Billing-console-projects-grouping.png)
-
+  - ![](docs/images/assets/costs1.png)
+  - ![](docs/images/assets/costs2.png)
+  
+  
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
-
-
-
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
