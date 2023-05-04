@@ -110,6 +110,18 @@ The system is designed to be robust, secure, auditable, and should only take a m
   
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
+# Coming Sooner Than Latter
+- Structural Variant Calling Concordance Analysis For The SV Callers:
+  - Manta
+  - TIDDIT
+  - Svaba
+  - Dysgu
+  - Octopus (which is a fantastic small SV caller!)
+- Annotation of SNV / SV `vcf` files with potentially clinically relevant info (VEP is in testing).
+- Document the steps to quickly re-run the 7 30x GIAB samples from scratch.
+- Explore hybrid assemblies using short and long reads (ONT + PacBio).
+
+
 # DOCUMENTATION (WIP)
 
 ## [Installation](docs/install/Install.md)
