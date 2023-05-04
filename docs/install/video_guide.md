@@ -1,5 +1,5 @@
 # Video Clips Of The Steps To Create A DEC
-  > [Please See The Detailed Written Install Guide Here](install.md)
+  > [Please See The Detailed Written Install Guide Here](Install.md)
 
 ## Prerequisite Overview 
 
