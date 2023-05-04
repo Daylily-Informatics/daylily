@@ -1,5 +1,5 @@
 # Configuring Daylily (drafting)
-Daylily snakemake rules rarely contain any specific config vales.  Instead those are abstracted to snakemake [profilesprofiles](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles) found in 'config/day_profiles/{slurm,local}]'. Profiles allow running da `.smk` rules where the wrapper for each rule if made more flexible by storing config in `config.yaml` and `rule_config.yaml`. The slurm profile has some additional files to interface with the slurm executor.
+Daylily snakemake rules rarely contain any specific config vales.  Instead those are abstracted to snakemake [profiles](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles) found in 'config/day_profiles/{slurm,local}]'. Profiles allow running da `.smk` rules where the wrapper for each rule if made more flexible by storing config in `config.yaml` and `rule_config.yaml`. The slurm profile has some additional files to interface with the slurm executor.
 
 ## Profile `yaml` Files
 ### `config.yaml`
