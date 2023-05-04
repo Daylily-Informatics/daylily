@@ -292,7 +292,7 @@ octopus:
     threads: 32 # Dynamically reset- this represents the cap
     octo_chrms: "1~0-30028082,1~30028083-121535434,1~124535434-205922707,1~205922707-249250621,2,3,4,5,6~0-58830166,6~58830166-171105067,7,8,9,10~0-42254935,10~42254935-70550000,10~70550000-103433061,10~103433061-128616069,10~128766069-135524747,11,12,13,14,15,16,17,18,19~0-24681782,19~27681782-59118983,20,21,22,23,24"  # 25 removed for the moment 
     anno: " AD ADP AF AFB ARF BQ CRF DP FRF GC GQ MC MF MQ MQ0 QD GQD QUAL SB STRL STRP SMQ SB DC NC PP MP "    
-    ld_pre: " EMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 "
+    ld_pre: "  "
     brt: " --bad-region-tolerance NORMAL "
     err_model: "PCR-FREE.NOVASEQ"  #  option, which accepts inputs of the form [library preparation]<.sequencer>. library preparation is selected from: PCR, PCR-FREE, or 10X. sequencer is selected from: HISEQ-2000, HISEQ-2500, HISEQ-4000, X10, NOVASEQ, BGISEQ-5000. For example, PCR.NOVASEQ would select the sequence error model parametrised for a PCR library preparation and a NOVASEQ sequencer. If no sequencer is provided then the default is used (s
     max_idel_err: " --max-indel-errors 37 "  # 36   ##  12 for test 36 prod
