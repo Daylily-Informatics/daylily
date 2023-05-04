@@ -12,7 +12,7 @@
 
 ## Managed Analysis Service
 - Daylily Informatics offers a managed genomic analysis service where, depending on the analyses and TAT desired, you pay a per-sample fee for daylily to run the desired analysis.
-- The gist of the standard deployment can be reviewed [here](). 
+- The gist of the standard deployment can be reviewed [here](https://github.com/Daylily-Informatics/daylily/blob/main/README.md#managed-genomics-analysis-services). 
   
 - Please contact [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91) for further information.
 
