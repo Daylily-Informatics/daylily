@@ -5,7 +5,7 @@ The `results` [directory structure](../../docs/ops/tree_structure) is designed t
   
 The file naming convention is designed to allow straight forward integration of new aligners, deduplication, SNV/SV callers, and QC tools. Filenames are are unique w/in a batch, allowing working with files w/out namespace collision. Filenames will be unique across batches if run & experiment identifiers are manages appropriately when creating `analysis_manifese.csv` files to begin analysis batches. 
   
-  # Daylily Files
+  ## Daylily Annotate Dirs
   ```bash
   
   <pre>
@@ -220,3 +220,8 @@ The file naming convention is designed to allow straight forward integration of 
   ```
 
   
+# Daylily File Naming Scheme
+_Wildcards, `{}` in file names match the directory names above as appropriate._
+
+  - RUNID_ANALYSIS-ID-SAMPLE-ID_SEQBARCODEID_LANE.{sent,bwab}.{oct,sentd,deep}.snv.{,sort}.vcf
+    - where LANE is a 1+ integer lane ID, or if `0` implies input lane fastqs were combined to be processed as lane zero.
