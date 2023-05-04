@@ -41,25 +41,13 @@
    - The above is actually a compressed view of the jobs managed for a sample moving through this pipeline. This view is of the dag which properly reflects parallelized jobs.... think UFO.
    
      ![](docs/images/assets/ks_dag.png)
-   
-
-#### Final Batch QC Report Produced 
-  > this report is generated running the google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.
-   [MQC](docs/images/assets/MQC_example.html)
-
-### Performance Monitoring
-  > A significant amount of time was spent exploring tools, finding which environments they operated best within, and so on. I plan to use the [daylily blog](https://daylily-informatics.github.io/) to discuss some of the neat insigts I was granted during this process.
 
 
 ## [Daylily Design Principles](docs/ops/design_principles.md)
   > Daylily was built while drawing on over 20 years of experience in clinical genomics and informatics. [These](docs/ops/design_principles.md) principles were kept front and center while building this framework.
 
 
-
-<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
-
 ## Some Bioinformatics Bits, Brass Tacks
-
 
 ### 3 Pipelines: Performance, Fscores, Costs
   >  Users may choose among the pre-validated pipeline options, or may extend the framework to run custom pipelines. The Scientific workflow manager behind the scenes happens to be [snakemake](), but any workflow manager that integrates with slurm or aws batch can extend the framework.
@@ -75,15 +63,8 @@
 
 
 
-<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\
->
 
-<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
-
-
-
-<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\
->
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\>
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
@@ -92,13 +73,14 @@
 ### Daylily Framework, Further Details
 
 #### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8081/components/daylily_qc_reports/reports/DAY_final_multiqc.html)
-  > Partial view of html report, #1
+  > This report is generated running the google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
+  
     ![](docs/images/assets/day_qc_1.png)
     
-  > Partial view of html report, #2
     ![](docs/images/assets/day_qc_2.png)
     
-### Consistent + Easy To Navigate Results Directory & File Organization.
+    
+### Consistent + Easy To Navigate Results Directory & File Structure.
   > IMG OF TREE HERE
 
     
