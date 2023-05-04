@@ -1,4 +1,4 @@
-# DAYLILY
+# [DAYLILY](http://daylilyinformatics.com/)
 
 ## A Free, Fast(~60m) & Frugal($3.5 EC2) Multi-omics Analysis
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
