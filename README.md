@@ -27,8 +27,8 @@
   
 ![DEC_components_v2](https://user-images.githubusercontent.com/4713659/236144817-d9b26d68-f50b-423b-8e46-410b05911b12.png)
 
-# Managed Genomics Analysis Service
-The system is designed to be robust, secure, auditable, and should only take a matter of days to stand up. The data flow is as follows:
+# Managed Genomics Analysis Services
+The system is designed to be robust, secure, auditable, and should only take a matter of days to stand up. [Please contact me for further details](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91).
 
 
 ![daylily_managed_service](https://user-images.githubusercontent.com/4713659/236186668-6ea2ec81-9fe4-4549-8ed0-6fcbd4256dd4.png)
