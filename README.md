@@ -73,11 +73,11 @@
 ### Daylily Framework, Further Details
 
 #### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8081/components/daylily_qc_reports/reports/DAY_final_multiqc.html)
-  > This report is generated running the google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
-  
-    ![](docs/images/assets/day_qc_1.png)
-    
-    ![](docs/images/assets/day_qc_2.png)
+> This report is generated running the google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
+
+![](docs/images/assets/day_qc_1.png)
+
+![](docs/images/assets/day_qc_2.png)
     
     
 ### [Consistent + Easy To Navigate Results Directory & File Structure](/docs/ops/dir_and_file_scheme.md)
