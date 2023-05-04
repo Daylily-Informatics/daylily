@@ -12,7 +12,6 @@
 │   │   │   │   ├── mosdepth
 │   │   │   │   ├── norm_cov_eveness
 │   │   │   │   ├── picard
-│   │   │   │   │   └── picard
 │   │   │   │   └── qmap
 │   │   │   └── snv
 │   │   │       ├── deep
@@ -35,7 +34,6 @@
 │   │       │   ├── goleft
 │   │       │   ├── norm_cov_eveness
 │   │       │   ├── picard
-│   │       │   │   └── picard
 │   │       │   └── qmap
 │   │       └── snv
 │   │           ├── deep
