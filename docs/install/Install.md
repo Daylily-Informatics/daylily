@@ -13,6 +13,8 @@
   - With the above in hand, you are ready to move on (in the region `us-west-2`!) to initializing a DEC.
 
 ## Initializing a DEC
+[there is a video guide for reference](video_guide.md).
+
   > Install is tested from a MAC using zsh only.  This should also work from linux w/homebrew (or hack the install script to install the few brew installed deps). Edit the init script and swap zsh for bash if you prefer.
 
 ### To Watch This Install Process In (near) Real Time
