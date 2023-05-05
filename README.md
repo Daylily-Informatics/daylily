@@ -1,6 +1,6 @@
 # [DAYLILY](http://daylilyinformatics.com/)
 
-## Free, Fast(~60m) & Frugal($3.5 EC2) Multi-omics Analysis Framework
+## Free, Fast(~60m) & Frugal($3.63 EC2) Multi-omics Analysis Framework
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 30x FQ to SNVvcf at $3.50 EC2 costs, completes in ~60m & process thousannds of genomes an hour
 
@@ -57,19 +57,25 @@ The system is designed to be robust, secure, auditable, and should only take a m
 ## Some Bioinformatics Bits, Brass Tacks
 
 ### Three Pipelines: Performance, Fscores, Costs
-  >  Users may choose among the pre-validated pipeline options, or may extend the framework to run custom pipelines. The Scientific workflow manager behind the scenes happens to be [snakemake](), but any workflow manager that integrates with slurm or aws batch can extend the framework.
-
-  - Three validated pipelines are available. Two are comprised of fully open source tools, the third leverages hardware agnostic accelerated tools from Sentieon. The pipelines and average performance across the google brain 30x Novaseq fastqs for the 7 [giab]() samples are as follows:
+  >  Presented below are Fscores, runtime and costs to run 3 pipelines.  The results below are generatef from the google-brain 30x Novaseq fastqs for all 7 GIAB samples. These fastqs and an analysis_manifest are included in the daylily-references S3 bucket so you may run these samples to show concordance with these results. The tools chosen for inclusion in daylily have been heavily optimized for speed and accuracy. The reported results are the median across all 7 GIAB samples. Only Fscores are reported below, the exhaustive full resul set can be downloaded [here](). Costs are the average EC2 spot insance price to process fq.gz->snv.vcf per sample.
  
- 
- | Pipeline |   SNP fscore  |  INS fscore |  DEL fscore | Indel fscore |  e2e walltime |  e2e 128vcpu instance min | Avg EC2 Cost |
+ | Pipeline |   SNPts/SNPtv fscore  |  INS fscore |  DEL fscore | Indel fscore |  e2e walltime |  e2e 128vcpu instance min | Avg EC2 Cost |
  | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: |
- |   Sentieon BWA + DNAscope (BD) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost |
- |   BWA-MEM2 + Octopus (B2O) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost |
- |   BWA-MEM2 + Deepvariant (B2D) |  SNP fscore | INS fscore | DEL fscore | Indel fscore | e2e walltime | e2e 128vcpu instance min | Avg EC2 Cost |
+ |   Sentieon BWA + SentDeDup + DNAscope (BD) | 0.996 / 0.996 | 0.997\* | 0.997 | 0.998\* | 68m | 68m\* | $3.7^\* |
+ |   BWA-MEM2 + DpplDeDup + Octopus (B2O) | 0.994 / 0.992  | 0.991 | 0.971 | 0.800 | 72.4m | 273m | $12.92 |
+ |   BWA-MEM2 + DpplDeDup + Deepvariant (B2D) |  0.997 / 0.996\* | 0.996 | 0.998\* | 0.998\* | 67m\* | 163m | $8.96 |
+ 
+ > ^=s/w licensing required to run the sentieon tool
+ > *=highest value
 
 
+#### Complete View of Fscores By Sample, Class
 
+![](cc)
+
+#### Complete View of Rule Runtimes
+
+![]()
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\>
 
