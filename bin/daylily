@@ -231,12 +231,8 @@ pem_name=$(basename $pem_file | cut -d '.' -f 1);
 
 echo " "
 echo " "
-echo """Enter the s3 bucket url for the bucket with the daylily reference data present in the top level 'data' directory.  This will be used to init a FSX filesystem with the bucket data in the 'data' directory mounted for use by daylily.  This will appear on the head node and compute nodes as /fsx/data. On the FSX filesystem an analysis_results directory will be created where compute will happen.  ** THIS DATA MUST BE EXPORTED BACK TO THIS NAMED S3 BUCKET VIA THE FSX DASHBOARD... ONCE EXPORTED, A TOP LEVEL DIR NAMED 'FSX*DATESTAMP' WILL CONTAIN YOUR DATA YOU'VE TRIGGERED TO EXPORT.  THIS FSX VOLUME WILL BE DELETED WHEN THE CLUSTER IS SHUT DOWN OR DELETED __ which is important b/c you do not want to keep it hot and idle.. dollar dollar dollar bill."""
 
-echo "Enter S3 REFERENCE DATA bucket URL , and analysis_results, bucket .. see docs for setting this up."
-
-read s3_ref_data_bucket_url;
-
+s3_ref_data_bucket=bucket_url
 
 echo "Enter the ARN policy ID for the S3Bucket access, should look like 'arn:aws:iam::YOURACCOUNTID:policy/pclusterTagsAndBudget'."
 read arn_policy_id;
