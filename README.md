@@ -65,7 +65,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
  |   BWA-MEM2 + DpplDeDup + Octopus (B2O) | 0.994 / 0.992  | 0.991 | 0.971 | 0.800 | 72.4m | 273m | $12.92 |
  |   BWA-MEM2 + DpplDeDuo + Deepvariant (B2D) |  0.997 / 0.996\* | 0.996 | 0.998\* | 0.998\* | 67m\* | 163m | $8.96 |
      > ^=s/w licensing required to run the sentieon tool
-     > \*=highest value
+     > *=highest value
 
 
 
