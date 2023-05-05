@@ -71,11 +71,11 @@ The system is designed to be robust, secure, auditable, and should only take a m
 
 #### Complete View of Fscores By Sample, Class
 
-![](cc)
+![](docs/images/assets/ALL_fscore.png)
 
 #### Complete View of Rule Runtimes
 
-![]()
+![](docs/images/assets/ALL_bench.png)
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\>
 
