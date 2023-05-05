@@ -1,8 +1,0 @@
-REGSUB_REGION=us-west-2
-REGSUB_PUB_SUBNET=subnet-018d25d2f208a83a2
-REGSUB_KEYNAME=daylily
-REGSUB_S3_BUCKET_INIT=s3://daylily-ref
-REGSUB_S3_BUCKET_NAME=daylily-ref
-REGSUB_S3_IAM_POLICY=arn:aws:iam::670484050738:policy/pclusterTagsAndBudget
-REGSUB_PRIVATE_SUBNET=subnet-0aafeaa872d546fc4
-REGSUB_S3_BUCKET_REF=s3://daylily-reference-data

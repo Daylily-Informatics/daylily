@@ -44,9 +44,6 @@ echo " ";
 echo "The above string(not including the timestamp) is your public ssh key. Double click on the key string and it should all select w/out linebreaks. Save this ssh key in your github->settings->ssh and gpg keys->New SSH Key.  Once you have saved this on github, please type 'yes' to proceed.";
 read cont;
 
-# Way to auto register the key...
-#not working... more annoying than the above approach?
-#curl -H "Authorization: token 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" --data '{"title":"test-key-jem","key":"$git_key"}' https://api.github.com/user/keys
 
 if [[ "$cont" == "yes" || "$cont" == "y" ]]; then
     echo "continuing to headnode config.";
