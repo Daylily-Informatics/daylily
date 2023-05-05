@@ -1,6 +1,6 @@
 # [DAYLILY](http://daylilyinformatics.com/)
 
-## Free, Fast(~60m) & Frugal($3.5 EC2) Multi-omics Analysis Framework
+## Free, Fast(~60m) & Frugal($3.63 EC2) Multi-omics Analysis Framework
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 30x FQ to SNVvcf at $3.50 EC2 costs, completes in ~60m & process thousannds of genomes an hour
 
