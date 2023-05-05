@@ -69,6 +69,13 @@ The system is designed to be robust, secure, auditable, and should only take a m
  > *=highest value
 
 
+#### Complete View of Fscores By Sample, Class
+
+![](cc)
+
+#### Complete View of Rule Runtimes
+
+![]()
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p\>
 
