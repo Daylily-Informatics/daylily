@@ -64,6 +64,7 @@ rule sentieon_bwa_sort:
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.K} -t {threads} {params.huref} \
         <(zcat {input.f1} ) <(zcat {input.f2} ) \
+        | mbuffer -m 20G \
         |  sentieon util sort \
         --thread_count {threads} \
         --sortblock_thread_count {params.sort_threads} \
