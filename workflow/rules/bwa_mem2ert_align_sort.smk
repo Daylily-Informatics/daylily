@@ -78,6 +78,7 @@ rule bwa_mem2ert_aln_sort:
             -Z {params.huref} \
             {params.subsample_head} <( unpigz -c -q -- {input.f1} )   {params.subsample_tail} \
             {params.subsample_head} <( unpigz -c  -q -- {input.f2} )  {params.subsample_tail}  \
+            | mbuffer -m 20G \
             |  samtools sort -l 0  -m {params.sort_thread_mem}   \
             -@  {params.sort_threads} -T $tdir -O SAM - \
             |  samtools view -b -1  -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};

@@ -13,3 +13,4 @@ dependencies:
   - seqkit
   - seqfu
   - sambamba
+  - mbuffer
