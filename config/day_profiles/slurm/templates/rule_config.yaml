@@ -137,7 +137,7 @@ bwa_mem2ert_aln_sort:
     threads: 128
     bwa_threads: 128
     write_threads: 120
-    sort_threads: 8
+    sort_threads: 16
     partition: "i128-6"
     benchmark_runs: 0
     softclip_alts: " -Y "
@@ -148,7 +148,7 @@ bwa_mem2ert_aln_sort:
     K: " -K 1204800000 "  # -K 750900000150   "  # -K 250000000 -K 150000000=1M/2s
     glances: " "
     k: " -k 19 "
-    sort_thread_mem: "23G"
+    sort_thread_mem: "20G"
     numactl: "none"
     piped_align: "yes"
 
