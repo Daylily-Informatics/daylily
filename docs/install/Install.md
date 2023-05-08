@@ -2,11 +2,11 @@
 
 ## Pre-requisites
 
-  - Please see the [pre-requisite instructions](prereq.md) for guidance on gathering the information necessary to proceed with spinning up a DEC:
+  - Please see the [prerequisite instructions](prereq.md) for guidance on gathering the information necessary to proceed with spinning up a DEC:
     1. Github SSH Key Authorized
     2. AWS CLI Credentials
     3. AWS PEM File
-    4. Sufficent AWS Spot Quota Allowance
+    4. Sufficient AWS Spot Quota Allowance
     5. AWS VPC, Public/Private Subnet IDs
     6. AWS Cost Tracking Tagging Policy ARN
     7. A new S3 Bucket With The Daylily Ref & Cfg Data Copied To It
@@ -37,7 +37,7 @@
   source bin/daylily-init
   ```
   
-  - You will be prompted for the information you obtained in the prereq steps (it is fine to re-run this script for new DECs or to re-try a failed attempt).
+  - You will be prompted for the information you obtained in the prereq steps (it is fine to re-run this script for new DECs or to retry a failed attempt).
   - This script will:
       1. Install brew (if not detected).
       3. Install conda (if not detected).
@@ -60,11 +60,11 @@
       7. Once the DEC has completed successfully, you will move to the final config of the head node and be asked:
       8.  to enter the cluster name from the displayed list.
       9.  to answer yes to adding the newly created ip address to your known hosts.
-      10. A ssh key is created for the daylily user on the headnode, and is displayed to you.  You must now go to [github ssh and gpg keys](https://github.com/settings/keys) and enter this ssh key as a new key in your list of keys. This is the same process as described [here](https://github.com/Daylily-Informatics/daylily/blob/main/docs/install/prereq.md#local-ssh-key-stored-with-github-account).  Once the key is saved, type `yes` and hit enter.
-      11. The daylily user on the headnode will now have the final configuration executed.  This will take a few moments.  Once complete, you are ready to use the DEC. It will exit with the following output:
+      10. A ssh key is created for the daylily user on the head node, and is displayed to you.  You must now go to [github ssh and gpg keys](https://github.com/settings/keys) and enter this ssh key as a new key in your list of keys. This is the same process as described [here](https://github.com/Daylily-Informatics/daylily/blob/main/docs/install/prereq.md#local-ssh-key-stored-with-github-account).  Once the key is saved, type `yes` and hit enter.
+      11. The daylily user on the head node will now have the final configuration executed.  This will take a few moments.  Once complete, you are ready to use the DEC. It will exit with the following output:
      
     ```bash
-    You may now ssh into the headnode with : ssh -i /Users/$USERNAME/.ssh/$PEMNAME.pem centos@$IP-ADDRESS 
+    You may now ssh into the head node with : ssh -i /Users/$USERNAME/.ssh/$PEMNAME.pem centos@$IP-ADDRESS 
     ... once logged in, run : sudo su - daylily 
     ...... then as daylily run: cd projects/daylily; source dyinit; dy-a local && dy-r help 
     ```
@@ -73,7 +73,7 @@
 
 
 ### Accessing and Testing Your DEC
-  1. Determine your DEC public headnode IP address
+  1. Determine your DEC public head node IP address
   
   ```bash
   conda activate DAYCLI
@@ -117,16 +117,16 @@
   dy-a local
   
   # run the included test data
-  dy-r produce_snv_concordances -p -n # the -n runs a dryrun, its good form to run any command with this flag first.
+  dy-r produce_snv_concordances -p -n # the -n runs a dry run, its good form to run any command with this flag first.
   ```
   - The output of this command will print the commands and execution plan (which will run locally) and will look like this:
   ![](../../docs/images/assets/DEC_execution_plan.png)
   
-  - To run locallly, re-run the previous command minus the `-n`:
+  - To run locally, re-run the previous command minus the `-n`:
   ```bash
   dy-r produce_snv_concordances -p 
   ```
-  - This will run a small test data set (~0.01x WGS) on the 16core headnode.  Execution will take ~5min in general. The first time the headnode runs daylily, requested environments will need to be built (only the for the first job for each new DEC). This will add ~5m to the first job.
+  - This will run a small test data set (~0.01x WGS) on the 16core head node.  Execution will take ~5min in general. The first time the head node runs daylily, requested environments will need to be built (only for the first job for each new DEC). This will add ~5m to the first job.
 
   3. To run this test data launching cluster jobs via slurm:
   ```bash
@@ -165,10 +165,10 @@ bin/helpers/watch_slurm.sh
    - ![](../../docs/images/assets/day_aws_tagged_costs_by_hour_project.png)
 
 ### Shutting Down a DEC
-  - DECs may be created on demand in roughly 20m.  Depending on your needs, the DEC will probably be shutdown when not needed. To do so, follow these steps:
+  - DECs may be created on demand in roughly 20m.  Depending on your needs, the DEC will probably be shut down when not needed. To do so, follow these steps:
     - *FIRST* 
     > **Warning**
-    > Be very certain you have exported the Fsx filesystem `analysis_results` directory back to the S3 bucket!!! When you delete the DEC, the Fsx filestem will be deleted.  Any unsaved data will be lost.
+    > Be very certain you have exported the Fsx file system `analysis_results` directory back to the S3 bucket!!! When you delete the DEC, the Fsx filesystem will be deleted.  Any unsaved data will be lost.
     - _*Second*_, you exported the Fsx filesystem, and the export job completed, correct?  ( [see the end of the S3 prereq instructions for pointers on exporting](prereq.md) ).
     - _third_, find the cluster you wish to delete:
       ```bash
@@ -185,3 +185,5 @@ bin/helpers/watch_slurm.sh
       conda activate DAYCLI;
       pcluster list-clusters;
       ```
+
+
