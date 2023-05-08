@@ -85,9 +85,9 @@ The system is designed to be robust, secure, auditable, and should only take a m
 
 ### Daylily Framework, More
 
-#### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8081/components/daylily_qc_reports/reports/DAY_final_multiqc.html)
+#### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html)
 > Batch comprised of google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
-
+[Example report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html).
 ![](docs/images/assets/day_qc_1.png)
 
 ![](docs/images/assets/day_qc_2.png)
