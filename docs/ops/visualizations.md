@@ -24,5 +24,5 @@ Snakemake will generate a report when a job has completed that visualizes the ru
 # QC Reports!
 Daylily will generate exhaustive QC reports for samples run in the same batch. When an analysis_manifest specifies multiple samples, and the kitchen sink pipeline is run, the final step will produce the following multiqc report.
   - `dy-r produce_multiqc_final_wgs -p`
-  produces for NA002 at 30x, 25x, 20x, 15x, 10x, 5x, 1.4x [the following report](../../docs/reports/downsampled_hg002_mqc.html).
+  produces for NA002 at 30x, 25x, 20x, 15x, 10x, 5x, 1.4x [the following report]((http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html).
   
