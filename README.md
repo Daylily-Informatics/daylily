@@ -63,7 +63,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
  | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: |
  |   Sentieon BWA + SentDeDup + DNAscope (BD) | 0.996 / 0.996 | 0.997\* | 0.997 | 0.998\* | 61m | 68m\* | $3.34^\*1 - 128vcpu|
  |   BWA-MEM2 + DpplDeDup + Octopus (B2O) | 0.994 / 0.992  | 0.991 | 0.971 | 0.800 | 72.4m | 273m | $12.92 - various vcpu|
- |   BWA-MEM2 + DpplDeDup + Deepvariant (B2D) |  0.997 / 0.996\* | 0.996 | 0.998\* | 0.998\* | 57m\* | 156m | $8.69 - 128 vcpu|
+ |   BWA-MEM2 + DpplDeDup + Deepvariant (B2D) |  0.997 / 0.996\* | 0.996 | 0.998\* | 0.998\* | 57m\* | 156m | $8.54 - 128 vcpu|
  
  > ^=s/w licensing required to run the sentieon tool
  > *=highest value
