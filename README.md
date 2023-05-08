@@ -2,13 +2,13 @@
 
 ## Free, Fast(~60m) & Frugal($3.63 EC2) Multi-omics Analysis Framework
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
-30x FQ to SNVvcf at $3.50 EC2 costs, completes in ~60m & process thousannds of genomes an hour
+30x FQ to SNVvcf at $3.50 EC2 costs, completes in ~60m & process thousands of genomes an hour
 
 - _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
-- Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliablay and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
+- Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliably and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
 
-- Daylily is open source and free to use(excepting the fastest pipline)! I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
+- Daylily is open source and free to use(excepting the fastest pipeline)! I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
 
   > **Note**
   > [Daylily Informatics](http://daylilyinformatics.com/) is available for consulting services to integrate daylily into your operations, migrate pipelines into this framework, or optimize existing pipelines. [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91)
@@ -26,7 +26,7 @@
 
 # General Components Overview
 
-  > Before even getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserve special thanks.
+  > Before even getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserves special thanks.
   
 ![DEC_components_v2](https://user-images.githubusercontent.com/4713659/236144817-d9b26d68-f50b-423b-8e46-410b05911b12.png)
 
@@ -57,7 +57,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 ## Some Bioinformatics Bits, Brass Tacks
 
 ### Three Pipelines: Performance, Fscores, Costs
-  >  Presented below are Fscores, runtime and costs to run 3 pipelines.  The results below are generatef from the google-brain 30x Novaseq fastqs for all 7 GIAB samples. These fastqs and an analysis_manifest are included in the daylily-references S3 bucket so you may run these samples to show concordance with these results. The tools chosen for inclusion in daylily have been heavily optimized for speed and accuracy. The reported results are the median across all 7 GIAB samples. Only Fscores are reported below, the exhaustive full resul set can be downloaded [here](). Costs are the average EC2 spot insance price to process fq.gz->snv.vcf per sample.
+  >  Presented below are Fscores, runtime and costs to run 3 pipelines.  The results below are generated from the google-brain 30x Novaseq fastqs for all 7 GIAB samples. These fastqs and an analysis_manifest are included in the daylily-references S3 bucket so you may run these samples to show concordance with these results. The tools chosen for inclusion in daylily have been heavily optimized for speed and accuracy. The reported results are the median across all 7 GIAB samples. Only Fscores are reported below, the exhaustive full result set can be downloaded [here](). Costs are the average EC2 spot instance price to process fq.gz->snv.vcf per sample.
  
  | Pipeline |   SNPts/SNPtv fscore  |  INS fscore |  DEL fscore | Indel fscore |  e2e walltime |  e2e instance min | Avg EC2 Cost |
  | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: |
@@ -86,7 +86,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 ### Daylily Framework, More
 
 #### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html)
-> Batch comprised of google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
+> The batch is comprised of google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
 [Example report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html).
 ![](docs/images/assets/day_qc_1.png)
 
@@ -100,7 +100,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
      - [with files](docs/ops/tree_full.md   
     
 ### [Automated Concordance Analysis Table](http://daylilyinformatics.com:8081/components/daylily_qc_reports/other_reports/giabhcr_concordance_mqc.tsv)
-  > Reported fasceted by: SNPts, SNPtv, INS>0-<51, DEL>0-51, Indel>0-<51.
+  > Reported faceted by: SNPts, SNPtv, INS>0-<51, DEL>0-51, Indel>0-<51.
   > Generated when the correct info is set in the analysis_manifest.
 
 
@@ -120,7 +120,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
   
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
-# Coming Sooner Than Latter
+# Coming Sooner Than Later
 - [snakemake github action](https://github.com/snakemake/snakemake-github-action) tests.
 - Structural Variant Calling Concordance Analysis For The SV Callers:
   - Manta
@@ -166,3 +166,5 @@ The system is designed to be robust, secure, auditable, and should only take a m
 # [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
 
 _named in honor of Margaret Oakley Dahoff_
+
+
