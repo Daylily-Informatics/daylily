@@ -107,7 +107,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 #### [Performance Monitoring Reports]()
   > Picture and  list of tools
 
-#### [Observability w/CloudWatch Dashboard)[https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#]
+#### [Observability w/CloudWatch Dashboard](https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#)
   > ![](docs/images/assets/cloudwatch.png)
   > ![](/docs/images/assets.cloudwatch_2.png)
   > ![](/docs/images/assets.cloudwatch3.png)
