@@ -34,7 +34,7 @@ rule bwa_mem2meme_aln_sort:
         k=get_bwa_kmer_size,
         K=config["bwa_mem2meme_aln_sort"]["K"],
         sort_thread_mem=config["bwa_mem2meme_aln_sort"]["sort_thread_mem"],
-        huref=config["supporting_files"]["files"]["huref"]["bwa_mem_index_fast"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["bwa_mem_index_meme"]["name"],
         lib=" "
         if "lib" not in config["bwa_mem2meme_aln_sort"]
         else config["bwa_mem2meme_aln_sort"]["lib"],
