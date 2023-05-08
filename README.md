@@ -6,12 +6,12 @@
 
 - _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
-- Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliably and at massive scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
+- Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliably and at scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
 
-- Daylily is open source and free to use(excepting the fastest pipeline)! I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
+- Daylily is open source and free to use(excepting the Sentieon pipeline)! I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
 
   > **Note**
-  > [Daylily Informatics](http://daylilyinformatics.com/) is available for consulting services to integrate daylily into your operations, migrate pipelines into this framework, or optimize existing pipelines. [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91)
+  > [Daylily Informatics](http://daylilyinformatics.com/) is available for consulting services to integrate daylily into your operations, migrate pipelines into this framework, optimize existing pipelines, or general informatics work. [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91)
 
 ## Managed Analysis Service
 - Daylily Informatics offers a managed genomic analysis service where, depending on the analyses and TAT desired, you pay a per-sample fee for daylily to run the desired analysis.
@@ -26,7 +26,7 @@
 
 # General Components Overview
 
-  > Before even getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserves special thanks.
+  > Before getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 spot instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserves special thanks.
   
 ![DEC_components_v2](https://user-images.githubusercontent.com/4713659/236144817-d9b26d68-f50b-423b-8e46-410b05911b12.png)
 
@@ -45,7 +45,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 
    ![](docs/images/assets/ks_rg.png)
    
-   - The above is actually a compressed view of the jobs managed for a sample moving through this pipeline. This view is of the dag which properly reflects parallelized jobs.... think UFO.
+   - The above is actually a compressed view of the jobs managed for a sample moving through this pipeline. This view is of the dag which properly reflects parallelized jobs.
    
      ![](docs/images/assets/ks_dag.png)
 
@@ -57,13 +57,13 @@ The system is designed to be robust, secure, auditable, and should only take a m
 ## Some Bioinformatics Bits, Brass Tacks
 
 ### Three Pipelines: Performance, Fscores, Costs
-  >  Presented below are Fscores, runtime and costs to run 3 pipelines.  The results below are generated from the google-brain 30x Novaseq fastqs for all 7 GIAB samples. These fastqs and an analysis_manifest are included in the daylily-references S3 bucket so you may run these samples to show concordance with these results. The tools chosen for inclusion in daylily have been heavily optimized for speed and accuracy. The reported results are the median across all 7 GIAB samples. Only Fscores are reported below, the exhaustive full result set can be downloaded [here](). Costs are the average EC2 spot instance price to process fq.gz->snv.vcf per sample.
+  >  Presented below are Fscores, runtime and costs to run 3 pipelines.  The results below are generated from the google-brain 30x Novaseq fastqs for all 7 GIAB samples. These fastqs and an analysis_manifest are included in the daylily-references S3 bucket so you may run these samples to show concordance with results shown here. The tools chosen for inclusion in daylily have been heavily optimized for speed and accuracy. The reported results are the median across all 7 GIAB samples. Only Fscores are reported below, the exhaustive full result set can be downloaded [here](). Costs are the average EC2 spot instance price to process fq.gz->snv.vcf per sample.
  
  | Pipeline |   SNPts/SNPtv fscore  |  INS fscore |  DEL fscore | Indel fscore |  e2e walltime |  e2e instance min | Avg EC2 Cost |
  | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: |
- |   Sentieon BWA + SentDeDup + DNAscope (BD) | 0.996 / 0.996 | 0.997\* | 0.997 | 0.998\* | 68m | 68m\* | $3.7^\* - 128vcpu|
+ |   Sentieon BWA + SentDeDup + DNAscope (BD) | 0.996 / 0.996 | 0.997\* | 0.997 | 0.998\* | 61m | 68m\* | $3.7^\* - 128vcpu|
  |   BWA-MEM2 + DpplDeDup + Octopus (B2O) | 0.994 / 0.992  | 0.991 | 0.971 | 0.800 | 72.4m | 273m | $12.92 - various vcpu|
- |   BWA-MEM2 + DpplDeDup + Deepvariant (B2D) |  0.997 / 0.996\* | 0.996 | 0.998\* | 0.998\* | 64m\* | 159m | $8.69 - 128 vcpu|
+ |   BWA-MEM2 + DpplDeDup + Deepvariant (B2D) |  0.997 / 0.996\* | 0.996 | 0.998\* | 0.998\* | 57m\* | 156m | $8.69 - 128 vcpu|
  
  > ^=s/w licensing required to run the sentieon tool
  > *=highest value
@@ -83,7 +83,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 
 
 
-### Daylily Framework, More
+### Daylily Framework, Cont.
 
 #### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html)
 > The batch is comprised of google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
@@ -127,7 +127,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
   - TIDDIT
   - Svaba
   - Dysgu
-  - Octopus (which is a fantastic small SV caller!)
+  - Octopus (which is a good small SV caller)
 - Annotation of SNV / SV `vcf` files with potentially clinically relevant info (VEP is in testing).
 - Document the steps to quickly re-run the 7 30x GIAB samples from scratch.
 - Explore hybrid assemblies using short and long reads (ONT + PacBio).
