@@ -35,9 +35,9 @@ active_s_v_callers:
 
 # #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
 active_aligners:
-    - bwa2b:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
+    - bwa2m:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
           mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
-#    - sent:
+#    - bwa2a:
 #           mkdup: dppl
 #    - bwa2b:
 #          mkdup: dppl
