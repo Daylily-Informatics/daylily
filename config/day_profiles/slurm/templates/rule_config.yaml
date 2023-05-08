@@ -132,8 +132,8 @@ bwa_mem2a_aln_sort:
     numactl: "none"
     piped_align: "no"
 
-bwa_mem2ert_aln_sort:
-    env_yaml: "../envs/bwasamtools_v0.1.yaml"
+bwa_mem2meme_aln_sort:
+    env_yaml: "../envs/bwa_mem2_meme_b_v0.1.yaml"
     threads: 128
     bwa_threads: 128
     write_threads: 120

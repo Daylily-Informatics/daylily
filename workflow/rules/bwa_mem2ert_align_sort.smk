@@ -1,12 +1,6 @@
 ####### BWA MEM2 -- Version radix-tree
 #
-# An accelerated version of BWA MEM
-# bwa-mem being the defactor standard mapper/aligner
-#
-# OG BWAMEM: https://github.com/lh3/bwa
-#    A bit more: https://informatics.fas.harvard.edu/short-introduction-to-bwa.html
-#       bwa requires large pre-computed indexes for the reference genome it works with
-#        these indexes have been pre-generated and are part of the suporting data.
+# An accelerated version of BWA MEM2
 
 
 rule bwa_mem2ert_aln_sort:

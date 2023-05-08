@@ -1,15 +1,5 @@
-####### BWA MEM2 -- 2 versions!
-# Alert: Process Substitution Ahead: https://en.wikipedia.org/wiki/Process_substitution
-#
+####### BWA MEM2 
 # An accelerated version of BWA MEM
-# bwa-mem being the defactor standard mapper/aligner
-#
-# OG BWAMEM: https://github.com/lh3/bwa
-#    A bit more: https://informatics.fas.harvard.edu/short-introduction-to-bwa.html
-#       bwa requires large pre-computed indexes for the reference genome it works with
-#        these indexes have been pre-generated and are part of the suporting data.
-#
-
 
 rule bwa_mem2_sort:
     """https://github.com/bwa-mem2/bwa-mem2"""
