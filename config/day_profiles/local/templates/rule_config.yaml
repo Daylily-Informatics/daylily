@@ -134,9 +134,33 @@ bwa_mem2a_aln_sort:
     orig_sort_mem: "1G"
     sort_thread_mem: "1G"  # 1350M
     numactl: ""
-    piped_align: "no"
 
 bwa_mem2ert_aln_sort:
+    env_yaml: "../envs/bwa_mem2_meme_b_v0.1.yaml"
+    threads: 12
+    bwa_threads: 12
+    orig_other_threads: 2
+    other_threads: 2
+    orig_write_threads: 2
+    write_threads: 2
+    orig_short_threads: 2
+    ldpre: ""
+    sort_threads: 2
+    partition: "i128-6"
+    benchmark_runs: 0
+    softclip_alts: " -Y "
+    lib: " "
+    ld_p re: " "  # https://microsoft.github.io/mimalloc/environment.html
+    cmd: " resources/ert/bwa-meme "
+    K: " -K 1260000000 "  # -K 750900000150   "  # -K 250000000 -K 150000000=1M/2s
+    glances: " "
+    k: " -k 19 "
+    orig_sort_mem: "2G"
+    sort_thread_mem: "2G"
+    numactl: ""
+
+
+bwa_mem2meme_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     threads: 12
     bwa_threads: 12
@@ -159,31 +183,6 @@ bwa_mem2ert_aln_sort:
     orig_sort_mem: "2G"
     sort_thread_mem: "2G"
     numactl: ""
-    piped_align: "yes"
-
-
-bwa_mem2c_aln_sort:
-    env_yaml: "../envs/bwa_mem2_meme_b_v0.1.yaml"
-    threads: 96
-    orig_other_threads: 250
-    other_threads: 250
-    orig_write_threads: 110
-    write_threads: 110
-    orig_sort_threads: 96
-    sort_threads: 96
-    benchmark_runs: 0
-    softclip_alts: " -Y "
-    lib: " "
-    ld_preload: " MIMALOC_DECOMMIT_DELAY=40 MIMALLOC_RESERVE_OS_MEMORY=1 MIMALLOC_LIMIT_OS_ALLOC=0 MIMALLOC_ABANDONED_PAGE_DECOMMIT=1 MIMALLOC_MAX_ERRORS=16 MIMALLOC_MAX_WARNINGS=16  MIMALLOC_SHOW_STATS=1 MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1 MIMALLOC_PAGE_RESET=1  MIMALLOC_RESERVE_HUGE_OS_PAGES_AT=0 MIMALLOC_RESERVE_HUGE_OS_PAGES=1 MIMALLOC_LARGE_OS_PAGES=1 MIMALLOC_USE_NUMA_NODES=1 MIMALLOC_RESET_DELAY=40   env LD_PRELOAD=./resources/bwa-mem2-mimalloc/mimalloc/libmimalloc.so.2 "
-    cmd: "  bwa-meme "
-    K: "  -K 199900000150  "  # -K 600000000 "  # -K 600000000 "  # -K 600000000  "   # -K 250000000
-    glances: " "
-    k: " -k 19 "
-    orig_sort_mem: "3125M"
-    thread_mem: "3125M"
-    numactl: ""
-    piped_align: "yes"
-    partition: "i32-5"
 
 clean:
     env_yaml: "envs/vanilla_v0.1.yaml"  # no ./../ b/c it's being referenced from Snakefile
