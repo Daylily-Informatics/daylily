@@ -151,7 +151,7 @@ bwa_mem2ert_aln_sort:
     softclip_alts: " -Y "
     lib: " "
     ld_p re: " "  # https://microsoft.github.io/mimalloc/environment.html
-    cmd: " bwa-meme "
+    cmd: " resources/ert/bwa "
     K: " -K 1260000000 "  # -K 750900000150   "  # -K 250000000 -K 150000000=1M/2s
     glances: " "
     k: " -k 19 "
@@ -176,7 +176,7 @@ bwa_mem2meme_aln_sort:
     softclip_alts: " -Y "
     lib: " "
     ld_p re: " "  # https://microsoft.github.io/mimalloc/environment.html
-    cmd: " resources/ert/bwa-mem2 "
+    cmd: " bwa-meme "
     K: " -K 1260000000 "  # -K 750900000150   "  # -K 250000000 -K 150000000=1M/2s
     glances: " "
     k: " -k 19 "

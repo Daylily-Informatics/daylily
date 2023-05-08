@@ -30,7 +30,7 @@ rule bwa_mem2meme_aln_sort:
         sort_threads=config["bwa_mem2meme_aln_sort"]["sort_threads"],  # eval( "lambda wildcards, input,threads, attempt:  int(attempt/attempt * config['bwa_mem2meme_aln_sort']['sort_threads'] if attempt < 2 else 44)"),
         benchmark_runs=config["bwa_mem2meme_aln_sort"]["softclip_alts"],
         softclip_alts=config["bwa_mem2meme_aln_sort"]["softclip_alts"],
-        bwa_mem2b_cmd=config["bwa_mem2meme_aln_sort"]["cmd"],
+        bwa_mem2m_cmd=config["bwa_mem2meme_aln_sort"]["cmd"],
         k=get_bwa_kmer_size,
         K=config["bwa_mem2meme_aln_sort"]["K"],
         sort_thread_mem=config["bwa_mem2meme_aln_sort"]["sort_thread_mem"],
@@ -63,7 +63,7 @@ rule bwa_mem2meme_aln_sort:
 
         unset LD_PRELOAD;
 
-        {params.ldpre} {params.bwa_mem2b_cmd}  mem  \
+        {params.ldpre} {params.bwa_mem2m_cmd}  mem  \
            -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
             {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  \
             -7 {params.huref} \
