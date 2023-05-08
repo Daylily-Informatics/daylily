@@ -48,7 +48,6 @@ rule bwa_mem2_sort:
         subsample_head=get_subsample_head,
         subsample_tail=get_subsample_tail,
         bwa_threads=config["bwa_mem2a_aln_sort"]["bwa_threads"],
-        piped_align=config["bwa_mem2a_aln_sort"]['piped_align'],
         samp=get_samp_name,
     conda:
         config["bwa_mem2a_aln_sort"]["env_yaml"]
