@@ -161,7 +161,7 @@ bwa_mem2ert_aln_sort:
 
 
 bwa_mem2meme_aln_sort:
-    env_yaml: "../envs/bwasamtools_v0.1.yaml"
+    env_yaml: "../envs/bwa_mem2_meme_b_v0.1.yaml"
     threads: 12
     bwa_threads: 12
     orig_other_threads: 2
