@@ -1,8 +1,8 @@
 # [DAYLILY](http://daylilyinformatics.com/) _v0.2.0-candidate_
 
-## Free, Fast(~60m) & Frugal(from $3.52 EC2)\^1 Multi-omics Analysis Framework
+## Free, Fast(~60m) & Frugal(from $3.34 EC2)\^1 Multi-omics Analysis Framework
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
-30x FQ to SNVvcf at $3.52 EC2 costs, completes in 57m & process thousands of genomes an hour
+30x `fastq` to SNV`vcf` at $3.34 EC2 costs, completes in 57m & process thousands of genomes an hour
 
 - _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
@@ -61,7 +61,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
  
  | Pipeline |   SNPts/SNPtv fscore  |  INS fscore |  DEL fscore | Indel fscore |  e2e walltime |  e2e instance min | Avg EC2 Cost |
  | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: |
- |   Sentieon BWA + SentDeDup + DNAscope (BD) | 0.996 / 0.996 | 0.997\* | 0.997 | 0.998\* | 61m | 68m\* | $3.7^\*1 - 128vcpu|
+ |   Sentieon BWA + SentDeDup + DNAscope (BD) | 0.996 / 0.996 | 0.997\* | 0.997 | 0.998\* | 61m | 68m\* | $3.34^\*1 - 128vcpu|
  |   BWA-MEM2 + DpplDeDup + Octopus (B2O) | 0.994 / 0.992  | 0.991 | 0.971 | 0.800 | 72.4m | 273m | $12.92 - various vcpu|
  |   BWA-MEM2 + DpplDeDup + Deepvariant (B2D) |  0.997 / 0.996\* | 0.996 | 0.998\* | 0.998\* | 57m\* | 156m | $8.69 - 128 vcpu|
  
