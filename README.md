@@ -57,7 +57,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 ## Some Bioinformatics Bits, Brass Tacks
 
 ### Three Pipelines: Performance, Fscores, Costs
-  >  Presented below are Fscores, runtime and costs to run 3 pipelines.  The results below are generated from the google-brain 30x Novaseq fastqs for all 7 GIAB samples. These fastqs and an analysis_manifest are included in the daylily-references S3 bucket so you may run these samples to show concordance with results shown here. The tools chosen for inclusion in daylily have been heavily optimized for speed and accuracy. The reported results are the median across all 7 GIAB samples. Only Fscores are reported below, the exhaustive full result set can be downloaded [here](). Costs are the average EC2 spot instance price to process fq.gz->snv.vcf per sample.
+  >  Presented below are Fscores, runtime and costs to run 3 pipelines.  The results below are generated from the google-brain 30x Novaseq fastqs for all 7 GIAB samples. These fastqs and an analysis_manifest are included in the daylily-references S3 bucket so you may run these samples to show concordance with results shown here. The tools chosen for inclusion in daylily have been heavily optimized for speed and accuracy. The reported results are the median across all 7 GIAB samples. Costs are the average EC2 spot instance price to process fq.gz->snv.vcf per sample.
  
  | Pipeline |   SNPts/SNPtv fscore  |  INS fscore |  DEL fscore | Indel fscore |  e2e walltime |  e2e instance min | Avg EC2 Cost |
  | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: | :--------------: | :-------------: | :-------------: |
