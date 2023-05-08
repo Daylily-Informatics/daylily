@@ -8,7 +8,7 @@
 
 - Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliably and at scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
 
-- Daylily is open source and free to use(excepting the Sentieon pipeline)! I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
+- Daylily is open source and free to use(excepting the Sentieon pipeline licensing fees which will be added to that pipeline). I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
 
   > **Note**
   > [Daylily Informatics](http://daylilyinformatics.com/) is available for consulting services to integrate daylily into your operations, migrate pipelines into this framework, optimize existing pipelines, or general informatics work. [daylily@daylilyinformatics.com](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91)
