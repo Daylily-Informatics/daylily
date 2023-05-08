@@ -112,7 +112,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
   > ![](/docs/images/assets.cloudwatch_2.png)
   > ![](/docs/images/assets.cloudwatch3.png)
 
-#### [Cost Tracking and Budget Enforcement])(https://aws.amazon.com/blogs/compute/using-cost-allocation-tags-with-aws-parallelcluster/)
+#### [Cost Tracking and Budget Enforcement](https://aws.amazon.com/blogs/compute/using-cost-allocation-tags-with-aws-parallelcluster/)
   > ![](https://d2908q01vomqb2.cloudfront.net/1b6453892473a467d07372d45eb05abc2031647a/2020/07/23/Billing-console-projects-grouping.png)
   - ![](docs/images/assets/costs1.png)
   - ![](docs/images/assets/costs2.png)
