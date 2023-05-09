@@ -69,7 +69,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
  > *=highest value
 
 
-#### Complete View of Fscores By Sample, Class
+#### Complete View of Fscores By Sample, Variant Caller & SNV Class
 
 ![](docs/images/assets/ALL_fscore.png)
 
