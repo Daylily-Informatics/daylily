@@ -1,4 +1,5 @@
-# [DAYLILY](http://daylilyinformatics.com/) _v0.2.0-candidate_
+# [DAYLILY](http://daylilyinformatics.com/) 
+_v0.2.0-candidate_
 
 ## Free, Fast(~60m) & Frugal(from $3.34 EC2)\^1 Multi-omics Analysis Framework
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
