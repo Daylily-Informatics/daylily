@@ -292,6 +292,7 @@ include: "rules/sentieon_minimap2.smk"
 include: "rules/smn12Caller.smk"
 include: "rules/svaba.smk"
 include: "rules/tiddit.smk"
+include: "rules/vep.smk"
 include: "rules/verifybamid2_contam.smk"
 include: "rules/workflow_staging.smk"
 
