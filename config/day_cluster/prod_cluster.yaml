@@ -271,4 +271,4 @@ Tags:  # TAGs necessary for per-user/project/job cost tracking
   - Key: aws-parallelcluster-jobid
     Value: NA
   - Key: aws-parallelcluster-project
-    Value: NA
+    Value: NA 
