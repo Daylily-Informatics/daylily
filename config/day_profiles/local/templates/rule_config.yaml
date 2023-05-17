@@ -533,3 +533,8 @@ seqfu:
     env_yaml: "../envs/fastqc_v0.1.yaml"
     ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
     partition: "i32-5"
+
+vep:
+    threads: 32
+    partition: "i32-5,i64-5,i96-5"
+    
