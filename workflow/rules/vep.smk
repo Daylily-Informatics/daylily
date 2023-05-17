@@ -25,13 +25,15 @@ rule vep:
         cluster_sample=ret_sample,
         genome_build="GRCh37" if 'b37' in config['genome_build'] else "GRCh38",
         huref=config["supporting_files"]["files"]["huref"]["bwa_mem_index_vanilla"]["name"],
-        vep_cache=config["supporting_files"]["files"]["vep"]["vep_cache"],
+        vep_cache=config["supporting_files"]["files"]["vep"]["vep_cache"]['name'],
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.{snv}.vep.bench.tsv"
     container:
         "docker://ensemblorg/ensembl-vep:release_109.3"
     shell:
         """
+        mkdir -p resources/vep;
+        ln -s {params.huref} resources/vep/;
         vep \
          --cache \
          --dir {params.vep_cache} \
