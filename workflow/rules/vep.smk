@@ -1,8 +1,8 @@
 0#### ENSEMBL VEP
 # -------------------------------------
 # github: https://github.com/Ensembl/ensembl-vep
-# docker: https://hub.docker.com/r/ensemblorg/ensembl-vep
- docker://ensemblorg/ensembl-vep
+# docker: https://hub.docker.com/r/ensemblorg/ensembl-vep:release_109.3
+
 
 rule vep:
     input:
@@ -28,8 +28,6 @@ rule vep:
         vep_cache=config["supporting_files"]["files"]["vep"]["vep_cache"],
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.{snv}.vep.bench.tsv"
-    container:
-        None
     container:
         "docker://ensemblorg/ensembl-vep:release_109.3"
     shell:
