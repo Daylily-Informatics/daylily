@@ -3,7 +3,7 @@
 
 import sys
 import argparse
-import pyvcf
+import vcf as pyvcf
 import requests
 
 # Define the ACMG guidelines
@@ -39,11 +39,15 @@ ACMG_GUIDELINES = {
 
 def annotate_vcf(input_vcf, output_vcf):
     vcf_reader = pyvcf.Reader(open(input_vcf, 'r'))
+
+    print(input_vcf, output_vcf)
     vcf_writer = pyvcf.Writer(open(output_vcf, 'w'), vcf_reader)
 
     # Iterate through each variant in the input VCF file
     for record in vcf_reader:
         info = record.INFO
+        from IPython import embed
+        embed()
         variant = info['ANN'][0]
         
         # Annotate the variant according to the ACMG guidelines
