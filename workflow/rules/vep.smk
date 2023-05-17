@@ -10,7 +10,7 @@ rule vep:
         + "{sample}/align/{alnr}/snv/{snv}/{sample}.{alnr}.{snv}.snv.sort.vcf.gz",
     output:
         ovcfgz=MDIR
-        + "{sample}/align/{alnr}/snv/{snv}/vep/{sample}.{alnr}.{snv}.vep.vcf.gz",
+        + "{sample}/align/{alnr}/snv/{snv}/vep/{sample}.{alnr}.{snv}.vep.vcf",
         done=touch(MDIR
         + "{sample}/align/{alnr}/snv/{snv}/vep/{sample}.{alnr}.{snv}.vep.done"),
     log:
@@ -24,7 +24,7 @@ rule vep:
     params:
         cluster_sample=ret_sample,
         genome_build="GRCh37" if 'b37' in config['genome_build'] else "GRCh38",
-        huref=config["supporting_files"]["files"]["huref"]["bwa_mem_index_vanilla"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         vep_cache=config["supporting_files"]["files"]["vep"]["vep_cache"]['name'],
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.{snv}.vep.bench.tsv"
@@ -32,19 +32,19 @@ rule vep:
         "docker://ensemblorg/ensembl-vep:release_109.3"
     shell:
         """
-        mkdir -p resources/vep;
-        ln -s {params.huref} resources/vep/;
+        mkdir -p resources/vep/{params.cluster_sample};
+        (ln -s {params.huref}* resources/vep/{params.cluster_sample} || echo 'huref link exists') > {log};
         vep \
          --cache \
          --dir {params.vep_cache} \
          -i {input.vcfgz} \
          -o {output.ovcfgz} \
-         --fasta {params.huref} \
+         --fasta resources/vep/{params.cluster_sample}/$(basename {params.huref}) \
          --species homo_sapiens \
          --assembly {params.genome_build} \
          --offline \
          --vcf \
-         --fork 64 > {log};
+         --fork 64 >> {log};
         """
 
 
