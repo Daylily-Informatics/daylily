@@ -8,57 +8,59 @@ rule vep:
     input:
         vcfgz=MDIR
         + "{sample}/align/{alnr}/snv/{snv}/{sample}.{alnr}.{snv}.snv.sort.vcf.gz",
-        # Generalize this for other var callers
     output:
         prefix=MDIR
-        + "{sample}/align/{alnr}/snv/{snv}/peddy/{sample}.{alnr}.{snv}.peddy.",
+        + "{sample}/align/{alnr}/snv/{snv}/vep/{sample}.{alnr}.{snv}.vep.vcf.gz",
         done=MDIR
-        + "{sample}/align/{alnr}/snv/{snv}/peddy/{sample}.{alnr}.{snv}.peddy.done",
+        + "{sample}/align/{alnr}/snv/{snv}/vep/{sample}.{alnr}.{snv}.vep.done",
     log:
         MDIR
-        + "{sample}/align/{alnr}/snv/{snv}/peddy/log/{sample}.{alnr}.{snv}.peddy.log",
-    threads: config["peddy"]["threads"]
+        + "{sample}/align/{alnr}/snv/{snv}/vep/log/{sample}.{alnr}.{snv}.vep.log",
+    threads: config["vep"]["threads"]
     resources:
-        vcpu=config["peddy"]["threads"],
+        vcpu=config["vep"]["threads"],
+        partition=config["vep"]["partition"],
+        threads=config["vep"]["threads"],
     params:
         cluster_sample=ret_sample,
-        ld_preload=config["malloc_alt"]["ld_preload"],
+        genome_build="GRCh37" if 'b37' in config['genome_build'] else "GRCh38",
+        huref=config["supporting_files"]["files"]["huref"]["bwa_mem_index_vanilla"]["name"],
     benchmark:
-        MDIR + "{sample}/benchmarks/{sample}.{alnr}.{snv}.peddy.bench.tsv"
+        MDIR + "{sample}/benchmarks/{sample}.{alnr}.{snv}.vep.bench.tsv"
     container:
         None
     conda:
-        config["peddy"]["env_yaml"]
+        config["vep"]["env_yaml"]
     shell:
         """
-        mkdir -p $(dirname {log}) > {log} ;
-        echo 'runnning peddy' >> {log} ;
-        set +euo pipefail;
-        ( ({params.ld_preload} peddy  -p {threads}  --plot --prefix {output.prefix} --loglevel DEBUG {input.vcfgz} {input.ped_f}) || (ls . && sleep 1 && echo 'peddy exited with an error.  If this is a small depth of coverate vs. the genome sample, then this may be a pca failure which can be ignored, run the command by hand to see the detailed error') ) || (sleep 1 && echo 'masking error' ) >> {log};
-        set -euo pipefail;
-        echo "DONE" >> {log} ;
-        echo reallydone > {output.done} ;
-        echo reallydone > {output.prefix} ;
-        touch {output.done} ;
-        touch {output.prefix} ;
-        sleep 4;
+        vep \
+         --cache \
+         --dir /fsx/data/tool_specific_data/.vep \
+         -i {input.vcfgz} \
+         -o {output.ovcfgz} \
+         --fasta {params.huref} \
+         --species homo_sapiens \
+         --assembly {params.genome_build} \
+         --offline \
+         --vcf \
+         --fork 64 > {log};
         """
 
 
 localrules:
-    produce_peddy,
+    produce_vep,
 
 
-rule produce_peddy:  # TARGET: just produce peddy results
+rule produce_vep:  # TARGET: just produce vep results
     input:
         expand(
             MDIR
-            + "{sample}/align/{alnr}/snv/{snv}/peddy/{sample}.{alnr}.{snv}.peddy.done",
+            + "{sample}/align/{alnr}/snv/{snv}/vep/{sample}.{alnr}.{snv}.vep.done",
             sample=SSAMPS,
             alnr=ALIGNERS,
             snv=snv_CALLERS,
         ),
     output:
-        "logs/peddy_gathered.done",
+        "logs/vep_gathered.done",
     shell:
         "touch {output};"
