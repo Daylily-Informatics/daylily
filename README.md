@@ -1,4 +1,4 @@
-# [DAYLILY](http://daylilyinformatics.com/) 
+# [DAYLILY](http://daylilyinformatics.com/) && [(blog)](https://daylily-informatics.github.io/)
 _v0.2.0-candidate_
 
 ## Free, Fast(~60m), Frugal(from $3.34 EC2)\^1 & Cloud Native Multi-omics Analysis Framework
