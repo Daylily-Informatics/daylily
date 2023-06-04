@@ -67,7 +67,9 @@ The system is designed to be robust, secure, auditable, and should only take a m
  |   BWA-MEM2 + DpplDeDup + Deepvariant (B2D) |  0.997 / 0.996\* | 0.996 | 0.998\* | 0.998\* | 57m\* | 156m | $8.54 - 128 vcpu|
  
  > ** [Visit this page more info on sentieon licensing](https://www.sentieon.com/free-trial/)
+ 
  > ^=s/w licensing required to run the sentieon tool
+ 
  > *=highest value
 
 
