@@ -100,7 +100,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 ### [Consistent + Easy To Navigate Results Directory & File Structure](/docs/ops/dir_and_file_scheme.md)
    - A visualization of just the directories (minus log dirs) created by daylily
     _b37 shown, hg38 is supported as well_
-    [![](docs/images/assets/tree_structure/tree.md)
+![](docs/images/assets/tree_structure/tree.md)
      - [with files](docs/ops/tree_full.md   
     
 ### [Automated Concordance Analysis Table](http://daylilyinformatics.com:8081/components/daylily_qc_reports/other_reports/giabhcr_concordance_mqc.tsv)
