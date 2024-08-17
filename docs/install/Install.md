@@ -4,7 +4,7 @@
 
   - Please see the [prerequisite instructions](prereq.md) for guidance on gathering the information necessary to proceed with spinning up a DEC:
     1. Github SSH Key Authorized
-    2. AWS CLI Credentials
+    2. AWS CLI Credentials and cli installed and available in the shell `pip install --no-input awscli==1.27.123`
     3. AWS PEM File
     4. Sufficient AWS Spot Quota Allowance
     5. AWS VPC, Public/Private Subnet IDs
@@ -29,9 +29,30 @@
   git clone git@github.com:Daylily-Informatics/daylily.git daylily
   cd daylily
   ```
+
   
 ### Run Daylily-Init
-  > With the prerequisite information in hand, run:
+#### Conda must be installed and activated
+##### OSX ARM
+```sh
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
+chmod a+x Miniconda3-latest-MacOSX-arm64.sh
+./Miniconda3-latest-MacOSX-arm64.sh
+# the installer should have run  ~/miniconda3/bin/conda init
+# So, open a new shell so that the PS1 reports (base), ie: (base) daylily@rangerrick ~ %
+```
+
+##### Ubuntu x86
+```sh
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod a+x Miniconda3-latest-Linux-x86_64.sh
+Miniconda3-latest-Linux-x86_64.sh
+# the installer should have run  ~/miniconda3/bin/conda init
+# So, open a new shell so that the PS1 reports (base), ie: (base) daylily@rangerrick ~ %, run conda init if not
+```
+
+#### In A Shell With Conda Active
+  > Have the other prerequisite information in hand, and run:
   
   ```bash
   source bin/daylily-init
