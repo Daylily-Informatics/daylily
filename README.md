@@ -124,7 +124,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
   
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
-# Coming Sooner Than Later
+# Future Dev Targets
 - [snakemake github action](https://github.com/snakemake/snakemake-github-action) tests.
 - Structural Variant Calling Concordance Analysis For The SV Callers:
   - Manta
