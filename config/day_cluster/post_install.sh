@@ -205,7 +205,7 @@ fi
 
 # this translates to yum commands, so I can just use the ubuntu script more or less unchanged for nowl
 
-#### sudo curl  https://raw.githubusercontent.com/dvershinin/apt-get-centos/master/apt-get.sh -o /usr/local/bin/apt-get
+#### sudo curl  https://raw.githubusercontent.com/dvershinin/apt-get-cent os/master/apt-get.sh -o /usr/local/bin/apt-get
 #### sudo chmod 0755 /usr/local/bin/apt-get
 #### sudo yum install -y tmux emacs apptainer rclone
 
@@ -215,7 +215,7 @@ fi
 sudo apt-get update -y;
 sudo apt-get install -y  parallel git yamllint
 
-#### sudo yum install -y centos-release-scl;
+#### sudo yum install -y cent os-release-scl;
 
 #### sudo yum makecache;
 
@@ -230,7 +230,7 @@ sudo apt-get install -y  parallel git yamllint
 sudo apt-get install -y atop htop glances tmux emacs fd-find emacs apt-transport-https ca-certificates curl software-properties-common gnupg lsb-release;
 
 sudo groupadd docker;
-sudo usermod -aG docker centos;
+sudo usermod -aG docker ubuntu;
 sudo usermod -aG docker root;
 
 
@@ -287,7 +287,7 @@ sudo apt-get install -y \
    cryptsetup \
    runc;
 
-#cd /fsx/centos/etc/tmp
+#cd /fsx/cent os/etc/tmp
 
 # install go
 wget https://dl.google.com/go/go1.17.7.linux-amd64.tar.gz ;
@@ -316,11 +316,11 @@ sudo apt-get install -y apptainer
 
 sudo mkdir /bin/DCVserv
 sudo mv /bin/dcv* /bin/DCVserv/
-kill -9 $(sudo lsof -i :8443 | tail -n 1 | perl -p -e 's/(^.*)( +)(.*)( +)(centos|root)(.*)( +.*)/$3/g;')
+kill -9 $(sudo lsof -i :8443 | tail -n 1 | perl -p -e 's/(^.*)( +)(.*)( +)(ubuntu|root)(.*)( +.*)/$3/g;')
 
 
 mkdir -p /fsx/analysis_results/daylily/
-mkdir -p /fsx/analysis_results/centos/
+mkdir -p /fsx/analysis_results/ubuntu/
 
 chmod -R a+wrx /fsx/analysis_results
 

@@ -85,7 +85,7 @@ Miniconda3-latest-Linux-x86_64.sh
       11. The daylily user on the head node will now have the final configuration executed.  This will take a few moments.  Once complete, you are ready to use the DEC. It will exit with the following output:
      
     ```bash
-    You may now ssh into the head node with : ssh -i /Users/$USERNAME/.ssh/$PEMNAME.pem centos@$IP-ADDRESS 
+    You may now ssh into the head node with : ssh -i /Users/$USERNAME/.ssh/$PEMNAME.pem ubuntu@$IP-ADDRESS 
     ... once logged in, run : sudo su - daylily 
     ...... then as daylily run: cd projects/daylily; source dyinit; dy-a local && dy-r help 
     ```
@@ -104,7 +104,7 @@ Miniconda3-latest-Linux-x86_64.sh
   pcluster describe-cluster-instances -n YOUR-CLUSTER-NAME
   
   # the json string will have a public IP key-value, copy the IP
-  ssh -i ~/.ssh/PEMFILENAME.pem centos@IP-ADDRESS
+  ssh -i ~/.ssh/PEMFILENAME.pem ubuntu@IP-ADDRESS
   
   # you will now be logged into the cluster.
   
