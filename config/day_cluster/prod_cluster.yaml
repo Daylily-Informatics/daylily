@@ -1,6 +1,6 @@
 Region: REGSUB_REGION  #us-west-2
 Image:
-  Os: centos7
+  Os: ubuntu2204
 HeadNode:
   InstanceType: r5n.4xlarge
   Networking:
@@ -8,7 +8,7 @@ HeadNode:
     SubnetId: REGSUB_PUB_SUBNET  # subnet-018d25d2f208a83a2
   DisableSimultaneousMultithreading: false
   Ssh:
-    KeyName: REGSUB_KEYNAME  # daylily
+    KeyName: REGSUB_KEYNAME  # must be ed25519 for ubuntu
   Dcv:
     Enabled: true
     Port: 8443

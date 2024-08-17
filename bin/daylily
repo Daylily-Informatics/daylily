@@ -156,7 +156,7 @@ echo """    *** VPC and SUBNET creation ***
 	       wish to use, AND which you have the actual pem file saved to ~/.ssh, cancel
 	       and go create a pem file in us-west-2.
 	  ...  choose 'slurm' batch will not work.
-	  ...  choose 'centos7'  the other options will not work for daylily to run.
+	  ...  choose 'rocky8' orig dev on centos7, needs porting
 	  ...  choose the default for the head node instance type t2.micro.
 	  ...  choose '1' for number of queues.
 	  ...  choose 'queue1' for the queue name.

@@ -1,28 +1,20 @@
 
-export PATH=$PATH:/opt/homebrew/bin/
+
 echo "installing daylily CLI"
 
-which brew
-if [[ "$?" == "0" ]]; then
-    echo "brew detected";
-else 
-    echo "Installing brew, you'll be prompted for your sudo pw"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi;
+if conda -h > /dev/null 2>&1; then
+    echo "Conda is working properly."
+else
+    echo "Error: Conda is not available in this shell. \n\nEXITING." >&2
+    return 1
+fi
 
-brew install conda
 
-conda init
-conda init zsh
-source ~/.zshrc
-conda activate
-
-conda install -y -c conda-forge mamba
-mamba create -y -n DAYCLI -c conda-forge python parallel nodejs==18.15.0
+conda create -y -n DAYCLI -c conda-forge python parallel nodejs==18.15.0 aws-parallelcluster==3.10.1 flask=2.2.5
 conda activate DAYCLI
 
-pip install --no-input aws-parallelcluster==3.5.0 awscli==1.27.123 
-pip install Flask==2.2.3  # Needed for pcluster bug
+# pip install --no-input awscli==1.27.123 
+
 
 parallel --citation <<< "will cite
 "
