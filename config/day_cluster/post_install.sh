@@ -205,26 +205,27 @@ fi
 
 # this translates to yum commands, so I can just use the ubuntu script more or less unchanged for nowl
 
-sudo curl  https://raw.githubusercontent.com/dvershinin/apt-get-centos/master/apt-get.sh -o /usr/local/bin/apt-get
-sudo chmod 0755 /usr/local/bin/apt-get
-sudo yum install -y tmux emacs apptainer rclone
+#### sudo curl  https://raw.githubusercontent.com/dvershinin/apt-get-centos/master/apt-get.sh -o /usr/local/bin/apt-get
+#### sudo chmod 0755 /usr/local/bin/apt-get
+#### sudo yum install -y tmux emacs apptainer rclone
 
-sudo yum  install -y https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
-sudo yum install  -y git
+#### sudo yum  install -y https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
+#### sudo yum install  -y git
 
-sudo apt-get install -y  parallel
-
-sudo yum install -y centos-release-scl;
-
-sudo yum makecache;
-
-sudo grubby --args="namespace.unpriv_enable=1" --update-kernel=/boot/vmlinuz-3.10.0-1160.81.1.el7.x86_64 
-
-sudo yum  install -y yamllint parallel;
-
-sudo yum clean all --enablerepo=* ;
-sudo yum update -y;
 sudo apt-get update -y;
+sudo apt-get install -y  parallel git yamllint
+
+#### sudo yum install -y centos-release-scl;
+
+#### sudo yum makecache;
+
+#### sudo grubby --args="namespace.unpriv_enable=1" --update-kernel=/boot/vmlinuz-3.10.0-1160.81.1.el7.x86_64 
+
+#### sudo yum  install -y yamllint parallel;
+
+#### sudo yum clean all --enablerepo=* ;
+####sudo yum update -y;
+#### sudo apt-get update -y;
 
 sudo apt-get install -y atop htop glances tmux emacs fd-find emacs apt-transport-https ca-certificates curl software-properties-common gnupg lsb-release;
 
@@ -248,7 +249,7 @@ sudo docker run hello-world;
 sudo systemctl status docker;
 
 
-## Retaining the dependench installs for OG singularity as I'm not sure what might also rely on them
+## Retaining the depend installs for OG singularity as I'm not sure what might also rely on them
 # Singularity install instructions https://docs.sylabs.io/guides/3.0/user-guide/installation.html
 sudo apt-get update -y && sudo apt-get install -y \
     build-essential \
@@ -275,6 +276,7 @@ sudo apt-get install -y singularity-container;
 
 # Ensure repositories are up-to-date
 sudo apt-get update -y;
+
 # Install debian packages for dependencies
 sudo apt-get install -y \
    build-essential \
@@ -309,8 +311,8 @@ make;
 sudo make install;
 
 
-sudo yum install -y apptainer;
-
+#### sudo yum install -y apptainer;
+sudo apt-get install -y apptainer
 
 sudo mkdir /bin/DCVserv
 sudo mv /bin/dcv* /bin/DCVserv/
