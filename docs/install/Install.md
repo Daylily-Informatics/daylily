@@ -4,7 +4,7 @@
 
   - Please see the [prerequisite instructions](prereq.md) for guidance on gathering the information necessary to proceed with spinning up a DEC:
     1. Github SSH Key Authorized
-    2. AWS CLI Credentials
+    2. AWS CLI Credentials and cli installed and available in the shell `pip install --no-input awscli==1.27.123`
     3. AWS PEM File
     4. Sufficient AWS Spot Quota Allowance
     5. AWS VPC, Public/Private Subnet IDs
