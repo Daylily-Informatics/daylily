@@ -168,9 +168,9 @@ sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-chan
                         atop htop glances fd-find \
                         docker.io docker-compose \
                         build-essential libssl-dev \
-                        uuid-dev libgpgme11-dev \
+                        uuid-dev  libgpgme-dev \
                         squashfs-tools libseccomp-dev \
-                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev apptainer
+                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev 
 
 
 # Docker setup
