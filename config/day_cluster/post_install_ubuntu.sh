@@ -28,10 +28,12 @@ if [ "${cfn_node_type}" == "ComputeFleet" ]; then
   echo "* * * * * /opt/slurm/sbin/check_tags.sh" | sudo tee /var/spool/cron/crontabs/root
 
   # Install Apptainer (formerly Singularity)
-  sudo apt-get update -y
-  sudo apt-get install -y apptainer
+  ## sudo apt-get update -y
+  ## sudo apt-get install -y apptainer
+  ## exit 0
 
-  exit 0
+  echo "compute node setup, doing nothing presently"
+
 else
   # Create and configure the check_tags.sh script for the head node
   cat <<'EOF' | sudo tee /opt/slurm/sbin/check_tags.sh
@@ -168,7 +170,7 @@ sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-chan
                         build-essential libssl-dev \
                         uuid-dev libgpgme11-dev \
                         squashfs-tools libseccomp-dev \
-                        pkg-config cryptsetup runc libglib2.0-dev
+                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev apptainer
 
 
 # Docker setup
