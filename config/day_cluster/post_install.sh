@@ -25,10 +25,15 @@ mkdir -p /tmp/jobs
 chmod -R a+wrx /tmp/jobs
 
 
-echo "vm.nr_hugepages=2048" >> /etc/sysctl.conf
-echo "vm.hugetlb_shm_group=27" >> /etc/sysctl.conf
-sysctl -p
+### echo "vm.nr_hugepages=2048" >> /etc/sysctl.conf
+### echo "vm.hugetlb_shm_group=27" >> /etc/sysctl.conf
+### sysctl -p
 
+
+sudo apt update -y;
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A5D32F012649A5A9
+sudo apt update -y
 
 # for singularity
 useradd -u 1002 daylily
@@ -47,8 +52,21 @@ if [ "${cfn_node_type}" == "ComputeFleet" ];then
 * * * * * /opt/slurm/sbin/check_tags.sh
 " | crontab -
 
+  sudo apt update
+  sudo apt install -y libfuse2 uidmap squashfuse fuse2fs fuse-overlayfs
+  sudo apt install -y \
+    build-essential \
+    libseccomp-dev \
+    pkg-config \
+    squashfs-tools \
+    cryptsetup \
+    wget \
+    uuid-dev
 
-  sudo yum install -y apptainer;
+  export VERSION=1.2.3  # Replace with the latest version
+  wget https://github.com/apptainer/apptainer/releases/download/v${VERSION}/apptainer_${VERSION}_amd64.deb
+  sudo dpkg -i apptainer_${VERSION}_amd64.deb
+
 
 
   exit 0
@@ -203,80 +221,19 @@ if [[ $(ls /tmp/$HOSTNAME.postinstallcomplete | wc -l) != "0" ]]; then
   #exit 0
 fi
 
-# this translates to yum commands, so I can just use the ubuntu script more or less unchanged for nowl
 
-sudo curl  https://raw.githubusercontent.com/dvershinin/apt-get-centos/master/apt-get.sh -o /usr/local/bin/apt-get
-sudo chmod 0755 /usr/local/bin/apt-get
-sudo yum install -y tmux emacs apptainer rclone
-
-sudo yum  install -y https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
-sudo yum install  -y git
-
-sudo apt-get install -y  parallel
-
-sudo yum install -y centos-release-scl;
-
-sudo yum makecache;
-
-sudo grubby --args="namespace.unpriv_enable=1" --update-kernel=/boot/vmlinuz-3.10.0-1160.81.1.el7.x86_64 
-
-sudo yum  install -y yamllint parallel;
-
-sudo yum clean all --enablerepo=* ;
-sudo yum update -y;
-sudo apt-get update -y;
-
-sudo apt-get install -y atop htop glances tmux emacs fd-find emacs apt-transport-https ca-certificates curl software-properties-common gnupg lsb-release;
-
-sudo groupadd docker;
-sudo usermod -aG docker centos;
-sudo usermod -aG docker root;
+sudo apt install -y  parallel git yamllint
 
 
-sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common;
+sudo apt install -y atop htop glances tmux emacs fd-find emacs apt-transport-https ca-certificates curl software-properties-common gnupg lsb-release;
 
-sudo apt-get install -y ca-certificates curl     gnupg     lsb-release;
-
-sudo mkdir -p /etc/apt/keyrings;
-
-sudo apt-get install -y docker docker-compose docker-ce docker-ce-cli containerd.io docker-compose-plugin docker.io docker-registry docker2aci docker-doc;
-
-sudo apt-get install -y docker.io ;
-sudo apt-get install -y  docker-registry docker2aci docker-doc; 
-sudo docker run hello-world;
-
-sudo systemctl status docker;
+# Step 1: Install required packages for Docker installation
+sudo apt update
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common gnupg lsb-release
 
 
-## Retaining the dependench installs for OG singularity as I'm not sure what might also rely on them
-# Singularity install instructions https://docs.sylabs.io/guides/3.0/user-guide/installation.html
-sudo apt-get update -y && sudo apt-get install -y \
-    build-essential \
-    libssl-dev \
-    uuid-dev \
-    libgpgme11-dev \
-    squashfs-tools \
-    libseccomp-dev \
-    pkg-config;
-
-
-
-sudo wget -O- http://neuro.debian.net/lists/xenial.us-ca.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list ;
-
-sudo apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9 ;
-
-sudo apt-get update -y;
-   
-sudo apt-get install -y singularity-container;
-
-
-## shoot, all the prior singularity install stuff in junk.  This> https://docs.sylabs.io/guides/latest/admin-guide/installation.html#install-from-provided-rpm-deb-packages
-
-
-# Ensure repositories are up-to-date
-sudo apt-get update -y;
 # Install debian packages for dependencies
-sudo apt-get install -y \
+sudo apt install -y \
    build-essential \
    libseccomp-dev \
    libglib2.0-dev \
@@ -285,7 +242,6 @@ sudo apt-get install -y \
    cryptsetup \
    runc;
 
-#cd /fsx/centos/etc/tmp
 
 # install go
 wget https://dl.google.com/go/go1.17.7.linux-amd64.tar.gz ;
@@ -296,29 +252,13 @@ sudo ln -s /usr/local/go/bin/gofmt /bin/gofmt
 
 
 
-# continue singularity install
-
-
-git clone --recurse-submodules https://github.com/sylabs/singularity.git;
-cd singularity ;
-git checkout --recurse-submodules v3.10.0;
- 
-./mconfig --prefix=/opt/singularity;
-cd builddir;
-make;
-sudo make install;
-
-
-sudo yum install -y apptainer;
-
-
-sudo mkdir /bin/DCVserv
-sudo mv /bin/dcv* /bin/DCVserv/
-kill -9 $(sudo lsof -i :8443 | tail -n 1 | perl -p -e 's/(^.*)( +)(.*)( +)(centos|root)(.*)( +.*)/$3/g;')
+sudo mkdir -p /bin/DCVserv
+sudo mv /bin/dcv* /bin/DCVserv/ || echo 'not moved'
+kill -9 $(sudo lsof -i :8443 | tail -n 1 | perl -p -e 's/(^.*)( +)(.*)( +)(ubuntu|root)(.*)( +.*)/$3/g;')
 
 
 mkdir -p /fsx/analysis_results/daylily/
-mkdir -p /fsx/analysis_results/centos/
+mkdir -p /fsx/analysis_results/ubuntu/
 
 chmod -R a+wrx /fsx/analysis_results
 

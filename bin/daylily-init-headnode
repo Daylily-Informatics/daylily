@@ -1,6 +1,6 @@
 # Daylily Headnode Configure
 
-duser="centos";
+duser="ubuntu";
 
 echo "clusters detected:";
 pcluster list-clusters | grep clusterName;
@@ -28,15 +28,15 @@ else
     read pem_file;
 fi;
 
-# Removed, running everything from the centos user for simplicity.  This was when using a daylily user.
-# ssh -i $pem_file centos@$cluster_ip_address "sudo useradd $duser" ;
-# ssh -i $pem_file centos@$cluster_ip_address "sudo passwd --stdin $duser <<< 'passw0rd'" ;
-# ssh -i $pem_file centos@$cluster_ip_address echo """ssh-keygen -q -t rsa -f ~$duser/.ssh/id_rsa -N \'\' <<< $'\ny'  | sudo su - $duser""";
+# Removed, running everything from the ubuntu user for simplicity.  This was when using a daylily user.
+# ssh -i $pem_file ubuntu@$cluster_ip_address "sudo useradd $duser" ;
+# ssh -i $pem_file ubuntu@$cluster_ip_address "sudo passwd --stdin $duser <<< 'passw0rd'" ;
+# ssh -i $pem_file ubuntu@$cluster_ip_address echo """ssh-keygen -q -t rsa -f ~$duser/.ssh/id_rsa -N \'\' <<< $'\ny'  | sudo su - $duser""";
 
 
-echo 'You must have a github account, and access to the daylily repo. The centos user public ssh key must be stored as a new valid ssh key in github: https://github.com/settings/keys. If logged in to github, click New SSH Key, name the key whatever, leave key type set to Authentication Key, and paste the following string into the Key field.  There should be no linebreaks in the key string.';
+echo 'You must have a github account, and access to the daylily repo. The ubuntu user public ssh key must be stored as a new valid ssh key in github: https://github.com/settings/keys. If logged in to github, click New SSH Key, name the key whatever, leave key type set to Authentication Key, and paste the following string into the Key field.  There should be no linebreaks in the key string.';
 echo " ";
-ssh -i $pem_file centos@$cluster_ip_address "echo 'head ~$duser/.ssh/id_rsa.pub' | sudo su - $duser " ;
+ssh -i $pem_file ubuntu@$cluster_ip_address "echo 'head ~$duser/.ssh/id_rsa.pub' | sudo su - $duser " ;
 
 echo " ";
 echo " ";
@@ -53,24 +53,24 @@ else
     return 1;
 fi;
 
-# clone daylily repo to headnode user. centos is not enabled to run the pipe by default.
+# clone daylily repo to headnode user. ubuntu is not enabled to run the pipe by default.
 echo "...............cloning repo";
-ssh -i $pem_file  centos@$cluster_ip_address "echo 'ssh-keyscan github.com >> ~$duser/.ssh/known_hosts; mkdir -p ~$duser/projects; cd ~$duser/projects; git clone  git@github.com:Daylily-Informatics/daylily.git ' | sudo su - $duser"; 
+ssh -i $pem_file  ubuntu@$cluster_ip_address "echo 'ssh-keyscan github.com >> ~$duser/.ssh/known_hosts; mkdir -p ~$duser/projects; cd ~$duser/projects; git clone  git@github.com:Daylily-Informatics/daylily.git ' | sudo su - $duser"; 
 
 echo "...............configuring daylily headnode deets";
 # init the first day environment
-ssh -i $pem_file centos@$cluster_ip_address "echo 'cd ~$duser/projects/daylily; source dyinit && source  config/day/day_env_installer.sh DAY;' | sudo su - $duser" ;
+ssh -i $pem_file ubuntu@$cluster_ip_address "echo 'cd ~$duser/projects/daylily; source dyinit && source  config/day/day_env_installer.sh DAY;' | sudo su - $duser" ;
 
 echo "................running a simple help test of daylily remotely";
 # Run simple help test
-ssh -t -i $pem_file centos@$cluster_ip_address "echo 'bash -c cd ~$duser/projects/daylily && source dyinit && dy-a local && dy-r help' | sudo su - $duser" ;
+ssh -t -i $pem_file ubuntu@$cluster_ip_address "echo 'bash -c cd ~$duser/projects/daylily && source dyinit && dy-a local && dy-r help' | sudo su - $duser" ;
 
 
 echo " ";
 echo " ";
-echo "You may now ssh into the headnode with : ssh -i $pem_file centos@$cluster_ip_address ";
+echo "You may now ssh into the headnode with : ssh -i $pem_file ubuntu@$cluster_ip_address ";
 echo " ... once logged in, ";
-echo " ...... as centos run: cd ~/projects/daylily; source dyinit; source bin/day_activate local ; dy-r help ";
+echo " ...... as ubuntu run: cd ~/projects/daylily; source dyinit; source bin/day_activate local ; dy-r help ";
 echo " .........";
 echo "et voila, fin.";
 
