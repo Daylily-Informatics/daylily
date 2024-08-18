@@ -5,6 +5,8 @@
 
 # The script configures the Slurm cluster after the deployment.
 
+touch /tmp/$HOSTNAME.postinstallBEGIN
+
 . "/etc/parallelcluster/cfnconfig"
 
 bucket="$1"  # specified in the cluster yaml, bucket-name, no s3:// prefix
@@ -17,8 +19,9 @@ echo "vm.nr_hugepages=2048" | sudo tee -a /etc/sysctl.conf
 echo "vm.hugetlb_shm_group=27" | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 
-# For Apptainer (formerly Singularity)
 sudo adduser --uid 1002 --disabled-password --gecos "" daylily || echo daylily user add fails
+
+# For Apptainer (formerly Singularity)
 echo "kernel.unprivileged_userns_clone=1" | sudo tee /etc/sysctl.d/00-local-userns.conf
 echo "user.max_user_namespaces=15076" | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
@@ -159,6 +162,9 @@ EOF
 
   sudo systemctl restart slurmctld
 fi
+
+
+touch /tmp/$HOSTNAME.postinstallaptinstalls
 
 export DEBIAN_FRONTEND=noninteractive
 
