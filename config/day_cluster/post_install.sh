@@ -176,7 +176,15 @@ sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-chan
                         build-essential libssl-dev \
                         uuid-dev  libgpgme-dev \
                         squashfs-tools libseccomp-dev \
-                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev 
+                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev golang-go \
+                        openjdk-11-jdk wget unzip
+
+
+# Install Cromwell
+sudo wget https://github.com/broadinstitute/cromwell/releases/download/87/cromwell-87.jar -O /usr/local/bin/cromwell.jar
+
+# Download WOMtool (optional, for validating WDL scripts)
+sudo wget https://github.com/broadinstitute/cromwell/releases/download/87/womtool-87.jar -O /usr/local/bin/womtool.jar
 
 
 # Docker setup
@@ -206,6 +214,7 @@ sudo make -C builddir install
 # Create necessary directories
 mkdir -p /fsx/analysis_results/daylily
 mkdir -p /fsx/analysis_results/ubuntu
+mkdir -p /fsx/analysis_results/cromwell_executions
 chmod -R a+wrx /fsx/analysis_results
 
 mkdir -p /fsx/resources/environments/conda

@@ -112,7 +112,7 @@ Miniconda3-latest-Linux-x86_64.sh
   sinfo
   
   # change to the daylily user
-  sudo su daylily
+  sudo su - daylily
   ```
   
   2. Strongly Advised: Use `screen` or `tmux`
