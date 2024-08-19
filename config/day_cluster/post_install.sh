@@ -188,19 +188,20 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 # Install Go
-wget https://dl.google.com/go/go1.17.7.linux-amd64.tar.gz
-sudo tar -xzvf go1.17.7.linux-amd64.tar.gz -C /usr/local
+wget https://dl.google.com/go/go1.20.4.linux-amd64.tar.gz
+sudo tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
 sudo ln -s /usr/local/go/bin/go /usr/bin/go
 sudo ln -s /usr/local/go/bin/gofmt /usr/bin/gofmt
 
-# Install Singularity
-git clone --recurse-submodules https://github.com/sylabs/singularity.git
-cd singularity
-git checkout --recurse-submodules v3.10.0
-./mconfig --prefix=/opt/singularity
-cd builddir
-make
-sudo make install
+# Install Apptainer (formerly Singularity)
+export VERSION=1.3.1  # Replace with the latest Apptainer version
+wget https://github.com/apptainer/apptainer/releases/download/v${VERSION}/apptainer-${VERSION}.tar.gz
+tar -xzf apptainer-${VERSION}.tar.gz
+cd apptainer-${VERSION}
+./mconfig
+make -C builddir
+sudo make -C builddir install
+
 
 # Create necessary directories
 mkdir -p /fsx/analysis_results/daylily
