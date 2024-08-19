@@ -1,3 +1,20 @@
+version 1.0
+
+workflow three_step {
+  input {
+    File procs
+    String pattern
+  }
+
+  call ps
+  call cgrep {
+    input: in_file=ps.procs
+  }
+  call wc {
+    input: in_file=ps.procs
+  }
+}
+
 task ps {
   command {
     ps
@@ -18,13 +35,19 @@ task ps {
 }
  
 task cgrep {
-  String pattern
-  File in_file
-  
+  input {
+    String pattern
+    File in_file
+  }
+
   command {
-    grep '${pattern}' ${in_file} | wc -l
+    grep '${pattern}' ${in_file} | wc -l > output.result
   }
   
+  output {
+    File result = "output.result"
+  }
+
   runtime {
           docker_image: "ubuntu:xenial"
           cpu: "1"
@@ -41,10 +64,16 @@ task cgrep {
 }
  
 task wc {
-  File in_file
-  
+  input {
+    File in_file
+  }
+
   command {
-    cat ${in_file} | wc -l
+    cat ${in_file} | wc -l > output2.result
+  }
+
+  output {
+    File result = "output2.result"
   }
   
   runtime {
@@ -60,14 +89,4 @@ task wc {
     Int count = read_int(stdout())
   }
   
-}
- 
-workflow three_step {
-  call ps
-  call cgrep {
-    input: in_file=ps.procs
-  }
-  call wc {
-    input: in_file=ps.procs
-  }
 }
