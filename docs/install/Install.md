@@ -133,7 +133,10 @@ Miniconda3-latest-Linux-x86_64.sh
 
   # source dy-cli
   source dyinit
-  
+
+  # Build daylily if not done so already
+  dy-b
+
   # activate the local profile
   dy-a local
   
