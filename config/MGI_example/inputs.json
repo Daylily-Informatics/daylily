@@ -1,4 +1,7 @@
 {
     "three_step.procs": "/fsx/analysis_results/cromwell_executions/test_bwa/daylily/procs.txt",
-    "three_step.pattern": "XAXA"
+    "three_step.pattern": "XAXA",
+    "wc.docker_image": "ubuntu:xenial",
+    "cgrep.docker_image": "ubuntu:xenial",
+    "ps.docker_image": "ubuntu:xenial"
 }

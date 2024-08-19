@@ -4,6 +4,10 @@ workflow three_step {
   input {
     File procs
     String pattern
+    String docker_image
+    String partition
+    Int cpu
+    Int memory
   }
 
   call ps
@@ -23,7 +27,7 @@ task ps {
   }
   
   runtime {
-          docker_image: "ubuntu:xenial"
+          docker: docker_image
           cpu: "1"
           memory: 4
           queue: "research-hpc"
@@ -40,6 +44,10 @@ task cgrep {
   input {
     String pattern
     File in_file
+    String docker_image
+    String partition
+    Int cpu
+    Int memory
   }
 
   command {
@@ -51,7 +59,7 @@ task cgrep {
   }
 
   runtime {
-          docker_image: "ubuntu:xenial"
+          docker: docker_image
           cpu: "1"
           memory: 4
           queue: "research-hpc"
@@ -65,6 +73,10 @@ task cgrep {
 task wc {
   input {
     File in_file
+    String docker_image
+    String partition
+    Int cpu
+    Int memory
   }
 
   command {
@@ -76,7 +88,7 @@ task wc {
   }
   
   runtime {
-          docker_image: "ubuntu:xenial"
+          docker:  docker_image
           cpu: "1"
           memory: 4
           queue: "research-hpc"
