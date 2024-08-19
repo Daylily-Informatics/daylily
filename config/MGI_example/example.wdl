@@ -53,9 +53,6 @@ task cgrep {
     String pattern
     File in_file
     String docker_image
-    String partition
-    Int cpu
-    Int memory
   }
 
   command {
@@ -82,9 +79,6 @@ task wc {
   input {
     File in_file
     String docker_image
-    String partition
-    Int cpu
-    Int memory
   }
 
   command {
