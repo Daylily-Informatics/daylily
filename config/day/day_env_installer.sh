@@ -93,7 +93,6 @@ $CONDA_DIR/bin/conda init bash  # prob not necessary
 conda config --add channels conda-forge
 conda config --add channels anaconda
 conda config --add channels bioconda
-conda config --add channels intel
 conda config --add channels r
 
 (conda config --set channel_priority strict && echo '' ) || echo 'failed to set conda pri to strict';
