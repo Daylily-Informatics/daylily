@@ -5,12 +5,16 @@ workflow AlignFastq {
     File fastq1
     File fastq2
     File reference_fasta
-    File reference_fasta_index
     File reference_fasta_dict
+    File reference_fasta_amb
+    File reference_fasta_ann
+    File reference_fasta_bwt
+    File reference_fasta_pac
+    File reference_fasta_sa
     String docker_image
     String partition
     Int cpus
-    String memory
+    Int memory
   }
 
   call AlignFastq {
@@ -18,7 +22,11 @@ workflow AlignFastq {
       fastq1 = fastq1,
       fastq2 = fastq2,
       reference_fasta = reference_fasta,
-      reference_fasta_index = reference_fasta_index,
+      reference_fasta_amb = reference_fasta_amb,
+      reference_fasta_ann = reference_fasta_ann,
+      reference_fasta_bwt = reference_fasta_bwt,
+      reference_fasta_pac = reference_fasta_pac,
+      reference_fasta_sa = reference_fasta_sa,
       reference_fasta_dict = reference_fasta_dict,
       docker_image = docker_image,
       partition = partition,
@@ -36,12 +44,16 @@ task AlignFastq {
     File fastq1
     File fastq2
     File reference_fasta
-    File reference_fasta_index
+    File reference_fasta_amb
+    File reference_fasta_ann
+    File reference_fasta_bwt
+    File reference_fasta_pac
+    File reference_fasta_sa
     File reference_fasta_dict
     String docker_image
     String partition
     Int cpus
-    String memory
+    Int memory
   }
 
   command {
@@ -59,5 +71,6 @@ task AlignFastq {
     memory: memory
     docker: docker_image
     partition: partition
+    entrypoint: "/bin/sh"
   }
 }
