@@ -3,7 +3,7 @@ channels:
   - bioconda
   - anaconda
   - r
-  - intel
+
   - defaults
 dependencies:
   - qualimap=2.2.2d
