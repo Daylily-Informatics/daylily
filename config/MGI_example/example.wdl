@@ -27,6 +27,9 @@ workflow three_step {
 }
 
 task ps {
+  input {
+    String docker_image
+  }
   command {
     ps
   }
