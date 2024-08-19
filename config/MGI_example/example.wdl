@@ -43,7 +43,7 @@ task cgrep {
   }
 
   command {
-    grep '${pattern}' ${in_file} | wc -l > output.result
+    sleep 60 && grep '${pattern}' ${in_file} | wc -l > output.result
   }
   
   output {
@@ -68,7 +68,7 @@ task wc {
   }
 
   command {
-    cat ${in_file} | wc -l > output2.result
+    sleep 60 && cat ${in_file} | wc -l > output2.result
   }
 
   output {
