@@ -1,5 +1,8 @@
 {
     "three_step.procs": "/fsx/analysis_results/cromwell_executions/test_bwa/daylily/procs.txt",
     "three_step.pattern": "XAXA",
-    "three_step.docker_image": "ubuntu:xenial"
+    "three_step.docker_image": "ubuntu:xenial",
+    "three_step.partition": "i4-5",    
+    "three_step.cpu": 1,
+    "three_step.memory": 1
 }
