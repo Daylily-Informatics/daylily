@@ -10,14 +10,19 @@ workflow three_step {
     Int memory
   }
 
-  call ps
+  call ps {
+    input: 
+      docker_image=docker_image
+  }
   call cgrep {
     input: 
       in_file=procs,
-      pattern=pattern
+      pattern=pattern,
+      docker_image=docker_image
   }
   call wc {
-    input: in_file=procs
+    input: in_file=procs,
+    docker_image=docker_image
   }
 }
 
