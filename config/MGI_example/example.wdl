@@ -12,22 +12,35 @@ workflow three_step {
 
   call ps {
     input: 
-      docker_image=docker_image
+      docker_image=docker_image,
+      partition=partition,
+      cpu=cpu,
+      memory=memory
   }
   call cgrep {
     input: 
       in_file=procs,
       pattern=pattern,
-      docker_image=docker_image
+      docker_image=docker_image,
+      partition=partition,
+      cpu=cpu,
+      memory=memory
   }
   call wc {
-    input: in_file=procs,
-    docker_image=docker_image
+    input: 
+      in_file=procs,
+      docker_image=docker_image,
+      partition=partition,
+      cpu=cpu,
+      memory=memory
   }
 }
 
 task ps {
   input {
+    String partition
+    Int cpu
+    Int memory
     String docker_image
   }
   command {
@@ -53,6 +66,9 @@ task cgrep {
     String pattern
     File in_file
     String docker_image
+    String partition
+    Int cpu
+    Int memory
   }
 
   command {
@@ -79,6 +95,9 @@ task wc {
   input {
     File in_file
     String docker_image
+    String partition
+    Int cpu
+    Int memory
   }
 
   command {
@@ -96,6 +115,7 @@ task wc {
           queue: "research-hpc"
           resource: "rusage[gtmp=10, mem=4000]"
           job_group: '/myjobgroup/'
+          partition: 'i4-5'
   }
  
   
