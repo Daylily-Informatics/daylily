@@ -8,10 +8,12 @@ workflow three_step {
 
   call ps
   call cgrep {
-    input: in_file=ps.procs
+    input: 
+      in_file=procs,
+      pattern=pattern
   }
   call wc {
-    input: in_file=ps.procs
+    input: in_file=procs
   }
 }
 
