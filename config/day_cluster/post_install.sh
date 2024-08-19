@@ -176,7 +176,7 @@ sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-chan
                         build-essential libssl-dev \
                         uuid-dev  libgpgme-dev \
                         squashfs-tools libseccomp-dev \
-                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev golang-go \
+                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev  \
                         openjdk-11-jdk wget unzip
 
 
