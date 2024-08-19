@@ -1,0 +1,11 @@
+{
+  "AlignFastq.fastq1": "",
+  "AlignFastq.fastq2": "/path/to/fastq2.gz",
+  "AlignFastq.reference_fasta": "/path/to/reference.fasta",
+  "AlignFastq.reference_fasta_index": "/path/to/reference.fasta.fai",
+  "AlignFastq.reference_fasta_dict": "/path/to/reference.dict",
+  "AlignFastq.docker_image": "broadinstitute/bwa-mem:latest",
+  "AlignFastq.partition": "your_partition",
+  "AlignFastq.cpus": 4,
+  "AlignFastq.memory": "16G"
+}

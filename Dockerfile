@@ -12,7 +12,7 @@ LABEL io.github.snakemake.conda_env_hash="4f57563e7b653fd7ad7fcc0c65e1ce7cfb6e9b
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - samtools>=1.11
@@ -33,7 +33,7 @@ COPY workflow/envs/bwasamtools_v0.1.yaml /conda-envs/e332402e4f0181c4533d4808ed2
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - fastp
@@ -51,7 +51,7 @@ COPY workflow/envs/fastp_v0.1.yaml /conda-envs/2c1fcdef6fd8b78abb453cf367d33af6/
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - fastqc=0.11.9
@@ -69,7 +69,7 @@ COPY workflow/envs/fastqc_v0.1.yaml /conda-envs/1f6a7e34ff1bf45e82e319f82e1f3908
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - goleft=0.2.4
@@ -84,7 +84,7 @@ COPY workflow/envs/go_left_v0.1.yaml /conda-envs/d9ae57b0259467e56b5ec3edd572f37
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #       - hisat2=2.2.1
@@ -103,7 +103,7 @@ COPY workflow/envs/hisat2_v0.1.yaml /conda-envs/13d6c08bdbd8adaab139b9fd6e0ca041
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - mosdepth=0.3.2
@@ -121,7 +121,7 @@ COPY workflow/envs/mosdepth_v0.1.yaml /conda-envs/eafc04c861b77d27fd56364ce234b9
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - multiqc
@@ -136,7 +136,7 @@ COPY workflow/envs/multiqc_v0.1.yaml /conda-envs/4076a60bcc18d220034a09af94d1ce9
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - _libgcc_mutex=0.1
@@ -178,7 +178,7 @@ COPY workflow/envs/octopus_v0.7.yaml /conda-envs/a4543ea14359b1714e597b0e70c6a64
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - peddy
@@ -195,7 +195,7 @@ COPY workflow/envs/peddy_v0.1.yaml /conda-envs/753ea3fe000cd80431db3f4fae0ccbe2/
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - picard
@@ -211,7 +211,7 @@ COPY workflow/envs/picard_v0.1.yaml /conda-envs/7b17fcd547d9025990813fe914db3286
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - qualimap=2.2.2d
@@ -227,7 +227,7 @@ COPY workflow/envs/qualimap_v0.1.yaml /conda-envs/9bde885de7e411ded58cabb1dae00f
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - rtg-tools=3.12.1
@@ -251,7 +251,7 @@ COPY workflow/envs/rtgtools_v0.1.yaml /conda-envs/4e1fe845949f2d4e6edd63dc1c2a37
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - samtools
@@ -266,7 +266,7 @@ COPY workflow/envs/samtools_v0.1.yaml /conda-envs/f080e4234b0c70dc690b6c52fbfe4f
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - sentieon==202112.06
@@ -287,7 +287,7 @@ COPY workflow/envs/sentD_v0.1.yaml /conda-envs/244b237b7cd6c4b6fef25b5fcd603b7a/
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - sentieon==202112.06
@@ -309,7 +309,7 @@ COPY workflow/envs/sentieon_v0.1.yaml /conda-envs/e40c66cc926b5d83dd51ff71746f8a
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - parallel=20210822
@@ -331,7 +331,7 @@ COPY workflow/envs/vanilla_v0.1.yaml /conda-envs/4b68e41282e18d46ed0c01f28070afa
 #     - bioconda
 #     - anaconda
 #     - r
-#     - intel
+
 #     - defaults
 #   dependencies:
 #     - verifybamid2=2.0.1

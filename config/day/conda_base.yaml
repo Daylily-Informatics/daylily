@@ -1,7 +1,6 @@
 name: base
 channels:
   - r
-  - intel
   - bioconda
   - anaconda
   - conda-forge

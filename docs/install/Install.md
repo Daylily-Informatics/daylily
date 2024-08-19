@@ -112,7 +112,9 @@ Miniconda3-latest-Linux-x86_64.sh
   sinfo
   
   # change to the daylily user
+
   sudo su - daylily
+
   ```
   
   2. Strongly Advised: Use `screen` or `tmux`
@@ -133,7 +135,10 @@ Miniconda3-latest-Linux-x86_64.sh
 
   # source dy-cli
   source dyinit
-  
+
+  # Build daylily if not done so already
+  dy-b
+
   # activate the local profile
   dy-a local
   

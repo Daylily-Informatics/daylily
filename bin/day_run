@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export SNAKEMAKE_SINGULARITY_CMD="apptainer"
 
 if [[ $DAY_ROOT == "" || $DAY_PROFILE == "" ]]; then
     echo "ERROR:: 'day-activate' needs to have been run prior to day-run in the shell sesssion you are in for day-run to proceed."
