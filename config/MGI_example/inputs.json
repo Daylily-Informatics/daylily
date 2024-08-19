@@ -1,4 +1,4 @@
 {
-    "three_step.procs": "X",
+    "three_step.procs": "procs.txt",
     "three_step.pattern": "XAXA"
 }
