@@ -13,7 +13,7 @@ workflow AlignFastq {
     File reference_fasta_sa
     String docker_image
     String partition
-    Int cpus
+    Int cpu
     Int memory
   }
 
@@ -30,7 +30,7 @@ workflow AlignFastq {
       reference_fasta_dict = reference_fasta_dict,
       docker_image = docker_image,
       partition = partition,
-      cpus = cpus,
+      cpu = cpu,
       memory = memory
   }
 
@@ -52,12 +52,12 @@ task AlignFastq {
     File reference_fasta_dict
     String docker_image
     String partition
-    Int cpus
+    Int cpu
     Int memory
   }
 
   command {
-      bwa mem -t ${cpus} ${reference_fasta} ${fastq1} ${fastq2} | \
+      bwa mem -t ${cpu} ${reference_fasta} ${fastq1} ${fastq2} | \
       samtools view -Sb - > output.bam
   }
 
@@ -66,7 +66,7 @@ task AlignFastq {
   }
 
   runtime {
-    cpu: cpus
+    cpu: cpu
     memory: memory
     docker: docker_image
     partition: partition
