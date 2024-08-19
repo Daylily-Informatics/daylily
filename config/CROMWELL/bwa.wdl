@@ -70,6 +70,5 @@ task AlignFastq {
     memory: memory
     docker: docker_image
     partition: partition
-    entrypoint: "/bin/sh"
   }
 }
