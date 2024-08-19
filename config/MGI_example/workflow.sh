@@ -26,7 +26,8 @@ cd $workflow_dir
 # echo "create database cromwell; create user 'cromwell'@'localhost' identified by 'test4cromwell'; grant all privileges on *.* to 'cromwell'@localhost;" \
 # | mysql -u root --socket=/tmp/mysqld.sock
  
-/usr/bin/java -Dconfig.file=$workflow_dir/application.conf -jar /cromwell/cromwell.jar run $workflow_dir/example.wdl -
+java -Dconfig.file=config/MGI_example/app.conf -jar /usr/local/bin/cromwell.jar run config/MGI_example/example.wdl
+#/usr/bin/java -Dconfig.file=$workflow_dir/application.conf -jar /cromwell/cromwell.jar run $workflow_dir/example.wdl -
  
 # If you setup a mysql database, make sure you properly shut it down
 # /usr/bin/mysqladmin -u root --socket /tmp/mysqld.sock shutdown

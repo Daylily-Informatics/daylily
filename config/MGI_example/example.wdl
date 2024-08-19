@@ -1,4 +1,4 @@
-ask ps {
+task ps {
   command {
     ps
   }
