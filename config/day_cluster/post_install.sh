@@ -181,10 +181,11 @@ sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-chan
 
 
 # Install Cromwell
-sudo wget https://github.com/broadinstitute/cromwell/releases/download/87/cromwell-87.jar -O /usr/local/bin/cromwell.jar
+CROMWELL_VER=87  # Replace with the latest Cromwell version
+sudo wget https://github.com/broadinstitute/cromwell/releases/download/${CROMWELL_VER}/cromwell-${CROMWELL_VER}.jar -O /usr/local/bin/cromwell.jar
 
 # Download WOMtool (optional, for validating WDL scripts)
-sudo wget https://github.com/broadinstitute/cromwell/releases/download/87/womtool-87.jar -O /usr/local/bin/womtool.jar
+sudo wget https://github.com/broadinstitute/cromwell/releases/download/${CROMWELL_VER}/womtool-${CROMWELL_VER}.jar -O /usr/local/bin/womtool.jar
 
 
 # Docker setup
@@ -202,10 +203,10 @@ sudo ln -s /usr/local/go/bin/go /usr/bin/go
 sudo ln -s /usr/local/go/bin/gofmt /usr/bin/gofmt
 
 # Install Apptainer (formerly Singularity)
-export VERSION=1.3.1  # Replace with the latest Apptainer version
-wget https://github.com/apptainer/apptainer/releases/download/v${VERSION}/apptainer-${VERSION}.tar.gz
-tar -xzf apptainer-${VERSION}.tar.gz
-cd apptainer-${VERSION}
+export AVERSION=1.3.1  # Replace with the latest Apptainer version
+wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz
+tar -xzf apptainer-${AVERSION}.tar.gz
+cd apptainer-${AVERSION}
 ./mconfig
 make -C builddir
 sudo make -C builddir install
