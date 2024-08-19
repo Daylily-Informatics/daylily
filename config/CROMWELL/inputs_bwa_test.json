@@ -1,11 +1,11 @@
 {
-  "AlignFastq.fastq1": "",
-  "AlignFastq.fastq2": "/path/to/fastq2.gz",
-  "AlignFastq.reference_fasta": "/path/to/reference.fasta",
-  "AlignFastq.reference_fasta_index": "/path/to/reference.fasta.fai",
-  "AlignFastq.reference_fasta_dict": "/path/to/reference.dict",
+  "AlignFastq.fastq1": "/fsx/analysis_results/cromwell_executions/test_bwa/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R1.fastq.gz",
+  "AlignFastq.fastq2": "/fsx/analysis_results/cromwell_executions/test_bwa/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R2.fastq.gz",
+  "AlignFastq.reference_fasta": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta",
+  "AlignFastq.reference_fasta_index": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.fai",
+  "AlignFastq.reference_fasta_dict": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.dict",
   "AlignFastq.docker_image": "broadinstitute/bwa-mem:latest",
-  "AlignFastq.partition": "your_partition",
-  "AlignFastq.cpus": 4,
-  "AlignFastq.memory": "16G"
+  "AlignFastq.partition": "i96-5",
+  "AlignFastq.cpus": 92,
+  "AlignFastq.memory": "100G"
 }
