@@ -57,7 +57,7 @@ task AlignFastq {
   }
 
   command {
-    docker run ${docker_image} \
+    docker run  -v ./cromwell-executions:/cromwell-executions ${docker_image} \
       bwa mem -t ${cpus} ${reference_fasta} ${fastq1} ${fastq2} | \
       samtools view -Sb - > output.bam
   }
