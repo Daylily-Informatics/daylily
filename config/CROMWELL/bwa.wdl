@@ -16,7 +16,7 @@ workflow AlignFastq {
     Int cpu
     Int memory
   }
-
+  
   call AlignFastq {
     input:
       fastq1 = fastq1,
@@ -70,5 +70,7 @@ task AlignFastq {
     memory: memory
     docker: docker_image
     partition: partition
+    project: "RandD"
+    all_partitions: "i4-5"
   }
 }
