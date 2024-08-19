@@ -10,8 +10,7 @@ HeadNode:
   Ssh:
     KeyName: REGSUB_KEYNAME  # must be ed25519 for ubuntu
   Dcv:
-    Enabled: true
-    Port: 8443
+    Enabled: false
   LocalStorage:
     RootVolume:
       Size: 775
