@@ -57,9 +57,6 @@ task cgrep {
           job_group: '/myjobgroup/'
   }
  
-  output {
-    Int count = read_int(stdout())
-  }
   
 }
  
@@ -85,8 +82,5 @@ task wc {
           job_group: '/myjobgroup/'
   }
  
-  output {
-    Int count = read_int(stdout())
-  }
   
 }
