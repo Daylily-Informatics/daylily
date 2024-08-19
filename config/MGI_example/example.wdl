@@ -25,7 +25,7 @@ task ps {
   runtime {
           docker_image: "ubuntu:xenial"
           cpu: "1"
-          memory_gb: "4"
+          memory: 4
           queue: "research-hpc"
           resource: "rusage[gtmp=10, mem=4000]"
           job_group: '/myjobgroup/'
@@ -53,7 +53,7 @@ task cgrep {
   runtime {
           docker_image: "ubuntu:xenial"
           cpu: "1"
-          memory_gb: "4"
+          memory: 4
           queue: "research-hpc"
           resource: "rusage[gtmp=10, mem=4000]"
           job_group: '/myjobgroup/'
@@ -78,7 +78,7 @@ task wc {
   runtime {
           docker_image: "ubuntu:xenial"
           cpu: "1"
-          memory_gb: "4"
+          memory: 4
           queue: "research-hpc"
           resource: "rusage[gtmp=10, mem=4000]"
           job_group: '/myjobgroup/'
