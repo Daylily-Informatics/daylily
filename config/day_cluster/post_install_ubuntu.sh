@@ -176,7 +176,16 @@ sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-chan
                         build-essential libssl-dev \
                         uuid-dev  libgpgme-dev \
                         squashfs-tools libseccomp-dev \
-                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev 
+                        pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev golang-go \
+                        openjdk-11-jdk wget unzip
+
+
+# Install Cromwell
+CROMWELL_VER=87  # Replace with the latest Cromwell version
+sudo wget https://github.com/broadinstitute/cromwell/releases/download/${CROMWELL_VER}/cromwell-${CROMWELL_VER}.jar -O /usr/local/bin/cromwell.jar
+
+# Download WOMtool (optional, for validating WDL scripts)
+sudo wget https://github.com/broadinstitute/cromwell/releases/download/${CROMWELL_VER}/womtool-${CROMWELL_VER}.jar -O /usr/local/bin/womtool.jar
 
 
 # Docker setup
@@ -188,23 +197,25 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 # Install Go
-wget https://dl.google.com/go/go1.17.7.linux-amd64.tar.gz
-sudo tar -xzvf go1.17.7.linux-amd64.tar.gz -C /usr/local
+wget https://dl.google.com/go/go1.20.4.linux-amd64.tar.gz
+sudo tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
 sudo ln -s /usr/local/go/bin/go /usr/bin/go
 sudo ln -s /usr/local/go/bin/gofmt /usr/bin/gofmt
 
-# Install Singularity
-git clone --recurse-submodules https://github.com/sylabs/singularity.git
-cd singularity
-git checkout --recurse-submodules v3.10.0
-./mconfig --prefix=/opt/singularity
-cd builddir
-make
-sudo make install
+# Install Apptainer (formerly Singularity)
+export AVERSION=1.3.1  # Replace with the latest Apptainer version
+wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz
+tar -xzf apptainer-${AVERSION}.tar.gz
+cd apptainer-${AVERSION}
+./mconfig
+make -C builddir
+sudo make -C builddir install
+
 
 # Create necessary directories
 mkdir -p /fsx/analysis_results/daylily
 mkdir -p /fsx/analysis_results/ubuntu
+mkdir -p /fsx/analysis_results/cromwell_executions
 chmod -R a+wrx /fsx/analysis_results
 
 mkdir -p /fsx/resources/environments/conda
