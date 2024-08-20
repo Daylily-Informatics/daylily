@@ -62,7 +62,7 @@ rule bwa_mem2_sort:
          {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  {params.huref} \
          {params.subsample_head} <(unpigz -c  -q -- {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <(unpigz -c  -q -- {input.f2} )  {params.subsample_tail}    \
-        | resources/numa/numactl --cpunodebind=1 --membind=1  samtools sort -l 0  -m {params.sort_thread_mem}   \
+        |   samtools sort -l 0  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir -O SAM - \
         |  samtools view -b -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};
         """
