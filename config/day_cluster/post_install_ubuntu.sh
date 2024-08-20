@@ -202,14 +202,18 @@ sudo tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
 sudo ln -s /usr/local/go/bin/go /usr/bin/go
 sudo ln -s /usr/local/go/bin/gofmt /usr/bin/gofmt
 
+sudo echo "APPTAINER START" > /tmp/$HOSTNAME.apptainerinstall
+
 # Install Apptainer (formerly Singularity)
 export AVERSION=1.3.1  # Replace with the latest Apptainer version
-wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz
-tar -xzf apptainer-${AVERSION}.tar.gz
-cd apptainer-${AVERSION}
-./mconfig
-make -C builddir
-sudo make -C builddir install
+sudo wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+sudo tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+cd apptainer-${AVERSION} >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+sudo ./mconfig >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+sudo make -C builddir >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+sudo make -C builddir install >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+cd ..
+sudo echo "APPTAINER END" >> /tmp/$HOSTNAME.apptainerinstall
 
 
 # Create necessary directories
