@@ -120,17 +120,17 @@ bwa_mem2a_aln_sort:
     partition: "i128-6"
     threads: 128
     bwa_threads: 128
-    write_threads: 82
-    sort_threads: 32
+    write_threads: 44
+    sort_threads: 44
     benchmark_runs: 0
     softclip_alts: " -Y "
     ld_preload: "  "
     ldpre: " "
-    cmd: " LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl  --cpunodebind=0 --membind=0  resources/bwa-mem2/bwa-mem2 " # LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  resources/bwa-mem2/bwa-mem2 "  #   resources/numa/numactl --interleave all env LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/bwa-mem2/bwa-mem2 "  
+    cmd: " LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/bwa-mem2/bwa-mem2 "
     K: "  -K  1204800000 "
     glances: " "
     k: "  19 "  # -k specified in dynamic setting of flag 
-    sort_thread_mem: "23G"  # 1350M
+    sort_thread_mem: "16G"  # 1350M
     numactl: "none"
     piped_align: "no"
 
