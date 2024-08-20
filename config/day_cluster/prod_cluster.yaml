@@ -37,20 +37,19 @@ Scheduling:
       DisableManagedDns: false
     QueueUpdateStrategy: DRAIN
   SlurmQueues:
-    - Name: i96-5
-      CapacityType: SPOT  # SPOT OR DEDICATED
-      AllocationStrategy: lowest-price  # lowest-price OR capactity-optimized
+    - Name: i4-5
+      CapacityType: SPOT
+      AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: v24xl
+        - Name: v2xl
           Instances:
-            - InstanceType: r5n.metal  # 96/78
-            - InstanceType: r5n.24xlarge  # 96/768  7,2
-            - InstanceType: r5dn.metal  # 96/768  7,2
-            - InstanceType: r5dn.24xlarge  # 96/768  7,2
-            - InstanceType: r5b.metal  # 96/768  7,2
-            - InstanceType: r5b.24xlarge  # 96/768  7,2
+            - InstanceType: r5.2xlarge  # 8/64
+            - InstanceType: r5b.2xlarge  # 8/64
+            - InstanceType: r5dn.2xlarge  # 8/64
+            - InstanceType: r5n.2xlarge  #  8/64
+            - InstanceType: r5d.2xlarge  #  8/64
           MinCount: 0
-          MaxCount: 17
+          MaxCount: 16
           Networking:
             PlacementGroup:
               Enabled: false
@@ -68,17 +67,17 @@ Scheduling:
             EnableWriteAccess: False
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
-    - Name: i64-5
+    - Name: i16-5
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: v16xl
+        - Name: v4xl
           Instances:
-            - InstanceType: r5b.16xlarge  # 64/512  4,1
-            - InstanceType: r5dn.16xlarge  # 64/512  4,1
-            - InstanceType: r5n.16xlarge  # 64/512   5,3
-            - InstanceType: r5.16xlarge  # 64/512 4,1
-            - InstanceType: r5d.16xlarge # 64/512 4.6,2.1
+            - InstanceType: r5b.4xlarge  # 16/128
+            - InstanceType: r5dn.4xlarge  # 16/128
+            - InstanceType: r5n.4xlarge  # 16/128
+            - InstanceType: r5d.4xlarge  # 16/128
+            - InstanceType: r5.4xlarge  # 16/128
           MinCount: 0
           MaxCount: 16
           Networking:
@@ -128,17 +127,17 @@ Scheduling:
             EnableWriteAccess: False
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
-    - Name: i16-5
+    - Name: i64-5
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: v4xl
+        - Name: v16xl
           Instances:
-            - InstanceType: r5b.4xlarge  # 16/128
-            - InstanceType: r5dn.4xlarge  # 16/128
-            - InstanceType: r5n.4xlarge  # 16/128
-            - InstanceType: r5d.4xlarge  # 16/128
-            - InstanceType: r5.4xlarge  # 16/128
+            - InstanceType: r5b.16xlarge  # 64/512  4,1
+            - InstanceType: r5dn.16xlarge  # 64/512  4,1
+            - InstanceType: r5n.16xlarge  # 64/512   5,3
+            - InstanceType: r5.16xlarge  # 64/512 4,1
+            - InstanceType: r5d.16xlarge # 64/512 4.6,2.1
           MinCount: 0
           MaxCount: 16
           Networking:
@@ -158,19 +157,47 @@ Scheduling:
             EnableWriteAccess: False
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
-    - Name: i4-5
+    - Name: i72-5
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: v2xl
+        - Name: v18xl
           Instances:
-            - InstanceType: r5.2xlarge  # 8/64
-            - InstanceType: r5b.2xlarge  # 8/64
-            - InstanceType: r5dn.2xlarge  # 8/64
-            - InstanceType: r5n.2xlarge  #  8/64
-            - InstanceType: r5d.2xlarge  #  8/64
+            - InstanceType: c5.18xlarge  # 72/144 3,1
+            - InstanceType: c5d.18xlarge  # 72/144 3,1.1
           MinCount: 0
-          MaxCount: 16
+          MaxCount: 8
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+      Networking:
+        SubnetIds:
+          - REGSUB_PRIVATE_SUBNET
+      CustomActions:
+        OnNodeConfigured:
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install.sh
+      Iam:
+        S3Access:
+          - BucketName: REGSUB_S3_BUCKET_NAME
+            EnableWriteAccess: False
+        AdditionalIamPolicies:
+          - Policy: REGSUB_S3_IAM_POLICY
+    - Name: i96-5
+      CapacityType: SPOT  # SPOT OR DEDICATED
+      AllocationStrategy: lowest-price  # lowest-price OR capactity-optimized
+      ComputeResources:
+        - Name: v24xl
+          Instances:
+            - InstanceType: r5n.metal  # 96/78
+            - InstanceType: r5n.24xlarge  # 96/768  7,2
+            - InstanceType: r5dn.metal  # 96/768  7,2
+            - InstanceType: r5dn.24xlarge  # 96/768  7,2
+            - InstanceType: r5b.metal  # 96/768  7,2
+            - InstanceType: r5b.24xlarge  # 96/768  7,2
+          MinCount: 0
+          MaxCount: 17
           Networking:
             PlacementGroup:
               Enabled: false
@@ -211,33 +238,6 @@ Scheduling:
               Enabled: false
           Efa:
             Enabled: true
-      Networking:
-        SubnetIds:
-          - REGSUB_PRIVATE_SUBNET
-      CustomActions:
-        OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install.sh
-      Iam:
-        S3Access:
-          - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
-        AdditionalIamPolicies:
-          - Policy: REGSUB_S3_IAM_POLICY
-    - Name: i72-5
-      CapacityType: SPOT
-      AllocationStrategy: lowest-price
-      ComputeResources:
-        - Name: v18xl
-          Instances:
-            - InstanceType: c5.18xlarge  # 72/144 3,1
-            - InstanceType: c5d.18xlarge  # 72/144 3,1.1
-          MinCount: 0
-          MaxCount: 8
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
       Networking:
         SubnetIds:
           - REGSUB_PRIVATE_SUBNET
