@@ -15,6 +15,7 @@ workflow AlignFastq {
     String partition
     Int cpu
     Int memory
+
   }
   
   call AlignFastq {
@@ -31,7 +32,7 @@ workflow AlignFastq {
       docker_image = docker_image,
       partition = partition,
       cpu = cpu,
-      memory = memory
+      memory = memory,
   }
 
   output {
@@ -54,6 +55,8 @@ task AlignFastq {
     String partition
     Int cpu
     Int memory
+    String project
+    String all_partitions
   }
 
   command {
@@ -70,7 +73,7 @@ task AlignFastq {
     memory: memory
     docker: docker_image
     partition: partition
-    project: "RandD"
-    all_partitions: "i4-5"
+    project: project
+    all_partitions: all_partitions
   }
 }

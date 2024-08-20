@@ -116,6 +116,8 @@ task wc {
           resource: "rusage[gtmp=10, mem=4000]"
           job_group: '/myjobgroup/'
           partition: 'i4-5'
+          project: 'RandD'
+          all_partitions: 'i4-5'
   }
  
   
