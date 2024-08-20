@@ -5,7 +5,7 @@ workflow three_step {
     File procs
     String pattern
     String docker_image
-    String partition = "i4-5"
+    String partition = "i4-5"  # Set your global default partition here
     Int cpu
     Int memory
   }
@@ -46,20 +46,20 @@ task ps {
   command {
     ps
   }
-  
+
   runtime {
-          docker: docker_image
-          cpu: 1
-          memory: 4
-          project: 'RandD'
-          all_partitions: 'i4-5'
+    docker: docker_image
+    cpu: cpu
+    memory: memory
+    partition: if defined(partition) then partition else "default_partition"  # Use the global default if not provided
+    project: 'RandD'
   }
- 
+
   output {
     File procs = stdout()
   }
 }
- 
+
 task cgrep {
   input {
     String pattern
@@ -73,22 +73,20 @@ task cgrep {
   command {
     sleep 60 && grep '${pattern}' ${in_file} | wc -l > output.result
   }
-  
+
   output {
     File result = "output.result"
   }
 
   runtime {
-          docker: docker_image
-          cpu: 1
-          memory: 4
-          project: 'RandD'
-          all_partitions: 'i4-5'
+    docker: docker_image
+    cpu: cpu
+    memory: memory
+    partition: if defined(partition) then partition else "default_partition"  # Use the global default if not provided
+    project: 'RandD'
   }
- 
-  
 }
- 
+
 task wc {
   input {
     File in_file
@@ -105,15 +103,12 @@ task wc {
   output {
     File result = "output2.result"
   }
-  
+
   runtime {
-          docker:  docker_image
-          cpu: 1
-          memory: 4
-          partition: 'i4-5'
-          project: 'RandD'
-          all_partitions: 'i4-5'
+    docker: docker_image
+    cpu: cpu
+    memory: memory
+    partition: if defined(partition) then partition else "default_partition"  # Use the global default if not provided
+    project: 'RandD'
   }
- 
-  
 }
