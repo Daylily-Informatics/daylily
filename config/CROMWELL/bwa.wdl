@@ -36,7 +36,7 @@ workflow AlignFastq {
   }
 
   output {
-    File bam = AlignFastq.bam
+    File bam = output.bam
   }
 }
 
