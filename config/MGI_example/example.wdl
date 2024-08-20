@@ -49,11 +49,10 @@ task ps {
   
   runtime {
           docker: docker_image
-          cpu: "1"
+          cpu: 1
           memory: 4
-          queue: "research-hpc"
-          resource: "rusage[gtmp=10, mem=4000]"
-          job_group: '/myjobgroup/'
+          project: 'RandD'
+          all_partitions: 'i4-5'
   }
  
   output {
@@ -81,11 +80,10 @@ task cgrep {
 
   runtime {
           docker: docker_image
-          cpu: "1"
+          cpu: 1
           memory: 4
-          queue: "research-hpc"
-          resource: "rusage[gtmp=10, mem=4000]"
-          job_group: '/myjobgroup/'
+          project: 'RandD'
+          all_partitions: 'i4-5'
   }
  
   
@@ -110,11 +108,8 @@ task wc {
   
   runtime {
           docker:  docker_image
-          cpu: "1"
+          cpu: 1
           memory: 4
-          queue: "research-hpc"
-          resource: "rusage[gtmp=10, mem=4000]"
-          job_group: '/myjobgroup/'
           partition: 'i4-5'
           project: 'RandD'
           all_partitions: 'i4-5'
