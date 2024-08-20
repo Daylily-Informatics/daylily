@@ -5,7 +5,7 @@ workflow three_step {
     File procs
     String pattern
     String docker_image
-    String partition
+    String partition = "i4-5"
     Int cpu
     Int memory
   }
