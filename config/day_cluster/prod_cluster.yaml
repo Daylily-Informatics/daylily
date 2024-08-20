@@ -157,33 +157,6 @@ Scheduling:
             EnableWriteAccess: False
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
-    - Name: i72-5
-      CapacityType: SPOT
-      AllocationStrategy: lowest-price
-      ComputeResources:
-        - Name: v18xl
-          Instances:
-            - InstanceType: c5.18xlarge  # 72/144 3,1
-            - InstanceType: c5d.18xlarge  # 72/144 3,1.1
-          MinCount: 0
-          MaxCount: 8
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-      Networking:
-        SubnetIds:
-          - REGSUB_PRIVATE_SUBNET
-      CustomActions:
-        OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install.sh
-      Iam:
-        S3Access:
-          - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
-        AdditionalIamPolicies:
-          - Policy: REGSUB_S3_IAM_POLICY
     - Name: i96-5
       CapacityType: SPOT  # SPOT OR DEDICATED
       AllocationStrategy: lowest-price  # lowest-price OR capactity-optimized
@@ -238,6 +211,33 @@ Scheduling:
               Enabled: false
           Efa:
             Enabled: true
+      Networking:
+        SubnetIds:
+          - REGSUB_PRIVATE_SUBNET
+      CustomActions:
+        OnNodeConfigured:
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install.sh
+      Iam:
+        S3Access:
+          - BucketName: REGSUB_S3_BUCKET_NAME
+            EnableWriteAccess: False
+        AdditionalIamPolicies:
+          - Policy: REGSUB_S3_IAM_POLICY
+    - Name: i192-5
+      CapacityType: SPOT
+      AllocationStrategy: lowest-price
+      ComputeResources:
+        - Name: v48xl
+          Instances:
+            - InstanceType: r6i.metal # 192/15024 ?,?
+            - InstanceType: m6i.metal # 192/768  ?,?
+          MinCount: 0
+          MaxCount: 8
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
       Networking:
         SubnetIds:
           - REGSUB_PRIVATE_SUBNET
