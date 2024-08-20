@@ -135,7 +135,6 @@ bwa_mem2a_aln_sort:
     piped_align: "no"
 
 
-
 bwa_mem2ert_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     threads: 128
