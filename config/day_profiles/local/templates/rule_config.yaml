@@ -221,6 +221,7 @@ deepvariant:
     deep_cmd: " singularity run   -B /usr/bin:/usr/bin   -B ./resources:/fsx/resources -B /fsx:/fsx -B /tmp:/tmp   -B $PWD:$PWD  /fsx/resources/environments/containers/deepvariant-1.3.0.sif "
     ld_preload: " env LD_PRELOAD=./resources/libs/libllalloc.so "  #3 "  "  # env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "  # env MIMALLOC_RESET_DELAY=1750ms MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MI_OVERRIDE=ON MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/libs/libmimalloc-debug.so.1.7 "
     partition: "i32-5"
+    partition_other: "i96-5,i192-6,i72-5"
     mem_mb: "60000"
     deep_chrms: "19,21"
     numa: " "
@@ -427,6 +428,7 @@ rtg_vcfeval:
     env_yaml: "../envs/rtgtools_v0.1.yaml"
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
     partition: "i32-5"
+    partition_other: "i72-5,i192-6,i-96-5"
 
 run_concordance:
     threads: 8
@@ -442,6 +444,7 @@ rtg_vcfstats:
     env_yaml: "../envs/rtgtools_v0.1.yaml"
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
     partition: "i32-5"
+    partition_other: "i72-5,i192-6,i-96-5"
 
 sambamba_markdups:
     threads: 8
