@@ -120,7 +120,9 @@ touch a sentinel noting they have been faked
             (ls -d {params.tdir}/* | parallel --halt never --env _ -k --jobs 1 'export vcf="{params.l}{params.r}/$alt_name.vcf.gz";
             export bed="{params.l}{params.r}/$alt_name.bed";
             echo "BEDBRDBED: _$bed _";
-            export subd=`bin/ret_d $bed`
+            # Retrieve the second-to-last element (-2 in Bash)
+            export subd=$(basename $(dirname "$bed"));
+
             echo "XXXXXXXX-----> _$subd _";
             if [[ "$subd" == "" ]]; then
                 exit 33;
@@ -177,11 +179,11 @@ rule produce_snv_concordances:  # TARGET:  produce snv concordances
     output:
         MDIR+"other_reports/giabhcr_concordance_mqc.tsv"
     shell:
-        """	
+        """
         echo 'START' 1>&2;
         set +euo pipefail;
         echo 'START 22' 1>&2;
-        export wcv=$(fd concord results/ | grep fofn | wc -l);
+        export wcv=$(find  results/ | grep concord | grep fofn | wc -l);
         # if [[ "$wcv" == "0" ]]; then
         touch {output};
         # else
@@ -189,6 +191,6 @@ rule produce_snv_concordances:  # TARGET:  produce snv concordances
         (find results/day/{params.genome_build}/*/align/*/snv/*/concordance/ | grep  concordance.mqc  | head -n 1 | parallel 'head -n 1 {{}} > {output}';) || echo 'GetHeaderFAILS' 1>&2;
         (find {params.mdir}*/align/*/snv/*/concordance/ | grep  .mqc | parallel ' tail -n +2 {{}} >> {output}';) || echo "GETCONCORDANCECALLSfails" 1>&2;
         #fi;
-	(perl -pi -e 's/^(.+?)(\t)(.+?)(\t)(.+)$/$3\t$1\t$5/g;' {output} ) || echo "perl regsub failed" 1>&2;
+        (perl -pi -e 's/^(.+?)(\t)(.+?)(\t)(.+)$/$3\t$1\t$5/g;' {output} ) || echo "perl regsub failed" 1>&2;
 
         """
