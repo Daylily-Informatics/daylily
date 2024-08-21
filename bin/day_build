@@ -40,7 +40,7 @@ else
 
     echo "
 
-  (disclaimer, only tested via bash on cent0s 7 w/slurm via awsparallelcompute)
+  (disclaimer, only tested via bash on ubuntu22.04  w/slurm via awsparallelcompute)
 
 
      This script can build the DAY conda environment(which you only need to do once on a given working environment.) 

@@ -129,8 +129,7 @@ elif [[ "$1" == "h" || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "
 
 
-(disclaimer, only tested via bash on ubuntu \
-14/18/20, cent0s 7/8.)
+(disclaimer, only tested via bash on ubuntu)
 
 
      This script will activate a mod analysis profile (each profile matches a dir of the same name in: config/day_profiles/). Some valid options are : local, drmaa).

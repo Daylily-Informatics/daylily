@@ -92,9 +92,8 @@ $CONDA_DIR/bin/conda init bash  # prob not necessary
 
 # Update Conda Config
 conda config --add channels conda-forge
-conda config --add channels anaconda
 conda config --add channels bioconda
-conda config --add channels r
+
 
 (conda config --set channel_priority strict && echo '' ) || echo 'failed to set conda pri to strict';
 (conda config --set repodata_threads 10 || echo "" ) || echo "repodata_threads not set";
