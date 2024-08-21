@@ -53,7 +53,7 @@ rule bwa_mem2meme_aln_sort:
         subsample_tail=get_subsample_tail,
     conda:
         config["bwa_mem2meme_aln_sort"]["env_yaml"]
-    shell:
+    shell: 
         """
         {params.lib}
         export tdir={params.mdir}/{params.cluster_sample}/{params.samtmpd};
@@ -69,7 +69,7 @@ rule bwa_mem2meme_aln_sort:
             -7 {params.huref} \
             {params.subsample_head} <( unpigz -c -q -- {input.f1} )   {params.subsample_tail} \
             {params.subsample_head} <( unpigz -c  -q -- {input.f2} )  {params.subsample_tail}  \
-            | mbuffer -m 20G \
+            | mbuffer -m 30G \
             |  samtools sort -l 0  -m {params.sort_thread_mem}   \
             -@  {params.sort_threads} -T $tdir -O SAM - \
             |  samtools view -b -1  -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};
