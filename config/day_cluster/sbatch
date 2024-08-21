@@ -44,7 +44,7 @@ if [ $? -eq 0 ];then
        ActualSpend=$(echo ${budget} | awk '{print $1}')
        BudgetLimit=$(echo ${budget} | awk '{print $2}')
        if (( $(echo "${ActualSpend} < ${BudgetLimit}" | bc -l) ));then
-         /opt/slurm/sbin/${slurm_command} --no-requeue $@
+         /opt/slurm/sbin/${slurm_command}  $@
          exit 0
        else
          echo "The Project ${project} does not have more budget allocated for this month."
@@ -52,7 +52,7 @@ if [ $? -eq 0 ];then
        fi
      fi
   else
-    /opt/slurm/sbin/${slurm_command} --no-requeue --export=ALL $@
+    /opt/slurm/sbin/${slurm_command} --export=ALL $@
   fi
 else
  echo "You are not allowed to use the project ${project}"
