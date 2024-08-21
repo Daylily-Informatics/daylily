@@ -46,7 +46,8 @@ rule strobe_align_sort:
         strobe_threads=config["strobe_align_sort"]["strobe_threads"],
         samp=get_samp_name,
         mbuff_mem=config["strobe_align_sort"]["mbuffer_mem"],
-	rgpg="strobealigner"	
+	rgpg="strobealigner",
+	numa=config["strobe_align_sort"]["mbuffer_mem"]
     conda:
         config["strobe_align_sort"]["env_yaml"]
     shell:
@@ -57,12 +58,12 @@ rule strobe_align_sort:
         epocsec=$(date +'%s');
         
         
-        {params.strobe_cmd} -v \
+        {params.numa} {params.strobe_cmd} -v \
          --rg '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
           -t {params.strobe_threads}  \
 	  --use-index {params.huref} \
-         {params.subsample_head} <(unpigz -c  -q -- {input.f1} )  {params.subsample_tail}  \
-         {params.subsample_head} <(unpigz -c  -q -- {input.f2} )  {params.subsample_tail}    \
+         {params.subsample_head} <(unpigz -t 4 -c  -q -- {input.f1} )  {params.subsample_tail}  \
+         {params.subsample_head} <(unpigz -t 4 -c  -q -- {input.f2} )  {params.subsample_tail}    \
         |   samtools sort -l 0  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir  -O SAM - \
         |  samtools view -b -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};
