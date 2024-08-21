@@ -22,7 +22,7 @@ rule bwa_mem2_sort:
         vcpu=config['bwa_mem2a_aln_sort']['threads']
     threads: config['bwa_mem2a_aln_sort']['threads']
     benchmark:
-        repeat(MDIR + "{sample}/benchmarks/{sample}.bwa2a.alNsort.bench.tsv",0)
+        MDIR + "{sample}/benchmarks/{sample}.bwa2a.alNsort.bench.tsv"
     params:
         cluster_slots=94,
         cluster_sample=ret_sample,

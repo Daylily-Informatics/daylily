@@ -19,7 +19,7 @@ rule strobe_align_sort:
         vcpu=config['strobe_align_sort']['threads']
     threads: config['strobe_align_sort']['threads']
     benchmark:
-        repeat(MDIR + "{sample}/benchmarks/{sample}.strobe.alNsort.bench.tsv",0)
+        MDIR + "{sample}/benchmarks/{sample}.strobe.alNsort.bench.tsv"
     params:
         cluster_slots=94,
         cluster_sample=ret_sample,
