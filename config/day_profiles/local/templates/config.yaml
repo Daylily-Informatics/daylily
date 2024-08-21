@@ -5,7 +5,7 @@ use-conda: true
 conda-frontend: "mamba"
 conda-prefix: "/fsx/resources/environments/conda/USER_REGSUB/HOSTNAME"
 force-use-threads: true
-restart-times: 1  # set this to  2 once stable.  now, fail fasst
+restart-times: 0  # set this to  2 once stable.  now, fail fasst
 cores: 16
 ## If these are uncommented (only 1 at a time)
 #dag: true

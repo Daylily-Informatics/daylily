@@ -10,7 +10,6 @@ rule strobe_align_sort:
     output:
         bami=MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam.bai",
         bamo=MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam",
-    priority: 49
     log:
         MDIR + "{sample}/align/strobe/logs/{sample}.strobe_sort.log",
     resources:
@@ -20,7 +19,7 @@ rule strobe_align_sort:
         vcpu=config['strobe_align_sort']['threads']
     threads: config['strobe_align_sort']['threads']
     benchmark:
-        repeat(MDIR + "{sample}/benchmarks/{sample}.strobe.alNsort.bench.tsv",4)
+        repeat(MDIR + "{sample}/benchmarks/{sample}.strobe.alNsort.bench.tsv",0)
     params:
         cluster_slots=94,
         cluster_sample=ret_sample,
@@ -54,17 +53,18 @@ rule strobe_align_sort:
         """
         export tdir={params.mdir}/{params.samp}/{params.samtmpd};
         mkdir -p $tdir ;
+
         epocsec=$(date +'%s');
         
         
-        {params.strobe_cmd} \
+        {params.strobe_cmd} -v \
          --rg '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
           -t {params.strobe_threads}  \
 	  --use-index {params.huref} \
          {params.subsample_head} <(unpigz -c  -q -- {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <(unpigz -c  -q -- {input.f2} )  {params.subsample_tail}    \
         |   samtools sort -l 0  -m {params.sort_thread_mem}   \
-         -@  {params.sort_threads} -T $tdir -O SAM - \
+         -@  {params.sort_threads} -T $tdir  -O SAM - \
         |  samtools view -b -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};
         """
 
