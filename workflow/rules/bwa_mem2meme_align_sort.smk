@@ -51,6 +51,7 @@ rule bwa_mem2meme_aln_sort:
         ldpre=config['bwa_mem2meme_aln_sort']['ldpre'],
         subsample_head=get_subsample_head,
         subsample_tail=get_subsample_tail,
+        mbuffer_mem=config["bwa_mem2meme_aln_sort"]["mbuffer_mem"]
     conda:
         config["bwa_mem2meme_aln_sort"]["env_yaml"]
     shell: 
@@ -62,6 +63,9 @@ rule bwa_mem2meme_aln_sort:
         {params.lib}
 
         unset LD_PRELOAD;
+        
+        # mbuffer size should be determined by memory option given to samtools.
+        # ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
         {params.ldpre} {params.bwa_mem2m_cmd}  mem  \
            -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
@@ -69,7 +73,7 @@ rule bwa_mem2meme_aln_sort:
             -7 {params.huref} \
             {params.subsample_head} <( unpigz -c -q -- {input.f1} )   {params.subsample_tail} \
             {params.subsample_head} <( unpigz -c  -q -- {input.f2} )  {params.subsample_tail}  \
-            | mbuffer -m 30G \
+            | mbuffer -m {params.mbuff_mem} \
             |  samtools sort -l 0  -m {params.sort_thread_mem}   \
             -@  {params.sort_threads} -T $tdir -O SAM - \
             |  samtools view -b -1  -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};

@@ -49,6 +49,7 @@ rule bwa_mem2_sort:
         subsample_tail=get_subsample_tail,
         bwa_threads=config["bwa_mem2a_aln_sort"]["bwa_threads"],
         samp=get_samp_name,
+        mbuffer_mem=config["bwa_mem2a_aln_sort"]["mbuffer_mem"]
     conda:
         config["bwa_mem2a_aln_sort"]["env_yaml"]
     shell:
@@ -57,11 +58,13 @@ rule bwa_mem2_sort:
         mkdir -p $tdir ;
         epocsec=$(date +'%s');
         
+        
         {params.ldpre} {params.bwa_mem2a_cmd} mem \
          -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
          {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  {params.huref} \
          {params.subsample_head} <(unpigz -c  -q -- {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <(unpigz -c  -q -- {input.f2} )  {params.subsample_tail}    \
+        | mbuffer -m {params.mbuff_mem} \
         |   samtools sort -l 0  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir -O SAM - \
         |  samtools view -b -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};

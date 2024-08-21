@@ -61,7 +61,7 @@ else
     export CONDA_DIR="$HOME/miniconda3/"
     echo "|||   No conda environment detected.
  Installing to $CONDA_DIR :
-    >    wget https://repo.anaconda.com/miniconda/Miniconda3-py39_23.1.0-1-Linux-x86_64.sh
+    >    wget wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     >    bash Miniconda3-latest-Linux-x86_64.sh -b -p  $CONDA_DIR
     >    rm Miniconda3-latest-Linux-x86_64.sh
 
@@ -72,9 +72,9 @@ else
     > conda install -n base -c conda-forge mamba
     "
 
-    wget https://repo.anaconda.com/miniconda/Miniconda3-py39_23.1.0-1-Linux-x86_64.sh
-    bash Miniconda3-py39_23.1.0-1-Linux-x86_64.sh -b -p  $CONDA_DIR
-    rm Miniconda3-py39_23.1.0-1-Linux-x86_64.sh
+    wget wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash Miniconda3-latest-Linux-x86_64.sh -b -p  $CONDA_DIR
+    rm Miniconda3-latest-Linux-x86_64.sh
 
     source $CONDA_DIR/etc/profile.d/conda.sh
     ~/conda/bin/conda init bash
