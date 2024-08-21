@@ -51,7 +51,7 @@ rule bwa_mem2meme_aln_sort:
         ldpre=config['bwa_mem2meme_aln_sort']['ldpre'],
         subsample_head=get_subsample_head,
         subsample_tail=get_subsample_tail,
-        mbuffer_mem=config["bwa_mem2meme_aln_sort"]["mbuffer_mem"]
+        mbuff_mem=config["bwa_mem2meme_aln_sort"]["mbuffer_mem"]
     conda:
         config["bwa_mem2meme_aln_sort"]["env_yaml"]
     shell: 
