@@ -46,7 +46,7 @@ rule strobe_align_sort:
         subsample_tail=get_subsample_tail,
         strobe_threads=config["strobe_align_sort"]["strobe_threads"],
         samp=get_samp_name,
-        mbuffer_mem=config["strobe_align_sort"]["mbuffer_mem"],
+        mbuff_mem=config["strobe_align_sort"]["mbuffer_mem"],
 	rgpg="strobealigner"	
     conda:
         config["strobe_align_sort"]["env_yaml"]
