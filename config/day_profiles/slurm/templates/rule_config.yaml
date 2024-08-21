@@ -228,7 +228,7 @@ duphold:
 
 doppelmark:
     threads: 128
-    partition: "i72-5,i192-6"
+    partition: "i72-5,i128-6"
     clip_padding: 600000
     shard_size: 100000000
     min_bases: 20000
