@@ -123,7 +123,7 @@ bwa_mem2a_aln_sort:
     threads: 192
     bwa_threads: 224
     orig_threads: 2
-    sort_threads: 20
+    sort_threads: 40
     write_threads: 2
     ldpre: ""
     orig_sort_threads: 2
@@ -135,7 +135,7 @@ bwa_mem2a_aln_sort:
     glances: " "
     k: " -k 19 "
     orig_sort_mem: "18G"
-    sort_thread_mem: "18G"  # 1350M
+    sort_thread_mem: "6G"  # 1350M
     numactl: ""
     mbuffer_mem: "200G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
@@ -146,7 +146,7 @@ strobe_align_sort:
     threads: 192
     strobe_threads: 192
     write_threads: 64
-    sort_threads: 30
+    sort_threads: 40
     benchmark_runs: 0
     softclip_alts: "  "
     ld_preload: "  "
@@ -155,7 +155,7 @@ strobe_align_sort:
     K: " "  # " -K  1204800000 "
     glances: " "
     k: "  -k 19 " 
-    sort_thread_mem: "10G"  
+    sort_thread_mem: "6G"  
     numactl: "none"
     piped_align: "no"
     mbuffer_mem: "100G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
