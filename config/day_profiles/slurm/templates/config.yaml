@@ -13,6 +13,7 @@ cluster:
     --partition={resources.partition}
     --chdir=$PWD
     --comment $DAY_PROJECT
+    --no-requeue
 default-resources:
   - disk_mb=1000
   - mem_mb=1000
