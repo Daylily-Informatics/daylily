@@ -14,6 +14,7 @@ mkdir -p ~$USER/.parallel
 ################################################################################
 DY_ENVNAME="DAY"
 
+
 if [[ $1 != "$DY_ENVNAME" ]]; then
 
     echo """
@@ -57,11 +58,10 @@ if [[ "$conda_detected" != "" ]]; then
     fi
 
 else
-
     export CONDA_DIR="$HOME/miniconda3/"
     echo "|||   No conda environment detected.
  Installing to $CONDA_DIR :
-    >    wget wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    >    wget https://repo.anaconda.com/miniconda/Miniconda3-py39_23.1.0-1-Linux-x86_64.sh
     >    bash Miniconda3-latest-Linux-x86_64.sh -b -p  $CONDA_DIR
     >    rm Miniconda3-latest-Linux-x86_64.sh
 
@@ -91,9 +91,8 @@ $CONDA_DIR/bin/conda init bash  # prob not necessary
 
 # Update Conda Config
 conda config --add channels conda-forge
-conda config --add channels anaconda
 conda config --add channels bioconda
-conda config --add channels r
+
 
 (conda config --set channel_priority strict && echo '' ) || echo 'failed to set conda pri to strict';
 (conda config --set repodata_threads 10 || echo "" ) || echo "repodata_threads not set";
