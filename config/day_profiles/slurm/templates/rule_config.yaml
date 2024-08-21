@@ -39,6 +39,8 @@ active_s_v_callers:
 active_aligners:
     - bwa2a:
           mkdup: dppl
+    - strobe:
+          mkdup: dppl
 #    - bwa2b:
 #          mkdup: dppl
 #    - bwa2m:
@@ -143,7 +145,7 @@ strobe_align_sort:
     partition: "i72-5"
     threads: 192
     strobe_threads: 192
-    write_threads: 192
+    write_threads: 64
     sort_threads: 30
     benchmark_runs: 0
     softclip_alts: "  "
