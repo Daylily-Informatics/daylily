@@ -188,12 +188,13 @@ Scheduling:
             EnableWriteAccess: False
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
-    - Name: i128-6
+    - Name: i128
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
         - Name: v32xl
           Instances:
+            - InstanceType: m6i.metal # 192/768  ?,?
             - InstanceType: r6i.32xlarge  # 128/1024  8.0,6.2  #
             - InstanceType: i4i.metal  # 128/1024  11,3.3 
             - InstanceType: i4i.32xlarge  #128/1024 11,4.2
@@ -223,14 +224,18 @@ Scheduling:
             EnableWriteAccess: False
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
-    - Name: i192-5
+    - Name: i192
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
         - Name: v48xl
           Instances:
-            - InstanceType: r6i.metal # 192/15024 ?,?
-            - InstanceType: m6i.metal # 192/768  ?,?
+            - InstanceType: c7i.48xlarge # 192/384
+            - InstanceType: c7i.metal-48xl # 192/384  ?,?
+            - InstanceType: m7i.metal-48xl # 192/768 ?,?
+            - InstanceType: m7i.48xlarge # 192/768 ?,?
+            - InstanceType: r7i.48xlarge # 192/1536 ?,?
+            - InstanceType: r7i.metal-48xl # 192/1536 ?,?
           MinCount: 0
           MaxCount: 8
           Networking:
