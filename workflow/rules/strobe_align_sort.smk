@@ -1,42 +1,41 @@
 ####### BWA MEM2 
 # An accelerated version of BWA MEM
 
-rule bwa_mem2_sort:
-    """https://github.com/bwa-mem2/bwa-mem2"""
-    """    Also used here, a common bfx toolset, samtools"""
-    """    https://github.com/samtools/samtools"""
+rule strobe_align_sort:
+    """https://github.com/ksahlin/strobealign""""
+    
     input:
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         f1=getR1s,
         f2=getR2s,
     output:
-        bami=MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam.bai",
-        bamo=MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam",
+        bami=MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam.bai",
+        bamo=MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam",
     priority: 49
     log:
-        MDIR + "{sample}/align/bwa2a/logs/{sample}.bwa2a_sort.log",
+        MDIR + "{sample}/align/strobe/logs/{sample}.strobe_sort.log",
     resources:
-        threads=config['bwa_mem2a_aln_sort']['threads'],
-        mem_mb=60000 if 'mem_mb' not in config['bwa_mem2a_aln_sort'] else config['bwa_mem2a_aln_sort']['mem_mb'],
-        partition=config['bwa_mem2a_aln_sort']['partition'],
-        vcpu=config['bwa_mem2a_aln_sort']['threads']
-    threads: config['bwa_mem2a_aln_sort']['threads']
+        threads=config['strobe_align_sort']['threads'],
+        mem_mb=60000 if 'mem_mb' not in config['strobe_align_sort'] else config['strobe_align_sort']['mem_mb'],
+        partition=config['strobe_align_sort']['partition'],
+        vcpu=config['strobe_align_sort']['threads']
+    threads: config['strobe_align_sort']['threads']
     benchmark:
-        repeat(MDIR + "{sample}/benchmarks/{sample}.bwa2a.alNsort.bench.tsv",4)
+        repeat(MDIR + "{sample}/benchmarks/{sample}.strobe.alNsort.bench.tsv",4)
     params:
         cluster_slots=94,
         cluster_sample=ret_sample,
         mdir=MDIR,
-        samtmpd="/align/bwa2a/logs/sam_tmpd/",
-        write_threads=config["bwa_mem2a_aln_sort"]["write_threads"],
-        sort_threads= config["bwa_mem2a_aln_sort"]["sort_threads"],
-        benchmark_runs=config["bwa_mem2a_aln_sort"]["softclip_alts"],
-        softclip_alts=config["bwa_mem2a_aln_sort"]["softclip_alts"],
-        bwa_mem2a_cmd=config["bwa_mem2a_aln_sort"]["cmd"],
-        ldpre=config['bwa_mem2a_aln_sort']['ldpre'],
-        k=get_bwa_kmer_size,  # little kay
-        K=config["bwa_mem2a_aln_sort"]["K"],  # BIG KAY
-        sort_thread_mem=config["bwa_mem2a_aln_sort"]["sort_thread_mem"],
+        samtmpd="/align/strobe/logs/sam_tmpd/",
+        write_threads=config["strobe_align_sort"]["write_threads"],
+        sort_threads= config["strobe_align_sort"]["sort_threads"],
+        benchmark_runs=config["strobe_align_sort"]["softclip_alts"],
+        softclip_alts=config["strobe_align_sort"]["softclip_alts"],
+        bwa_mem2a_cmd=config["strobe_align_sort"]["cmd"],
+        ldpre=config['strobe_align_sort']['ldpre'],
+        k=config["strobe_align_sort"]["k"],  # little kay
+        K=config["strobe_align_sort"]["K"],  # BIG KAY
+        sort_thread_mem=config["strobe_align_sort"]["sort_thread_mem"],
         huref=config["supporting_files"]["files"]["huref"]["bwa_mem_index_vanilla"]["name"],
         rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
         rgpu="presumedCombinedLanes",  # ideally flowcell_lane(s)
@@ -47,11 +46,11 @@ rule bwa_mem2_sort:
         rgpg="bwamem2",  #program
         subsample_head=get_subsample_head,
         subsample_tail=get_subsample_tail,
-        bwa_threads=config["bwa_mem2a_aln_sort"]["bwa_threads"],
+        bwa_threads=config["strobe_align_sort"]["bwa_threads"],
         samp=get_samp_name,
-        mbuffer_mem=config["bwa_mem2a_aln_sort"]["mbuffer_mem"]
+        mbuffer_mem=config["strobe_align_sort"]["mbuffer_mem"]
     conda:
-        config["bwa_mem2a_aln_sort"]["env_yaml"]
+        config["strobe_align_sort"]["env_yaml"]
     shell:
         """
         export tdir={params.mdir}/{params.samp}/{params.samtmpd};
@@ -59,9 +58,9 @@ rule bwa_mem2_sort:
         epocsec=$(date +'%s');
         
         
-        {params.ldpre} {params.bwa_mem2a_cmd} mem \
+        resources/strobealign/bin/strobealign --use-index  \
          -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
-         {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  {params.huref} \
+          {params.k} -t {params.strobe_threads}  {params.huref} \
          {params.subsample_head} <(unpigz -c  -q -- {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <(unpigz -c  -q -- {input.f2} )  {params.subsample_tail}    \
         | mbuffer -m {params.mbuff_mem} \
@@ -75,5 +74,5 @@ localrules: produce_bwa_mem2,
 
 rule produce_bwa_mem2:  # TARGET: only produce bwamem2a
      input:
-         expand(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam", sample=SAMPS)
+         expand(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam", sample=SAMPS)
 	 

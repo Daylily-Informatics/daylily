@@ -1,0 +1,11 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - samtools
+  - bwa-meme
+  - mbuffer
+  - pigz
+  - biobambam
+  - seqkit
+  - seqfu
