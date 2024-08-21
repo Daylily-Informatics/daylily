@@ -1,8 +1,7 @@
-####### BWA MEM2 
-# An accelerated version of BWA MEM
+####### strobe aligner
 
 rule strobe_align_sort:
-    """https://github.com/ksahlin/strobealign""""
+    """https://github.com/ksahlin/strobealign"""
     
     input:
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
@@ -31,7 +30,7 @@ rule strobe_align_sort:
         sort_threads= config["strobe_align_sort"]["sort_threads"],
         benchmark_runs=config["strobe_align_sort"]["softclip_alts"],
         softclip_alts=config["strobe_align_sort"]["softclip_alts"],
-        bwa_mem2a_cmd=config["strobe_align_sort"]["cmd"],
+        strobe_cmd=config["strobe_align_sort"]["cmd"],
         ldpre=config['strobe_align_sort']['ldpre'],
         k=config["strobe_align_sort"]["k"],  # little kay
         K=config["strobe_align_sort"]["K"],  # BIG KAY
@@ -43,10 +42,9 @@ rule strobe_align_sort:
         rgid='x', #ret_sample,  # ideally samplename_flowcell_lane(s)_barcode  ! Imp this is unique, I add epoc seconds to the end of start of this rule
         rglb="_presumedNoAmpWGS",  # prepend sample_name in shell block ideally samplename_libprep
         rgcn="CenterName",  # center name
-        rgpg="bwamem2",  #program
         subsample_head=get_subsample_head,
         subsample_tail=get_subsample_tail,
-        bwa_threads=config["strobe_align_sort"]["bwa_threads"],
+        strobe_threads=config["strobe_align_sort"]["strobe_threads"],
         samp=get_samp_name,
         mbuffer_mem=config["strobe_align_sort"]["mbuffer_mem"]
     conda:
@@ -70,9 +68,9 @@ rule strobe_align_sort:
         """
 
 
-localrules: produce_bwa_mem2,
+localrules: produce_strobe_align,
 
-rule produce_bwa_mem2:  # TARGET: only produce bwamem2a
+rule produce_strobe_align:  # TARGET: only produce strobe align
      input:
          expand(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam", sample=SAMPS)
 	 
