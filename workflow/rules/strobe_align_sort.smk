@@ -58,7 +58,7 @@ rule strobe_align_sort:
         
         
         resources/strobealign/bin/strobealign --use-index  \
-         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
+         --rg '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
           {params.k} -t {params.strobe_threads}  {params.huref} \
          {params.subsample_head} <(unpigz -c  -q -- {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <(unpigz -c  -q -- {input.f2} )  {params.subsample_tail}    \
