@@ -177,7 +177,7 @@ sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-chan
                         uuid-dev  libgpgme-dev \
                         squashfs-tools libseccomp-dev \
                         pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev  \
-                        openjdk-11-jdk wget unzip
+                        openjdk-11-jdk wget unzip squashfuse
 
 
 # Install Cromwell
