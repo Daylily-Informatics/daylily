@@ -57,7 +57,7 @@ rule strobe_align_sort:
         epocsec=$(date +'%s');
         
         
-        {params.strobe_cmd} \
+        {params.strobe_cmd} -v \
          --rg '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
           -t {params.strobe_threads}  \
 	  --use-index {params.huref} \
