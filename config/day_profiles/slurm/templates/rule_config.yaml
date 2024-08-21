@@ -144,7 +144,7 @@ strobe_align_sort:
     env_yaml: "../envs/strobe_aligner.yaml"
     partition: "i72-5"
     threads: 192
-    strobe_threads: 192
+    strobe_threads: 128
     write_threads: 64
     sort_threads: 40
     benchmark_runs: 0
