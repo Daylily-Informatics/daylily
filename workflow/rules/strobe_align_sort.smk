@@ -46,8 +46,8 @@ rule strobe_align_sort:
         strobe_threads=config["strobe_align_sort"]["strobe_threads"],
         samp=get_samp_name,
         mbuff_mem=config["strobe_align_sort"]["mbuffer_mem"],
-	rgpg="strobealigner",
-	numa=config["strobe_align_sort"]["mbuffer_mem"]
+        rgpg="strobealigner",
+        numa=config["strobe_align_sort"]["numa"]
     conda:
         config["strobe_align_sort"]["env_yaml"]
     shell:
@@ -58,15 +58,18 @@ rule strobe_align_sort:
         epocsec=$(date +'%s');
         
         
-        {params.numa} {params.strobe_cmd} -v \
+        {params.numa} \
+        bash -c \" \
+        {params.strobe_cmd}  \
+        -t {params.strobe_threads} \
+        -v \
          --rg '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
-          -t {params.strobe_threads}  \
-	  --use-index {params.huref} \
-         {params.subsample_head} <(unpigz -t 4 -c  -q -- {input.f1} )  {params.subsample_tail}  \
-         {params.subsample_head} <(unpigz -t 4 -c  -q -- {input.f2} )  {params.subsample_tail}    \
+        --use-index {params.huref} \
+         {params.subsample_head} <(unpigz -c  -q -- {input.f1} )  {params.subsample_tail}  \
+         {params.subsample_head} <(unpigz -c  -q -- {input.f2} )  {params.subsample_tail}    \
         |   samtools sort -l 0  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir  -O SAM - \
-        |  samtools view -b -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};
+        |  samtools view -b -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};\"
         """
 
 
@@ -75,4 +78,4 @@ localrules: produce_strobe_align,
 rule produce_strobe_align:  # TARGET: only produce strobe align
      input:
          expand(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam", sample=SAMPS)
-	 
+ 
