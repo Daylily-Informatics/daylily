@@ -142,8 +142,8 @@ bwa_mem2a_aln_sort:
 
 strobe_align_sort:
     env_yaml: "../envs/strobe_aligner.yaml"
-    partition: "i64-5,i96-5"
-    threads: 64
+    partition: "i129-6,i72-5"
+    threads: 128
     strobe_threads: 64
     write_threads: 64
     sort_threads: 64
@@ -152,7 +152,7 @@ strobe_align_sort:
     ld_preload: "  "
     ldpre: " "
     numa: " "
-    cmd: " OMP_NUM_THREADS=64 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVEresources/strobealign/bin/strobealign "
+    cmd: " OMP_NUM_THREADS=128 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVEresources/strobealign/bin/strobealign "
     K: " "  # " -K  1204800000 "
     glances: " "
     k: "  -k 19 " 
