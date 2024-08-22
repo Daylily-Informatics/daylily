@@ -26,7 +26,7 @@ jobs: 500
 cores: 1600
 latency-wait: 100
 local-cores: 10
-restart-times: 0
+restart-times: 1
 max-jobs-per-second: 10
 keep-going: True
 keep-remote: True
