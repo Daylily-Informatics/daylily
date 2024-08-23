@@ -7,7 +7,7 @@
 ```bash
 
 region="us-west-2"
-cluster_name="mycluster"
+cluster_name="jem-calm-down-99"
 aws ec2 describe-instances --region $region --filters "Name=tag:parallelcluster:cluster-name,Values=$cluster_name" --query "Reservations[*].Instances[*].[InstanceId,InstanceType,State.Name,Tags[?Key=='Name'].Value|[0],Tags[?Key=='parallelcluster:node-type'].Value|[0],PrivateIpAddress,PublicIpAddress,LaunchTime]" --output table
 
 --------------------------------------------------------------------------------------------------------------------------------------
@@ -41,3 +41,13 @@ aws ec2 describe-spot-price-history \
     --output table \
     --region us-west-2
 ```
+
+
+### For Terminated Instances
+
+```bash
+
+aws cloudtrail lookup-events     --region us-west-2     --lookup-attributes AttributeKey=EventName,AttributeValue=TerminateInstances     --start-time $(date -u -d '2 days ago' '+%Y-%m-%dT%H:%M:%SZ')     --end-time $(date -u '+%Y-%m-%dT%H:%M:%SZ')     --output json > termination_events.json
+
+```
+

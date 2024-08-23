@@ -32,7 +32,7 @@ HeadNode:
 Scheduling:
   Scheduler: slurm
   SlurmSettings:
-    ScaledownIdletime: 15
+    ScaledownIdletime: 5
     Dns:
       DisableManagedDns: false
     QueueUpdateStrategy: DRAIN
