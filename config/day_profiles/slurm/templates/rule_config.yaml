@@ -121,11 +121,11 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 122
+    bwa_threads: 124
     orig_threads: 2
     sort_threads: 96
     write_threads: 96
-    igz_threads: 128 # from 64
+    igz_threads: 64 # from 64
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
@@ -149,7 +149,7 @@ strobe_align_sort:
     write_threads: 96
     sort_threads: 96
     benchmark_runs: 0
-    igz_threads: 64
+    igz_threads: 96
     softclip_alts: "  "
     ld_preload: "  "
     ldpre: " "
@@ -189,7 +189,7 @@ bwa_mem2meme_aln_sort:
     threads: 192
     bwa_threads: 124
     write_threads: 96
-    igz_threads: 64
+    igz_threads: 96
     sort_threads: 96
     partition: "i192"
     benchmark_runs: 0
