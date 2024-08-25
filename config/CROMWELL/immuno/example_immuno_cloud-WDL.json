@@ -3,18 +3,18 @@
       "tumor_sequence": [
         {
           "sequence": {
-            "fastq1": "",
-            "fastq2": ""
+            "fastq1": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R1.fastq.gz",
+            "fastq2": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R2.fastq.gz"
           },
           "readgroup": "@RG\tID:1\tPU:\tSM:\tLB:\tPL:Illumina\tCN:"
         }
       ],
-      "tumor_sample_name": "",
+      "tumor_sample_name": "yy",
       "normal_sequence": [
         {
           "sequence": {
-            "fastq1": "",
-            "fastq2": ""
+            "fastq1": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R1.fastq.gz",
+            "fastq2": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R2.fastq.gz"
           },
           "readgroup": "@RG\tID:2\tPU:\tSM:\tLB:\tPL:Illumina\tCN:"
         }
@@ -23,68 +23,68 @@
       "rna_sequence": [
         {
           "sequence": {
-            "fastq1": "",
-            "fastq2": ""
+            "fastq1": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R1.fastq.gz",
+            "fastq2": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R2.fastq.gz"
           },
           "readgroup": "ID:3\tPU:\tSM:\tLB:\tPL:Illumina\tCN:"
         }
       ],
-      "sample_name": "",
+      "sample_name": "xx",
       "strand": "",
-      "reference": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa",
-      "reference_fai": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.fai",
-      "reference_dict": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.dict",
-      "reference_alt": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.alt",
-      "reference_amb": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.amb",
-      "reference_ann": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.ann",
-      "reference_bwt": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.bwt.2bit.64",
-      "reference_pac": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.pac",
-      "reference_0123": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.0123",
-      "synonyms_file": "s3://daylily-references/data/human_GRCh38_ens105/reference_genome/chromAlias.ensembl.txt",
-      "star_fusion_genome_dir_zip": "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/star-fusion_1.10.1_index.zip",
+      "reference": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa",
+      "reference_fai": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.fai",
+      "reference_dict": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.dict",
+      "reference_alt": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.alt",
+      "reference_amb": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.amb",
+      "reference_ann": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.ann",
+      "reference_bwt": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.bwt.2bit.64",
+      "reference_pac": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.pac",
+      "reference_0123": "/fsx/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.0123",
+      "synonyms_file": "/fsx/data/human_GRCh38_ens105/reference_genome/chromAlias.ensembl.txt",
+      "star_fusion_genome_dir_zip": "/fsx/data/human_GRCh38_ens105/aligner_indices/star-fusion_1.10.1_index.zip",
       "examine_coding_effect": true,
       "fusioninspector_mode": "validate",
-      "cdna_fasta": "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.cdna.all.fa.gz",
-      "agfusion_database": "s3://daylily-references/data/human_GRCh38_ens105/agfusion_1.3_database/agfusion.homo_sapiens.105.db",
+      "cdna_fasta": "/fsx/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.cdna.all.fa.gz",
+      "agfusion_database": "/fsx/data/human_GRCh38_ens105/agfusion_1.3_database/agfusion.homo_sapiens.105.db",
       "agfusion_annotate_noncanonical": true,
       "min_ffpm_level": 0.025,
-      "ribosomal_intervals": "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.ribo_intervals",
-      "gene_transcript_lookup_table": "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/ensembl105.transcriptToGene.tsv",
-      "kallisto_index": "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.cdna.all.fa.kallisto.idx",
-      "refFlat": "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.refFlat.txt",
-      "reference_annotation": "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.gtf",
+      "ribosomal_intervals": "/fsx/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.ribo_intervals",
+      "gene_transcript_lookup_table": "/fsx/data/human_GRCh38_ens105/rna_seq_annotation/ensembl105.transcriptToGene.tsv",
+      "kallisto_index": "/fsx/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.cdna.all.fa.kallisto.idx",
+      "refFlat": "/fsx/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.refFlat.txt",
+      "reference_annotation": "/fsx/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.gtf",
       "trimming_adapter_min_overlap": 7,
       "trimming_adapter_trim_end": "RIGHT",
-      "trimming_adapters": "s3://daylily-references/data/human_GRCh38_ens105/misc/illumina_multiplex.fa",
+      "trimming_adapters": "/fsx/data/human_GRCh38_ens105/misc/illumina_multiplex.fa",
       "trimming_max_uncalled": 300,
       "trimming_min_readlength": 25,
-      "bait_intervals": "s3://daylily-references/data/human_GRCh38_ens105/capture_reagents/IDT_xGen_Lockdown_Exome_v1.baits.interval_list",
-      "target_intervals": "s3://daylily-references/data/human_GRCh38_ens105/capture_reagents/IDT_xGen_Lockdown_Exome_v1.targets.interval_list",
-      "docm_vcf": "s3://daylily-references/data/human_GRCh38_ens105/known_variants/docm.vcf.gz",
-      "docm_vcf_tbi": "s3://daylily-references/data/human_GRCh38_ens105/known_variants/docm.vcf.gz.tbi",
-      "omni_vcf": "s3://daylily-references/data/human_GRCh38_ens105/known_variants/omni25-ld-pruned-20000-2000-0.5-annotated.wchr.sites_only.b38.autosomes_only.vcf.gz",
-      "omni_vcf_tbi": "s3://daylily-references/data/human_GRCh38_ens105/known_variants/omni25-ld-pruned-20000-2000-0.5-annotated.wchr.sites_only.b38.autosomes_only.vcf.gz.tbi",
-      "somalier_vcf": "s3://daylily-references/data/human_GRCh38_ens105/known_variants/GRC-human-build38_gnomad_exome_common_snps.vcf",
-      "vep_cache_dir_zip": "s3://daylily-references/data/human_GRCh38_ens105/vep_cache.zip",
+      "bait_intervals": "/fsx/data/human_GRCh38_ens105/capture_reagents/IDT_xGen_Lockdown_Exome_v1.baits.interval_list",
+      "target_intervals": "/fsx/data/human_GRCh38_ens105/capture_reagents/IDT_xGen_Lockdown_Exome_v1.targets.interval_list",
+      "docm_vcf": "/fsx/data/human_GRCh38_ens105/known_variants/docm.vcf.gz",
+      "docm_vcf_tbi": "/fsx/data/human_GRCh38_ens105/known_variants/docm.vcf.gz.tbi",
+      "omni_vcf": "/fsx/data/human_GRCh38_ens105/known_variants/omni25-ld-pruned-20000-2000-0.5-annotated.wchr.sites_only.b38.autosomes_only.vcf.gz",
+      "omni_vcf_tbi": "/fsx/data/human_GRCh38_ens105/known_variants/omni25-ld-pruned-20000-2000-0.5-annotated.wchr.sites_only.b38.autosomes_only.vcf.gz.tbi",
+      "somalier_vcf": "/fsx/data/human_GRCh38_ens105/known_variants/GRC-human-build38_gnomad_exome_common_snps.vcf",
+      "vep_cache_dir_zip": "/fsx/data/human_GRCh38_ens105/vep_cache.zip",
       "bqsr_known_sites": [
-        "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.dbsnp138.vcf.gz",
-        "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.known_indels.vcf.gz",
-        "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"
+        "/fsx/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.dbsnp138.vcf.gz",
+        "/fsx/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.known_indels.vcf.gz",
+        "/fsx/data/human_GRCh38_ens105/known_variants/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"
       ],
       "bqsr_known_sites_tbi": [
-        "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi",
-        "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi",
-        "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi"
+        "/fsx/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi",
+        "/fsx/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi",
+        "/fsx/data/human_GRCh38_ens105/known_variants/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi"
       ],
       "per_base_intervals": [
         {
-          "file": "s3://daylily-references/data/human_GRCh38_ens105/qc_regions/clinvar.interval_list",
+          "file": "/fsx/data/human_GRCh38_ens105/qc_regions/clinvar.interval_list",
           "label": "clinvar"
         }
       ],
       "per_target_intervals": [
         {
-          "file": "s3://daylily-references/data/human_GRCh38_ens105/qc_regions/acmg_genes.interval_list",
+          "file": "/fsx/data/human_GRCh38_ens105/qc_regions/acmg_genes.interval_list",
           "label": "acmg_genes"
         }
       ],
@@ -97,9 +97,9 @@
           "method": "exact",
           "force_report_coordinates": true,
           "annotation": {
-            "file": "s3://daylily-references/data/human_GRCh38_ens105/known_variants/gnomad_fixed_b38_exome.vcf.gz",
+            "file": "/fsx/data/human_GRCh38_ens105/known_variants/gnomad_fixed_b38_exome.vcf.gz",
             "secondary_files": [
-              "s3://daylily-references/data/human_GRCh38_ens105/known_variants/gnomad_fixed_b38_exome.vcf.gz.tbi"
+              "/fsx/data/human_GRCh38_ens105/known_variants/gnomad_fixed_b38_exome.vcf.gz.tbi"
             ],
             "data_format": "vcf",
             "name": "gnomADe",
@@ -195,7 +195,7 @@
       "iedb_retries": 3,
       "pvacfuse_keep_tmp_files": true,
       "run_reference_proteome_similarity": true,
-      "peptide_fasta": "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.pep.all.fa.gz",
+      "peptide_fasta": "/fsx/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.pep.all.fa.gz",
       "aggregate_inclusion_binding_threshold": 1500,
       "allele_specific_anchors": true,
       "problematic_amino_acids": [
@@ -300,7 +300,8 @@
       "percentile_threshold": 95,
       "net_chop_threshold": 0.5,
       "anchor_contribution_threshold": 0.3,
-      "manta_non_wgs": true
+      "manta_non_wgs": true,
+
     }
   }
   
