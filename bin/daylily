@@ -219,11 +219,6 @@ read bucket_url;
 bucket_name=$(echo $bucket_url | sed 's/s3\:\/\///g' | sed 's/\/$//')
 
 
-echo "enter the s3 bucket url for the ANALYSIS RESULTS to be saved to, this must be different than the REFERENCES and INIT bucket >>ie s3://BUCKET-NAME-FOR-ANALYSIS-RESULTS<<, NO trailing /";
-read bucket_results_url;
-
-bucket_results_name=$(echo $bucket_results_url | sed 's/s3\:\/\///g' | sed 's/\/$//')
-
 echo "making the daylily conf dir.";
 mkdir -p ~/.config/daylily;
 
@@ -247,8 +242,6 @@ REGSUB_PUB_SUBNET=$public_subnet
 REGSUB_KEYNAME=$pem_name
 REGSUB_S3_BUCKET_INIT=$bucket_url
 REGSUB_S3_BUCKET_NAME=$bucket_name
-REGSUB_S3_BUCKET_RESULTS=$bucket_results_url
-REGSUB_S3_BUCKET_RESULTS_NAME=$bucket_results_name
 REGSUB_S3_IAM_POLICY=$arn_policy_id
 REGSUB_PRIVATE_SUBNET=$private_subnet
 REGSUB_S3_BUCKET_REF=$bucket_url
