@@ -1,0 +1,73 @@
+{
+    "germlineWgs.bqsr_known_sites": [
+      "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz"
+    ],
+    "germlineWgs.reference_alt": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+    "germlineWgs.reference_dict": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.dict",
+    "germlineWgs.reference_fai": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.fai",
+    "germlineWgs.reference_0123": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.0123",
+    "germlineWgs.sequence": [
+      {
+        "sequence": {
+          "bam": null,
+          "fastq1": "",
+          "fastq2": ""
+        },
+        "readgroup": null
+      }
+    ],
+    "germlineWgs.merge_max_distance": 1000, 
+    "germlineWgs.reference": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+    "germlineWgs.per_base_intervals": [
+      {
+        "file": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+        "label": "intervals"
+      }
+    ],
+    "germlineWgs.merge_same_type": true,
+    "germlineWgs.per_target_intervals": [
+      {
+        "file": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+        "label": "target_intervals"
+      }
+    ],
+    "germlineWgs.reference_pac": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.pac",
+    "germlineWgs.qc_intervals": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+    "germlineWgs.vep_cache_dir_zip": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+    "germlineWgs.variant_reporting_intervals": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+    "germlineWgs.bqsr_known_sites_tbi": [
+      "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.tbi"
+    ],
+    "germlineWgs.merge_min_svs": 3,
+    "germlineWgs.detectVariants.germline_filter_gnomAD_maximum_population_allele_frequency": 0.01,
+    "germlineWgs.intervals": [
+      ["chr1"],
+      ["chr2"],
+      ["chr3"]
+    ],
+    "germlineWgs.omni_vcf": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+    "germlineWgs.reference_ann": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.ann",
+    "germlineWgs.vep_custom_annotations": [
+      {
+        "force_report_coordinates": true,
+        "method": "exact",
+        "annotation": {
+          "name": "gnomADe",
+          "gnomad_filter": true,
+          "check_existing": true,
+          "vcf_fields": ["AF"],
+          "data_format": "vcf",
+          "file": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+          "secondary_files": ["s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.tbi"]
+        }
+      }
+    ],
+    "germlineWgs.omni_vcf_tbi": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.tbi",
+    "germlineWgs.vep_ensembl_version": "105",
+    "germlineWgs.gvcf_gq_bands": ["0-20", "21-60", "61-99"],
+    "germlineWgs.reference_bwt": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.bwt",
+    "germlineWgs.vep_ensembl_species": "homo_sapiens",
+    "germlineWgs.reference_amb": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.amb",
+    "germlineWgs.picard_metric_accumulation_level": "LIBRARY"
+  }
+  
