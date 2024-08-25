@@ -80,7 +80,7 @@
         }
       ],
     "germlineWgs.vep_ensembl_assembly":"GRCh37",
-    "germlineWgs.merge_min_sv_size":10000,
+    "germlineWgs.merge_min_sv_size": false,
     "germlineWgs.merge_same_strand":false,
     "germlineWgs.merge_estimate_sv_distance":"10000"
   }
