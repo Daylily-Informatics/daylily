@@ -20,13 +20,9 @@ HeadNode:
       MountDir: /head_root
   CustomActions:
     OnNodeConfigured:
-      Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
+      Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_head.sh
       Args:
         - REGSUB_S3_BUCKET_NAME
-    OnNodeShutdown:
-      Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/shutdown_ubuntu.sh # Will export FSx analysis data to S3
-      Args:
-        - REGSUB_S3_BUCKET_RESULTS
   Iam:
     S3Access:
       - BucketName: REGSUB_S3_BUCKET_NAME  # daylily-ref
@@ -67,7 +63,7 @@ Scheduling:
           - REGSUB_PRIVATE_SUBNET
       CustomActions:
         OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -117,7 +113,7 @@ Scheduling:
           - REGSUB_PRIVATE_SUBNET
       CustomActions:
         OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -163,7 +159,7 @@ Scheduling:
           - REGSUB_PRIVATE_SUBNET
       CustomActions:
         OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -205,7 +201,7 @@ Scheduling:
           - REGSUB_PRIVATE_SUBNET
       CustomActions:
         OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -262,7 +258,7 @@ Scheduling:
           - REGSUB_PRIVATE_SUBNET
       CustomActions:
         OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -293,7 +289,7 @@ Scheduling:
           - REGSUB_PRIVATE_SUBNET
       CustomActions:
         OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
