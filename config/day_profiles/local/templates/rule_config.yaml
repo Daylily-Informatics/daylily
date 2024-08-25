@@ -159,8 +159,8 @@ strobe_align_sort:
     K: " "
     glances: " "
     k: " -k 19 "
-    orig_sort_mem: "20G"
-    sort_thread_mem: "20G"  # 1350M
+    orig_sort_mem: "10G"
+    sort_thread_mem: "10G"  # 1350M
     numactl: ""
     mbuffer_mem: "300G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 

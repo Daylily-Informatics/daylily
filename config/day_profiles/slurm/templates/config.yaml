@@ -19,7 +19,7 @@ default-resources:
   - mem_mb=1000
   - threads=4
   - time=4440
-  - partition=i4-5,i16-5,i32-5,i64-5,i96-5
+  - partition=i8,i32,i64,i96,i128,i192
   - vcpu=4
   - tmpdir='/fsx/scratch/'
 jobs: 500

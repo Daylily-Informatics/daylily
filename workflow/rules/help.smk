@@ -156,7 +156,7 @@ rule util_env_check:  # TARGET : Will create a few files in the results dir, use
         cluster_sample="na",
         cluster_slots=get_slots,
     resources:
-        partition="i4-5",  # if partition is not set in rule, default from profile config is used
+        partition="i8",  # if partition is not set in rule, default from profile config is used
         threads=get_slots,  # if threads is not set in rule, default from profile config is used
     conda:
         "../envs/vanilla_v0.1.yaml"  # oddity- the conda envs are declared relative to the rules directory, not like everything else which is from the execution directory.

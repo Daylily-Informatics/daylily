@@ -29,7 +29,7 @@ rule hisat2_align_sort:
     resources:
         threads=config["hisat2"]["threads"],
         vcpu=config["hisat2"]["threads"],
-        partition="i128-6"
+        partition="i128"
     params:
         K=400000400,
         huref=config["supporting_files"]["files"]["huref"]["hisat2"]["name"],
