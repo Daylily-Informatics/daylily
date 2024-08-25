@@ -68,6 +68,11 @@
     "germlineWgs.reference_bwt": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.bwt",
     "germlineWgs.vep_ensembl_species": "homo_sapiens",
     "germlineWgs.reference_amb": "s3://daylily-references/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.amb",
-    "germlineWgs.picard_metric_accumulation_level": "LIBRARY"
+    "germlineWgs.picard_metric_accumulation_level": "LIBRARY",
+    "germlineWgs.summary_intervals":"xxx",
+    "germlineWgs.vep_ensembl_assembly":"GRCh37",
+    "germlineWgs.merge_min_sv_size":10000,
+    "germlineWgs.merge_same_strand":false,
+    "germlineWgs.merge_estimate_sv_distance":"10000"
   }
   
