@@ -21,7 +21,7 @@ task sequenceAlignAndTag {
   Int space_needed_gb = 10 + ceil(5*data_size + reference_size)
   # CPU |  Memory / RAM
   #24 bwa cores + 1 for samblaster + 2 for samtools view
-  Int cores = 27 
+  Int cores = 64 
   # mem values tested on a 60x WGS bam with up to 30 cores. Lower values would 
   # be fine for exome if we ever want to optimize to that extent
   # Mem does not seem to be as dependent on # of cores as I expected
@@ -33,6 +33,7 @@ task sequenceAlignAndTag {
     docker: "mgibio/alignment_helper-cwl:2.2.1"
     memory: "~{instance_memory_gb}GB"
     cpu: cores
+    partition: "i64"
     bootDiskSizeGb: space_needed_gb
     disks: "local-disk ~{space_needed_gb} HDD"
   }
@@ -56,14 +57,14 @@ task sequenceAlignAndTag {
     TRIMMING_ADAPTER_MIN_OVERLAP=~{if defined(trimming) then "~{select_first([trimming]).min_overlap}" else ""}
 
     function bwa_blast_view () {
-        /usr/local/bin/bwa-mem2 mem -K 100000000 -t ~{cores-3} -Y -p -R "$READGROUP" "$REFERENCE" /dev/stdin \
+        /usr/local/bin/bwa-mem2 mem -K 100000000 -t ~{cores} -Y -p -R "$READGROUP" "$REFERENCE" /dev/stdin \
             | /usr/local/bin/samblaster -a --addMateTags \
             | /opt/samtools/bin/samtools view -@ 2 -b -S /dev/stdin
     }
 
     if [[ "$MODE" == "fastq" ]]; then
         if [[ "$RUN_TRIMMING" == "false" ]]; then
-            /usr/local/bin/bwa-mem2 mem -K 100000000 -t ~{cores-3} -Y -R "$READGROUP" "$REFERENCE" $FASTQ1 $FASTQ2 \
+            /usr/local/bin/bwa-mem2 mem -K 100000000 -t ~{cores} -Y -R "$READGROUP" "$REFERENCE" $FASTQ1 $FASTQ2 \
                 | /usr/local/bin/samblaster -a --addMateTags \
                 | /opt/samtools/bin/samtools view -@ 2 -b -S /dev/stdin > "~{outname}"
         else
