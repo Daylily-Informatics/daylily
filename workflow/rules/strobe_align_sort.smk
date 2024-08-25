@@ -63,7 +63,7 @@ rule strobe_align_sort:
         {params.strobe_cmd}  \
         -t {params.strobe_threads} \
         -v \
-        --rg-id:{params.rgid}_$epocsec \
+        --rg-id={params.rgid}_$epocsec \
         --rg=SM:{params.rgsm} \
         --rg=LB:{params.samp}{params.rglb} \
         --rg=PL:{params.rgpl} \ 
