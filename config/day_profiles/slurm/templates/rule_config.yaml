@@ -37,10 +37,10 @@ active_s_v_callers:
 
 # #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
 active_aligners:
-    - bwa2m:
+    - strobe:
           mkdup: dppl
-#    - bwa2a:
-#          mkdup: dppl
+    - bwa2a:
+          mkdup: dppl
 #    - bwa2b:
 #          mkdup: dppl
 #    - bwa2m:
@@ -125,7 +125,7 @@ bwa_mem2a_aln_sort:
     orig_threads: 2
     sort_threads: 96
     write_threads: 96
-    igz_threads: 64
+    igz_threads: 128 # from 64
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
