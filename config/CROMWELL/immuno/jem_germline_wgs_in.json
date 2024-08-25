@@ -65,7 +65,7 @@
     "germlineWgs.omni_vcf_tbi": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.tbi",
     "germlineWgs.vep_ensembl_version": "105",
     "germlineWgs.gvcf_gq_bands": ["0-20", "21-60", "61-99"],
-    "germlineWgs.reference_bwt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.bwt",
+    "germlineWgs.reference_bwt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.bwt.2bit.64",
     "germlineWgs.vep_ensembl_species": "homo_sapiens",
     "germlineWgs.reference_amb": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.amb",
     "germlineWgs.picard_metric_accumulation_level": "LIBRARY",
