@@ -3,7 +3,7 @@ conda activate DAYCLI;
 # Daylily API
 
 echo "Welcome to daylily"; 
-sleep 0.4;
+
 
 echo "PREREQUISITES: Versions listed are tested, more recent versions may work, but not tested...";
 echo " 1:gnu parallel (install with brew install parallel, sudo yum install -y parallel, sudo apt-get install parallel, conda install -c conda-forge parallel ).";
@@ -110,7 +110,6 @@ if [[ "$aver" == "1.27.92" ]]; then
     echo 'aws cli version 1.27.92 detected.';
 else
     echo "aws version != 1.27.92 !!!, FOUND: $aver .. cconsider installing expected version if problems are encountered.";
-    sleep 5;
 fi;
 
 echo "... checking pcluster version";
@@ -121,7 +120,6 @@ if [[ "$pcver" == "3.5.0" ]]; then
 else
     echo "WARNING::: pcluster version ~= 3.5.0 !!!, FOUND: $pcver";
     echo "if this is >  3.5.0, you should be OK, but daylily is tested on 3.5.0.";
-    sleep 7;
 fi;
 sleep 0.4;
 
@@ -281,11 +279,11 @@ echo "Your config file will create a working cluster, creating now:";
 
 pcluster create-cluster	-n $cluster_name -c $target_conf ;
 
-sleep 2;
+
 echo "Now, you wait a little while, 10-15m, for the cloudstack to complete creationg all the bits and bobs needed for daylily to run.  You may wish to run the command 'watch pcluster list-clusters' until the cluster status is COMPLETE.  If it fails, I would suspect quotas first, but you may debug in your cloudstack console to find out what failed.";
 
 echo " ";
-sleep 2;
+
 echo "hit CTRL-C to exit the watch command.  AND when complete, run ./bin/daylily-init-headnode you will only need the cluster name and pem path+name<.";
 
 #watch pcluster list-clusters;
@@ -293,7 +291,7 @@ echo "hit CTRL-C to exit the watch command.  AND when complete, run ./bin/daylil
 echo "if the status is COMPLETE, you are ready to run ./bin/daylily-init-headnode.  If cluster create fails, check your cloudformation stack.";
 echo " .... This may take ~15min !";
 echo " ";
-sleep 5;
+
 python bin/helpers/watch_cluster_status.py;
 
 echo " ";
