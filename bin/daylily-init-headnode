@@ -28,15 +28,12 @@ else
     read pem_file;
 fi;
 
-# Removed, running everything from the ubuntu user for simplicity.  This was when using a daylily user.
-# ssh -i $pem_file ubuntu@$cluster_ip_address "sudo useradd $duser" ;
-# ssh -i $pem_file ubuntu@$cluster_ip_address "sudo passwd --stdin $duser <<< 'passw0rd'" ;
-# ssh -i $pem_file ubuntu@$cluster_ip_address echo """ssh-keygen -q -t rsa -f ~$duser/.ssh/id_rsa -N \'\' <<< $'\ny'  | sudo su - $duser""";
-
+# Create ssh key for headnode user, to be saved to github
+ssh -i $pem_file ubuntu@$cluster_ip_address echo """ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N \'\' <<< $'\ny'  | sudo su - $duser""";
 
 echo 'You must have a github account, and access to the daylily repo. The ubuntu user public ssh key must be stored as a new valid ssh key in github: https://github.com/settings/keys. If logged in to github, click New SSH Key, name the key whatever, leave key type set to Authentication Key, and paste the following string into the Key field.  There should be no linebreaks in the key string.';
 echo " ";
-ssh -i $pem_file ubuntu@$cluster_ip_address "echo 'head ~$duser/.ssh/id_rsa.pub' | sudo su - $duser " ;
+ssh -i $pem_file ubuntu@$cluster_ip_address "echo 'head ~/.ssh/id_rsa.pub' | sudo su - $duser " ;
 
 echo " ";
 echo " ";
