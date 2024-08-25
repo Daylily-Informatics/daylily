@@ -1,11 +1,11 @@
 {
     "germlineWgs.bqsr_known_sites": [
-      "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz"
+      "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz"
     ],
-    "germlineWgs.reference_alt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
-    "germlineWgs.reference_dict": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.dict",
-    "germlineWgs.reference_fai": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.fai",
-    "germlineWgs.reference_0123": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.0123",
+    "germlineWgs.reference_alt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
+    "germlineWgs.reference_dict": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.dict",
+    "germlineWgs.reference_fai": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.fai",
+    "germlineWgs.reference_0123": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.0123",
     "germlineWgs.sequence": [
       {
         "sequence": {
@@ -17,26 +17,26 @@
       }
     ],
     "germlineWgs.merge_max_distance": 1000, 
-    "germlineWgs.reference": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+    "germlineWgs.reference": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
     "germlineWgs.per_base_intervals": [
       {
-        "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+        "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
         "label": "intervals"
       }
     ],
     "germlineWgs.merge_same_type": true,
     "germlineWgs.per_target_intervals": [
       {
-        "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+        "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
         "label": "target_intervals"
       }
     ],
-    "germlineWgs.reference_pac": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.pac",
-    "germlineWgs.qc_intervals": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
-    "germlineWgs.vep_cache_dir_zip": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
-    "germlineWgs.variant_reporting_intervals": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
+    "germlineWgs.reference_pac": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.pac",
+    "germlineWgs.qc_intervals": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
+    "germlineWgs.vep_cache_dir_zip": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
+    "germlineWgs.variant_reporting_intervals": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
     "germlineWgs.bqsr_known_sites_tbi": [
-      "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.tbi"
+      "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.tbi"
     ],
     "germlineWgs.merge_min_svs": 3,
     "germlineWgs.detectVariants.germline_filter_gnomAD_maximum_population_allele_frequency": 0.01,
@@ -45,8 +45,8 @@
       ["chr2"],
       ["chr3"]
     ],
-    "germlineWgs.omni_vcf": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
-    "germlineWgs.reference_ann": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.ann",
+    "germlineWgs.omni_vcf": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
+    "germlineWgs.reference_ann": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.ann",
     "germlineWgs.vep_custom_annotations": [
       {
         "force_report_coordinates": true,
@@ -57,17 +57,17 @@
           "check_existing": true,
           "vcf_fields": ["AF"],
           "data_format": "vcf",
-          "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz",
-          "secondary_files": ["/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.tbi"]
+          "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz",
+          "secondary_files": ["/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.tbi"]
         }
       }
     ],
-    "germlineWgs.omni_vcf_tbi": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.tbi",
+    "germlineWgs.omni_vcf_tbi": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.tbi",
     "germlineWgs.vep_ensembl_version": "105",
     "germlineWgs.gvcf_gq_bands": ["0-20", "21-60", "61-99"],
-    "germlineWgs.reference_bwt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.bwt",
+    "germlineWgs.reference_bwt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.bwt",
     "germlineWgs.vep_ensembl_species": "homo_sapiens",
-    "germlineWgs.reference_amb": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37.fasta.gz.amb",
+    "germlineWgs.reference_amb": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz.amb",
     "germlineWgs.picard_metric_accumulation_level": "LIBRARY",
     "germlineWgs.summary_intervals":  [
         {
