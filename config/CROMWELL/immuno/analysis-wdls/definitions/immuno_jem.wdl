@@ -207,7 +207,7 @@ workflow immuno {
     Int? ploidy
     String? optitype_name
     Float germline_filter_gnomAD_maximum_population_allele_frequency = 1.1
-
+  }
 
   call geht.germlineExomeHlaTyping as germlineExome {
     input:
