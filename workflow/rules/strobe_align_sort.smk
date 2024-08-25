@@ -59,7 +59,6 @@ rule strobe_align_sort:
         
         
         {params.numa} \
-        bash -c \" \
         {params.strobe_cmd}  \
         -t {params.strobe_threads} \
         -v \
