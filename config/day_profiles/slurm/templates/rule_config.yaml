@@ -121,10 +121,11 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 224
+    bwa_threads: 124
     orig_threads: 2
     sort_threads: 96
     write_threads: 96
+    igz_threads: 64
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
@@ -137,7 +138,6 @@ bwa_mem2a_aln_sort:
     orig_sort_mem: "3G"
     sort_thread_mem: "3G"  # 1350M
     numactl: ""
-    igz_threads: 64
     mbuffer_mem: "200G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
 
