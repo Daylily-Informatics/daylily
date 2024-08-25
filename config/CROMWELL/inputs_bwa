@@ -9,7 +9,7 @@
   "AlignFastq.reference_fasta_pac": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa-mem/human_1kg_v37.fasta.gz.pac",
   "AlignFastq.reference_fasta_sa": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa-mem/human_1kg_v37.fasta.gz.sa",    
   "AlignFastq.docker_image": "dukegcb/bwa-samtools:latest",
-  "AlignFastq.partition": "i96-5",
+  "AlignFastq.partition": "i96",
   "AlignFastq.cpus": 92,
   "AlignFastq.memory": 20240
 }

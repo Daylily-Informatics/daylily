@@ -5,7 +5,7 @@ workflow three_step {
     File procs
     String pattern
     String docker_image
-    String partition = "i4-5"  # Set your global default partition here
+    String partition = "i8"  # Set your global default partition here
     Int cpu
     Int memory
   }
