@@ -1,13 +1,9 @@
 #!/bin/bash
  
-set -e
-err_report() {
-  echo "Error on line $1, error code:$?"
-}
-trap 'err_report $LINENO' ERR
  
  
-workflow_dir=/path/to/test-project
+cp config/MGI_example/procs.txt .
+workflow_dir=$PWD
 cd $workflow_dir
 
 
