@@ -154,7 +154,7 @@ strobe_align_sort:
     benchmark_runs: 0
     softclip_alts: " -Y "
     ld_preload: "  "
-    numa: " resources/numa/numactl --physcpubind=0-128 --membind=0-1   " 
+    numa: " " # resources/numa/numactl --physcpubind=0-128 --membind=0-1   " 
     cmd: "  OMP_NUM_THREADS=16 OMP_PLACES=cores OMP_PROC_BIND=TRUE OMP_DYNAMIC=FALSE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/strobealign/bin/strobealign "
     K: " "
     glances: " "
