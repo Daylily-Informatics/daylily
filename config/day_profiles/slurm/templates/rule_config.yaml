@@ -137,7 +137,7 @@ bwa_mem2a_aln_sort:
     orig_sort_mem: "2G"
     sort_thread_mem: "2G"  # 1350M
     numactl: ""
-    igz_threads: 8
+    igz_threads: 32
     mbuffer_mem: "200G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
 
@@ -149,7 +149,7 @@ strobe_align_sort:
     write_threads: 64
     sort_threads: 64
     benchmark_runs: 0
-    igz_threads: 8
+    igz_threads: 32
     softclip_alts: "  "
     ld_preload: "  "
     ldpre: " "
