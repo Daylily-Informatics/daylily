@@ -2,7 +2,7 @@
     "three_step.procs": "./procs.txt",
     "three_step.pattern": "XAXA",
     "three_step.docker_image": "ubuntu:xenial",
-    "three_step.partition": "i8",    
+    "three_step.partition": "i8,i64,i96,i128,i192",    
     "three_step.cpu": 1,
     "three_step.memory": 1
 }
