@@ -300,8 +300,7 @@
       "percentile_threshold": 95,
       "net_chop_threshold": 0.5,
       "anchor_contribution_threshold": 0.3,
-      "manta_non_wgs": true,
-
+      "manta_non_wgs": true
     }
   }
   
