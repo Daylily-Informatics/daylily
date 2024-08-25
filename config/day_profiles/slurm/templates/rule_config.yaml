@@ -39,8 +39,8 @@ active_s_v_callers:
 active_aligners:
     - strobe:
           mkdup: dppl
-#    - bwa2a:
-#          mkdup: dppl
+    - bwa2a:
+          mkdup: dppl
 #    - bwa2b:
 #          mkdup: dppl
 #    - bwa2m:
