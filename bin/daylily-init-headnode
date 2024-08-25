@@ -52,16 +52,18 @@ fi;
 
 # clone daylily repo to headnode user. ubuntu is not enabled to run the pipe by default.
 echo "...............cloning repo";
-ssh -i $pem_file  ubuntu@$cluster_ip_address "echo 'ssh-keyscan github.com >> ~$duser/.ssh/known_hosts; mkdir -p ~$duser/projects; cd ~$duser/projects; git clone  git@github.com:Daylily-Informatics/daylily.git ' | sudo su - $duser"; 
+ssh -i $pem_file  ubuntu@$cluster_ip_address "echo 'ssh-keyscan github.com >> ~/.ssh/known_hosts; mkdir -p ~/projects; cd ~/projects; git clone  git@github.com:Daylily-Informatics/daylily.git ' | sudo su - $duser"; 
 
 echo "...............configuring daylily headnode deets";
 # init the first day environment
-ssh -i $pem_file ubuntu@$cluster_ip_address "echo 'cd ~$duser/projects/daylily; source dyinit && source  config/day/day_env_installer.sh DAY;' | sudo su - $duser" ;
+ssh -t -i $pem_file ubuntu@$cluster_ip_address "sudo su - $duser -c 'cd ~/projects/daylily && ls -lta . && . dyinit; . bin/day_build'" 
+## if this isnt working, try this one
+###ssh -i $pem_file ubuntu@$cluster_ip_address "echo 'cd ~/projects/daylily; source dyinit && source  config/day/day_env_installer.sh DAY;' | sudo su - $duser" ;
 
 echo "................running a simple help test of daylily remotely";
-# Run simple help test
-ssh -t -i $pem_file ubuntu@$cluster_ip_address "echo 'bash -c cd ~$duser/projects/daylily && source dyinit && dy-a local && dy-r help' | sudo su - $duser" ;
 
+# Run simple help test ( will faill at dy-r)
+ssh -t -i $pem_file ubuntu@$cluster_ip_address "sudo su - $duser -c 'cd ~/projects/daylily && ls -lta . && . dyinit; . bin/day_activate local;  dy-r  help'"
 
 echo " ";
 echo " ";
