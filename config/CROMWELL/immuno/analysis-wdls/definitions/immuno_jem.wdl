@@ -48,13 +48,13 @@ import "types.wdl"  # !UnusedImport
 #  FdaMetrics aligned_tumor_rna
 #}
 
-struct Qc {
-  Array[File?] tumor_rna
-  QCMetrics tumor_dna
-  QCMetrics normal_dna
-  Array[File?] concordance
-  FdaMetricBundle fda_metrics
-}
+#struct Qc {
+#  Array[File?] tumor_rna
+#  QCMetrics tumor_dna
+#  QCMetrics normal_dna
+#  Array[File?] concordance
+#  FdaMetricBundle fda_metrics
+#}
 
 struct Variants {
   Array[File?] mutect
