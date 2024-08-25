@@ -228,8 +228,8 @@ duphold:
     partition: "i32,i64,i96"
 
 doppelmark:
-    threads: 128
-    partition: "i192,i128"
+    threads: 192
+    partition: "i192"
     clip_padding: 600000
     shard_size: 100000000
     min_bases: 20000
