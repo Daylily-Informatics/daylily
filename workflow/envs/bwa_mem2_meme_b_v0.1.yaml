@@ -10,6 +10,5 @@ dependencies:
   - mbuffer
   - pigz
   - biobambam
-  - isa-l
   - seqkit
   - seqfu

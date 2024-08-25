@@ -3,14 +3,10 @@ channels:
   - bioconda
   - anaconda
   - r
-
   - defaults
 dependencies:
   - samtools>=1.11
   - bwa-mem2
-  - pigz
-  - biobambam
+  - isa-l
   - seqkit
-  - seqfu
-  - sambamba
   - mbuffer
