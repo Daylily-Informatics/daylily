@@ -10,8 +10,8 @@
       {
         "sequence": {
           "bam": null,
-          "fastq1": "",
-          "fastq2": ""
+          "fastq1": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R1.fastq.gz",
+          "fastq2": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R2.fastq.gz"
         },
         "readgroup": null
       }
