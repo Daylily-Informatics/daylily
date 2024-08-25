@@ -65,8 +65,7 @@ rule bwa_mem2_sort:
          {params.subsample_head} <(igzip -c -d -T 8 -q  {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <(igzip -c -d -T 8 -q  {input.f2} )  {params.subsample_tail}    \
         |   samtools sort -l 0  -m {params.sort_thread_mem}   \
-         -@  {params.sort_threads} -T $tdir -O SAM - \
-        |  samtools view -b -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};
+         -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.bami} > {log} 2>&1;
         """
 
 
