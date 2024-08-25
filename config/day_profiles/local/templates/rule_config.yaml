@@ -35,7 +35,7 @@ active_s_v_callers:
 
 # #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
 active_aligners:
-    - bwa2a:
+    - strobe:
          mkdup: dppl
 #    - bwa2a:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
 #          mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
@@ -143,7 +143,7 @@ bwa_mem2a_aln_sort:
 
 strobe_align_sort:
     env_yaml: "../envs/strobe_aligner.yaml"
-    partition: "i128-6"
+    partition: "i192"
     threads: 16
     strobe_threads: 16
     orig_threads: 16
