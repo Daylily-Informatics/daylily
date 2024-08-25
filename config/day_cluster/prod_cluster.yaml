@@ -23,6 +23,10 @@ HeadNode:
       Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
       Args:
         - REGSUB_S3_BUCKET_NAME
+    OnNodeShutdown:
+      Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/shutdown_ubuntu.sh # Will export FSx analysis data to S3
+      Args:
+        - REGSUB_S3_BUCKET_RESULTS
   Iam:
     S3Access:
       - BucketName: REGSUB_S3_BUCKET_NAME  # daylily-ref
@@ -49,11 +53,10 @@ Scheduling:
             - InstanceType: r6id.2xlarge # 8 vCPUs, 64 GiB, $0.6048 hourly, $0.2379 spot, 474 GB NVMe
             - InstanceType: z1d.2xlarge # 8 vCPUs, 64 GiB, $0.7440 hourly, $0.2421 spot, 300 GB NVMe
             - InstanceType: r7iz.2xlarge # 8 vCPUs, 64 GiB, $0.7440 hourly, $0.2638 spot
-            - InstanceType: m5.4xlarge # 16 vCPUs, 64 GiB, $0.7680 hourly, $0.2649 spot
             - InstanceType: r5n.2xlarge # 8 vCPUs, 64 GiB, $0.5960 hourly, $0.2691 spot, 25 Gigabit
             - InstanceType: i4i.2xlarge # 8 vCPUs, 64 GiB, $0.6860 hourly, $0.2700 spot, 1875 GB NVMe
           MinCount: 0
-          MaxCount: 16
+          MaxCount: 12
           Networking:
             PlacementGroup:
               Enabled: false
@@ -90,7 +93,6 @@ Scheduling:
             - InstanceType: r5.8xlarge # 32 vCPUs, 256 GiB, $2.0160 hourly, $0.6653 spot
             - InstanceType: r6i.8xlarge # 32 vCPUs, 256 GiB, $2.0160 hourly, $0.6317 spot
             - InstanceType: r7i.8xlarge # 32 vCPUs, 256 GiB, $2.1168 hourly, $0.6483 spot
-            - InstanceType: g4dn.8xlarge # 32 vCPUs, 128 GiB, $2.1760 hourly, $0.7641 spot, 900 GB NVMe
             - InstanceType: m6in.8xlarge # 32 vCPUs, 128 GiB, $2.2277 hourly, $1.0006 spot, 50 Gigabit
             - InstanceType: r5d.8xlarge # 32 vCPUs, 256 GiB, $2.3040 hourly, $0.7832 spot, 1200 GB NVMe
             - InstanceType: r5b.8xlarge # 32 vCPUs, 256 GiB, $2.3840 hourly, $1.0337 spot
@@ -104,7 +106,7 @@ Scheduling:
             - InstanceType: d3.8xlarge # 32 vCPUs, 256 GiB, $3.9955 hourly, $1.3947 spot, 47520 GB NVMe HDD
             - InstanceType: d3en.8xlarge # 32 vCPUs, 128 GiB, $4.2058 hourly, $1.3698 spot, 223680 GB NVMe HDD
           MinCount: 0
-          MaxCount: 8
+          MaxCount: 6
           Networking:
             PlacementGroup:
               Enabled: false
@@ -135,7 +137,6 @@ Scheduling:
             - InstanceType: m6id.16xlarge # 64 vCPUs, 256 GiB, $3.7968 hourly, $1.0806 spot, 3800 GB NVMe
             - InstanceType: m6in.16xlarge # 64 vCPUs, 256 GiB, $4.4554 hourly, $1.9342 spot, 100 Gigabit
             - InstanceType: m6idn.16xlarge # 64 vCPUs, 256 GiB, $5.0918 hourly, $1.8180 spot, 3800 GB NVMe
-            - InstanceType: g4dn.16xlarge # 64 vCPUs, 256 GiB, $4.3520 hourly, $1.3613 spot, 900 GB NVMe
             - InstanceType: r5.16xlarge # 64 vCPUs, 512 GiB, $4.0320 hourly, $1.3575 spot
             - InstanceType: r6i.16xlarge # 64 vCPUs, 512 GiB, $4.0320 hourly, $1.2905 spot
             - InstanceType: r7i.16xlarge # 64 vCPUs, 512 GiB, $4.2336 hourly, $1.3088 spot
@@ -151,7 +152,7 @@ Scheduling:
             - InstanceType: x2idn.16xlarge # 64 vCPUs, 1024 GiB, $6.6690 hourly, $2.3923 spot, 1900 GB NVMe
             - InstanceType: x2iedn.16xlarge # 64 vCPUs, 2048 GiB, $13.3380 hourly, $3.9505 spot, 1900 GB NVMe
           MinCount: 0
-          MaxCount: 16
+          MaxCount: 10
           Networking:
             PlacementGroup:
               Enabled: false
@@ -193,7 +194,7 @@ Scheduling:
             - InstanceType: r5d.metal # 96/768 $6.9120 hourly, $2.2178 spot, 3600 GB NVMe
             - InstanceType: r5b.metal # 96/768 $7.1520 hourly, $3.0190 spot
           MinCount: 0
-          MaxCount: 12
+          MaxCount: 10
           Networking:
             PlacementGroup:
               Enabled: false
@@ -250,14 +251,15 @@ Scheduling:
             - InstanceType: x2iedn.32xlarge # 128 vCPUs, 4096 GiB, $26.6760 hourly, $7.4495 spot, 3800 GB NVMe, 100 Gigabit
             - InstanceType: x2iedn.metal # 128 vCPUs, 4096 GiB, $26.6760 hourly, $7.3224 spot, 3800 GB NVMe, 100 Gigabit    
           MinCount: 0
-          MaxCount: 8
+          MaxCount: 10
           Networking:
             PlacementGroup:
               Enabled: false
-              Efa:
-                Enabled: true
-          SubnetIds:
-            - REGSUB_PRIVATE_SUBNET
+          Efa:
+            Enabled: true
+      Networking:
+        SubnetIds:
+          - REGSUB_PRIVATE_SUBNET
       CustomActions:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu.sh
@@ -280,7 +282,7 @@ Scheduling:
           - InstanceType: r7i.48xlarge # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.9238 spot
           - InstanceType: r7i.metal-48xl # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.3266 spot     
           MinCount: 0
-          MaxCount: 8
+          MaxCount: 10
           Networking:
             PlacementGroup:
               Enabled: false
@@ -309,21 +311,11 @@ SharedStorage:  # This is the local FS which is expensive but fast, could be swa
     StorageType: FsxLustre
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
+      ExportPath: REGSUB_S3_BUCKET_RESULTS/exports/
       StorageCapacity: 4800
       DeploymentType: SCRATCH_2
       AutoImportPolicy: NEW_CHANGED_DELETED # LustreMountOptions: ro # Mount as read-only << enable this once dayliyl no longer caches to /fsx
-  - MountDir: /fsx_analysis_results # FSx for Lustre filesystem for analysis results with export to S3 on shutdown
-    Name: fsx-analysis-results
-    StorageType: FsxLustre
-    FsxLustreSettings:
-      ExportPath: s3://REGSUB_S3_BUCKET_RESULTS/
-      StorageCapacity: 2400
-      DeploymentType: SCRATCH_2
-      AutoImportPolicy: NONE
-      AutoExportPolicy: NEW_CHANGED # Export changes back to S3 automatically
-    ImportExportSettings:
-      OnClusterShutdown:
-        BlockUntilExportComplete: true # Ensure export is complete before shutdown
+      StorageType: SSD
 Tags:  # TAGs necessary for per-user/project/job cost tracking
   - Key: aws-parallelcluster-username
     Value: NA
