@@ -25,76 +25,107 @@ immuno.rna_sequence:
 immuno.sample_name: ""
 immuno.strand: ""
 
+## JEM ORIGINAL HAS 
+#immuno.rna_sequence:
+#  - sequence:
+#      bam: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/unaligned_subset_bams/rna/2895626107.bam
+#  - sequence:
+#      bam: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/unaligned_subset_bams/rna/2895626112.bam
+
 # ------------- CLE validated variants for intersection/filtering --------------------
 #Not applicable to this case since sequencing was done outside WASHU CLE lab and we did not receive a VCF from Tempus
 #immuno.validated_variants: ""
 #immuno.validated_variants_tbi: ""
 
 # ------------- Reference genome for DNA-seq alignments ---------------
-immuno.reference: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa"
-immuno.reference_fai: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.fai"
-immuno.reference_dict: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.dict"
-immuno.reference_alt: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.alt"
-immuno.reference_amb: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.amb"
-immuno.reference_ann: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.ann"
-immuno.reference_bwt: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.bwt.2bit.64"
-immuno.reference_pac: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.pac"
-immuno.reference_0123: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.0123"
-immuno.synonyms_file: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/reference_genome/chromAlias.ensembl.txt"
+immuno.reference: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa"
+immuno.reference_fai: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.fai"
+immuno.reference_dict: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.dict"
+immuno.reference_alt: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.alt"
+immuno.reference_amb: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.amb"
+immuno.reference_ann: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.ann"
+immuno.reference_bwt: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.bwt.2bit.64"
+immuno.reference_pac: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.pac"
+immuno.reference_0123: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/bwamem2_2.2.1/all_sequences.fa.0123"
+immuno.synonyms_file: "s3://daylily-references/data/human_GRCh38_ens105/reference_genome/chromAlias.ensembl.txt"
+
+# JEM ADDED FROM FILE DIFF
+##immuno.reference_bwt: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.bwt
+##immuno.reference_pac: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.pac
+##immuno.reference_sa: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.sa
+##immuno.reference_sa: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.sa
+
+# JEM ORIGINAL HAS REF INDEXES for hisat
+#immuno.reference_index: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index
+#immuno.reference_index_1ht2: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index.1.ht2
+#immuno.reference_index_2ht2: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index.2.ht2
+#immuno.reference_index_3ht2: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index.3.ht2
+#immuno.reference_index_4ht2: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index.4.ht2
+#immuno.reference_index_5ht2: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index.5.ht2
+#immuno.reference_index_6ht2: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index.6.ht2
+#immuno.reference_index_7ht2: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index.7.ht2
+#immuno.reference_index_8ht2: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/hisat/subset_hisat_index.8.ht2
+
+
 
 # ------------- Reference files and settings for STAR alignment and STAR-fusion calling
-immuno.star_fusion_genome_dir_zip: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/aligner_indices/star-fusion_1.10.1_index.zip"
+immuno.star_fusion_genome_dir_zip: "s3://daylily-references/data/human_GRCh38_ens105/aligner_indices/star-fusion_1.10.1_index.zip"
 immuno.examine_coding_effect: true
 immuno.fusioninspector_mode: "validate"
-immuno.cdna_fasta: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.cdna.all.fa.gz"
-immuno.agfusion_database: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/agfusion_1.3_database/agfusion.homo_sapiens.105.db"
+immuno.cdna_fasta: "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.cdna.all.fa.gz"
+immuno.agfusion_database: "s3://daylily-references/data/human_GRCh38_ens105/agfusion_1.3_database/agfusion.homo_sapiens.105.db"
 immuno.agfusion_annotate_noncanonical: true
 immuno.min_ffpm_level: 0.025
 
 # ------------- RNA transcript annotations ------------
-immuno.ribosomal_intervals: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.ribo_intervals"
-immuno.gene_transcript_lookup_table: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/rna_seq_annotation/ensembl105.transcriptToGene.tsv"
-immuno.kallisto_index: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.cdna.all.fa.kallisto.idx"
-immuno.refFlat: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.refFlat.txt"
-immuno.reference_annotation: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.gtf"
+immuno.ribosomal_intervals: "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.ribo_intervals"
+immuno.gene_transcript_lookup_table: "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/ensembl105.transcriptToGene.tsv"
+immuno.kallisto_index: "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.cdna.all.fa.kallisto.idx"
+immuno.refFlat: "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.refFlat.txt"
+immuno.reference_annotation: "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.105.gtf"
+
+# JEM ORIG HAS 
+#immuno.reference_annotation: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/subset_annotation.gtf
+#immuno.refFlat: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/subset_refFlat.txt
+
 
 # ------------ RNA trimming settings ---------------- 
 immuno.trimming_adapter_min_overlap: 7
 immuno.trimming_adapter_trim_end: RIGHT
-immuno.trimming_adapters: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/misc/illumina_multiplex.fa"
+immuno.trimming_adapters: "s3://daylily-references/data/human_GRCh38_ens105/misc/illumina_multiplex.fa"
 immuno.trimming_max_uncalled: 300
 immuno.trimming_min_readlength: 25
 
 # ------------- Baits and targets for exome reagent (94b23d66f667472690a7ee165e2037b6 = "xGen Lockdown Exome Panel v1)"
-immuno.bait_intervals: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/capture_reagents/IDT_xGen_Lockdown_Exome_v1.baits.interval_list"
-immuno.target_intervals: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/capture_reagents/IDT_xGen_Lockdown_Exome_v1.targets.interval_list"
+immuno.bait_intervals: "s3://daylily-references/data/human_GRCh38_ens105/capture_reagents/IDT_xGen_Lockdown_Exome_v1.baits.interval_list"
+immuno.target_intervals: "s3://daylily-references/data/human_GRCh38_ens105/capture_reagents/IDT_xGen_Lockdown_Exome_v1.targets.interval_list"
 
 # ------------- Miscellaneous other know variant files
-immuno.docm_vcf: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/docm.vcf.gz"
-immuno.docm_vcf_tbi: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/docm.vcf.gz.tbi"
-immuno.omni_vcf: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/omni25-ld-pruned-20000-2000-0.5-annotated.wchr.sites_only.b38.autosomes_only.vcf.gz"
-immuno.omni_vcf_tbi: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/omni25-ld-pruned-20000-2000-0.5-annotated.wchr.sites_only.b38.autosomes_only.vcf.gz.tbi"
-immuno.somalier_vcf: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/GRC-human-build38_gnomad_exome_common_snps.vcf"
+immuno.docm_vcf: "s3://daylily-references/data/human_GRCh38_ens105/known_variants/docm.vcf.gz"
+immuno.docm_vcf_tbi: "s3://daylily-references/data/human_GRCh38_ens105/known_variants/docm.vcf.gz.tbi"
+immuno.omni_vcf: "s3://daylily-references/data/human_GRCh38_ens105/known_variants/omni25-ld-pruned-20000-2000-0.5-annotated.wchr.sites_only.b38.autosomes_only.vcf.gz"
+immuno.omni_vcf_tbi: "s3://daylily-references/data/human_GRCh38_ens105/known_variants/omni25-ld-pruned-20000-2000-0.5-annotated.wchr.sites_only.b38.autosomes_only.vcf.gz.tbi"
+immuno.somalier_vcf: "s3://daylily-references/data/human_GRCh38_ens105/known_variants/GRC-human-build38_gnomad_exome_common_snps.vcf"
 
 # ------------- Variant annotation VEP cache --------------------
-immuno.vep_cache_dir_zip: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/vep_cache.zip"
+immuno.vep_cache_dir_zip: "s3://daylily-references/data/human_GRCh38_ens105/vep_cache.zip"
 
 # ---------------- Sites to ignore/treat specially during base quality score recalibration after alignemt as per GATK best practices -------------------
 immuno.bqsr_known_sites:
-- "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.dbsnp138.vcf.gz"
-- "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.known_indels.vcf.gz"
-- "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"
+- "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.dbsnp138.vcf.gz"
+- "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.known_indels.vcf.gz"
+- "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"
 immuno.bqsr_known_sites_tbi:
-- "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi"
-- "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi"
-- "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi"
+- "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi"
+- "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi"
+- "s3://daylily-references/data/human_GRCh38_ens105/known_variants/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi"
 
 # -------------------- Regions used for QC reporting on coverage of known variants and clinically relevant genes -------------------
 immuno.per_base_intervals:
-- file: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/qc_regions/clinvar.interval_list"
+- file: "s3://daylily-references/data/human_GRCh38_ens105/qc_regions/clinvar.interval_list"
   label: clinvar
 immuno.per_target_intervals:
-- file: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/qc_regions/acmg_genes.interval_list"
+- file: "s3://daylily-references/data/human_GRCh38_ens105/qc_regions/acmg_genes.interval_list"
   label: acmg_genes
 immuno.picard_metric_accumulation_level: LIBRARY
 
@@ -106,9 +137,9 @@ immuno.vep_custom_annotations:
 - method: exact
   force_report_coordinates: true
   annotation:
-    file: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/gnomad_fixed_b38_exome.vcf.gz"
+    file: "s3://daylily-references/data/human_GRCh38_ens105/known_variants/gnomad_fixed_b38_exome.vcf.gz"
     secondary_files:
-    - "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/known_variants/gnomad_fixed_b38_exome.vcf.gz.tbi"
+    - "s3://daylily-references/data/human_GRCh38_ens105/known_variants/gnomad_fixed_b38_exome.vcf.gz.tbi"
     data_format: vcf
     name: gnomADe
     vcf_fields:
@@ -204,7 +235,7 @@ immuno.pvacfuse_keep_tmp_files: true
 
 #pvacseq v4 modifications
 immuno.run_reference_proteome_similarity: true
-immuno.peptide_fasta: "gs://griffith-lab-workflow-inputs/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.pep.all.fa.gz"
+immuno.peptide_fasta: "s3://daylily-references/data/human_GRCh38_ens105/rna_seq_annotation/Homo_sapiens.GRCh38.pep.all.fa.gz"
 immuno.aggregate_inclusion_binding_threshold: 1500
 immuno.allele_specific_anchors: true
 immuno.problematic_amino_acids:
