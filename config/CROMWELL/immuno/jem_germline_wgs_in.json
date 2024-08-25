@@ -13,7 +13,7 @@
           "fastq1": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R1.fastq.gz",
           "fastq2": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R2.fastq.gz"
         },
-        "readgroup": null
+        "readgroup": "@RG\tID:1\tPU:\tSM:\tLB:\tPL:Illumina\tCN:"
       }
     ],
     "germlineWgs.merge_max_distance": 1000, 
