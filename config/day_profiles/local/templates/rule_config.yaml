@@ -126,12 +126,13 @@ bwa_mem2a_aln_sort:
     orig_threads: 2
     sort_threads: 4
     write_threads: 2
+    igz_threads: 2
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
     softclip_alts: " -Y "
     ld_preload: "  "
-    cmd: "  OMP_NUM_THREADS=16 OMP_PLACES=cores OMP_PROC_BIND=TRUE OMP_DYNAMIC=FALSE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  
+    cmd: "  resources/bwa-mem2/bwa-mem2 "  
     K: " " # -K 12600000000 "
     glances: " "
     k: " -k 19 "
@@ -146,16 +147,17 @@ strobe_align_sort:
     partition: "i192"
     threads: 16
     strobe_threads: 16
-    orig_threads: 16
-    sort_threads: 4
-    write_threads: 2
+    orig_threads: 8
+    sort_threads: 8
+    write_threads: 0
+    igz_threads: 4
     ldpre: ""
-    orig_sort_threads: 4
+    orig_sort_threads: 7
     benchmark_runs: 0
     softclip_alts: " -Y "
     ld_preload: "  "
     numa: " " # resources/numa/numactl --physcpubind=0-128 --membind=0-1   " 
-    cmd: "  OMP_NUM_THREADS=16 OMP_PLACES=cores OMP_PROC_BIND=TRUE OMP_DYNAMIC=FALSE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/strobealign/bin/strobealign "
+    cmd: " OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign "
     K: " "
     glances: " "
     k: " -k 19 "

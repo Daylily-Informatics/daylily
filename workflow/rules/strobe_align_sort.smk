@@ -47,34 +47,32 @@ rule strobe_align_sort:
         samp=get_samp_name,
         mbuff_mem=config["strobe_align_sort"]["mbuffer_mem"],
         rgpg="strobealigner",
-        numa=config["strobe_align_sort"]["numa"]
+        numa=config["strobe_align_sort"]["numa"],
+	igz_threads=config['strobe_align_sort']['igz_threads']	
     conda:
         config["strobe_align_sort"]["env_yaml"]
     shell:
         """
         export tdir={params.mdir}/{params.samp}/{params.samtmpd};
         mkdir -p $tdir ;
-
         epocsec=$(date +'%s');
         
-        
         {params.numa} \
-        {params.strobe_cmd}  \
-        -t {params.strobe_threads} \
-        -v \
-        --rg-id={params.rgid}_$epocsec \
-        --rg=SM:{params.rgsm} \
-        --rg=LB:{params.samp}{params.rglb} \
-        --rg=PL:{params.rgpl} \ 
-        --rg=PU:{params.rgpu} \ 
-        --rg=CN:{params.rgcn} \
-        --rg=PG:{params.rgpg} \
-        --use-index {params.huref} \
-         {params.subsample_head} <(igzip -c -d -T 8 -q  {input.f1} )  {params.subsample_tail}  \
-         {params.subsample_head} <(igzip -c -d -T 8 -q {input.f2} )  {params.subsample_tail}    \
-        |   samtools sort -l 0  -m {params.sort_thread_mem}   \
-         -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} > {log} ;
-        """
+	{params.strobe_cmd} \
+	-t {params.strobe_threads} \
+	--rg-id="{params.rgid}_$epocsec" \
+	--rg="SM:{params.rgsm}" \
+        --rg=LB:"{params.samp}{params.rglb}" \
+        --rg=PL:"{params.rgpl}" \
+        --rg=PU:"{params.rgpu}" \
+        --rg=CN:"{params.rgcn}" \
+        --rg=PG:"{params.rgpg}" \
+	--use-index {params.huref}  \
+	{params.subsample_head} <(igzip -c -d -T {params.igz_threads} -q  {input.f1} ) {params.subsample_tail} \
+	{params.subsample_head}  <(igzip -c -d -T {params.igz_threads} -q {input.f2} )  {params.subsample_tail} \
+	|   samtools sort -l 0  -m {params.sort_thread_mem}   \
+         -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} > {log} 2>&1;
+	"""
 
 
 localrules: produce_strobe_align,

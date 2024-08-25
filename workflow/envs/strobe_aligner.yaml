@@ -3,6 +3,5 @@ channels:
   - bioconda
 dependencies:
   - samtools
-  - mbuffer
   - isa-l
   - seqkit
