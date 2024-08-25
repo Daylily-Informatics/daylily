@@ -33,7 +33,6 @@ task sequenceAlignAndTag {
     docker: "mgibio/alignment_helper-cwl:2.2.1"
     memory: "~{instance_memory_gb}GB"
     cpu: cores
-    partition: "i64"
     bootDiskSizeGb: space_needed_gb
     disks: "local-disk ~{space_needed_gb} HDD"
   }
