@@ -63,13 +63,18 @@ rule strobe_align_sort:
         {params.strobe_cmd}  \
         -t {params.strobe_threads} \
         -v \
-         --rg '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
+        --rg-id:{params.rgid}_$epocsec \
+        --rg=SM:{params.rgsm} \
+        --rg=LB:{params.samp}{params.rglb} \
+        --rg=PL:{params.rgpl} \ 
+        --rg=PU:{params.rgpu} \ 
+        --rg=CN:{params.rgcn} \
+        --rg=PG:{params.rgpg} \
         --use-index {params.huref} \
          {params.subsample_head} <(unpigz -c  -q -- {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <(unpigz -c  -q -- {input.f2} )  {params.subsample_tail}    \
         |   samtools sort -l 0  -m {params.sort_thread_mem}   \
-         -@  {params.sort_threads} -T $tdir  -O SAM - \
-        |  samtools view -b -@ {params.write_threads} -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log};\"
+         -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} > {log} ;
         """
 
 
