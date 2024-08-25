@@ -49,10 +49,10 @@ rule bwa_mem2_sort:
         subsample_tail=get_subsample_tail,
         bwa_threads=config["bwa_mem2a_aln_sort"]["bwa_threads"],
         samp=get_samp_name,
-        mbuff_mem=config["bwa_mem2a_aln_sort"]["mbuffer_mem"]
+        mbuff_mem=config["bwa_mem2a_aln_sort"]["mbuffer_mem"],
+	igz_threads=config['bwa_mem2a_aln_sort']['igz_threads']
     conda:
-        config["bwa_mem2a_aln_sort"]["env_yaml"],
-        igz_threads=config['strobe_align_sort']['igz_threads']
+        config["bwa_mem2a_aln_sort"]["env_yaml"]
     shell:
         """
         export tdir={params.mdir}/{params.samp}/{params.samtmpd};
