@@ -1,6 +1,6 @@
 {
     "germlineWgs.bqsr_known_sites": [
-      "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz"
+      "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/hapmap_3.3.b37.vcf.gz"
     ],
     "germlineWgs.reference_alt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta",
     "germlineWgs.reference_dict": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.dict",
@@ -45,7 +45,7 @@
       ["chr2"],
       ["chr3"]
     ],
-    "germlineWgs.omni_vcf": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/hapmap_3.3.b37.vcf.gz",
+    "germlineWgs.omni_vcf": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz",
     "germlineWgs.reference_ann": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta.ann",
     "germlineWgs.vep_custom_annotations": [
       {
@@ -55,10 +55,10 @@
           "name": "gnomADe",
           "gnomad_filter": true,
           "check_existing": true,
-          "vcf_fields": ["AF","AN","AC","DP"],
+          "vcf_fields": ["AF","AN","AC"],
           "data_format": "vcf",
-          "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz",
-          "secondary_files": ["/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz.tbi"]
+          "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/hapmap_3.3.b37.vcf.gz",
+          "secondary_files": ["/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/hapmap_3.3.b37.vcf.gz.tbi"]
         }
       }
     ],
