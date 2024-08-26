@@ -24,6 +24,7 @@ dependencies:
   - glances
   - tabix
   - fd-find
+  - graphviz
   - pip:
     - drmaa
     - docopt

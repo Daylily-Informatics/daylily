@@ -52,7 +52,7 @@ fi;
 
 # clone daylily repo to headnode user. ubuntu is not enabled to run the pipe by default.
 echo "...............cloning repo";
-ssh -i $pem_file  ubuntu@$cluster_ip_address "echo ' mkdir -p ~/projects; cd ~/projects; git clone  git@github.com:Daylily-Informatics/daylily.git ' | sudo su - $duser"; 
+ssh -i $pem_file  ubuntu@$cluster_ip_address """echo ' mkdir -p ~/projects; cd ~/projects; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git clone  git@github.com:Daylily-Informatics/daylily.git ' | sudo su - $duser"""; 
 
 echo "...............configuring daylily headnode deets";
 # init the first day environment
