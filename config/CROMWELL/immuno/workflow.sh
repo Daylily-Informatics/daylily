@@ -6,9 +6,15 @@ cp config/MGI_example/procs.txt .
 workflow_dir=$PWD
 cd $workflow_dir
 
-
+## Validate
 # java -jar /usr/local/bin/womtool.jar validate config/CROMWELL/immuno/analysis-wdls/definitions/immuno.wdl
 
+## Generate Input JSON Template
+# java -jar /usr/local/bin/womtool.jar inputs config/CROMWELL/immuno/analysis-wdls/definitions/immuno.wdl > config/CROMWELL/immuno/example_immuno_cloud-WDL.json    
+
+## Generate Graph
+# java -jar /usr/local/bin/womtool.jar graph config/CROMWELL/immuno/analysis-wdls/definitions/immuno.wdl -o config/CROMWELL/immuno/analysis-wdls/definitions/immuno.dot    
+# dot -Tpng workflow.dot -o workflow.png
 
 
 # Germine WGS
