@@ -64,6 +64,8 @@ Scheduling:
       CustomActions:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
+          Args:
+            - REGSUB_S3_BUCKET_NAME
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -114,6 +116,8 @@ Scheduling:
       CustomActions:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
+          Args:
+            - REGSUB_S3_BUCKET_NAME
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -160,6 +164,8 @@ Scheduling:
       CustomActions:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
+          Args:
+            - REGSUB_S3_BUCKET_NAME
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -202,6 +208,8 @@ Scheduling:
       CustomActions:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
+          Args:
+            - REGSUB_S3_BUCKET_NAME
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -259,6 +267,8 @@ Scheduling:
       CustomActions:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
+          Args:
+            - REGSUB_S3_BUCKET_NAME
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -290,6 +300,8 @@ Scheduling:
       CustomActions:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
+          Args:
+            - REGSUB_S3_BUCKET_NAME
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -303,7 +315,7 @@ Monitoring:
       RetentionInDays: 14
 SharedStorage:  # This is the local FS which is expensive but fast, could be swapped for EFS, etc.
   - MountDir: /fsx
-    Name: fsx-for-daylily-data-x3  # WARNING, EDIT NAME WILL DEL EXISTING DATA
+    Name: fsx-for-daylily-x3  # WARNING, EDIT NAME WILL DEL EXISTING DATA
     StorageType: FsxLustre
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
