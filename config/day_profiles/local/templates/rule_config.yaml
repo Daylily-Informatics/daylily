@@ -203,7 +203,7 @@ deepvariant:
     partition_other: "i96-5,i192-6,i192"
     mem_mb: "60000"
     deep_chrms: "19,21"
-    numa: " "
+    numa: " OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
 
 duphold:
     threads: 8

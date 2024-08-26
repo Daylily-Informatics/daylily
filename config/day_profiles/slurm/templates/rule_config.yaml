@@ -192,7 +192,7 @@ clean:
 deepvariant:
     threads: 62
     deep_cmd: " "
-    ld_preload: " env LD_PRELOAD=./resources/libs/libllalloc.so "
+    ld_preload: " "  # env LD_PRELOAD=./resources/libs/libllalloc.so "
     partition: "i192,i128,i64"
     partition_other: "i192,i128,i64"
     mem_mb: "810000"
