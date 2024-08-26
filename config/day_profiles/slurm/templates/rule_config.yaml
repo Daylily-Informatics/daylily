@@ -214,14 +214,14 @@ clean:
     partition: "i32,i64,i96,i128"
 
 deepvariant:
-    threads: 96
+    threads: 64
     deep_cmd: " "
     ld_preload: " env LD_PRELOAD=./resources/libs/libllalloc.so "
-    partition: "i96,i128,i192"
-    partition_other: "i64,i96,i128,i192"
-    mem_mb: "800000"
+    partition: "i192,i128,i64"
+    partition_other: "i192,i128,i164"
+    mem_mb: "810000"
     deep_chrms: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
-    numa: " LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  " 
+    numa: " OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "  #LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  " 
 
 duphold:
     threads: 16
