@@ -3,7 +3,6 @@ channels:
   - bioconda
   - anaconda
   - r
-
   - defaults
 dependencies:
   - _libgcc_mutex=0.1=conda_forge
@@ -42,7 +41,6 @@ dependencies:
   - gxx_linux-64=9.4.0=h0316aca_4
   - harfbuzz=3.3.1=hb4a5f5f_0
   - icu=69.1=h9c3ff4c_0
-
   - jbig=2.1=hdba287a_0
   - jpeg=9e=h7f98852_0
   - kernel-headers_linux-64=2.6.32=he073ed8_15
