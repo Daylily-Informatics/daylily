@@ -13,7 +13,7 @@
           "fastq1": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R1.fastq.gz",
           "fastq2": "/fsx/analysis_results/jem/daylily/.test_data/data/RIH0_ANA0-HG002_DBC0_0.R2.fastq.gz"
         },
-        "readgroup": "@RG\tID:1\tPU:\tSM:\tLB:\tPL:Illumina\tCN:"
+        "readgroup": "@RG\tID:1\tPU:FCELL123.1\tSM:TESTsample\tLB:Lib1\tPL:Illumina\tCN:ILMN"
       }
     ],
     "germlineWgs.merge_max_distance": 1000, 
@@ -55,7 +55,7 @@
           "name": "gnomADe",
           "gnomad_filter": true,
           "check_existing": true,
-          "vcf_fields": ["AF"],
+          "vcf_fields": ["AF","AN","AC","DP"],
           "data_format": "vcf",
           "file": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz",
           "secondary_files": ["/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz.tbi"]
