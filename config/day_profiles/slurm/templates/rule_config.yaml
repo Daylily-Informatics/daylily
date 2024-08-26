@@ -214,7 +214,7 @@ clean:
     partition: "i32,i64,i96,i128"
 
 deepvariant:
-    threads: 64
+    threads: 61
     deep_cmd: " "
     ld_preload: " env LD_PRELOAD=./resources/libs/libllalloc.so "
     partition: "i192,i128,i64"
