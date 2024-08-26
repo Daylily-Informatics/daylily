@@ -1,6 +1,7 @@
 # [DAYLILY](http://daylilyinformatics.com/) && [(blog)](https://daylily-informatics.github.io/)
 _v0.6.12 --- STILL IN ACTIVE DEV_
 
+
 ## Free, Fast(~60m), Frugal(from $3.34 EC2)\^1 & Cloud Native Multi-omics Analysis Framework
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 30x `fastq` to SNV`vcf` at $3.34 EC2 costs, completes in 57m & process thousands of genomes an hour
