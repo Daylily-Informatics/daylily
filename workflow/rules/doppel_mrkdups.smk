@@ -14,8 +14,8 @@ if "dppl" in DDUP:
     rule doppelmark_dups:
         """Runs duplicate marking on the merged(mg) BAM."""
         input:
-            bam=temp(MDIR + "{sx}/align/{alnr}/{sx}.{alnr}.sort.bam"),
-            bai=temp(MDIR + "{sx}/align/{alnr}/{sx}.{alnr}.sort.bam.bai"),
+            bam=MDIR + "{sx}/align/{alnr}/{sx}.{alnr}.sort.bam",
+            bai=MDIR + "{sx}/align/{alnr}/{sx}.{alnr}.sort.bam.bai",
         priority: 3
         output:
             bamo="{MDIR}{sx}/align/{alnr}/{sx}.{alnr}.mrkdup.sort.bam",

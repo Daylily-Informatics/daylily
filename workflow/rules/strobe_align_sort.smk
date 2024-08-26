@@ -8,8 +8,8 @@ rule strobe_align_sort:
         f1=getR1s,
         f2=getR2s,
     output:
-        bami=MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam.bai",
-        bamo=MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam",
+        bami=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam.bai"),
+        bamo=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam"),
     log:
         MDIR + "{sample}/align/strobe/logs/{sample}.strobe_sort.log",
     resources:
