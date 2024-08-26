@@ -307,10 +307,9 @@ SharedStorage:  # This is the local FS which is expensive but fast, could be swa
     StorageType: FsxLustre
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
-      ExportPath: REGSUB_S3_BUCKET_REF/exports/
       StorageCapacity: 4800
       DeploymentType: SCRATCH_2
-      AutoImportPolicy: NEW_CHANGED_DELETED # LustreMountOptions: ro # Mount as read-only << enable this once dayliyl no longer caches to /fsx
+      AutoImportPolicy: NEW_CHANGED_DELETED 
       StorageType: SSD
 Tags:  # TAGs necessary for per-user/project/job cost tracking
   - Key: aws-parallelcluster-username
