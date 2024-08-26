@@ -216,6 +216,7 @@ doppelmark:
     threads: 16
     partition: "i4-5"
     clip_padding: 600000
+    mem_gb: 50
     shard_size: 700000
     min_bases: 1000
     queue_length: 640
