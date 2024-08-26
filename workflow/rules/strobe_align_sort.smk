@@ -81,3 +81,4 @@ rule produce_strobe_align:  # TARGET: only produce strobe align
      input:
          expand(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam", sample=SAMPS)
  
+ 

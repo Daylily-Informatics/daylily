@@ -54,4 +54,4 @@ if "dppl" in DDUP:
             samtools index -b {output.bamo} >> {log};
             
             touch {output};
-            """
+            """ 

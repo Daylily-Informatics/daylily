@@ -77,3 +77,4 @@ rule bwa_mem2meme_aln_sort:
             |  samtools sort -l 1  -m {params.sort_thread_mem}   \
             -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log} 2>&1;
         """
+ 

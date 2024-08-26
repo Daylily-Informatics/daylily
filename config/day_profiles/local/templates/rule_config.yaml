@@ -546,4 +546,4 @@ seqfu:
 vep:
     threads: 12
     partition: "i32-5,i64-5,i96-5"
-    
+     
