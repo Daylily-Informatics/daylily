@@ -256,7 +256,6 @@ include: "rules/alignstats_compile.smk"
 include: "rules/art.smk"
 include: "rules/bcftools_vcfstat.smk"
 include: "rules/bwa_mem2a_align_sort.smk"
-include: "rules/bwa_mem2ert_align_sort.smk"
 include: "rules/bwa_mem2meme_align_sort.smk"
 include: "rules/calc_coverage_eveness.smk"
 include: "rules/cyp2d6_cyrius.smk"
@@ -339,3 +338,4 @@ rule all:  # TARGET : Prompt user to run help
 
 # #### AND THAT IS THE SNAKEFILE
 # ------------------------------
+ 

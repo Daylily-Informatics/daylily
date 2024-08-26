@@ -37,8 +37,8 @@ active_s_v_callers:
 active_aligners:
     - strobe:
          mkdup: dppl
-#    - bwa2a:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
-#          mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
+    - bwa2a:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
+          mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
 #    - strobe:
 #	  mkdup: dppl
 #    - bwa2a:
@@ -132,7 +132,7 @@ bwa_mem2a_aln_sort:
     benchmark_runs: 0
     softclip_alts: " -Y "
     ld_preload: "  "
-    cmd: "  resources/bwa-mem2/bwa-mem2 "  
+    cmd: " OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  
     K: " " # -K 12600000000 "
     glances: " "
     k: " -k 19 "
@@ -167,31 +167,6 @@ strobe_align_sort:
     mbuffer_mem: "300G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
 
-bwa_mem2ert_aln_sort:
-    env_yaml: "../envs/bwa_mem2_meme_b_v0.1.yaml"
-    threads: 12
-    bwa_threads: 12
-    orig_other_threads: 2
-    other_threads: 2
-    orig_write_threads: 2
-    write_threads: 2
-    orig_short_threads: 2
-    ldpre: ""
-    sort_threads: 2
-    partition: "i128-6"
-    benchmark_runs: 0
-    softclip_alts: " -Y "
-    lib: " "
-    ld_p re: " "  # https://microsoft.github.io/mimalloc/environment.html
-    cmd: " resources/ert/bwa "
-    K: " -K 1260000000 "  # -K 750900000150   "  # -K 250000000 -K 150000000=1M/2s
-    glances: " "
-    k: " -k 19 "
-    orig_sort_mem: "2G"
-    sort_thread_mem: "2G"
-    numactl: ""
-
-
 bwa_mem2meme_aln_sort:
     env_yaml: "../envs/bwa_mem2_meme_conda.yaml"
     threads: 32
@@ -205,7 +180,7 @@ bwa_mem2meme_aln_sort:
     lib: " "
     ld_pre: " " 
     ldpre: " "
-    cmd: " bwa-meme " 
+    cmd: " OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE bwa-meme " 
     K: " "  # "-K 200000000 "
     glances: " "
     k: " -k 19 "
@@ -222,8 +197,8 @@ clean:
 deepvariant:
     threads: 128
     env_yaml: "../envs/deepvariant_v0.1.yaml"
-    deep_cmd: " singularity run   -B /usr/bin:/usr/bin   -B ./resources:/fsx/resources -B /fsx:/fsx -B /tmp:/tmp   -B $PWD:$PWD  /fsx/resources/environments/containers/deepvariant-1.3.0.sif "
-    ld_preload: " env LD_PRELOAD=./resources/libs/libllalloc.so "  #3 "  "  # env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "  # env MIMALLOC_RESET_DELAY=1750ms MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MI_OVERRIDE=ON MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/libs/libmimalloc-debug.so.1.7 "
+    deep_cmd: " singularity run   -B /usr/bin:/usr/bin   -B ./resources:/fsx/resources -B /fsx:/fsx -B /tmp:/tmp   -B $PWD:$PWD  /fsx/resources/environments/containers/deepvariant-1.3.0.sif OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    ld_preload: " "  # env LD_PRELOAD=./resources/libs/libllalloc.so "  #3 "  "  # env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "  # env MIMALLOC_RESET_DELAY=1750ms MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MI_OVERRIDE=ON MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/libs/libmimalloc-debug.so.1.7 "
     partition: "i32-5"
     partition_other: "i96-5,i192-6,i192"
     mem_mb: "60000"
@@ -245,7 +220,7 @@ doppelmark:
     min_bases: 1000
     queue_length: 640
     env_yaml: "../envs/vanilla_v0.1.yaml"
-    numactl: ""
+    numa: " OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
 
 dysgu:
     threads: 32
@@ -571,4 +546,4 @@ seqfu:
 vep:
     threads: 12
     partition: "i32-5,i64-5,i96-5"
-    
+     
