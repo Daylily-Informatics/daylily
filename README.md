@@ -180,3 +180,10 @@ _named in honor of Margaret Oakley Dahoff_
 I'm getting cromwell running w/in the AWS ParallelCluster framework. This will allow for the running of WDLs in the cloud using the self-scaling cluster defined here.  I am not keen on trying to get things to work similarly between snakemake and cromwell. For now these things are co-habitating, but I think the next cleanup steps will be to break this repo into three:  the aws pcluster bits, snakemake stuff and cromwell.
 
 For now, docs for cromwell will follow as soon as I have clean base cases running locally and in ParallelCluster.
+
+
+Fail to copy still
+
+2024/08/25 23:07:43 NOTICE: human_GRCh38_ens105/aligner_indices/star-fusion_1.10.1_index.zip: Skipped copy as --dry-run is set (size 32.394Gi)
+2024/08/25 23:07:43 NOTICE: human_GRCh38_ens105/aligner_indices/star_2.7.8a_index.zip: Skipped copy as --dry-run is set (size 26.090Gi)
+2024/08/25 23:07:43 NOTICE: human_GRCh38_ens105/aligner_indices/star_2.7.0f_index/SA: Skipped
