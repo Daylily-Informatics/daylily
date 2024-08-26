@@ -78,7 +78,7 @@ rule deepvariant:
         
         # Log the start time as 0 seconds
         start_time=$(date +%s);
-        echo "Start time: 0 seconds" >> {output.instance_log} 2>&1;
+        echo "Start-Time-sec:$itype\t0" >> {output.instance_log} 2>&1;
 
         dchr={params.cpre}{params.dchrm};
 
@@ -110,7 +110,7 @@ rule deepvariant:
         elapsed_time=$((end_time - start_time));
 
         # Log the elapsed time
-        echo "DV-Elapsed-Time-sec:\t$itype\t$elapsed_time >> {output.instance_log} 2>&1";
+        echo "Elapsed-Time-sec:\t$itype\t$elapsed_time >> {output.instance_log} 2>&1";
         """
 
 
