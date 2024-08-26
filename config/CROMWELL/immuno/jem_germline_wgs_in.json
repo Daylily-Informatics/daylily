@@ -45,7 +45,7 @@
       ["chr2"],
       ["chr3"]
     ],
-    "germlineWgs.omni_vcf": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz",
+    "germlineWgs.omni_vcf": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/hapmap_3.3.b37.vcf.gz",
     "germlineWgs.reference_ann": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta.ann",
     "germlineWgs.vep_custom_annotations": [
       {
@@ -62,7 +62,7 @@
         }
       }
     ],
-    "germlineWgs.omni_vcf_tbi": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz.tbi",
+    "germlineWgs.omni_vcf_tbi": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/hapmap_3.3.b37.vcf.gz.tbi",
     "germlineWgs.vep_ensembl_version": "105",
     "germlineWgs.gvcf_gq_bands": ["0-20", "21-60", "61-99"],
     "germlineWgs.reference_bwt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta.bwt.2bit.64",
