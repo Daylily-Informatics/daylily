@@ -107,7 +107,7 @@ rule deepvariant:
         elapsed_time=$((end_time - start_time));
 
         # Log the elapsed time
-        echo "DV-Elapsed-Time-sec:\t${itype}\t${elapsed_time}";
+        echo "DV-Elapsed-Time-sec:\t$itype\t$elapsed_time >> {log} 2>&1";
         """
 
 

@@ -198,6 +198,7 @@ bwa_mem2meme_aln_sort:
     bwa_threads: 24
     write_threads: 24
     sort_threads: 10
+    igz_threads: 2
     partition: "i192"
     benchmark_runs: 0
     softclip_alts: " -Y "
