@@ -176,3 +176,7 @@ _named in honor of Margaret Oakley Dahoff_
  
  
  
+# Cromwell
+I'm getting cromwell running w/in the AWS ParallelCluster framework. This will allow for the running of WDLs in the cloud using the self-scaling cluster defined here.  I am not keen on trying to get things to work similarly between snakemake and cromwell. For now these things are co-habitating, but I think the next cleanup steps will be to break this repo into three:  the aws pcluster bits, snakemake stuff and cromwell.
+
+For now, docs for cromwell will follow as soon as I have clean base cases running locally and in ParallelCluster.
