@@ -307,10 +307,9 @@ SharedStorage:  # This is the local FS which is expensive but fast, could be swa
     StorageType: FsxLustre
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
-      StorageCapacity: 7200
+      StorageCapacity: 4800
       DeploymentType: SCRATCH_2
       AutoImportPolicy: NEW_CHANGED_DELETED 
-      StorageType: SSD
 Tags:  # TAGs necessary for per-user/project/job cost tracking
   - Key: aws-parallelcluster-username
     Value: NA
