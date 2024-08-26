@@ -207,8 +207,8 @@ duphold:
     partition: "i32,i64,i96"
 
 doppelmark:
-    threads: 192
-    partition: "i192"
+    threads: 128
+    partition: "i128"
     clip_padding: 600000
     shard_size: 100000000
     min_bases: 20000
@@ -216,7 +216,7 @@ doppelmark:
     xld_preload: " "
     ld_preload: "  "
     env_yaml: "../envs/vanilla_v0.1.yaml"
-    numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    numa: " OMP_NUM_THREADS=128 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
 
 dysgu:
     threads: 16
