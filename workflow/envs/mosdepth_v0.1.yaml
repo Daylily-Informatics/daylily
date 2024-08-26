@@ -3,7 +3,6 @@ channels:
   - bioconda
   - anaconda
   - r
-
   - defaults
 dependencies:
   - mosdepth=0.3.2

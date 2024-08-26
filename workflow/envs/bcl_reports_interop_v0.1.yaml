@@ -3,7 +3,6 @@ channels:
   - bioconda
   - anaconda
   - r
-
   - defaults
 dependencies:
   - bcl2fastq2=2.20.0.422

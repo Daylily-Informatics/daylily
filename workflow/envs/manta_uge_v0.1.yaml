@@ -3,7 +3,6 @@ channels:
   - bioconda
   - anaconda
   - r
-
   - defaults
 dependencies:
   - ca-certificates=2020.10.14=0
@@ -24,4 +23,3 @@ dependencies:
   - zlib=1.2.11=h7b6447c_3
   - htslib
   - bedtools
-
