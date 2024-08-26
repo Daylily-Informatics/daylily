@@ -4,7 +4,7 @@ import os
 ##### deepvariant
 # ---------------------------
 #
-
+ 
 def get_dvchrm_day(wildcards):
     pchr=""
 
@@ -69,6 +69,14 @@ rule deepvariant:
     shell:
         """
         touch {log};
+        TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
+        itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id);
+        echo "INSTANCE TYPE: $itype" >> {log};
+        
+        # Log the start time as 0 seconds
+        start_time=$(date +%s);
+        echo "Start time: 0 seconds";
+
         dchr={params.cpre}{params.dchrm};
 
         if [[ "{params.dchrm}" == "23" ]]; then
@@ -93,7 +101,13 @@ rule deepvariant:
         --output_gvcf={output.gvcf} \
         --num_shards={threads} \
         --logging_dir=$(dirname {log}) \
-        --dry_run=false;
+        --dry_run=false >> {log} 2>&1;
+
+        end_time=$(date +%s);
+        elapsed_time=$((end_time - start_time));
+
+        # Log the elapsed time
+        echo "DV-Elapsed-Time-sec:\t${itype}\t${elapsed_time}";
         """
 
 
