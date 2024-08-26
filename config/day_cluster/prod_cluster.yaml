@@ -148,7 +148,7 @@ Scheduling:
             - InstanceType: x2idn.16xlarge # 64 vCPUs, 1024 GiB, $6.6690 hourly, $2.3923 spot, 1900 GB NVMe
             - InstanceType: x2iedn.16xlarge # 64 vCPUs, 2048 GiB, $13.3380 hourly, $3.9505 spot, 1900 GB NVMe
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 6
           Networking:
             PlacementGroup:
               Enabled: false
@@ -190,7 +190,7 @@ Scheduling:
             - InstanceType: r5d.metal # 96/768 $6.9120 hourly, $2.2178 spot, 3600 GB NVMe
             - InstanceType: r5b.metal # 96/768 $7.1520 hourly, $3.0190 spot
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 6
           Networking:
             PlacementGroup:
               Enabled: false
@@ -303,13 +303,13 @@ Monitoring:
       RetentionInDays: 14
 SharedStorage:  # This is the local FS which is expensive but fast, could be swapped for EFS, etc.
   - MountDir: /fsx
-    Name: fsx-for-daylily-data  # WARNING, EDIT NAME WILL DEL EXISTING DATA
+    Name: fsx-for-daylily-data-x3  # WARNING, EDIT NAME WILL DEL EXISTING DATA
     StorageType: FsxLustre
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
       StorageCapacity: 4800
       DeploymentType: SCRATCH_2
-      AutoImportPolicy: NEW_CHANGED_DELETED 
+      AutoImportPolicy: NEW_CHANGED_DELETED
 Tags:  # TAGs necessary for per-user/project/job cost tracking
   - Key: aws-parallelcluster-username
     Value: NA
