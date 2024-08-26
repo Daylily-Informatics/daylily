@@ -285,7 +285,7 @@ rule octopus:
         export APPTAINER_HOME=/fsx/scratch;
         export oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
 
-        ocmd=" {params.ld_pre} octopus --very-fast  -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}  $midel  $mhap  --annotations {params.anno}   --forest-model {params.fm}  --sequence-error-model {params.em}  {params.min_for_qual}   {params.tm} --skip-regions-file {params.skr}  $BRTL  {params.tgt_working_mem} $variable_args --max-open-read-files {params.mor} ";
+        ocmd=" OMP_NUM_THREADS={params.threads} OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE octopus --very-fast  -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}  $midel  $mhap  --annotations {params.anno}   --forest-model {params.fm}  --sequence-error-model {params.em}  {params.min_for_qual}   {params.tm} --skip-regions-file {params.skr}  $BRTL  {params.tgt_working_mem} $variable_args --max-open-read-files {params.mor} ";
         
         echo $ocmd 1&>2 > ocmd.log;
 

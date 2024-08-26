@@ -9,8 +9,8 @@ rule bwa_mem2meme_aln_sort:
         f1=getR1s,  # method defined in fastp.smk
         f2=getR2s,  # method defined in fastp.smk
     output:
-        bami=MDIR + "{sample}/align/bwa2m/{sample}.bwa2m.sort.bam.bai",
-        bamo=MDIR + "{sample}/align/bwa2m/{sample}.bwa2m.sort.bam",
+        bami=temp(MDIR + "{sample}/align/bwa2m/{sample}.bwa2m.sort.bam.bai"),
+        bamo=temp(MDIR + "{sample}/align/bwa2m/{sample}.bwa2m.sort.bam"),
     priority: 49
     resources:
         threads=config["bwa_mem2meme_aln_sort"]["threads"],

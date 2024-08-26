@@ -31,6 +31,7 @@ if "dppl" in DDUP:
             vcpu=config["doppelmark"]["threads"],
         params:
             cluster_sample='na',
+	    numa=config['doppelmark']['numa'],
             shard_size=config['doppelmark']['shard_size'],
             clip_padding=config['doppelmark']['clip_padding'],
             min_bases=config['doppelmark']['min_bases'],
@@ -40,7 +41,7 @@ if "dppl" in DDUP:
         shell:
             """
 
-            resources/DOPPLEMARK/doppelmark \
+            {params.numa} resources/DOPPLEMARK/doppelmark \
              -parallelism {threads} \
              -bam {input.bam} \
              -clip-padding {params.clip_padding} \
@@ -52,7 +53,5 @@ if "dppl" in DDUP:
 
             samtools index -b {output.bamo} >> {log};
             
-            # using biobambabm2
-            #LD_LIBRARY_PATH=resources/lib/  resources/biobambam2/bammarkduplicates I={input.bam} O={output.bamo} index=1 markthreads={threads}  M={output.bamo}.metrics fragbufsize=500331648000 colhashbits=23 collistsize=93554432   indexfilename={output.bami} ;
             touch {output};
             """

@@ -10,8 +10,8 @@ rule bwa_mem2_sort:
         f1=getR1s,
         f2=getR2s,
     output:
-        bami=MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam.bai",
-        bamo=MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam",
+        bami=temp(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam.bai"),
+        bamo=temp(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam"),
     priority: 49
     log:
         MDIR + "{sample}/align/bwa2a/logs/{sample}.bwa2a_sort.log",

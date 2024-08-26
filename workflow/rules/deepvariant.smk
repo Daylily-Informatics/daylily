@@ -64,7 +64,7 @@ rule deepvariant:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
         mem_mb=config['deepvariant']['mem_mb'],
-        numa="",  #config['deepvariant']['numa'],
+        numa=config['deepvariant']['numa'],
         cpre="" if "b37" == config['genome_build'] else "chr",
     shell:
         """
