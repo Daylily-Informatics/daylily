@@ -3,7 +3,7 @@
       "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/1000G_omni2.5.b37.vcf.gz"
     ],
     "germlineWgs.reference_alt": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta",
-    "germlineWgs.reference_dict": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta.dict",
+    "germlineWgs.reference_dict": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.dict",
     "germlineWgs.reference_fai": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta.fai",
     "germlineWgs.reference_0123": "/fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa_mem2_scale/human_1kg_v37.fasta.0123",
     "germlineWgs.sequence": [
