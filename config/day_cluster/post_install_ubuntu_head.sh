@@ -177,7 +177,7 @@ sudo apt install -y --allow-downgrades --allow-remove-essential --allow-change-h
                         uuid-dev  libgpgme-dev \
                         squashfs-tools libseccomp-dev \
                         pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev  \
-                        openjdk-11-jdk wget unzip squashfuse nasm yasm isal fuse2fs gocryptfs
+                        openjdk-11-jdk wget unzip squashfuse nasm yasm isal fuse2fs gocryptfs 
 
 
 # Install Cromwell
