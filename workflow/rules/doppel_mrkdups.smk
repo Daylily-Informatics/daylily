@@ -30,7 +30,7 @@ if "dppl" in DDUP:
             threads=config["doppelmark"]["threads"],
             partition=config["doppelmark"]["partition"],
             vcpu=config["doppelmark"]["threads"],
-            mem_gb=config["doppelmark"]["mem_gb"],
+            mem_mb=config["doppelmark"]["mem_mb"],
         params:
             cluster_sample='na',
 	    numa=config['doppelmark']['numa'],
