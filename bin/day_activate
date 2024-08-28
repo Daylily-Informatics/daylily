@@ -80,6 +80,10 @@ if [[ "$DAY_ROOT" != "" ]]; then
     export DYR=$DAY_ROOT/
 fi
 
+if [[ "$1" == "slurm" ]]; then
+    export TMPDIR="/fsx/scratch/";
+fi
+
 # is this a known profile?  if so, get the env var value
 env_val=$(grep env_var_val $DYR"config/day_profiles/$1/templates/profile.info" | cut -d ':' -f 2)
 
@@ -116,7 +120,6 @@ then
     if [[ "$1" == "h" || "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
         ret_code=0
     fi
-
     
 elif [[ "$1" == "h" || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "SPECIFIED:$1"

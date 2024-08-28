@@ -33,7 +33,7 @@ HeadNode:
 Scheduling:
   Scheduler: slurm
   SlurmSettings:
-    EnableMemoryBasedScheduling: false # This gets to be really gnarly if true. I am meeting my needs with resource gorups
+    EnableMemoryBasedScheduling: true # This gets to be really gnarly if true. I am meeting my needs with resource gorups
     ScaledownIdletime: 5
     Dns:
       DisableManagedDns: false

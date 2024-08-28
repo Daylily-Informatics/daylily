@@ -15,8 +15,7 @@ cluster:
     --mem={resources.mem_mb}
     --comment $DAY_PROJECT
     --no-requeue
-    --distribution={resources.distribution}
-    --tmpdir={resources.tmpdir} {resources.exclusive}
+    --distribution={resources.distribution} {resources.exclusive}
 default-resources:  
   - disk_mb=1000
   - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type
@@ -24,7 +23,6 @@ default-resources:
   - time=4440
   - partition=i8,i32,i64,i96,i128,i192
   - vcpu=1
-  - tmpdir='/fsx/scratch/'
   - distribution=block
   - exclusive=''
 jobs: 500
