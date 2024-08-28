@@ -82,6 +82,8 @@ fi
 
 if [[ "$1" == "slurm" ]]; then
     export TMPDIR="/fsx/scratch/";
+else
+    export TMPDIR="/tmp/";
 fi
 
 # is this a known profile?  if so, get the env var value
