@@ -56,6 +56,9 @@ if "dppl" in DDUP:
              -clip-padding {params.clip_padding} \
              -output {output.bamo} \
              -logtostderr \
+	     -disk-mate-shards 0 \
+	     -max-depth 300000 \
+	     -scratch-dir $TMPDIR \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
              -shard-size {params.shard_size}  >> {log};
