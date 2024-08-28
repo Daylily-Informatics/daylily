@@ -14,7 +14,7 @@ rule strobe_align_sort:
         MDIR + "{sample}/align/strobe/logs/{sample}.strobe_sort.log",
     resources:
         threads=config['strobe_align_sort']['threads'],
-        mem_mb=60000 if 'mem_mb' not in config['strobe_align_sort'] else config['strobe_align_sort']['mem_mb'],
+        mem_mb=config['strobe_align_sort']['mem_mb'],
         partition=config['strobe_align_sort']['partition'],
         vcpu=config['strobe_align_sort']['threads']
     threads: config['strobe_align_sort']['threads']

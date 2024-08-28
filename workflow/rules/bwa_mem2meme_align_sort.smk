@@ -15,7 +15,8 @@ rule bwa_mem2meme_aln_sort:
     resources:
         threads=config["bwa_mem2meme_aln_sort"]["threads"],
         partition=config["bwa_mem2meme_aln_sort"]["partition"],
-        vcpu=config["bwa_mem2meme_aln_sort"]["threads"]
+        vcpu=config["bwa_mem2meme_aln_sort"]["threads"],
+        mem_mb=config["bwa_mem2meme_aln_sort"]["mem_mb"],
     log:
         MDIR + "{sample}/align/bwa2m/logs/align_sort/{sample}.bwa2m.sort.log",
     threads: config["bwa_mem2meme_aln_sort"]["threads"]  # eval( "lambda wildcards,input,threads,  attempt:int( attempt/attempt * config['bwa_mem2meme_aln_sort']['threads'] if attempt < 2 else 254)"),

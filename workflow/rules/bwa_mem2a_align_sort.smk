@@ -17,7 +17,7 @@ rule bwa_mem2_sort:
         MDIR + "{sample}/align/bwa2a/logs/{sample}.bwa2a_sort.log",
     resources:
         threads=config['bwa_mem2a_aln_sort']['threads'],
-        mem_mb=60000 if 'mem_mb' not in config['bwa_mem2a_aln_sort'] else config['bwa_mem2a_aln_sort']['mem_mb'],
+        mem_mb=config['bwa_mem2a_aln_sort']['mem_mb'],
         partition=config['bwa_mem2a_aln_sort']['partition'],
         vcpu=config['bwa_mem2a_aln_sort']['threads']
     threads: config['bwa_mem2a_aln_sort']['threads']

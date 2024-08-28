@@ -51,6 +51,7 @@ rule deepvariant:
         vcpu=config['deepvariant']['threads'],
         threads=config['deepvariant']['threads'],
         partition=config['deepvariant']['partition'],
+        mem_mb=config['deepvariant']['mem_mb'],
     benchmark:
         repeat(
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.deep.{dvchrm}.bench.tsv",
