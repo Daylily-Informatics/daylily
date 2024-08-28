@@ -20,7 +20,6 @@ if "dppl" in DDUP:
         output:
             bamo="{MDIR}{sx}/align/{alnr}/{sx}.{alnr}.mrkdup.sort.bam",
             bami="{MDIR}{sx}/align/{alnr}/{sx}.{alnr}.mrkdup.sort.bam.bai",
-	    instance_log="{MDIR}{sx}/align/{alnr}/{sx}.{alnr}.mrkdup.sort.instance.log",
         threads: config["doppelmark"]["threads"]
         benchmark:
             repeat("{MDIR}{sx}/benchmarks/{sx}.{alnr}.mrkdup.bench.tsv", 0)
@@ -42,10 +41,11 @@ if "dppl" in DDUP:
             "{MDIR}{sx}/align/{alnr}/logs/dedupe.{sx}.{alnr}.log",
         shell:
             """
-            touch {log} {output.instance_log};
+            touch {log};
             TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
             itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
-            echo "INSTANCE TYPE: $itype" >> {output.instance_log};
+            echo "INSTANCE TYPE: $itype" > {log};
+	    echo "INSTANCE TYPE: $itype";
             start_time=$(date +%s);
 
             {params.numa} resources/DOPPLEMARK/doppelmark \
@@ -56,7 +56,7 @@ if "dppl" in DDUP:
              -logtostderr \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
-             -shard-size {params.shard_size} > {log};
+             -shard-size {params.shard_size} >> {log};
 
             samtools index -b {output.bamo} >> {log};
             
@@ -64,5 +64,6 @@ if "dppl" in DDUP:
 
             end_time=$(date +%s);
             elapsed_time=$((end_time - start_time));
-            echo "Elapsed-Time-sec:\t$itype\t$elapsed_time >> {output.instance_log} 2>&1";
+	    echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
+            echo "Elapsed-Time-sec:\t$itype\t$elapsed_time" >> {log} 2>&1;
             """ 

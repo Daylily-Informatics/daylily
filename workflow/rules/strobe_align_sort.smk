@@ -9,8 +9,7 @@ rule strobe_align_sort:
         f2=getR2s,
     output:
         bami=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam.bai"),
-        bamo=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam"),
-	instance_log=MDIR +"{sample}/align/strobe/{sample}.strobe.sort.instance.log",
+        bamo=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam")
     log:
         MDIR + "{sample}/align/strobe/logs/{sample}.strobe_sort.log",
     resources:
@@ -56,7 +55,8 @@ rule strobe_align_sort:
         """
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
-        echo "INSTANCE TYPE: $itype" >> {output.instance_log};
+        echo "INSTANCE TYPE: $itype" > {log};
+	echo "INSTANCE TYPE: $itype"
         start_time=$(date +%s);
 
         export tdir={params.mdir}/{params.samp}/{params.samtmpd};
@@ -77,11 +77,12 @@ rule strobe_align_sort:
 	{params.subsample_head} <(igzip -c -d -T {params.igz_threads} -q  {input.f1} ) {params.subsample_tail} \
 	{params.subsample_head}  <(igzip -c -d -T {params.igz_threads} -q {input.f2} )  {params.subsample_tail} \
 	|   samtools sort -l 1  -m {params.sort_thread_mem}   \
-         -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} > {log} 2>&1;
+         -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
 
         end_time=$(date +%s);
         elapsed_time=$((end_time - start_time));
-        echo "Elapsed-Time-sec:\t$itype\t$elapsed_time >> {output.instance_log} 2>&1";
+	echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
+        echo "Elapsed-Time-sec:\t$itype\t$elapsed_time" >> {log} 2>&1;
 	"""
 
 

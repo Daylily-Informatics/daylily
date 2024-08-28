@@ -40,8 +40,6 @@ rule deepvariant:
         + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.vcf",
         gvcf=MDIR
         + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.vcf",
-	instance_log=MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.instance.log",
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.deep.{dvchrm}.snv.log",
@@ -70,15 +68,15 @@ rule deepvariant:
         cpre="" if "b37" == config['genome_build'] else "chr",
     shell:
         """
-        touch {log} {output.instance_log};
+        touch {log};
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
-        echo "INSTANCE TYPE: $itype" >> {output.instance_log};
+        echo "INSTANCE TYPE: $itype" > {log};
 
         
         # Log the start time as 0 seconds
         start_time=$(date +%s);
-        echo "Start-Time-sec:$itype\t0" >> {output.instance_log} 2>&1;
+        echo "Start-Time-sec:$itype\t0" >> {log} 2>&1;
 
         dchr={params.cpre}{params.dchrm};
 
@@ -110,7 +108,8 @@ rule deepvariant:
         elapsed_time=$((end_time - start_time));
 
         # Log the elapsed time
-        echo "Elapsed-Time-sec:\t$itype\t$elapsed_time >> {output.instance_log} 2>&1";
+        echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
+        echo "Elapsed-Time-sec:\t$itype\t$elapsed_time >> {log} 2>&1;
         """
 
 
