@@ -33,7 +33,7 @@ HeadNode:
 Scheduling:
   Scheduler: slurm
   SlurmSettings:
-    EnableMemoryBasedScheduling: true
+    EnableMemoryBasedScheduling: false # This gets to be really gnarly if true. I am meeting my needs with resource gorups
     ScaledownIdletime: 5
     Dns:
       DisableManagedDns: false
@@ -85,7 +85,7 @@ Scheduling:
             - InstanceType: c6id.8xlarge # 32 vCPUs, 64 GiB, $1.6128 hourly, $0.5638 spot, 1900 GB NVMe
             - InstanceType: c6in.8xlarge # 32 vCPUs, 64 GiB, $1.8144 hourly, $0.7672 spot, 50 Gigabit
           MinCount: 0
-          MaxCount: 6
+          MaxCount: 8
           Networking:
             PlacementGroup:
               Enabled: false
@@ -102,7 +102,7 @@ Scheduling:
             - InstanceType: m6in.8xlarge # 32 vCPUs, 128 GiB, $2.2277 hourly, $1.0006 spot, 50 Gigabit
             - InstanceType: m6idn.8xlarge # 32 vCPUs, 128 GiB, $2.5459 hourly, $1.0409 spot, 1900 GB NVMe, 50 Gigabit
           MinCount: 0
-          MaxCount: 6
+          MaxCount: 8
           Networking:
             PlacementGroup:
               Enabled: false
@@ -121,11 +121,8 @@ Scheduling:
             - InstanceType: r7iz.8xlarge # 32 vCPUs, 256 GiB, $2.9760 hourly, $1.1909 spot
             - InstanceType: r6idn.8xlarge # 32 vCPUs, 256 GiB, $3.1262 hourly, $1.0301 spot, 1900 GB NVMe, 50 Gigabit
             - InstanceType: i4i.8xlarge # 32 vCPUs, 256 GiB, $2.7460 hourly, $0.9075 spot, 7500 GB NVMe
-            - InstanceType: r6in.8xlarge # 32 vCPUs, 256 GiB, $2.7893 hourly, $1.1189 spot, 50 Gigabit
-            - InstanceType: r7iz.8xlarge # 32 vCPUs, 256 GiB, $2.9760 hourly, $1.1909 spot
-            - InstanceType: r6idn.8xlarge # 32 vCPUs, 256 GiB, $3.1262 hourly, $1.0301 spot, 1900 GB NVMe, 50 Gigabit
           MinCount: 0
-          MaxCount: 6
+          MaxCount: 8
           Networking:
             PlacementGroup:
               Enabled: false
@@ -159,7 +156,7 @@ Scheduling:
             - InstanceType: m6in.16xlarge # 64 vCPUs, 256 GiB, $4.4554 hourly, $1.9342 spot, 100 Gigabit
             - InstanceType: m6idn.16xlarge # 64 vCPUs, 256 GiB, $5.0918 hourly, $1.8180 spot, 3800 GB NVMe
           MinCount: 0
-          MaxCount: 6
+          MaxCount: 8
           Networking:
             PlacementGroup:
               Enabled: false
@@ -177,10 +174,8 @@ Scheduling:
             - InstanceType: r6in.16xlarge # 64 vCPUs, 512 GiB, $5.5786 hourly, $2.2605 spot, 100 Gigabit
             - InstanceType: r7iz.16xlarge # 64 vCPUs, 512 GiB, $5.9520 hourly, $1.9114 spot
             - InstanceType: r7iz.metal-16xl # 64 vCPUs, 512 GiB, $5.9520 hourly, $1.7381 spot
-            - InstanceType: r6idn.16xlarge # 64 vCPUs, 512 GiB, $6.2525 hourly, $2.5039 spot, 3800 GB NVMe
-            - InstanceType: i4i.16xlarge # 64 vCPUs, 512 GiB, $5.4910 hourly, $1.7016 spot, 15000 GB NVMe
           MinCount: 0
-          MaxCount: 6
+          MaxCount: 8
           Networking:
             PlacementGroup:
               Enabled: false
@@ -212,7 +207,7 @@ Scheduling:
             - InstanceType: m7i.metal-24xl # 96 vCPUs, 384 GiB, $4.8384 hourly, $1.4655 spot
             - InstanceType: m7i.24xlarge # 96 vCPUs, 384 GiB, $4.8384 hourly, $1.4294 spot
           MinCount: 0
-          MaxCount: 6
+          MaxCount: 8
           Networking:
             PlacementGroup:
               Enabled: false
@@ -229,7 +224,7 @@ Scheduling:
             - InstanceType: r5d.metal # 96 vCPUs, 768 GiB, $6.9120 hourly, $2.2178 spot, 3600 GB NVMe
             - InstanceType: r5b.metal # 96 vCPUs, 768 GiB, $7.1520 hourly, $3.0190 spot
           MinCount: 0
-          MaxCount: 6
+          MaxCount: 8
           Networking:
             PlacementGroup:
               Enabled: false
@@ -253,6 +248,21 @@ Scheduling:
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
+        - Name: gb256
+          Instances:
+            - InstanceType: c6i.metal # 128 vCPUs, 256 GiB, $5.4400 hourly, $1.5974 spot
+            - InstanceType: c6i.32xlarge # 128 vCPUs, 256 GiB, $5.4400 hourly, $1.7163 spot
+            - InstanceType: c6id.32xlarge # 128 vCPUs, 256 GiB, $6.4512 hourly, $1.9416 spot, 7600 GB NVMe
+            - InstanceType: c6id.metal # 128 vCPUs, 256 GiB, $6.4512 hourly, $1.9892 spot, 7600 GB NVMe
+            - InstanceType: c6in.metal # 128 vCPUs, 256 GiB, $7.2576 hourly, $2.0311 spot, 200 Gigabit
+            - InstanceType: c6in.32xlarge # 128 vCPUs, 256 GiB, $7.2576 hourly, $2.3195 spot, 200 Gigabit
+          MinCount: 0
+          MaxCount: 8
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: true
         - Name: gb512
           Instances:
             - InstanceType: m6i.32xlarge # 128 vCPUs, 512 GiB, $6.1440 hourly, $1.9570 spot
