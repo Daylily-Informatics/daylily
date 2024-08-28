@@ -7,22 +7,26 @@ cluster:
     --parsable
     --cpus-per-task={threads}
     --time={resources.time}
-    --job-name=D-{rule}
+    --job-name=D-{rule}-{sample}
     --output=logs/slurm/{rule}/{rule}.{sample}.{jobid}.out
     --error=logs/slurm/{rule}/{rule}.{sample}.{jobid}.err
     --partition={resources.partition}
     --chdir=$PWD
-    --mem-per-cpu={resources.mem_mb}
+    --mem={resources.mem_mb}
     --comment $DAY_PROJECT
     --no-requeue
+    --distribution={resources.distribution}
+    --tmpdir={resources.tmpdir} {resources.exclusive}
 default-resources:  
   - disk_mb=1000
-  - mem_gb=1
-  - threads=4
+  - mem_mb=1000
+  - threads=1
   - time=4440
   - partition=i8,i32,i64,i96,i128,i192
-  - vcpu=4
+  - vcpu=1
   - tmpdir='/fsx/scratch/'
+  - distribution=block
+  - exclusive=''
 jobs: 500
 cores: 1600
 latency-wait: 100

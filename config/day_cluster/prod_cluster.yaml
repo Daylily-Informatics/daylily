@@ -9,6 +9,7 @@ HeadNode:
   DisableSimultaneousMultithreading: false
   Ssh:
     KeyName: REGSUB_KEYNAME  # must be ed25519 for ubuntu
+    AllowedIps: "0.0.0.0/0" # SET THIS TO YOUR DESIRED FILTER
   Dcv:
     Enabled: false
   LocalStorage:
@@ -26,12 +27,13 @@ HeadNode:
   Iam:
     S3Access:
       - BucketName: REGSUB_S3_BUCKET_NAME  # daylily-ref
-        EnableWriteAccess: False
+        EnableWriteAccess: false
     AdditionalIamPolicies:
       - Policy: REGSUB_S3_IAM_POLICY  # arn:aws:iam::670484050738:policy/pclusterTagsAndBudget
 Scheduling:
   Scheduler: slurm
   SlurmSettings:
+    EnableMemoryBasedScheduling: true
     ScaledownIdletime: 5
     Dns:
       DisableManagedDns: false
@@ -41,7 +43,7 @@ Scheduling:
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: a
+        - Name: gb64
           Instances:
             - InstanceType: r7i.2xlarge # 8 vCPUs, 64 GiB, $0.5292 hourly, $0.2005 spot
             - InstanceType: r5.2xlarge # 8 vCPUs, 64 GiB, $0.5040 hourly, $0.2127 spot
@@ -69,40 +71,59 @@ Scheduling:
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
+            EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
     - Name: i32
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: a
+        - Name: gb64
           Instances:
             - InstanceType: c6i.8xlarge # 32 vCPUs, 64 GiB, $1.3600 hourly, $0.4781 spot
             - InstanceType: c7i.8xlarge # 32 vCPUs, 64 GiB, $1.4280 hourly, $0.5055 spot
+            - InstanceType: c6id.8xlarge # 32 vCPUs, 64 GiB, $1.6128 hourly, $0.5638 spot, 1900 GB NVMe
+            - InstanceType: c6in.8xlarge # 32 vCPUs, 64 GiB, $1.8144 hourly, $0.7672 spot, 50 Gigabit
+          MinCount: 0
+          MaxCount: 6
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb128
+          Instances:
             - InstanceType: m7i-flex.8xlarge # 32 vCPUs, 128 GiB, $1.5322 hourly, $0.5659 spot
             - InstanceType: m5.8xlarge # 32 vCPUs, 128 GiB, $1.5360 hourly, $0.5201 spot
             - InstanceType: m6i.8xlarge # 32 vCPUs, 128 GiB, $1.5360 hourly, $0.5225 spot
-            - InstanceType: c6id.8xlarge # 32 vCPUs, 64 GiB, $1.6128 hourly, $0.5638 spot, 1900 GB NVMe
             - InstanceType: m7i.8xlarge # 32 vCPUs, 128 GiB, $1.6128 hourly, $0.5817 spot
             - InstanceType: m5d.8xlarge # 32 vCPUs, 128 GiB, $1.8080 hourly, $0.7627 spot, 1200 GB NVMe
-            - InstanceType: c6in.8xlarge # 32 vCPUs, 64 GiB, $1.8144 hourly, $0.7672 spot, 50 Gigabit
             - InstanceType: m6id.8xlarge # 32 vCPUs, 128 GiB, $1.8984 hourly, $0.7110 spot, 1900 GB NVMe
+            - InstanceType: m6in.8xlarge # 32 vCPUs, 128 GiB, $2.2277 hourly, $1.0006 spot, 50 Gigabit
+            - InstanceType: m6idn.8xlarge # 32 vCPUs, 128 GiB, $2.5459 hourly, $1.0409 spot, 1900 GB NVMe, 50 Gigabit
+          MinCount: 0
+          MaxCount: 6
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb256
+          Instances:
             - InstanceType: r5.8xlarge # 32 vCPUs, 256 GiB, $2.0160 hourly, $0.6653 spot
             - InstanceType: r6i.8xlarge # 32 vCPUs, 256 GiB, $2.0160 hourly, $0.6317 spot
             - InstanceType: r7i.8xlarge # 32 vCPUs, 256 GiB, $2.1168 hourly, $0.6483 spot
-            - InstanceType: m6in.8xlarge # 32 vCPUs, 128 GiB, $2.2277 hourly, $1.0006 spot, 50 Gigabit
             - InstanceType: r5d.8xlarge # 32 vCPUs, 256 GiB, $2.3040 hourly, $0.7832 spot, 1200 GB NVMe
             - InstanceType: r5b.8xlarge # 32 vCPUs, 256 GiB, $2.3840 hourly, $1.0337 spot
             - InstanceType: r5n.8xlarge # 32 vCPUs, 256 GiB, $2.3840 hourly, $0.7143 spot, 25 Gigabit
             - InstanceType: r6id.8xlarge # 32 vCPUs, 256 GiB, $2.4192 hourly, $0.8227 spot, 1900 GB NVMe
-            - InstanceType: m6idn.8xlarge # 32 vCPUs, 128 GiB, $2.5459 hourly, $1.0409 spot, 1900 GB NVMe, 50 Gigabit
+            - InstanceType: r6in.8xlarge # 32 vCPUs, 256 GiB, $2.7893 hourly, $1.1189 spot, 50 Gigabit
+            - InstanceType: r7iz.8xlarge # 32 vCPUs, 256 GiB, $2.9760 hourly, $1.1909 spot
+            - InstanceType: r6idn.8xlarge # 32 vCPUs, 256 GiB, $3.1262 hourly, $1.0301 spot, 1900 GB NVMe, 50 Gigabit
             - InstanceType: i4i.8xlarge # 32 vCPUs, 256 GiB, $2.7460 hourly, $0.9075 spot, 7500 GB NVMe
             - InstanceType: r6in.8xlarge # 32 vCPUs, 256 GiB, $2.7893 hourly, $1.1189 spot, 50 Gigabit
             - InstanceType: r7iz.8xlarge # 32 vCPUs, 256 GiB, $2.9760 hourly, $1.1909 spot
             - InstanceType: r6idn.8xlarge # 32 vCPUs, 256 GiB, $3.1262 hourly, $1.0301 spot, 1900 GB NVMe, 50 Gigabit
-            - InstanceType: d3.8xlarge # 32 vCPUs, 256 GiB, $3.9955 hourly, $1.3947 spot, 47520 GB NVMe HDD
-            - InstanceType: d3en.8xlarge # 32 vCPUs, 128 GiB, $4.2058 hourly, $1.3698 spot, 223680 GB NVMe HDD
           MinCount: 0
           MaxCount: 6
           Networking:
@@ -121,14 +142,14 @@ Scheduling:
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
+            EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
     - Name: i64
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: a
+        - Name: gb256
           Instances:
             - InstanceType: m5.16xlarge # 64 vCPUs, 256 GiB, $3.0720 hourly, $0.9812 spot
             - InstanceType: m6i.16xlarge # 64 vCPUs, 256 GiB, $3.0720 hourly, $1.0138 spot
@@ -137,6 +158,15 @@ Scheduling:
             - InstanceType: m6id.16xlarge # 64 vCPUs, 256 GiB, $3.7968 hourly, $1.0806 spot, 3800 GB NVMe
             - InstanceType: m6in.16xlarge # 64 vCPUs, 256 GiB, $4.4554 hourly, $1.9342 spot, 100 Gigabit
             - InstanceType: m6idn.16xlarge # 64 vCPUs, 256 GiB, $5.0918 hourly, $1.8180 spot, 3800 GB NVMe
+          MinCount: 0
+          MaxCount: 6
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb512
+          Instances:
             - InstanceType: r5.16xlarge # 64 vCPUs, 512 GiB, $4.0320 hourly, $1.3575 spot
             - InstanceType: r6i.16xlarge # 64 vCPUs, 512 GiB, $4.0320 hourly, $1.2905 spot
             - InstanceType: r7i.16xlarge # 64 vCPUs, 512 GiB, $4.2336 hourly, $1.3088 spot
@@ -149,8 +179,6 @@ Scheduling:
             - InstanceType: r7iz.metal-16xl # 64 vCPUs, 512 GiB, $5.9520 hourly, $1.7381 spot
             - InstanceType: r6idn.16xlarge # 64 vCPUs, 512 GiB, $6.2525 hourly, $2.5039 spot, 3800 GB NVMe
             - InstanceType: i4i.16xlarge # 64 vCPUs, 512 GiB, $5.4910 hourly, $1.7016 spot, 15000 GB NVMe
-            - InstanceType: x2idn.16xlarge # 64 vCPUs, 1024 GiB, $6.6690 hourly, $2.3923 spot, 1900 GB NVMe
-            - InstanceType: x2iedn.16xlarge # 64 vCPUs, 2048 GiB, $13.3380 hourly, $3.9505 spot, 1900 GB NVMe
           MinCount: 0
           MaxCount: 6
           Networking:
@@ -169,32 +197,37 @@ Scheduling:
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
+            EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
     - Name: i96
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: a
+        - Name: gb384
           Instances:
-            - InstanceType: m5.24xlarge # 96/384 $4.6080 hourly, $1.4674 spot
-            - InstanceType: m5.metal # 96/384 $4.6080 hourly, $1.4022 spot
-            - InstanceType: m6i.24xlarge # 96/384 $4.6080 hourly, $1.4655 spot
-            - InstanceType: m7i.metal-24xl # 96/384 $4.8384 hourly, $1.4655 spot
-            - InstanceType: m7i.24xlarge # 96/384 $4.8384 hourly, $1.4294 spot
-            - InstanceType: m5d.24xlarge # 96/384 $5.4240 hourly, $2.2228 spot, 3600 GB NVMe
-            - InstanceType: m5d.metal # 96/384 $5.4240 hourly, $1.5600 spot, 3600 GB NVMe
-            - InstanceType: m6id.24xlarge # 96/384 $5.6952 hourly, $1.8382 spot, 5700 GB NVMe
-            - InstanceType: m6in.24xlarge # 96/384 $6.6830 hourly, $2.6751 spot, 150 Gigabit
-            - InstanceType: r5.metal # 96/768 $6.0480 hourly, $2.0115 spot
-            - InstanceType: r5.24xlarge # 96/768 $6.0480 hourly, $2.0451 spot
-            - InstanceType: r6i.24xlarge # 96/768 $6.0480 hourly, $1.9176 spot
-            - InstanceType: r7i.metal-24xl # 96/768 $6.3504 hourly, $1.8208 spot
-            - InstanceType: r7i.24xlarge # 96/768 $6.3504 hourly, $2.0739 spot
-            - InstanceType: r5d.24xlarge # 96/768 $6.9120 hourly, $2.2242 spot, 3600 GB NVMe
-            - InstanceType: r5d.metal # 96/768 $6.9120 hourly, $2.2178 spot, 3600 GB NVMe
-            - InstanceType: r5b.metal # 96/768 $7.1520 hourly, $3.0190 spot
+            - InstanceType: m5.24xlarge # 96 vCPUs, 384 GiB, $4.6080 hourly, $1.4674 spot
+            - InstanceType: m5.metal # 96 vCPUs, 384 GiB, $4.6080 hourly, $1.4022 spot
+            - InstanceType: m6i.24xlarge # 96 vCPUs, 384 GiB, $4.6080 hourly, $1.4655 spot
+            - InstanceType: m7i.metal-24xl # 96 vCPUs, 384 GiB, $4.8384 hourly, $1.4655 spot
+            - InstanceType: m7i.24xlarge # 96 vCPUs, 384 GiB, $4.8384 hourly, $1.4294 spot
+          MinCount: 0
+          MaxCount: 6
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb768
+          Instances:
+            - InstanceType: r5.metal # 96 vCPUs, 768 GiB, $6.0480 hourly, $2.0115 spot
+            - InstanceType: r5.24xlarge # 96 vCPUs, 768 GiB, $6.0480 hourly, $2.0451 spot
+            - InstanceType: r6i.24xlarge # 96 vCPUs, 768 GiB, $6.0480 hourly, $1.9176 spot
+            - InstanceType: r7i.metal-24xl # 96 vCPUs, 768 GiB, $6.3504 hourly, $1.8208 spot
+            - InstanceType: r7i.24xlarge # 96 vCPUs, 768 GiB, $6.3504 hourly, $2.0739 spot
+            - InstanceType: r5d.24xlarge # 96 vCPUs, 768 GiB, $6.9120 hourly, $2.2242 spot, 3600 GB NVMe
+            - InstanceType: r5d.metal # 96 vCPUs, 768 GiB, $6.9120 hourly, $2.2178 spot, 3600 GB NVMe
+            - InstanceType: r5b.metal # 96 vCPUs, 768 GiB, $7.1520 hourly, $3.0190 spot
           MinCount: 0
           MaxCount: 6
           Networking:
@@ -213,23 +246,17 @@ Scheduling:
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
+            EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
     - Name: i128
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: a
+        - Name: gb512
           Instances:
-            - InstanceType: c6i.metal # 128 vCPUs, 256 GiB, $5.4400 hourly, $1.5974 spot
-            - InstanceType: c6i.32xlarge # 128 vCPUs, 256 GiB, $5.4400 hourly, $1.7163 spot
             - InstanceType: m6i.32xlarge # 128 vCPUs, 512 GiB, $6.1440 hourly, $1.9570 spot
             - InstanceType: m6i.metal # 128 vCPUs, 512 GiB, $6.1440 hourly, $1.9233 spot
-            - InstanceType: c6id.32xlarge # 128 vCPUs, 256 GiB, $6.4512 hourly, $1.9416 spot, 7600 GB NVMe
-            - InstanceType: c6id.metal # 128 vCPUs, 256 GiB, $6.4512 hourly, $1.9892 spot, 7600 GB NVMe
-            - InstanceType: c6in.metal # 128 vCPUs, 256 GiB, $7.2576 hourly, $2.0311 spot, 200 Gigabit
-            - InstanceType: c6in.32xlarge # 128 vCPUs, 256 GiB, $7.2576 hourly, $2.3195 spot, 200 Gigabit
             - InstanceType: m6id.32xlarge # 128 vCPUs, 512 GiB, $7.5936 hourly, $2.8095 spot, 7600 GB NVMe
             - InstanceType: m6id.metal # 128 vCPUs, 512 GiB, $7.5936 hourly, $2.7597 spot, 7600 GB NVMe
             - InstanceType: r6i.metal # 128 vCPUs, 1024 GiB, $8.0640 hourly, $2.6258 spot
@@ -238,22 +265,21 @@ Scheduling:
             - InstanceType: m6in.32xlarge # 128 vCPUs, 512 GiB, $8.9107 hourly, $3.2370 spot, 200 Gigabit
             - InstanceType: r6id.32xlarge # 128 vCPUs, 1024 GiB, $9.6768 hourly, $3.2789 spot, 7600 GB NVMe
             - InstanceType: r6id.metal # 128 vCPUs, 1024 GiB, $9.6768 hourly, $3.0266 spot, 7600 GB NVMe
-            - InstanceType: m6idn.metal # 128 vCPUs, 512 GiB, $10.1837 hourly, $3.1613 spot, 7600 GB NVMe, 200 Gigabit
-            - InstanceType: m6idn.32xlarge # 128 vCPUs, 512 GiB, $10.1837 hourly, $3.6223 spot, 7600 GB NVMe, 200 Gigabit
-            - InstanceType: i4i.metal # 128 vCPUs, 1024 GiB, $10.9820 hourly, $3.1886 spot, 30000 GB NVMe
-            - InstanceType: i4i.32xlarge # 128 vCPUs, 1024 GiB, $10.9824 hourly, $3.0902 spot, 30000 GB NVMe
+          MinCount: 0
+          MaxCount: 10
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: true
+        - Name: gb1024
+          Instances:
             - InstanceType: r6in.metal # 128 vCPUs, 1024 GiB, $11.1571 hourly, $2.9561 spot, 200 Gigabit
             - InstanceType: r6in.32xlarge # 128 vCPUs, 1024 GiB, $11.1571 hourly, $3.8881 spot, 200 Gigabit
             - InstanceType: r7iz.32xlarge # 128 vCPUs, 1024 GiB, $11.9040 hourly, $3.9241 spot
             - InstanceType: r7iz.metal-32xl # 128 vCPUs, 1024 GiB, $11.9040 hourly, $3.2953 spot
             - InstanceType: r6idn.metal # 128 vCPUs, 1024 GiB, $12.5050 hourly, $3.4682 spot, 7600 GB NVMe, 200 Gigabit
             - InstanceType: r6idn.32xlarge # 128 vCPUs, 1024 GiB, $12.5050 hourly, $4.2938 spot, 7600 GB NVMe, 200 Gigabit
-            - InstanceType: x2idn.metal # 128 vCPUs, 2048 GiB, $13.3380 hourly, $4.0124 spot, 3800 GB NVMe, 100 Gigabit
-            - InstanceType: x2idn.32xlarge # 128 vCPUs, 2048 GiB, $13.3380 hourly, $4.2098 spot, 3800 GB NVMe, 100 Gigabit
-            - InstanceType: trn1.32xlarge # 128 vCPUs, 512 GiB, $21.5000 hourly, $6.2900 spot, 7600 GB NVMe, 8x 100 Gigabit
-            - InstanceType: trn1n.32xlarge # 128 vCPUs, 512 GiB, $24.7800 hourly, $7.5984 spot, 7600 GB NVMe, 16x 100 Gigabit
-            - InstanceType: x2iedn.32xlarge # 128 vCPUs, 4096 GiB, $26.6760 hourly, $7.4495 spot, 3800 GB NVMe, 100 Gigabit
-            - InstanceType: x2iedn.metal # 128 vCPUs, 4096 GiB, $26.6760 hourly, $7.3224 spot, 3800 GB NVMe, 100 Gigabit    
           MinCount: 0
           MaxCount: 10
           Networking:
@@ -272,21 +298,39 @@ Scheduling:
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
+            EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
     - Name: i192
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: a
+        - Name: gb384
           Instances:
-          - InstanceType: c7i.48xlarge # 192 vCPUs, 384 GiB, $8.5680 hourly, $2.8069 spot
-          - InstanceType: c7i.metal-48xl # 192 vCPUs, 384 GiB, $8.5680 hourly, $2.5001 spot
-          - InstanceType: m7i.metal-48xl # 192 vCPUs, 768 GiB, $9.6768 hourly, $2.6537 spot
-          - InstanceType: m7i.48xlarge # 192 vCPUs, 768 GiB, $9.6768 hourly, $3.2883 spot
-          - InstanceType: r7i.48xlarge # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.9238 spot
-          - InstanceType: r7i.metal-48xl # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.3266 spot     
+            - InstanceType: c7i.48xlarge # 192 vCPUs, 384 GiB, $8.5680 hourly, $2.8069 spot
+            - InstanceType: c7i.metal-48xl # 192 vCPUs, 384 GiB, $8.5680 hourly, $2.5001 spot
+          MinCount: 0
+          MaxCount: 10
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb768
+          Instances:
+            - InstanceType: m7i.metal-48xl # 192 vCPUs, 768 GiB, $9.6768 hourly, $2.6537 spot
+            - InstanceType: m7i.48xlarge # 192 vCPUs, 768 GiB, $9.6768 hourly, $3.2883 spot
+          MinCount: 0
+          MaxCount: 10
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb1536
+          Instances:
+            - InstanceType: r7i.48xlarge # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.9238 spot
+            - InstanceType: r7i.metal-48xl # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.3266 spot
           MinCount: 0
           MaxCount: 10
           Networking:
@@ -305,10 +349,11 @@ Scheduling:
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: False
+            EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
 Monitoring:
+  DetailedMonitoring: true
   Logs:
     CloudWatch:
       Enabled: true
