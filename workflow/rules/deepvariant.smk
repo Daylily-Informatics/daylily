@@ -109,7 +109,7 @@ rule deepvariant:
 
         # Log the elapsed time
         echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
-        echo "Elapsed-Time-sec:\t$itype\t$elapsed_time >> {log} 2>&1;
+        echo "Elapsed-Time-sec:\t$itype\t$elapsed_time" >> {log} 2>&1;
         """
 
 
