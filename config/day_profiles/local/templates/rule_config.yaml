@@ -221,6 +221,7 @@ doppelmark:
     mem_mb: 50000
     shard_size: 700000
     min_bases: 1000
+    read_buffer_size: 50000
     queue_length: 640
     env_yaml: "../envs/vanilla_v0.1.yaml"
     numa: " OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "

@@ -37,6 +37,7 @@ if "dppl" in DDUP:
             clip_padding=config['doppelmark']['clip_padding'],
             min_bases=config['doppelmark']['min_bases'],
             queue_length=config['doppelmark']['queue_length'],
+	    read_buffer_size=config['doppelmark']['read_buffer_size'],
 	    huref_fasta=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         log:
             "{MDIR}{sx}/align/{alnr}/logs/dedupe.{sx}.{alnr}.log",
@@ -57,7 +58,8 @@ if "dppl" in DDUP:
              -logtostderr \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
-             -shard-size {params.shard_size} >> {log};
+             -shard-size {params.shard_size}  \
+	     -read-buffer-size {params.read_buffer_size} >> {log};
 
             samtools index -b {output.bamo} >> {log};
             
