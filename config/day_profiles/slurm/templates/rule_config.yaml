@@ -117,6 +117,7 @@ bwa_mem2a_aln_sort:
     orig_threads: 2
     sort_threads: 96
     write_threads: 96
+    mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     igz_threads: 64 # from 64
     ldpre: ""
     orig_sort_threads: 2
@@ -140,6 +141,7 @@ strobe_align_sort:
     strobe_threads: 192
     write_threads: 96
     sort_threads: 96
+    mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     benchmark_runs: 0
     igz_threads: 96
     softclip_alts: "  "
@@ -162,6 +164,7 @@ bwa_mem2meme_aln_sort:
     write_threads: 96
     igz_threads: 96
     sort_threads: 96
+    mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     partition: "i192"
     benchmark_runs: 0
     softclip_alts: " -Y "
