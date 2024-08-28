@@ -16,6 +16,7 @@ cluster:
     --comment $DAY_PROJECT
     --no-requeue
     --distribution={resources.distribution} {resources.exclusive}
+    --restart-times=3
 default-resources:  
   - disk_mb=1000
   - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type
