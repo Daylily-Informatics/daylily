@@ -12,10 +12,10 @@ cluster:
     --error=logs/slurm/{rule}/{rule}.{sample}.{jobid}.err
     --partition={resources.partition}
     --chdir=$PWD
-    --mem={resources.mem_mb}
+    --mem-per-cpu={resources.mem_mb}
     --comment $DAY_PROJECT
     --no-requeue
-default-resources:
+default-resources:  
   - disk_mb=1000
   - mem_gb=1
   - threads=4
