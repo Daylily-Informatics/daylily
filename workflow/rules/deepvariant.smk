@@ -106,7 +106,7 @@ rule deepvariant:
         --dry_run=false >> {log} 2>&1;
 
         end_time=$(date +%s);
-        elapsed_time=$((end_time - start_time));
+        elapsed_time=$((($end_time - $start_time) / 60));
 
         # Log the elapsed time
         echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";

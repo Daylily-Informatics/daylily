@@ -204,11 +204,11 @@ duphold:
 doppelmark:
     threads: 192
     partition: "i192"
-    mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
+    mem_mb: 300000 ## potentially this can be set to by dynamic by input bam size
     clip_padding: 600000
-    shard_size: 20000000
+    shard_size: 50000000
     min_bases: 20000
-    queue_length: 2000
+    queue_length: 5000
     read_buffer_size: 500000000
     xld_preload: " "
     ld_preload: "  "

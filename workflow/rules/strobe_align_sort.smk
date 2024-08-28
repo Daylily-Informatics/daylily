@@ -80,7 +80,7 @@ rule strobe_align_sort:
          -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
 
         end_time=$(date +%s);
-        elapsed_time=$((end_time - start_time));
+	elapsed_time=$((($end_time - $start_time) / 60));
 	echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
         echo "Elapsed-Time-sec:\t$itype\t$elapsed_time" >> {log} 2>&1;
 	"""

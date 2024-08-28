@@ -58,6 +58,12 @@ rule bwa_mem2meme_aln_sort:
         config["bwa_mem2meme_aln_sort"]["env_yaml"]
     shell: 
         """
+	TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
+        itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
+        echo "INSTANCE TYPE: $itype" > {log};
+        echo "INSTANCE TYPE: $itype"
+        start_time=$(date +%s);
+
         {params.lib}
         export tdir={params.mdir}/{params.cluster_sample}/{params.samtmpd};
         mkdir -p $tdir;
@@ -77,5 +83,10 @@ rule bwa_mem2meme_aln_sort:
             {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}  \
             |  samtools sort -l 1  -m {params.sort_thread_mem}   \
             -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log} 2>&1;
+        
+            end_time=$(date +%s);
+            elapsed_time=$((($end_time - $start_time) / 60));
+	    echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
+            echo "Elapsed-Time-sec:\t$itype\t$elapsed_time" >> {log} 2>&1;
         """
  
