@@ -37,6 +37,7 @@ if "dppl" in DDUP:
             clip_padding=config['doppelmark']['clip_padding'],
             min_bases=config['doppelmark']['min_bases'],
             queue_length=config['doppelmark']['queue_length'],
+	    huref_fasta=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         log:
             "{MDIR}{sx}/align/{alnr}/logs/dedupe.{sx}.{alnr}.log",
         shell:
@@ -67,8 +68,8 @@ if "dppl" in DDUP:
 	    echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
             echo "Elapsed-Time-sec:\t$itype\t$elapsed_time" >> {log} 2>&1;
 
-	    cram_cmd="samtools view -@ {threads} -m MEMORY-T $tdir -C -T HUREF --write-index -o {output.bamo}.cram##idx##{output.bami}.crai {output.bamo}";
-	    echo $cram_cmd;
+	    cram_cmd="samtools view -@ {threads} -m 2G  -C -T {params.huref_fasta}   --write-index  -o  {output.bamo}.cram  {output.bamo}";
+	    echo "$cram_cmd";
 	    echo "$cram_cmd" >> {log};
 
             """ 
