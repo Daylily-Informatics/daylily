@@ -66,4 +66,9 @@ if "dppl" in DDUP:
             elapsed_time=$((end_time - start_time));
 	    echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
             echo "Elapsed-Time-sec:\t$itype\t$elapsed_time" >> {log} 2>&1;
+
+	    cram_cmd="samtools view -@ {threads} -m MEMORY-T $tdir -C -T HUREF --write-index -o {output.bamo}.cram##idx##{output.bami}.crai {output.bamo}";
+	    echo $cram_cmd;
+	    echo "$cram_cmd" >> {log};
+
             """ 
