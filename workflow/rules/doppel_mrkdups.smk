@@ -58,8 +58,7 @@ if "dppl" in DDUP:
              -logtostderr \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
-             -shard-size {params.shard_size}  \
-	     -read-buffer-size {params.read_buffer_size} >> {log};
+             -shard-size {params.shard_size}  >> {log};
 
             samtools index -b {output.bamo} >> {log};
             
