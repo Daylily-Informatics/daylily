@@ -16,6 +16,8 @@ input_file="$1"
 output_r1="$2"
 output_r2="$3"
 
+threads="$4
+
 # Temporary uncompressed FASTQ files
 tmp_r1="${output_r1%.gz}"
 tmp_r2="${output_r2%.gz}"
@@ -24,7 +26,7 @@ tmp_r2="${output_r2%.gz}"
 # -c : Include only properly paired reads
 # -f : Include only the first read in a pair
 # -F : Include only the second read in a pair
-samtools fastq -1 "$tmp_r1" -2 "$tmp_r2" -0 /dev/null -s /dev/null -n "$input_file"
+samtools fastq  -@ "$threads" -1 "$tmp_r1" -2 "$tmp_r2" -0 /dev/null -s /dev/null -n "$input_file"
 
 # Compress the FASTQ files with igzip
 igzip -c "$tmp_r1" > "$output_r1"
