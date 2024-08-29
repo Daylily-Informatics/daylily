@@ -65,12 +65,14 @@ rule bwa_mem2_sort:
         mkdir -p $tdir ;
         epocsec=$(date +'%s');
         
+        echo WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
+
         
         {params.ldpre} {params.bwa_mem2a_cmd} mem \
          -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
          {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  {params.huref} \
-         {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f1} | sed 's/ /_/')  {params.subsample_tail}  \
-         {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f2} | sed 's/ /_/')  {params.subsample_tail}    \
+         {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f1} | sed 's/ /\//')  {params.subsample_tail}  \
+         {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f2} | sed 's/ /\//')  {params.subsample_tail}    \
         |   samtools sort -l 1  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
 

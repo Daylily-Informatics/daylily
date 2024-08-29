@@ -72,6 +72,9 @@ rule bwa_mem2meme_aln_sort:
 
         unset LD_PRELOAD;
         
+        echo WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
+
+
         # mbuffer size should be determined by memory option given to samtools.
         # ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
@@ -79,8 +82,8 @@ rule bwa_mem2meme_aln_sort:
            -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
             {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  \
             -7 {params.huref} \
-            {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f1} | sed 's/ /_/')   {params.subsample_tail} \
-            {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f2} | sed 's/ /_/')  {params.subsample_tail}  \
+            {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f1} | sed 's/ /\//')   {params.subsample_tail} \
+            {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f2} | sed 's/ /\//')  {params.subsample_tail}  \
             |  samtools sort -l 1  -m {params.sort_thread_mem}   \
             -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log} 2>&1;
         
