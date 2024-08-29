@@ -35,10 +35,10 @@ rule deepvariant:
         bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
         d=MDIR + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.ready",
     output:
-        vcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.vcf"),
-        gvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.vcf"),
+        vcf=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.vcf",
+        gvcf=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.vcf",
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.deep.{dvchrm}.snv.log",
@@ -122,18 +122,18 @@ rule dv_sort_index_chunk_vcf:
         + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.vcf",
     priority: 46
     output:
-        vcfsort=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf"),
-        vcfgz=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf.gz"),
-        vcftbi=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf.gz.tbi"),
-	gvcfsort=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf"),
-        gvcfgz=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf.gz"),
-        gvcftbi=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf.gz.tbi"),
+        vcfsort=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf",
+        vcfgz=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf.gz",
+        vcftbi=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf.gz.tbi",
+	gvcfsort=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf",
+        gvcfgz=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf.gz",
+        gvcftbi=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf.gz.tbi",
     conda:
         "../envs/vanilla_v0.1.yaml"
     log:
@@ -189,12 +189,12 @@ rule deep_concat_fofn:
     # This expand pattern is neat.  the escaped {} remain acting as a snakemake wildcard and expect to be derived from the dag, while th dvchrm wildcard is effectively being constrained by the values in the DEEPD_CHRMS array;  So you produce 1 input array of files for every sample+dvchrm parir, with one list string/file name per array.  The rule will only begin when all array members are produced. It's then sorted by first deepdvchrm so they can be concatenated w/out another soort as all the chunks had been sorted already.
     priority: 44
     output:
-        fin_fofn=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn"),
-        tmp_fofn=temp(MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn.tmp"),
-    	gfin_fofn=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn"),
-        gtmp_fofn=temp(MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp"),
+        fin_fofn=MDIR
+        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn",
+        tmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn.tmp",
+    	gfin_fofn=MDIR
+        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn",
+        gtmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp",
     threads: 2
     resources:
         threads=2
@@ -317,15 +317,23 @@ rule clear_combined_deep_vcf:  # TARGET:  clear combined deep vcf so the chunks 
         "(rm {input.vcf}* {input.gvcf}*  1> /dev/null  2> /dev/null ) || echo 'file not found for deletion: {input}';"
 
 
-localrules:
-    produce_deepDna_vcf,
-
-
 rule produce_deepDna_vcf:  # TARGET: just gen deep calls
     input:
+        vcftb=expand(
+            MDIR
+            + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.vcf.gz",
+            sample=SSAMPS,
+            alnr=ALIGNERS,
+        ),
         vcftbi=expand(
             MDIR
             + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.vcf.gz.tbi",
+            sample=SSAMPS,
+            alnr=ALIGNERS,
+        ),
+        gvcf=expand(
+            MDIR
+            + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf.gzi",
             sample=SSAMPS,
             alnr=ALIGNERS,
         ),
@@ -337,13 +345,37 @@ rule produce_deepDna_vcf:  # TARGET: just gen deep calls
         ),
     output:
         "gatheredall.deep",
+    threads: 4
     priority: 48
     log:
         "gatheredall.deep.log",
+    conda:
+        "../envs/vanilla_v0.1.yaml"
     shell:
-        """( touch {output} ;
+        """
+        # Convert VCF to BCF and index it
+        for vcf in {input.vcftb}; do
+            bcf="${{vcf%.vcf.gz}}.bcf";
+            bcftools view -O b -o $bcf --threads {threads} $vcf && bcftools index --threads 4 $bcf;
+        done;
 
-        {latency_wait}; ls {output} ) >> {log} 2>&1;
+        # Convert GVCF to BCF and index it
+        for gvcf in {input.gvcf}; do
+            gbcf="${{gvcf%.vcf.gzi}}.bcf";
+            bcftools view -O b -o $gbcf --threads {threads} $gvcf && bcftools index --threads 4 $gbcf;
+        done;
+
+        # Mark the output as completed
+        touch {output};
+
+        # Log completion and list output
+        {latency_wait};
+        ls {output} >> {log} 2>&1;
+
+        #( touch {output} ;
+        #echo "bcftools view -O b -o output.bcf --threads 4 input.vcf.gz && bcftools index --threads 4 output.bcf""
+        {latency_wait}; 
+        ls {output}  >> {log} 2>&1;
         """
 
 
