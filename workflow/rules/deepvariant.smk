@@ -7,7 +7,6 @@ import os
  
 def get_dvchrm_day(wildcards):
     pchr=""
-
     ret_str = ""
     sl = wildcards.dvchrm.replace('chr','').split("-")
     sl2 = wildcards.dvchrm.replace('chr','').split("~")
@@ -223,7 +222,6 @@ rule deep_concat_fofn:
             echo $ii >> {output.gtmp_fofn};
         done;
         (workflow/scripts/sort_concat_chrm_list.py {output.gtmp_fofn} {wildcards.sample}.{wildcards.alnr}.deep. {output.gfin_fofn}) || echo "Python Script Error? CODE __ $? __" >> {log} && ls -lt {output} >> {log};
-
         """
 
 
@@ -290,7 +288,9 @@ rule deep_concat_index_chunks:
         stats_f=$(echo "{output.gvcfgz}.bcf.stats");
         bcftools stats -F {params.huref}  {output.gvcfgz} > g$stats_f;
 
-        {latency_wait}; > {log} """
+        {latency_wait};
+        touch {log};
+        """
 
 
 localrules:
