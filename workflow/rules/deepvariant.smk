@@ -148,13 +148,14 @@ rule dv_sort_index_chunk_vcf:
     threads: 4 #config["config"]["sort_index_deepDna_chunk_vcf"]['threads']
     shell:
         """
-        (rm {output} 1>  /dev/null  2> /dev/null )  || echo rmfailed > {log};
+        (rm  {output} 1>  /dev/null  2> /dev/null )  || echo rmfailed > {log};
         (bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log}) || exit 1233;
         (
         bgzip {output.vcfsort};        
         touch {output.vcfsort};
         tabix -f -p vcf {output.vcfgz};
         touch {output.vcftbi};
+        ) >> {log} 2>&1;
 
 
         (bedtools sort -header -i {input.gvcf} > {output.gvcfsort} 2>> {log}) || exit 1233;
@@ -163,9 +164,9 @@ rule dv_sort_index_chunk_vcf:
         touch {output.gvcfsort};
         tabix -f -p vcf {output.gvcfgz};
         touch {output.gvcftbi};
-
-        {latency_wait};
-        ls {output}; ) > {log} 2>&1 ;
+        ) >> {log} 2>&1;
+        
+        ls {output} >> {log} 2>&1 ;
         
         {latency_wait};
         """
