@@ -230,8 +230,10 @@ rule deep_concat_index_chunks:
     input:
         fofn=MDIR
         + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn",
-	gfofn=MDIR
+        tmp_fofn=temp(MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn.tmp"),
+    	gfofn=MDIR
         + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn",
+        gtmp_fofn=temp(MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp"),
     output:
         vcf=touch(
             MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.vcf"
