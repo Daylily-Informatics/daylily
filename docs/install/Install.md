@@ -60,8 +60,6 @@ Miniconda3-latest-Linux-x86_64.sh
   
   - You will be prompted for the information you obtained in the prereq steps (it is fine to re-run this script for new DECs or to retry a failed attempt).
   - This script will:
-      1. Install brew (if not detected).
-      3. Install conda (if not detected).
       4. Install w/in a conda venv: mamba, aws cli, aws parallel cluster cli, gnu parallel
       5. It activates the venv, then runs `bin/daylily` to proceed with the DEC creation.  This will ask for (in order):
         4. If you have gathered the pre-req info.
