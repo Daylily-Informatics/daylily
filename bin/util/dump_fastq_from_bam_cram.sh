@@ -11,6 +11,10 @@ if [ "$#" -ne 7 ]; then
     exit 1
 fi
 
+
+echo "THIS SCRIPT IS NOT YET MODIFIED TO ADD BACK THE information in the read names following the ' '[1|2].*, which has been saved in a metadata file next to the BAM."
+sleep 2
+
 # Input BAM/CRAM file
 input_file="$1"
 
