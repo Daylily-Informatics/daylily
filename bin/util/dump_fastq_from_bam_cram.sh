@@ -79,8 +79,10 @@ samtools fastq  \
 # Compress the FASTQ files with igzip
 igzip -c "$tmp_r1" > "$output_r1"
 igzip -c "$tmp_r2" > "$output_r2"
+igzip -c "$tmp_singletons" > "$output_singletons"
+igzip -c "$tmp_others" > "$output_others"
 
 # Clean up temporary files
-rm "$tmp_r1" "$tmp_r2"
+rm "$tmp_r1" "$tmp_r2" "$tmp_singletons" "$tmp_others"
 
 echo "Conversion complete. Output files: $output_r1 and $output_r2"
