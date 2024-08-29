@@ -177,7 +177,7 @@ localrules:
 
 
 rule deep_concat_fofn:
-    input:
+    input:.
         chunk_tbi=sorted(
             expand(
                 MDIR
@@ -210,19 +210,19 @@ rule deep_concat_fofn:
     shell:
         """
         (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFailOK >> {log} && ls ./ >> {log};
-
+        touch {output};
         for i in {input.chunk_tbi}; do
             ii=$(echo $i | perl -pe 's/\.tbi$//g'; );
             echo $ii >> {output.tmp_fofn};
         done;
-        (workflow/scripts/sort_concat_chrm_list.py {output.tmp_fofn} {wildcards.sample}.{wildcards.alnr}.deep. {output.fin_fofn}) || echo "Python Script Error? CODE __ $? __" >> {log} && ls -lt {output} >> {log};
+        (workflow/scripts/sort_concat_chrm_list.py {output.tmp_fofn} {wildcards.sample}.{wildcards.alnr}.deep. {output.fin_fofn}) || echo "Python Script Error? CODE __ $? __" >> {log} && ls -lt {output.fin_fofn} {output.tmp_fofn} >> {log};
 
 
         for i in {input.chunk_gtbi}; do
             ii=$(echo $i | perl -pe 's/\.tbi$//g'; );
             echo $ii >> {output.gtmp_fofn};
         done;
-        (workflow/scripts/sort_concat_chrm_list.py {output.gtmp_fofn} {wildcards.sample}.{wildcards.alnr}.deep. {output.gfin_fofn}) || echo "Python Script Error? CODE __ $? __" >> {log} && ls -lt {output} >> {log};
+        (workflow/scripts/sort_concat_chrm_list.py {output.gtmp_fofn} {wildcards.sample}.{wildcards.alnr}.deep. {output.gfin_fofn}) || echo "Python Script Error? CODE __ $? __" >> {log} && ls -lt {output.gfin_fofn} {output.gtmp_fofn} >> {log};
         """
 
 
