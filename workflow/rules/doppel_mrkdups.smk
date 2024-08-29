@@ -71,8 +71,8 @@ if "dppl" in DDUP:
 
             end_time=$(date +%s);
 	    elapsed_time=$((($end_time - $start_time) / 60));
-	    echo "Elapsed-Time-sec:\t$itype\t$elapsed_time";
-            echo "Elapsed-Time-sec:\t$itype\t$elapsed_time" >> {log} 2>&1;
+	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
+            echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
 
 	    cram_cmd="samtools view -@ {threads} -m 2G  -C -T {params.huref_fasta}   --write-index  -o  {output.bamo}.cram  {output.bamo}";
 	    echo "$cram_cmd";
