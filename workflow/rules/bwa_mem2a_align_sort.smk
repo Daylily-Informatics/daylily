@@ -65,7 +65,7 @@ rule bwa_mem2_sort:
         mkdir -p $tdir ;
         epocsec=$(date +'%s');
         
-        echo WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
+        echo 'WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
 
         
         {params.ldpre} {params.bwa_mem2a_cmd} mem \

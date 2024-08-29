@@ -63,7 +63,7 @@ rule strobe_align_sort:
         mkdir -p $tdir ;
         epocsec=$(date +'%s');
         
-        echo WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
+        echo 'WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
 
         {params.numa} \
 	{params.strobe_cmd} \
