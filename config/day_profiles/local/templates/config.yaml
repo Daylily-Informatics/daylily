@@ -7,13 +7,8 @@ conda-prefix: "/fsx/resources/environments/conda/USER_REGSUB/HOSTNAME"
 force-use-threads: true
 restart-times: 0  # set this to  2 once stable.  now, fail fasst
 cores: 16
-## If these are uncommented (only 1 at a time)
-#dag: true
-#rulegraph: true
-#filegraph: true
-## Then jobs must be removed
 scheduler: greedy
-jobs: "6"
+jobs: 1
 max-jobs-per-second: 5
 max-status-checks-per-second: 10
 stats: "day_stats.json"
