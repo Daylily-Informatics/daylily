@@ -311,7 +311,7 @@ rule deep_concat_index_chunks:
         bcftools view -O b -o {output.gbcf} --threads {threads} {output.gvcfgz};
         bcftools index --threads {threads} {output.gbcf};
 
-        rm -rf $(dirname {output.gbcf})/vcfs;  # clean up all the crap
+        rm -rf $(dirname {output.gbcf})/vcfs >> {log} 2>&1;  # clean up all the crap
         {latency_wait};
         touch {log};
         """
