@@ -289,7 +289,7 @@ rule deep_concat_index_chunks:
         bcftools view -O z -o {output.gvcfgz} {output.gvcf};
         bcftools index -f -t --threads {threads} -o {output.gvcfgztbi} {output.gvcfgz};
         stats_f=$(echo "{output.gvcfgz}.bcf.stats");
-        bcftools stats -F {params.huref}  {output.gvcfgz} > g$stats_f;
+        bcftools stats -F {params.huref}  {output.gvcfgz} > $stats_f;
 
         {latency_wait};
         touch {log};
