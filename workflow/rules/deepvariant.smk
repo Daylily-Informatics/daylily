@@ -255,6 +255,18 @@ rule deep_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf.gz.tbi"
         ),
+        bcf=touch(
+            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.bcf"
+        ),
+        bcfi=touch(
+            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.bcf.csi"
+        ),
+        gbcf=touch(
+            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.bcf"
+        ),
+        gbcfi=touch(
+            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.bcf.csi"
+        ),
     threads: 4
     resources:
         vcpu=4,
@@ -284,12 +296,20 @@ rule deep_concat_index_chunks:
         stats_f=$(echo "{output.vcfgz}.bcf.stats");
         bcftools stats -F {params.huref}  {output.vcfgz} > $stats_f;
 
+        # Convert to BCF and index it
+        bcftools view -O b -o {output.bcf} --threads {threads} {output.vcfgz};
+        bcftools index --threads {threads} {output.bcf};
 
         bcftools concat -a -d all --threads {threads} -f {input.gfofn}  -O v -o {output.gvcf};
         bcftools view -O z -o {output.gvcfgz} {output.gvcf};
         bcftools index -f -t --threads {threads} -o {output.gvcfgztbi} {output.gvcfgz};
         stats_f=$(echo "{output.gvcfgz}.bcf.stats");
         bcftools stats -F {params.huref}  {output.gvcfgz} > $stats_f;
+
+
+        # Convert to BCF and index it
+        bcftools view -O b -o {output.gbcf} --threads {threads} {output.gvcfgz};
+        bcftools index --threads {threads} {output.gbcf};
 
         {latency_wait};
         touch {log};
