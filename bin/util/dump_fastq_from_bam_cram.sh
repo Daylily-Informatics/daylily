@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/bin/env bash
 
 # requires samtools >= XXXXX and isa-l (for igzip)
-# conda create -n SAMTOOLS -c conda-forge samtools>=n.n isa-l
+# conda create -y -n SAMTOOLS -c conda-forge samtools>=1.20 isa-l>=2.31
+
+# From a shell where you `conda activate SAMTOOLS` run this script
 
 # Check if the correct number of arguments are provided
 if [ "$#" -ne 7 ]; then
@@ -26,6 +28,14 @@ check_dir_exists() {
     dir=$(dirname "$1")
     if [ ! -d "$dir" ]; then
         echo "Error: Output directory '$dir' does not exist."
+        exit 1
+    fi
+}
+
+# Function to check if the file already exists
+check_file_exists() {
+    if [ -f "$1" ]; then
+        echo "Error: Output file '$1' already exists."
         exit 1
     fi
 }
@@ -57,6 +67,12 @@ check_dir_exists "$output_r2"
 check_dir_exists "$output_singletons"
 check_dir_exists "$output_others"
 
+# Check if output files already exist
+check_file_exists "$output_r1"
+check_file_exists "$output_r2"
+check_file_exists "$output_singletons"
+check_file_exists "$output_others"
+
 # Temporary uncompressed FASTQ files
 tmp_r1="${output_r1%.gz}"
 tmp_r2="${output_r2%.gz}"
@@ -69,6 +85,7 @@ tmp_others="${output_others%.fastq.gz}_others.fastq"
 # -F : Include only the second read in a pair
 samtools fastq  \
     -@ "$threads" \
+    -t \
     -c 1 \
     -1 "$tmp_r1" \
     -2 "$tmp_r2" \
@@ -85,4 +102,4 @@ igzip -c "$tmp_others" > "$output_others"
 # Clean up temporary files
 rm "$tmp_r1" "$tmp_r2" "$tmp_singletons" "$tmp_others"
 
-echo "Conversion complete. Output files: $output_r1 and $output_r2"
+echo "Conversion complete. Output files: $output_r1, $output_r2, $output_singletons, and $output_others"
