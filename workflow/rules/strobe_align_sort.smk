@@ -74,8 +74,8 @@ rule strobe_align_sort:
         --rg=CN:"{params.rgcn}" \
         --rg=PG:"{params.rgpg}" \
 	--use-index {params.huref}  \
-	{params.subsample_head} <(igzip -c -d -T {params.igz_threads} -q  {input.f1} ) {params.subsample_tail} \
-	{params.subsample_head}  <(igzip -c -d -T {params.igz_threads} -q {input.f2} )  {params.subsample_tail} \
+	{params.subsample_head} <(igzip -c -d -T {params.igz_threads} -q  {input.f1} | sed 's/ /_/') {params.subsample_tail} \
+	{params.subsample_head}  <(igzip -c -d -T {params.igz_threads} -q {input.f2} | sed 's/ /_/')  {params.subsample_tail} \
 	|   samtools sort -l 1  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
 
