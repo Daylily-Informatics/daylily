@@ -191,7 +191,7 @@ rule deep_concat_fofn:
     output:
         fin_fofn=temp(MDIR
         + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn"),
-        tmp_fofn=temp(MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp"),
+        tmp_fofn=temp(MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn.tmp"),
     	gfin_fofn=temp(MDIR
         + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn"),
         gtmp_fofn=temp(MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp"),
