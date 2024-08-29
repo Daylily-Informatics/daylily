@@ -11,6 +11,8 @@ rule bwa_mem2meme_aln_sort:
     output:
         bami=temp(MDIR + "{sample}/align/bwa2m/{sample}.bwa2m.sort.bam.bai"),
         bamo=temp(MDIR + "{sample}/align/bwa2m/{sample}.bwa2m.sort.bam"),
+        r1_metadata=MDIR + "{sample}/align/bwa2m/{sample}.bwa2m.r1_metadata.txt",
+        r2_metadata=MDIR + "{sample}/align/bwa2m/{sample}.bwa2m.r2_metadata.txt",
     priority: 49
     resources:
         threads=config["bwa_mem2meme_aln_sort"]["threads"],
@@ -82,8 +84,8 @@ rule bwa_mem2meme_aln_sort:
            -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
             {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  \
             -7 {params.huref} \
-            {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f1} | sed 's/ /\//')   {params.subsample_tail} \
-            {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f2} | sed 's/ /\//')  {params.subsample_tail}  \
+            {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f1} | awk 'BEGIN {FS=" "} {if(NR%4==1) {split($2,a,":"); print $1" "a[1]; print $0 > "{output.r1_metadata}"} else print $0}')   {params.subsample_tail} \
+            {params.subsample_head} <( igzip -c -d -T {params.igz_threads} -q  {input.f2} | awk 'BEGIN {FS=" "} {if(NR%4==1) {split($2,a,":"); print $1" "a[1]; print $0 > "{output.r2_metadata}"} else print $0}') )  {params.subsample_tail}  \
             |  samtools sort -l 1  -m {params.sort_thread_mem}   \
             -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} -  >> {log} 2>&1;
         
