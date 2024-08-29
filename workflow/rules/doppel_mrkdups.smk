@@ -60,8 +60,6 @@ if "dppl" in DDUP:
 	     -max-depth 300000 \
 	     -scratch-dir $TMPDIR \
              -min-bases {params.min_bases} \
-	     -cpu-profile {output.bamo}.cpu_profile.out \
-	     -heap-profile {output.bamo}.heap_profile.out \
              -queue-length {params.queue_length} \
              -shard-size {params.shard_size}  >> {log};
 

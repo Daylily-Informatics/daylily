@@ -413,7 +413,7 @@ rule prep_deep_chunkdirs:
             dvchrm=DEEPD_CHRMS,
         ),
     log:
-        MDIR + "{sample}/align/{alnr}/snv/deep/logs/{sample}.{alnr}.chunkdirs.log",
+        MDIR + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.chunkdirs.log",
     shell:
         """
         ( echo {output}  ;
