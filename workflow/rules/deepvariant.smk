@@ -197,7 +197,8 @@ rule deep_concat_fofn:
         gtmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp",
     threads: 2
     resources:
-        threads=2
+        threads=2,
+        vcpu=2,
     params:
         fn_stub="{sample}.{alnr}.deep.",
         cluster_sample=ret_sample,
