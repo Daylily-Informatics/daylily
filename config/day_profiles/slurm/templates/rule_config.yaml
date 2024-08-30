@@ -31,8 +31,8 @@ active_s_v_callers:
 active_aligners:
     - strobe:
           mkdup: dppl
-#    - bwa2a:
-#          mkdup: dppl
+    - bwa2a:
+          mkdup: dppl
 #    - bwa2b:
 #          mkdup: dppl
 #    - bwa2m:
@@ -115,8 +115,8 @@ bwa_mem2a_aln_sort:
     threads: 192
     bwa_threads: 164
     orig_threads: 2
-    sort_threads: 96
-    write_threads: 96
+    sort_threads: 128
+    write_threads: 128
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     igz_threads: 96 # from 64
     ldpre: ""
@@ -139,11 +139,11 @@ strobe_align_sort:
     partition: "i192"
     threads: 192
     strobe_threads: 192
-    write_threads: 96
-    sort_threads: 96
+    write_threads: 128
+    sort_threads: 128
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     benchmark_runs: 0
-    igz_threads: 96
+    igz_threads: 128
     softclip_alts: "  "
     ld_preload: "  "
     ldpre: " "
