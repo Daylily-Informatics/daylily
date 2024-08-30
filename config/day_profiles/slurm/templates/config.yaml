@@ -24,11 +24,11 @@ default-resources:
   - vcpu=1
   - distribution=block
   - exclusive=''
-resources: vcpu=1755 # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
+resources: vcpu=1771 # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 jobs: 100
-cores: 1755  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
+cores: 1770  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 latency-wait: 100
-local-cores: 10
+local-cores: 16
 restart-times: 2
 max-jobs-per-second: 10
 keep-going: True
@@ -47,4 +47,4 @@ force-use-threads: True
 stats: "day_pipe_stats.json"
 use-singularity: True
 singularity-prefix: "/fsx/resources/environments/containers/USER_REGSUB/HOSTNAME"
-singularity-args: " -B ./results:$PWD/results -B /tmp:/tmp -B /fsx:/fsx -B resources/fsx:/fsx  -B /home/$USER:/home/$USER -B $PWD/:$PWD "   # cluster-config: "config/day_profiles/slurm/templates/depricated_cluster.yaml"
+singularity-args: " -B ./results:$PWD/results -B /tmp:/tmp -B /fsx:/fsx -B resources/fsx:/fsx  -B /home/$USER:/home/$USER -B $PWD/:$PWD " 
