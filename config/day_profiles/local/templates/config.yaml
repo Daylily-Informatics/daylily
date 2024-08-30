@@ -16,6 +16,5 @@ use-singularity: true
 singularity-args: "   -B ./results:$PWD/results -B /fsx:/fsx -B /tmp:/tmp -B resources/fsx:/fsx  -B /home/$USER:/home/$USER -B $PWD/:$PWD  "
 singularity-prefix: "/fsx/resources/environments/containers/USER_REGSUB/HOSTNAME"
 printshellcmds: true
-resources:
-  - vcpu: 16
+resources: vcpu=16  # OR HOWEVER MANY LOCAL vCPUs there are
 
