@@ -102,9 +102,6 @@ rule deepvariant:
         --output_gvcf={output.gvcf} \
         --num_shards={threads} \
         --logging_dir=$(dirname {log}) \
-        --use_openvino \
-        --parse_sam_aux_fields \
-        --use_original_quality_scores \     
         --dry_run=false >> {log} 2>&1;
 
         end_time=$(date +%s);
