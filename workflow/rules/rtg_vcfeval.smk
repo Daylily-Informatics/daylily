@@ -65,7 +65,7 @@ if len(CONCORDANCE_SAMPLES.keys()) > 0:
             ld_p=config['malloc_alt']['ld_preload'] if 'ld_preload' not in config['rtg_vcfeval'] else config['rtg_vcfeval']['ld_preload'],
             l="{",
             r="}",
-            sdf=config['supporting_files']['files']['huref']['rtg_tools_genome']['name'],
+            sdf=config['supporting_files']['files']['huref']['rtg_tools_genome_noalt']['name'],
             sub_threads="7" if 'sub_threads' not in config['rtg_vcfeval'] else config['rtg_vcfeval']['sub_threads'],
             alt_name=get_alt_sample_name, 
         shell:
