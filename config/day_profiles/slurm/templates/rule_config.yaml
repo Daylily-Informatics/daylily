@@ -190,9 +190,9 @@ deepvariant:
     ld_preload: " "  # env LD_PRELOAD=./resources/libs/libllalloc.so "
     partition: "i192,i128,i64"
     partition_other: "i192,i128,i64"
-    mem_mb: 80000 ## Potentially this can be dynmoic by input BAM size
+    mem_mb: 85000 ## Potentially this can be dynmoic by input BAM size
     deep_chrms: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
-    numa: " OMP_THREADS=64 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "  #LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  " 
+    numa: " OMP_THREADS=64 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE " 
 
 duphold:
     threads: 16
