@@ -38,7 +38,7 @@ if "dppl" in DDUP:
             min_bases=config['doppelmark']['min_bases'],
             queue_length=config['doppelmark']['queue_length'],
 	    read_buffer_size=config['doppelmark']['read_buffer_size'],
-	    huref_fasta=config["supporting_files"]["files"]["huref"]["fasta_minalt"]["name"],
+	    huref_fasta=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         log:
             "{MDIR}{sx}/align/{alnr}/logs/dedupe.{sx}.{alnr}.log",
         shell:
