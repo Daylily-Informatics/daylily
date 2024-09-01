@@ -34,7 +34,7 @@ rule strobe_align_sort:
         k=config["strobe_align_sort"]["k"],  # little kay
         K=config["strobe_align_sort"]["K"],  # BIG KAY
         sort_thread_mem=config["strobe_align_sort"]["sort_thread_mem"],
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta_minalt"]["name"],
         rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
         rgpu="presumedCombinedLanes",  # ideally flowcell_lane(s)
         rgsm='x', # ret_sample,  # samplename
