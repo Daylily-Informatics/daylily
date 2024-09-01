@@ -1,0 +1,11 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - defaults
+dependencies:
+  - fastp
+  - glances
+  - glances
+  - pigz

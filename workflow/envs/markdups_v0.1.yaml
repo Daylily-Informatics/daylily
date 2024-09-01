@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - defaults
+dependencies:
+  - sambamba=0.8.1

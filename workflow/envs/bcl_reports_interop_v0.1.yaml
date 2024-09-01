@@ -1,0 +1,11 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - defaults
+dependencies:
+  - bcl2fastq2=2.20.0.422
+  - illumina-interop
+  - multiqc
+  - gnuplot

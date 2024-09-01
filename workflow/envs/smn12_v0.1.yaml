@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+dependencies:
+    - python
+    - akt
+    - pip
+    - pip:
+      - git+https://github.com/iamh2o/SMNCopyNumberCaller.git@v0.0.0.4-jem

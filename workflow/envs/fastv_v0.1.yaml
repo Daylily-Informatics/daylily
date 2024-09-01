@@ -1,0 +1,9 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - defaults
+dependencies:
+  - fastv=0.8.1
+  - perl

@@ -1,0 +1,12 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - defaults
+dependencies:
+  - octopus
+  - bedtools
+  - htslib
+  - glances
+  - bcftools

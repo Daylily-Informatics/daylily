@@ -1,0 +1,12 @@
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - defaults
+dependencies:
+  - kat
+  - boost
+  - pigz
+  - seqfu
+  - seqkit
