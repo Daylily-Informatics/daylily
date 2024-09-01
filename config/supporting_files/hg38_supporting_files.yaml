@@ -39,7 +39,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
       rtg_tools_genome_full:
         class: dir_plus
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/rtg/Homo_sapiens_assembly38.fasta.sdf
-      rtg_tools_genome_minalt:
+      rtg_tools_genome_noalt:
         class: dir_plus
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta.sdf
       rtg_tools_genome:

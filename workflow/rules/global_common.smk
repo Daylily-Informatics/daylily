@@ -42,10 +42,11 @@ except Exception as e:
     )
 
 # Check the genome_build is an allowable reference
-PERMITTED_REFCODES = ["b37", "GRCh38", "hg38"]
+PERMITTED_REFCODES = ["b37",  "hg38"]
 
 if config['genome_build'] not in PERMITTED_REFCODES:
-    raise(f"The entered config['genome_build'] is not permitted: {config['genome_build']}")
+   print(f"The entered config.conf GENOME BUILD CODE {config['genome_build']} is not permitted: {config['genome_build']}, acceptable values are: {PERMITTED_REFCODES} .", file=sys.stdout)
+   raise(f"The entered config.conf GENOME BUILD CODE {config['genome_build']} is not permitted: {config['genome_build']}, acceptable values are: {PERMITTED_REFCODES} .")
 config["ref_code"] = config["genome_build"]
 
 
