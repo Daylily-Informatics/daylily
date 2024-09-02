@@ -1,193 +1,28 @@
-# Use the existing base image as the foundation
-ARG FROM_IMAGE=ubuntu:20.04
-ARG PYTHON_VERSION=3.8
-ARG DV_GPU_BUILD=0
-ARG VERSION=1.6.1
+# Start with the existing DeepVariant image
+FROM daylilyinformatics/deepvariant-avx512:1.5.0
 
-# Stage 1: Setup Conda environment with bioinformatics tools
-FROM continuumio/miniconda3 as conda_setup
-RUN conda config --add channels defaults && \
-    conda config --add channels bioconda && \
-    conda config --add channels conda-forge
-RUN conda create -n bio \
-                    bioconda::bcftools=1.10 \
-                    bioconda::samtools=1.10 \
-    && conda clean -a
+# Install OpenVINO
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates \
+    gnupg2 \
+    wget && \
+    wget https://apt.repos.intel.com/intel-openvino/2022/intel-openvino.key && \
+    apt-key add intel-openvino.key && \
+    echo "deb https://apt.repos.intel.com/intel-openvino/2022 all main" > /etc/apt/sources.list.d/intel-openvino.list && \
+    apt-get update && \
+    apt-get install -y intel-openvino-runtime-ubuntu20.04
 
-# Stage 2: Install Intel tools and build DeepVariant using AVX-512 optimizations
-FROM ${FROM_IMAGE} as builder
+# Set environment variables required for OpenVINO
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino_2022
+ENV PATH=$INTEL_OPENVINO_DIR/bin:$PATH
+ENV LD_LIBRARY_PATH=$INTEL_OPENVINO_DIR/lib:$LD_LIBRARY_PATH
 
-# Copy Conda setup
-COPY --from=conda_setup /opt/conda /opt/conda
+# Make sure the OpenVINO environment is initialized
+RUN /opt/intel/openvino_2022/bin/setupvars.sh
 
-RUN apt update
-RUN  DEBIAN_FRONTEND=noninteractive  apt install -y apt-utils
-RUN  DEBIAN_FRONTEND=noninteractive  apt install -y wget gnupg build-essential
- # Use the Intel GPG key from the alternative URL
-
-
-RUN wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-echo "deb https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list && \
-apt-get update && \
-DEBIAN_FRONTEND=noninteractive apt-get install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
-
-
-# Set environment variables for Intel compiler and MKL
-ENV CC=icc
-ENV CXX=icpc
-ENV MKLROOT=/opt/intel/oneapi/mkl/latest
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin
-
-# Set the compiler flags to optimize for AVX-512
-ENV CFLAGS="-O3 -xCORE-AVX512 -qopt-zmm-usage=high"
-ENV CXXFLAGS="-O3 -xCORE-AVX512 -qopt-zmm-usage=high"
-
-# Copying DeepVariant source code
-COPY . /opt/deepvariant
-
+# Copy the rest of your DeepVariant setup (if needed)
 WORKDIR /opt/deepvariant
 
-# Build the binaries using Intel compilers and optimized flags
-RUN ./build-prereq.sh && \
-    PATH="${HOME}/bin:${PATH}" ./build_release_binaries.sh
-
-# Stage 3: Final image setup
-FROM ${FROM_IMAGE}
-
-# Copy built binaries from builder stage
-COPY --from=builder /opt/deepvariant /opt/deepvariant
-COPY --from=builder /opt/conda /opt/conda
-COPY --from=builder /opt/intel/oneapi /opt/intel/oneapi
-
-WORKDIR /opt/deepvariant/bin/
-
-# Set Intel environment variables in the final image
-ENV MKLROOT=/opt/intel/oneapi/mkl/latest
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin
-
-# Run prerequisites
-RUN ./run-prereq.sh
-
-# Set up Python alternatives
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 0 && \
-    update-alternatives --install /usr/bin/python python /usr/bin/python${PYTHON_VERSION} 0
-
-# Create shell wrappers for easier use
-RUN \
-  BASH_HEADER='#!/bin/bash' && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/make_examples.zip "$@"' > \
-    /opt/deepvariant/bin/make_examples && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/call_variants.zip "$@"' > \
-    /opt/deepvariant/bin/call_variants && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/call_variants_slim.zip "$@"' > \
-    /opt/deepvariant/bin/call_variants_slim && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/postprocess_variants.zip "$@"' > \
-    /opt/deepvariant/bin/postprocess_variants && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/vcf_stats_report.zip "$@"' > \
-    /opt/deepvariant/bin/vcf_stats_report && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/show_examples.zip "$@"' > \
-    /opt/deepvariant/bin/show_examples && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/runtime_by_region_vis.zip "$@"' > \
-    /opt/deepvariant/bin/runtime_by_region_vis && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/multisample_make_examples.zip "$@"' > \
-    /opt/deepvariant/bin/multisample_make_examples && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 -u /opt/deepvariant/bin/labeled_examples_to_vcf.zip "$@"' > \
-    /opt/deepvariant/bin/labeled_examples_to_vcf && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 -u /opt/deepvariant/bin/make_examples_somatic.zip "$@"' > \
-    /opt/deepvariant/bin/make_examples_somatic && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 -u /opt/deepvariant/bin/run_deepvariant.py "$@"' > \
-    /opt/deepvariant/bin/run_deepvariant && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 -u /opt/deepvariant/bin/run_deepsomatic.py "$@"' > \
-    /opt/deepvariant/bin/run_deepsomatic && \
-  printf "%s\n%s\n" \
-    "${BASH_HEADER}" \
-    'python3 /opt/deepvariant/bin/train.zip "$@"' > \
-    /opt/deepvariant/bin/train && \
-  chmod +x /opt/deepvariant/bin/*
-
-# Copy models
-WORKDIR /opt/models/wgs
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wgs.savedmodel/fingerprint.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wgs.savedmodel/saved_model.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wgs.savedmodel/example_info.json .
-WORKDIR /opt/models/wgs/variables
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wgs.savedmodel/variables/variables.data-00000-of-00001 .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wgs.savedmodel/variables/variables.index .
-RUN chmod -R +r /opt/models/wgs/*
-
-WORKDIR /opt/models/wes
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wes.savedmodel/fingerprint.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wes.savedmodel/saved_model.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wes.savedmodel/example_info.json .
-WORKDIR /opt/models/wes/variables
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wes.savedmodel/variables/variables.data-00000-of-00001 .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.wes.savedmodel/variables/variables.index .
-RUN chmod -R +r /opt/models/wes/*
-
-WORKDIR /opt/models/pacbio
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.pacbio.savedmodel/fingerprint.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.pacbio.savedmodel/saved_model.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.pacbio.savedmodel/example_info.json .
-WORKDIR /opt/models/pacbio/variables
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.pacbio.savedmodel/variables/variables.data-00000-of-00001 .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.pacbio.savedmodel/variables/variables.index .
-RUN chmod -R +r /opt/models/pacbio/*
-
-WORKDIR /opt/models/hybrid_pacbio_illumina
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.hybrid.savedmodel/fingerprint.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.hybrid.savedmodel/saved_model.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.hybrid.savedmodel/example_info.json .
-WORKDIR /opt/models/hybrid_pacbio_illumina/variables
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.hybrid.savedmodel/variables/variables.data-00000-of-00001 .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.hybrid.savedmodel/variables/variables.index .
-RUN chmod -R +r /opt/models/hybrid_pacbio_illumina/*
-
-WORKDIR /opt/models/ont_r104
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.ont.savedmodel/fingerprint.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.ont.savedmodel/saved_model.pb .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.ont.savedmodel/example_info.json .
-WORKDIR /opt/models/ont_r104/variables
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.ont.savedmodel/variables/variables.data-00000-of-00001 .
-ADD https://storage.googleapis.com/deepvariant/models/DeepVariant/${VERSION}/savedmodels/deepvariant.ont.savedmodel/variables/variables.index .
-RUN chmod -R +r /opt/models/ont_r104/*
-
-# Set PATH for conda and deepvariant
-ENV PATH="${PATH}:/opt/conda/bin:/opt/conda/envs/bio/bin:/opt/deepvariant/bin"
-
-# Install additional dependencies
-RUN apt-get -y update && \
-  apt-get install -y parallel python3-pip && \
-  PATH="${HOME}/.local/bin:$PATH" python3 -m pip install absl-py==0.13.0 && \
-  apt-get clean autoclean && \
-  apt-get autoremove -y --purge && \
-  rm -rf /var/lib/apt/lists/*
-
-WORKDIR /opt/deepvariant
-
+# Entry point remains the same
 CMD ["/opt/deepvariant/bin/run_deepvariant", "--help"]
