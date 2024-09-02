@@ -21,10 +21,10 @@ FROM ${FROM_IMAGE} as builder
 COPY --from=conda_setup /opt/conda /opt/conda
 
 # Install Intel's compilers and libraries for optimization
-RUN apt-get update && apt-get install -y wget build-essential \
-    && wget https://apt.repos.intel.com/intel-gpg-keys/intel-archive-signing-gpg-pub-key-2023.key -O - | apt-key add - \
-    && wget -qO - https://apt.repos.intel.com/setup/intelproducts-archive.list > /etc/apt/sources.list.d/oneapi.list \
-    && apt-get update && apt-get install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
+RUN apt-get update && apt-get install -y apt-utils wget gnupg build-essential && \
+    wget -O- https://apt.repos.intel.com/gpg | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneapi.list && \
+    apt-get update && apt-get install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
 
 # Set environment variables for Intel compiler and MKL
 ENV CC=icc
