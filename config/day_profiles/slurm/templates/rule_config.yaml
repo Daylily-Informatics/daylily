@@ -113,10 +113,10 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 164
+    bwa_threads: 192
     orig_threads: 2
-    sort_threads: 128
-    write_threads: 128
+    sort_threads: 96
+    write_threads: 96
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     igz_threads: 96 # from 64
     ldpre: ""
@@ -128,8 +128,8 @@ bwa_mem2a_aln_sort:
     K: " " # -K 12600000000 "
     glances: " "
     k: " -k 19 "
-    orig_sort_mem: "2000M"
-    sort_thread_mem: "2000M"  # 1350M
+    orig_sort_mem: "2600M"
+    sort_thread_mem: "2600M"  # 1350M
     numactl: ""
     mbuffer_mem: "200G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
@@ -139,11 +139,11 @@ strobe_align_sort:
     partition: "i192"
     threads: 192
     strobe_threads: 192
-    write_threads: 128
-    sort_threads: 128
+    write_threads: 96
+    sort_threads: 96
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     benchmark_runs: 0
-    igz_threads: 128
+    igz_threads: 96
     softclip_alts: "  "
     ld_preload: "  "
     ldpre: " "
@@ -152,7 +152,7 @@ strobe_align_sort:
     K: " "  # " -K  1204800000 "
     glances: " "
     k: "  -k 19 " 
-    sort_thread_mem: "2000M"  
+    sort_thread_mem: "2600M"  
     numactl: "none"
     piped_align: "no"
     mbuffer_mem: "100G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
