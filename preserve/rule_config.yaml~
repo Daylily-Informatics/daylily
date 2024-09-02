@@ -1,0 +1,541 @@
+---
+analysis_manifest: .test_data/data/0.01xwgs_HG002.samplesheet.csv
+unit_test: false
+profile_name: slurm
+valid_biome: AWSPC
+genome_build: "hg38"  # or hg38
+
+
+
+# ###### Tool Selection CONFIG ----------------------------------------
+
+
+# Thread scaling activated  ## DEPRECATED
+dynamic_scaling: false
+dynamic_scaling_factor: 1.0  # Takes the presets and scales them up/down based on this scaling factor.  WARNING-  you can choke your machine if not careful, go below 1 and you begin to request more theads than are detected.  This param can be set on the command line with --config dynamic_scaling_factor=1.5
+
+# #### Select one to all of the available SNV callers
+active_snv_callers:
+    - deep
+#    - oct
+#    - sentd
+
+# #### Select one to all of the available SV callers
+active_s_v_callers:
+    - tiddit
+#    - manta
+#    - dysgu
+#    - svaba #
+
+# #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
+active_aligners:
+    - strobe:
+          mkdup: dppl
+#    - bwa2a:
+#          mkdup: dppl
+#    - bwa2b:
+#          mkdup: dppl
+#    - bwa2m:
+#          mkdup: sent
+#    - sent:
+#          mkdup: bbb2
+
+
+# #######  FASTQ PREP
+
+# env JEMALLOC_CONF="oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4" LD_PRELOAD=resources/lib/libjemalloc.so.1
+
+# env  MIMALLOC_RESERVE_HUGE_OS_PAGES=1 MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/lib/libmimalloc.so
+# 
+
+prep_input_sample_files:
+    source_read_method: " ln -s  "
+
+
+# ###### RULE CONFIG ----------------------------------------
+
+malloc_alt:
+    ld_preload: "  "  # env LD_PRELOAD=./resources/libs/libllalloc.so  "
+
+alignstats:
+    threads: 64
+    partition: "i64,i96,i128"
+    num_reads_in_mem: " "  # 100000
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    glances: " "
+    ld_preload: "  "  # env LD_PRELOAD=./resources/libs/libllalloc.so  "
+
+bcftools_vcfstat:
+    threads: 16
+
+
+bcl2fq:
+    bcl2fq_cmd:
+        use_bases_mask: ' --use-bases-mask  y150n1,i8,i8,y150n1 '  # Set this wisely- heavily depends on the seq lib adpaters used ie: --use-bases-mask y150n1,i8,i8,y150n1  ##<----  !  remember to change this
+        addl_flags: " --fastq-compression-level 1  --create-fastq-for-index-reads  --ignore-missing-bcls --adapter-stringency=0.9 --mask-short-adapter-reads 22  --minimum-trimmed-read-length 35 "
+        barcode_mismatch: 0  # Tempting
+        threads_loading: 96  # some low number around 15-20% of the processing threads
+        threads_writing: 0  # <-- per docs, leave this set to zero.
+        #-w [ --writing-threads ] arg (=4)               number of threads used for
+        #                                          writing FASTQ data.
+        #                                         This should not be set higher
+        #                                         than the number of samples.
+        #                                         If set =0 then these threads
+        #                                         will be placed in the same
+        #                                         pool as the loading threads,
+        #                                         and the number of shared
+        #                                         threads will be determined by
+        #                                        --loading-threads.
+        #to zero and all threads in loading are shared withwritingtjreads. Per docs, much more efficent.
+        threads_processing: 180  #
+        env_yaml: "../envs/bcl2fq_v0.2.yaml"
+        b2fq_addl_flags: ''
+        2fq_use_bases_mask: ''
+    env_yaml: "../envs/bcl2fq_v0.2.yaml"
+    threads: 96
+    ex_uid: EX00000  # EX### you are working in
+    have_you_double_checked_your_inputs_and_settings: true    # or yes - wil not proced w/this not set to true
+    lanes: L001,L002,L003,L004  #ie L001 or L001,L002,L003  csv, no spaces please
+    ru_path: "/fsx/"  #/lll/data
+    ru_uid: RU0000  # The RU# for the data referenced above
+    sample_sheet: config/bcl2fastq_samplesheet.csv  # save your sample sheet in this location with this name, or specify a new path. Former is encouraged.
+    ld_preload: "  "
+    b2fq_addl_flags: ''
+    2fq_use_bases_mask: ''
+    partition: "i32"
+
+bcl2fq_by_lane:
+    threads: 16
+    partition: "i32"
+
+
+bwa_mem2a_aln_sort:
+    env_yaml: "../envs/bwasamtools_v0.1.yaml"
+    partition: "i192"
+    threads: 192
+    bwa_threads: 164
+    orig_threads: 2
+    sort_threads: 128
+    write_threads: 128
+    mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
+    igz_threads: 96 # from 64
+    ldpre: ""
+    orig_sort_threads: 2
+    benchmark_runs: 0
+    softclip_alts: " -Y "
+    ld_preload: "  "
+    cmd: "  OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  
+    K: " " # -K 12600000000 "
+    glances: " "
+    k: " -k 19 "
+    orig_sort_mem: "2000M"
+    sort_thread_mem: "2000M"  # 1350M
+    numactl: ""
+    mbuffer_mem: "200G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
+
+
+strobe_align_sort:
+    env_yaml: "../envs/strobe_aligner.yaml"
+    partition: "i192"
+    threads: 192
+    strobe_threads: 192
+    write_threads: 128
+    sort_threads: 128
+    mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
+    benchmark_runs: 0
+    igz_threads: 128
+    softclip_alts: "  "
+    ld_preload: "  "
+    ldpre: " "
+    numa: " "
+    cmd: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign "
+    K: " "  # " -K  1204800000 "
+    glances: " "
+    k: "  -k 19 " 
+    sort_thread_mem: "2000M"  
+    numactl: "none"
+    piped_align: "no"
+    mbuffer_mem: "100G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
+    
+bwa_mem2meme_aln_sort:
+    env_yaml: "../envs/bwa_mem2_meme_conda.yaml"
+    threads: 192
+    bwa_threads: 124
+    write_threads: 96
+    igz_threads: 96
+    sort_threads: 96
+    mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
+    partition: "i192"
+    benchmark_runs: 0
+    softclip_alts: " -Y "
+    lib: " "
+    ld_pre: " " 
+    ldpre: " "
+    cmd: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE bwa-meme " 
+    K: " "  # "-K 200000000 "
+    glances: " "
+    k: " -k 19 "
+    sort_thread_mem: "3000M"
+    numactl: "none"
+    piped_align: "yes"
+    mbuffer_mem: "100G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
+
+clean:
+    env_yaml: "envs/vanilla_v0.1.yaml"  # no ./../ b/c it's being referenced from Snakefile
+    partition: "i32,i64,i96,i128"
+
+deepvariant:
+    threads: 64
+    deep_cmd: " "
+    ld_preload: " "  # env LD_PRELOAD=./resources/libs/libllalloc.so "
+    partition: "i192,i128,i64"
+    partition_other: "i192,i128,i64"
+    mem_mb: 85000 ## Potentially this can be dynmoic by input BAM size
+    deep_chrms: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
+    numa: " OMP_THREADS=64 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE " 
+
+duphold:
+    threads: 16
+    env_yaml: "../envs/duphold_v0.1.yaml"
+    numactl: "none"
+    ld_preload: "  "
+    partition: "i32,i64,i96"
+
+doppelmark:
+    threads: 192
+    partition: "i192"
+    mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
+    clip_padding: 600000
+    shard_size: 30000000
+    min_bases: 20000
+    queue_length: 3000
+    read_buffer_size: 500000000
+    xld_preload: " "
+    ld_preload: "  "
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+
+dysgu:
+    threads: 16
+    env_yaml: "../envs/dysgu_sv_v0.2.yaml"
+    min_sv_size: 30
+    ld_preload: "  "
+    partition: "i64,i96"
+
+dysgu_sort_index:
+    threads: 8
+    partition: "i32,i64"
+
+fastp:
+    threads: 16
+    env_yaml: "../envs/fastp_v0.1.yaml"
+    filter_avg_q_score: 9
+    other_args: "  "
+    ld_preload: "  "
+    partition: "i8,i64,i96,i128"
+
+fastqc:
+    threads: 16
+    env_yaml: "../envs/fastqc_v0.1.yaml"
+    extract: "  "
+    ld_preload: " "
+    partition: "i32,i64,i96,i128"
+
+fastv:
+    threads: 16
+    env_yaml: "../envs/fastv_v0.1.yaml"
+    ld_preload: "  "
+    partition: "i8,i64,i96,i128"
+
+go_left:
+    env_yaml: "../envs/go_left_v0.1.yaml"
+    threads: 16
+    partition: "i8,i64,i96,i128"
+
+kat:
+    threads: 32
+    heap_size: "1G"
+    benchmark_rounds: 0
+    env_yaml: "../envs/kat_v0.1.yaml"
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i64,i96,i96,i128"
+
+manta_sort_and_index:
+    threads: 16
+    partition: "i32,i64"
+
+manta:
+    threads: 16
+    env_yaml: "../envs/manta_v0.1.yaml"
+    numactl: "none"
+    ld_preload: "  "
+    partition: "i32,i8,i32,i96"
+
+mosdepth:
+    threads: 16
+    env_yaml: "../envs/mosdepth_v0.1.yaml"
+    depth_bins: "0,1,3,5,10,15,20,30,40"
+    partition: "i32,i64,i96,i128"
+
+duphold_sort_index:
+    threads: 8
+    partition: "i32,i64,i96,i128"
+
+tiddit_sort_index:
+    threads: 8
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so "
+    partition: "i32,i64,i96,i128"
+
+merge_bam:
+    threads: 127
+    smem: '400G'
+    mmem: '400G'
+    sthreads: 64
+    mthreads: 64
+    partition: 'i64,i96,i128'
+
+multiqc:
+    config_yaml: "config/external_tools/multiqc.yaml"
+    threads: 4
+    lcwgs:
+        config_yaml: "config/external_tools/multiqc_lcwgs_qc.yaml"
+        env_yaml: "../envs/multiqc_v0.1.yaml"
+    aln_qc:
+        config_yaml: "config/external_tools/multiqc_align_cov_qc.yaml"
+        env_yaml: "../envs/multiqc_v0.1.yaml"
+    bcl2fq:
+        config_yaml: "config/external_tools/multiqc_bcl2fq.yaml"
+        env_yaml: "../envs/multiqc_v0.1.yaml"
+    final:
+        config_yaml: "config/external_tools/multiqc_final.yaml"
+        env_yaml: "../envs/multiqc_v0.1.yaml"
+    seqqc:
+        config_yaml: "config/external_tools/multiqc_seqqc.yaml"
+        env_yaml: "../envs/multiqc_v0.1.yaml"
+    ld_preload: "  "
+    partition: "i8,i64,i8,i96,i128"
+
+octopus:
+    regions_to_call: '  '
+    testing_model: '  ' 
+    threads: 32 # Dynamically reset- this represents the cap
+    octo_chrms: "1~0-30028082,1~30028083-121535434,1~124535434-205922707,1~205922707-249250621,2,3,4,5,6~0-58830166,6~58830166-171105067,7,8,9,10~0-42254935,10~42254935-70550000,10~70550000-103433061,10~103433061-128616069,10~128766069-135524747,11,12,13,14,15,16,17,18,19~0-24681782,19~27681782-59118983,20,21,22,23,24"  # 25 removed for the moment 
+    anno: " AD ADP AF AFB ARF BQ CRF DP FRF GC GQ MC MF MQ MQ0 QD GQD QUAL SB STRL STRP SMQ SB DC NC PP MP "    
+    ld_pre: "   "
+    brt: " --bad-region-tolerance NORMAL "
+    err_model: "PCR-FREE.NOVASEQ"  #  option, which accepts inputs of the form [library preparation]<.sequencer>. library preparation is selected from: PCR, PCR-FREE, or 10X. sequencer is selected from: HISEQ-2000, HISEQ-2500, HISEQ-4000, X10, NOVASEQ, BGISEQ-5000. For example, PCR.NOVASEQ would select the sequence error model parametrised for a PCR library preparation and a NOVASEQ sequencer. If no sequencer is provided then the default is used (s
+    max_idel_err: " --max-indel-errors 37 "  # 36   ##  12 for test 36 prod
+    max_haplotypes: " --max-haplotypes 360 "  # 350  ## 10 for test 300 prod
+    env_yaml: "../envs/octopus_v0.7.yaml"
+    oct_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    glances: " "
+    numactl: "none"
+    max_open_read_files_modifier: 300   # 250* this number
+    target_working_memory: " "  # invalid option?--target-working-memory  155G "
+    min_forest_quality: " --min-forest-quality 0 "
+    max_reference_cache_footprint: " -X 12000M  "  #  dynamically set
+    target_read_buffer_footprint: "   -B 360M  "  #  dynamically set
+    addl_options: "  --max-variant-size 51 --downsample-above 41 --downsample-target 40 --min-mapping-quality 6 --use-wide-hmm-scores  "  #  --assemble-all --keep-unfiltered-calls --max-region-to-assemble 600/2000 --max-assembly-region-size ### --assemble-all--downsample-above 50 --downsample-target 50 --max-variant-size 2000 --min-mapping-quality 6 --use-wide-hmm-scores "   # --min-mapping-quality 6 --max-variant-size 50  --downsample-above 50 --downsample-target 50 "  #--max-variant-size 2000  --downsample-above 57 --downsample-target 56 --no-adapter-contaminated-reads  --ignore-unmapped-contigs  --mask-low-quality-tails 6 --mask-soft-clipped-boundary-bases 3  --mask-inverted-soft-clipping --mask-3prime-shifted-soft-clipped-heads --use-wide-hmm-scores --min-candidate-credible-vaf-probability 0.36 --allow-secondary-alignments --allow-supplementary-alignments --consider-unmapped-reads "  # from 0.35 bk is new  ## First set of options to explore:: --use-wide-hmm-scores --consider-unmapped-reads  "  ## --refcall BLOCKED --mask-low-quality-tails 5 --min-mapping-quality 8 --allow-secondary-alignments --min-supporting-reads 3 --max-variant-size 1500 --min-candidate-credible-vaf-probability 0.35"  # --max-read-length n --disable-read-preprocessing / --consider-unmapped-reads  --allow-supplementary-alignments  --downsample-target 100 --downsample-above 500  --num-fallback-kmers 20 --kmer-sizes 10,15,20...19,24,29,34 5 10 15 20 25 30 35 40 45 50       --fallback-kmer-gap 5  --max-region-to-assemble large value finds bigger events at loss of sens of smaller....   --assembler-mask-base-quality  --downsample-above 51 --downsample-target 50  #  --use-wide-hmm-scores --allow-supplementary-alignments --downsample-target 9 --downsample-above 10
+    partition: "i32"
+
+
+sentD:
+    threads: 128 
+    sentD_chrms: "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: "none"
+    partition: "i128"
+
+sort_index_sentD_chunk_vcf:
+    threads: 16
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    partition: "i32,i64,i96,i128"
+
+concat_index_sentD_chunks:
+    threads: 16
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    partition: "i32,i64,i96,i128"
+
+peddy:
+    threads: 16
+    env_yaml: "../envs/peddy_v0.1.yaml"
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i8,i32,i64,i96,i128"
+
+
+prep_for_concordance_check:
+    threads: 4
+    partition: "i8,i64,i32,i96,i128"
+
+picard:
+    threads: 16
+    env_yaml: "../envs/picard_v0.1.yaml"
+    partition: "i32,i64,i96,i128"
+
+qualimap:
+    threads: 16
+    java_mem_size: "150000M"
+    env_yaml: "../envs/qualimap_v0.1.yaml"
+    glances: " "
+    numactl: "none"
+    partition: "i32,i64,i96,i128"
+
+rtg_vcfeval:
+    threads: 32
+    env_yaml: "../envs/rtgtools_v0.1.yaml"
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i192,i128,i96"
+    partition_other: "i192,i128,i96"
+    rtg_region: " " 
+
+run_concordance:
+    threads: 8
+    env_yaml: "../envs/rtgtools_v0.1.yaml"
+    partition: "i8,i8,i64,i96,i128"
+
+sentieon_haplocaller:
+    threads: 127
+    partition: "i128"
+
+rtg_vcfstats:
+    threads: 16
+    env_yaml: "../envs/rtgtools_v0.1.yaml"
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i192,i128,i96"
+
+sambamba_markdups:
+    threads: 96
+    sort_buff_size: 1024
+    io_buff_size: 1024
+    overflow_list_si45ze: 800000
+    benchmark_runs: 0
+    ulimit: " ulimit -Sn 810000 "
+    env_yaml: "../envs/sambamba_v0.1.yaml"
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i96,i128"
+
+samtools_markdups:
+    threads: 128
+    ulimit: " ulimit -Sn 810000 "
+    env_yaml: "../envs/samtools_v0.1.yaml"
+    partition: "i128"
+
+sentieon_dnascope:
+    threads: 64
+    benchmark_runs: 0
+    env_yaml: "../envs/sentieon_v0.1.yaml"
+    mask_regions: " "
+    numactl: " resources/numa/numactl --interleave all "
+    metrics_threads: 64
+    ld_preload: "   "
+    partition: "i64,i96,i128"
+
+sentieon:
+    threads: 128
+    benchmark_runs: 0
+    max_mem: "120G"
+    K: "  -K 1204800000 -k 19 -Y  "
+    env_yaml: "../envs/sentieon_v0.1.yaml"
+    glances: " "
+    mask_regions: " "
+    numactl: "  JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  "  
+    metrics_threads: 128
+    partition: "i128"
+    sort_thread_mem: "10G"
+    sort_threads: 38
+    write_threads: 82
+
+sentieon_markdups:
+    threads: 128
+    ulimit: " ulimit -Sn 810000 "
+    env_yaml: "../envs/sentieon_v0.1.yaml"
+    glances: " "
+    numactl: "none"
+    ld_preload: "  env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "
+    partition: "i128"
+
+stargazer:
+    threads: 16
+    benchmark_runs: 0
+    env_yaml: "../envs/stargazer_v0.1.yaml"
+    partition: "i32,i64"
+
+tiddit:
+    threads: 16
+    min_sv_size: 10  # default is 100, min 10.
+    env_yaml: "../envs/tiddit_v0.1.yaml"
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i32,i64,i96"
+
+vanilla:
+    threads: 8
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i8,i64,i8,i32,i96"
+
+verifybamid2_contam:
+    env_yaml: "../envs/verifybamid2_v0.1.yaml"
+    threads: 16
+    ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i32,i64,i96,i128"
+
+gen_samstats:
+    threads: 16
+    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i32,i64,i96,i128"
+
+sentieon_qc_metrics:
+    threads: 16
+    partition: "i32,i64,i96,i128"
+
+svaba:
+    orig_threads: 96
+    threads: 96
+    ld_preload: " "
+    cmd: " ./resources/svaba/svaba "
+    partition: "i96"
+
+svaba_sort_index:
+    threads: 4
+    ld_preload: "  "
+    partition: "i8,i64,i32,i8"
+
+calc_coverage_evenness:
+    threads: 16
+    ld_preload: " "
+    partition: "i32,i64,i8,i96"
+
+produce_fastqs_from_bams:
+    threads: 4
+    samtools_view_threads: 88
+    partition: "i8,i64,i8,i96,i128"
+
+svim_asm:
+    threads: 16
+    env_yaml: "../envs/svim_asm_v0.1.yaml"
+    ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i32,i64,i8,i96,i128"
+
+hisat2:
+    threads: 128
+    env_yaml: "../envs/hisat2_v0.1.yaml"
+    ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so "
+    partition: "i128"
+    sthreads: 32
+    smem: "26G"
+    wthreads: 84
+    ldpre: " LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1 "
+
+seqfu:
+    threads: 16
+    env_yaml: "../envs/fastqc_v0.1.yaml"
+    ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    partition: "i32,i64,i8,i96,i128"
+
+vep:
+    threads: 32
+    partition: "i32,i64,i96" 
