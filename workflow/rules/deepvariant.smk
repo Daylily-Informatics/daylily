@@ -44,7 +44,7 @@ rule deepvariant:
         + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.deep.{dvchrm}.snv.log",
     threads: config['deepvariant']['threads']
     container:
-        "docker://daylilyinformatics/deepvariant-avx512-openvino:1.5.0"  # "docker://daylilyinformatics/deepvariant-avx512:1.5.0"
+        "docker://daylilyinformatics/deepvariant-avx512:1.5.0"  #
     priority: 45
     resources:
         vcpu=config['deepvariant']['threads'],
@@ -102,7 +102,6 @@ rule deepvariant:
         --output_gvcf={output.gvcf} \
         --num_shards={threads} \
         --logging_dir=$(dirname {log}) \
-        --call_variants_extra_args="--min_mapping_quality=10 --min_base_quality=10 --use_openvino=True"
         --dry_run=false >> {log} 2>&1;
 
         end_time=$(date +%s);
