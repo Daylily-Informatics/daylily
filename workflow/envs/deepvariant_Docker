@@ -21,8 +21,9 @@ FROM ${FROM_IMAGE} as builder
 COPY --from=conda_setup /opt/conda /opt/conda
 
 # Install Intel's compilers and libraries for optimization
-RUN apt-get update && apt-get install -y apt-utils wget gnupg build-essential && \
-    wget -O- https://apt.repos.intel.com/gpg | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg && \
+RUN apt-get update && apt-get install -y apt-utils wget gnupg build-essential
+
+RUN  wget -O- https://apt.repos.intel.com/gpg | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneapi.list && \
     apt-get update && apt-get install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
 
