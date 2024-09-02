@@ -14,9 +14,6 @@ RUN  DEBIAN_FRONTEND=noninteractive apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt install -y openvino
 
 
-# Make sure the OpenVINO environment is initialized
-RUN /opt/intel/openvino_2022/bin/setupvars.sh
-
 # Copy the rest of your DeepVariant setup (if needed)
 WORKDIR /opt/deepvariant
 
