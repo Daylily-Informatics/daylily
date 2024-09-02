@@ -10,10 +10,9 @@ RUN apt-get update && \
     wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
     apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
     rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-    echo "deb https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list && \
+    echo "deb https://apt.repos.intel.com/openvino/2023 ubuntu20 main" | sudo tee /etc/apt/sources.list.d/intel-openvino-2023.list
     apt-get update && \
-        apt-get update && \
-    apt-get install -y intel-openvino-dev-ubuntu20.04
+    apt-get install -y openvino
 
 # Set environment variables required for OpenVINO
 ENV INTEL_OPENVINO_DIR=/opt/intel/openvino_2022
