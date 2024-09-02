@@ -2,22 +2,17 @@
 FROM daylilyinformatics/deepvariant-avx512:1.5.0
 
 # Install OpenVINO
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates \
-    gnupg build-essential \
-    wget && \
-    wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-    apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-    rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-    echo "deb https://apt.repos.intel.com/openvino/2023 ubuntu20 main" | sudo tee /etc/apt/sources.list.d/intel-openvino-2023.list \
-    apt-get update && \
-    apt-get install -y openvino
 
-# Set environment variables required for OpenVINO
-ENV INTEL_OPENVINO_DIR=/opt/intel/openvino_2022
-ENV PATH=$INTEL_OPENVINO_DIR/bin:$PATH
-ENV LD_LIBRARY_PATH=$INTEL_OPENVINO_DIR/lib:$LD_LIBRARY_PATH
+
+RUN  DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates gnupg2 wget build-essential && \
+    wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
+    DEBIAN_FRONTEND=noninteractive apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y gnupg && \
+    echo "deb https://apt.repos.intel.com/openvino/2023 ubuntu20 main" | tee /etc/apt/sources.list.d/intel-openvino-2023.list && \
+    DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt install -y openvino
+
 
 # Make sure the OpenVINO environment is initialized
 RUN /opt/intel/openvino_2022/bin/setupvars.sh
@@ -27,3 +22,5 @@ WORKDIR /opt/deepvariant
 
 # Entry point remains the same
 CMD ["/opt/deepvariant/bin/run_deepvariant", "--help"]
+
+
