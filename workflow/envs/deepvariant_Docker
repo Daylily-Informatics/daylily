@@ -20,11 +20,13 @@ FROM ${FROM_IMAGE} as builder
 # Copy Conda setup
 COPY --from=conda_setup /opt/conda /opt/conda
 
-
-RUN apt-get update && apt-get install -y apt-utils wget gnupg build-essential && \
-    wget -qO - https://apt.repos.intel.com/oneapi/gpgkey | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null && \
-    echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneapi.list > /dev/null && \
-    apt-get update && apt-get install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
+RUN apt update
+RUN apt install -y apt-utils
+RUN apt install -y wget gnupg build-essential
+ 
+RUN wget -qO - https://apt.repos.intel.com/oneapi/gpgkey | gpg --dearmor -o /usr/share/keyrings/oneapi-archive-keyring.gpg && \
+echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneapi.list && \
+apt-get update && apt-get install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
 
 
 # Set environment variables for Intel compiler and MKL
