@@ -44,7 +44,7 @@ rule deepvariant:
         + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.deep.{dvchrm}.snv.log",
     threads: config['deepvariant']['threads']
     container:
-        "docker://daylilyinformatics/deepvariant-avx512:1.5.0"
+        "docker://daylilyinformatics/deepvariant-avx512-openvino:1.5.0"  # "docker://daylilyinformatics/deepvariant-avx512:1.5.0"
     priority: 45
     resources:
         vcpu=config['deepvariant']['threads'],
