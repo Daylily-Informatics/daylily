@@ -21,12 +21,12 @@ FROM ${FROM_IMAGE} as builder
 COPY --from=conda_setup /opt/conda /opt/conda
 
 RUN apt update
-RUN apt install -y apt-utils
-RUN apt install -y wget gnupg build-essential
+RUN  DEBIAN_FRONTEND=noninteractive  apt install -y apt-utils
+RUN  DEBIAN_FRONTEND=noninteractive  apt install -y wget gnupg build-essential
  
-RUN wget -qO - https://apt.repos.intel.com/oneapi/gpgkey | gpg --dearmor -o /usr/share/keyrings/oneapi-archive-keyring.gpg && \
+RUN  DEBIAN_FRONTEND=noninteractive  wget -qO - https://apt.repos.intel.com/oneapi/gpgkey | gpg --dearmor -o /usr/share/keyrings/oneapi-archive-keyring.gpg && \
 echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneapi.list && \
-apt-get update && apt-get install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
+apt-get update &&  DEBIAN_FRONTEND=noninteractive  apt-get install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
 
 
 # Set environment variables for Intel compiler and MKL
