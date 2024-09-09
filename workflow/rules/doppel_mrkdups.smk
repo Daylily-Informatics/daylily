@@ -57,7 +57,7 @@ if "dppl" in DDUP:
              -output {output.bamo} \
              -logtostderr \
     	     -disk-mate-shards 0 \
-	         -max-depth 100000 \
+	         -max-depth 300000 \
 	         -scratch-dir $TMPDIR \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
