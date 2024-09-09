@@ -31,8 +31,8 @@ active_s_v_callers:
 active_aligners:
     - strobe:
           mkdup: dppl
-    - bwa2a:
-          mkdup: dppl
+#    - bwa2a:
+#          mkdup: dppl
 #    - bwa2b:
 #          mkdup: dppl
 #    - bwa2m:
@@ -148,7 +148,7 @@ strobe_align_sort:
     ld_preload: "  "
     ldpre: " "
     numa: " "
-    cmd: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign  -B 5 -l 1 -u 10 -M 50 -S 0.2 -L 5 -N 1  -O 8 -R 3 "
+    cmd: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign  -B 4 -M 50 -S 0.2 -L 5 -N 5 -O 6 -R 4 "
     K: " "  # " -K  1204800000 "
     glances: " "
     k: "  -k 19 " 
