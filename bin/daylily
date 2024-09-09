@@ -251,8 +251,10 @@ REGSUB_S3_BUCKET_REF=$bucket_url
 # swap in working cluster info
 #cat ~/.config/daylily/cluster_init_values.txt | parallel 'k=$(echo {} | cut -d "=" -f 1) && v=$(echo {} | cut -d "=" -f 2 |  perl -p -e "s/\//\\\\\//g;" ); vv=$(echo $v | perl -p -e "s/\:/\\\\\:/g;"); perl -pi -e "s/$k/$vv/g"  ~/.config/daylily/daylily_default_cluster.yaml ;'
 
+sleep 0.25
 bash  bin/other/regsub_yaml.sh;
-## bash  bin/other/regsub_yaml.sh;
+sleep 0.25
+bash  bin/other/regsub_yaml.sh;
 
 echo "TESTING The $target_conf  with a cluster creation dry-run";
 
