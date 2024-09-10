@@ -12,12 +12,15 @@
 #sleep 100
 #return 1
 
+first_job_id=$1
+
 for SAMPLE in HG002 HG003 HG005 HG006; do
     mkdir -p "$PWD/output2/tfrecords/${SAMPLE}"
 
-    bin/util/submit_make_examples.sh $SAMPLE "--regions chr21 --regions chr20"
-    
-    #sbatch --comment RandD --partition i192 bin/util/submit_make_examples.sh $SAMPLE "--regions chr21"
+    #bin/util/submit_make_examples.sh $SAMPLE "--regions chr21 --regions chr20"
+    #JOB_ID=$(sbatch --dependency=afterok:$JOB_ID myscript.sh $SAMPLE | awk '{print $4}')
+    sleep 1.25
+    JOB_ID=$(sbatch --dependency=afterok:$JOB_ID --comment RandD --partition i192 bin/util/submit_make_examples.sh $SAMPLE "--regions chr21 --regions chr20" | awk '{print $4}')
 
 
     #docker run \#
