@@ -1,27 +1,15 @@
-task {
-  name: "train"
-  examples_path: "/tfrecords/HG002/examples.tfrecord.gz"
-  truth_variants_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG002/wgsHC/HG002.vcf.gz"
-  confident_regions_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG002/wgsHC/HG002.bed"
-}
+examples_path: "/tfrecords/HG002/examples.tfrecord.gz"
+truth_variants_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG002/wgsHC/HG002.vcf.gz"
+confident_regions_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG002/wgsHC/HG002.bed"
 
-task {
-  name: "train"
-  examples_path: "/tfrecords/HG003/examples.tfrecord.gz"
-  truth_variants_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG003/wgsHC/HG003.vcf.gz"
-  confident_regions_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG003/wgsHC/HG003.bed"
-}
+examples_path: "/tfrecords/HG003/examples.tfrecord.gz"
+truth_variants_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG003/wgsHC/HG003.vcf.gz"
+confident_regions_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG003/wgsHC/HG003.bed"
 
-task {
-  name: "train"
-  examples_path: "/tfrecords/HG005/examples.tfrecord.gz"
-  truth_variants_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG005/wgsHC/HG005.vcf.gz"
-  confident_regions_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG005/wgsHC/HG005.bed"
-}
+examples_path: "/tfrecords/HG005/examples.tfrecord.gz"
+truth_variants_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG005/wgsHC/HG005.vcf.gz"
+confident_regions_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG005/wgsHC/HG005.bed"
 
-task {
-  name: "train"
-  examples_path: "/tfrecords/HG006/examples.tfrecord.gz"
-  truth_variants_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG006/wgsHC/HG006.vcf.gz"
-  confident_regions_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG006/wgsHC/HG006.bed"
-}
+examples_path: "/tfrecords/HG006/examples.tfrecord.gz"
+truth_variants_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG006/wgsHC/HG006.vcf.gz"
+confident_regions_path: "/fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG006/wgsHC/HG006.bed"

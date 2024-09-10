@@ -1,4 +1,4 @@
-
+#!/bin/bash
 
 #for SAMPLE in HG002 HG003 HG005 HG006; do
 #    echo start $SAMPLE
@@ -14,14 +14,15 @@
 
 JOB_ID=$1
 
-#for SAMPLE in HG002 HG003 HG005 HG006; do
-#    mkdir -p "$PWD/output2/tfrecords/${SAMPLE}"
+
+for SAMPLE in HG001 HG004 HG007; do
+    mkdir -p "$PWD/output2/tfrecords/${SAMPLE}"
 
     #bin/util/submit_make_examples.sh $SAMPLE "--regions chr21 --regions chr20"
-    #JOB_ID=$(sbatch --dependency=afterok:$JOB_ID myscript.sh $SAMPLE | awk '{print $4}')
-#    sleep 1.25
-#    JOB_ID=$(sbatch --dependency=afterany:$JOB_ID  --comment RandD --partition i192 bin/util/submit_make_examples.sh $SAMPLE  | awk '{print $4}')
-
+    
+    sleep 1.25
+    JOB_ID=$(sbatch --dependency=afterany:$JOB_ID  --comment RandD --partition i192 bin/util/submit_make_examples.sh $SAMPLE  | awk '{print $4}')
+done
 
     #docker run \#
 	#   --cpus=16 \
@@ -43,22 +44,25 @@ JOB_ID=$1
 # train model
 
 
-mkdir -p output2/training_output
+mkdir -p output3/training_output
+
+
+mkdir -p output3/training_output
 
 docker run \
-  --cpus=192 \
-  --memory=324g \
-  -v $PWD/output2/tfrecords:/tfrecords:ro \  # Adjust this path to your actual TFRecords location
-  -v $PWD/output2:/output2 \  # Adjust this for training output and config file
+  --cpus=16 \
+  --memory=224g \
+  -v $PWD/output2/tfrecords:/tfrecords \
+  -v $PWD/output3:/output3 \
+  -v $PWD/output2:/output2 \
+  -v /fsx:/fsx \
   daylilyinformatics/deepvariant-avx512:1.5.0 \
-  /opt/deepvariant/bin/train \
+  /opt/deepvariant/bin/model_train \
     --model_type=WGSSTROBE \
-    --train_dir=/output2/training_output \
+    --train_dir=/output3/training_output \
     --dataset_config_pbtxt=/output2/dataset_config.pbtxt \
     --batch_size=64 \
     --num_training_steps=50000
-
-  
 
 #CALL VARS
 #docker run \
