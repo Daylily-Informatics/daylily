@@ -22,7 +22,12 @@ for SAMPLE in HG001 HG004 HG007; do
     
     sleep 1.25
     JOB_ID=$(sbatch --dependency=afterany:$JOB_ID  --comment RandD --partition i192 bin/util/submit_make_examples.sh $SAMPLE  | awk '{print $4}')
+
 done
+
+return 0
+
+exit 0
 
     #docker run \#
 	#   --cpus=16 \
