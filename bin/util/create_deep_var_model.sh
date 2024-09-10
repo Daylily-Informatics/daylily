@@ -1,0 +1,64 @@
+
+
+#for SAMPLE in HG002 HG003 HG005 HG006; do
+#    echo start $SAMPLE
+#    cp ~/MNT/analysis_results/ubuntu/BETA/hg38/daylily/results/day/hg38/RIH0_ANA0-${SAMPLE}-19_DBC0_0/align/strobe/snv/deep/RIH0_ANA0-${SAMPLE}-19_DBC0_0.strobe.deep.snv.sort.vcf.{gz,gz.tbi} inputs &
+#    cp ~/MNT/analysis_results/ubuntu/BETA/hg38/daylily/results/day/hg38/RIH0_ANA0-${SAMPLE}-19_DBC0_0/align/strobe/RIH0_ANA0-${SAMPLE}-19_DBC0_0.strobe.mrkdup.sort.{bam,bam.bai} inputs &
+#    echo end $SAMPLE
+#done
+#echo waiting
+#wait
+#echo done waiting
+#sleep 100
+#return 1
+
+for SAMPLE in HG002 HG003 HG005 HG006; do
+    mkdir -p "$PWD/output2/tfrecords/${SAMPLE}"
+
+    bin/util/submit_make_examples.sh $SAMPLE "--regions chr21 --regions chr20"
+    
+    #sbatch --comment RandD --partition i192 bin/util/submit_make_examples.sh $SAMPLE "--regions chr21"
+
+
+    #docker run \#
+	#   --cpus=16 \
+	#   --memory=256g \
+	#   -v $PWD:/here \
+	#   -v /fsx:/fsx \
+	#   daylilyinformatics/deepvariant-avx512:1.5.0 \
+	#   /opt/deepvariant/bin/make_examples \
+	#   --mode training \
+	#   --ref /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta \
+	#   --reads /here/inputs/RIH0_ANA0-${SAMPLE}-19_DBC0_0.strobe.mrkdup.sort.bam \
+        #   --examples /here/output2/tfrecords/${SAMPLE}/examples.tfrecord.gz \
+        #   --truth_variants /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/${SAMPLE}/wgsHC/${SAMPLE}.vcf.gz \
+	#   --confident_regions /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/${SAMPLE}/wgsHC/${SAMPLE}.bed \
+	#   --regions "chr21"
+
+    
+done
+return 1
+# train model
+docker run \
+  --cpus=192 \
+  --memory=324g \
+  -v /path/to/tfrecords:/tfrecords:ro \
+  daylilyinformatics/deepvariant-avx512:1.5.0 \
+  /opt/deepvariant/bin/train \
+    --model_type=WGSSTROBE \
+    --train_dir=/output2/training_output \
+    --dataset_config_pbtxt=/output2/dataset_config.pbtxt \
+    --batch_size=64 \
+    --num_training_steps=50000
+
+#CALL VARS
+#docker run \
+#  --cpus=192 \
+#  --memory=324g \
+#  -v /path/to/output:/output \
+#  -v /home/ubuntu/MNT/analysis_results:/mnt:ro \
+#  daylilyinformatics/deepvariant-avx512:1.5.0 \
+#  /opt/deepvariant/bin/call_variants \
+#    --outfile /output2/HG001_deepvariant.vcf.gz \
+#    --examples /mnt/tfrecords/HG001/examples.tfrecord.gz \
+#    --checkpoint /output2/training_output/model.ckpt-50000
