@@ -44,6 +44,29 @@ aws_access_key_id = <ACCESS_KEY>
 aws_secret_access_key = <SECRET_ACCESS_KEY>
 ```
 
+##### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster
+Please refer to the pcluster docs to verify your cli user has the appropriate permissions to create and manage the resources necessary for the cluster.  [AWS Parallel Cluster Permissions](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam.html).
+
+**This policy is often missing from cli users**
+- Add this inline policy to both the cli user from the user iam dashboard. Name it `pcluster-omics-analysis`.
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "spot.amazonaws.com"
+        }
+      }
+    }
+  ]
+}
+```
+
 #### 2. Create A New SSH Key Pair (type: ed25519) & Downloaded `.pem` File
 Move, copy and chmod: 
 ```bash
@@ -446,24 +469,3 @@ pcluster delete-cluster -n <cluster-name> --region us-west-2
 ``` 
 - You can monitor the status of the cluster deletion using `pcluster list-clusters --region us-west-2` and/or `pcluster describe-cluster -n <cluster-name> --region us-west-2`. Deletion can take ~10min depending on the complexity of resources created and fsx filesystem size.
 
-
-# Debugging
-- I've had to add `AmazonEC2SpotFleetTaggingRole` policy to the HEadNode
-- Also, I added this inline policy to both the HeadNode and my user
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "iam:CreateServiceLinkedRole",
-      "Resource": "*",
-      "Condition": {
-        "StringLike": {
-          "iam:AWSServiceName": "spot.amazonaws.com"
-        }
-      }
-    }
-  ]
-}
-```
