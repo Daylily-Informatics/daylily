@@ -1,25 +1,71 @@
 #!/bin/bash
 
+# Function to display usage information
+function usage() {
+  echo "Usage: $0 TEMPLATE_FILE RESOURCE_PREFIX"
+  echo
+  echo "Arguments:"
+  echo "  TEMPLATE_FILE      Full path to the CloudFormation template file (e.g., ./config/day_cluster/pcluster_env.yml)"
+  echo "  RESOURCE_PREFIX    A prefix for all resources created by the stack (alphabets and dashes only)"
+  echo
+  echo "Options:"
+  echo "  --help             Display this help message and exit"
+}
 
-TEMPLATE_FILE=$1
+# Check if help is requested
+if [[ "$1" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+# Check for missing arguments
+if [[ -z "$1" || -z "$2" ]]; then
+  echo "Error: Missing required arguments."
+  usage
+  exit 1
+fi
+
+TEMPLATE_FILE=$1 # full path to the CloudFormation template file, probably ./config/day_cluster/pcluster_env.yml
+RESOURCES_PREFIX=$2 # a prefix for all resources created by the stack, only alphamum and dash alloed, be succinct
+
+
+# Validate if the template file exists
+if [[ ! -f "$TEMPLATE_FILE" ]]; then
+  echo "Error: The template file $TEMPLATE_FILE does not exist."
+  exit 1
+fi
+
+# Validate resource prefix: only allow alphabets and dashes
+if [[ ! "$RESOURCES_PREFIX" =~ ^[a-zA-Z-]+$ ]]; then
+  echo "Error: The resource prefix can only contain alphabets and dashes."
+  exit 1
+fi
 
 # Variables
 STACK_NAME="pcluster-vpc-stack"
-REGION="us-west-2"
-ENVIRONMENT_NAME="MyEnvironmentName"
+REGION="us-west-2"  # resources are tuned for us-west-2c, it is not advised to change zones
+AVAILABILITY_ZONE="us-west-2c"
 VPC_CIDR="10.0.0.0/16"
 PUBLIC_SUBNET_CIDR="10.0.0.0/24"
 PRIVATE_SUBNET_CIDR="10.0.1.0/24"
+
+
+# Validate that the availability zone starts with the region
+if [[ "$AVAILABILITY_ZONE" != "$REGION"* ]]; then
+  echo "Error: Availability zone ($AVAILABILITY_ZONE) does not match the region ($REGION)."
+  exit 1
+fi
 
 # Create the CloudFormation Stack
 aws cloudformation create-stack \
   --stack-name $STACK_NAME \
   --template-body file://$TEMPLATE_FILE \
   --region $REGION \
-  --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
+  --parameters ParameterKey=EnvironmentName,ParameterValue=$RESOURCES_PREFIX \
                ParameterKey=VpcCIDR,ParameterValue=$VPC_CIDR \
                ParameterKey=PublicSubnetCIDR,ParameterValue=$PUBLIC_SUBNET_CIDR \
                ParameterKey=PrivateSubnetCIDR,ParameterValue=$PRIVATE_SUBNET_CIDR \
+               ParameterKey=AvailabilityZone,ParameterValue=$AVAILABILITY_ZONE \
   --capabilities CAPABILITY_NAMED_IAM
 
 # Wait for the stack to finish creating (success or failure)

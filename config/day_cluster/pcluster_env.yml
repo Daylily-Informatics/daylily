@@ -21,6 +21,12 @@ Parameters:
     Description: Please enter the IP range (CIDR notation) for the private subnet
     Type: String
     Default: 10.0.1.0/24
+
+  AvailabilityZone:
+    Description: Please enter the availability zone for the subnets (e.g., us-west-2c)
+    Type: String
+    Default: us-west-2c
+
 Resources:
   pclusterManageTags:
     Type: 'AWS::IAM::ManagedPolicy'
@@ -40,6 +46,7 @@ Resources:
             Action:
               - 'budgets:ViewBudget'
             Resource: 'arn:aws:budgets::*:budget/*'
+
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -67,7 +74,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: us-west-2c
+      AvailabilityZone: !Ref AvailabilityZone
       CidrBlock: !Ref PublicSubnetCIDR
       MapPublicIpOnLaunch: true
       Tags:
@@ -78,7 +85,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: us-west-2c
+      AvailabilityZone: !Ref AvailabilityZone
       CidrBlock: !Ref PrivateSubnetCIDR
       MapPublicIpOnLaunch: false
       Tags:
@@ -139,6 +146,7 @@ Resources:
     Properties:
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet
+
 Outputs:
   VPC:
     Description: A reference to the created VPC
