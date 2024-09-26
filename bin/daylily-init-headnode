@@ -1,4 +1,13 @@
+#!/bin/bash
+
 # Daylily Headnode Configure
+
+
+# Check if the script is sourced
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "This script should be sourced, not executed directly. Please use 'source THISSCRIPT' to run."
+    exit 1
+fi
 
 duser="ubuntu";
 
