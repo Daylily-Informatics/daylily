@@ -97,35 +97,20 @@ select version_choice in "${versions[@]}"; do
     fi
 done
 
-# Test if the directories exist in the S3 bucket
-data_dir="$bucket_url/data/$s3_reference_data_version"
-cluster_boot_config_dir="$bucket_url/cluster_boot_config/$s3_reference_data_version"
-
-echo "Checking if directories exist in the S3 bucket..."
-
-# Check if data directory exists
-if aws s3 ls "$data_dir/" &> /dev/null; then
-    echo "Data directory '$data_dir' exists."
-else
-    echo "Error: Data directory '$data_dir' does not exist. Exiting."
-    return 1
-fi
-
-# Check if cluster_boot_config directory exists
-if aws s3 ls "$cluster_boot_config_dir/" &> /dev/null; then
-    echo "Cluster boot config directory '$cluster_boot_config_dir' exists."
-else
-    echo "Error: Cluster boot config directory '$cluster_boot_config_dir' does not exist. Exiting."
-    return 1
-fi
 
 
-cmda="aws s3 cp s3://rcrf-omics-analysis/daylily/data/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/data --recursive --request-payer requester "
-cmdb="aws s3 cp s3://rcrf-omics-analysis/daylily/cluster_boot_config/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/cluster_boot_config --recursive  --request-payer requester "
+cmda="aws s3 cp s3://daylily-references-public/data/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/data --recursive --request-payer requester "
+cmdb="aws s3 cp s3://daylily-references-public/cluster_boot_config/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/cluster_boot_config --recursive  --request-payer requester "
 
-echo "Now, run the following commands in your shell."
-echo "  $cmda & $cmdb & echo 'waiting for both to complete' & wait "
+echo " Now, run the following commands in your shell:\n\n\t"
+echo "  $cmda & $cmdb & echo 'waiting for both to complete' & wait \n\n"
 
+```
+
+The above is composing the commands to copy the current versions of the reference and config files to your local s3 bucket. This is the gist of it (using `v0.9`):
+```bash
+aws s3 cp s3://daylily-references-public/data/v0.9 s3://<YOURPREFIX>-omics-analysis/data --recursive --request-payer requester 
+aws s3 cp s3://daylily-references-public/cluster_boot_config/v0.9 s3://<YOURPREFIX>-omics-analysis/cluster_boot_config 
 ```
 
 
