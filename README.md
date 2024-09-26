@@ -1,6 +1,9 @@
  
 # [DAYLILY](http://daylilyinformatics.com/) && [(blog)](https://daylily-informatics.github.io/)
-_v0.6.18  --- STILL IN ACTIVE DEV_ 
+_v0.6.30  --- STILL IN ACTIVE DEV_ 
+
+## COMPLETE INSTALLATION STEPS (updated)
+- [FULL INSTALLATION](docs/quickinstall.md)  
 
 ## Free, Fast(~60m), Frugal(from $3.34 EC2)\^1 & Cloud Native Multi-omics Analysis Framework
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
@@ -8,7 +11,7 @@ _v0.6.18  --- STILL IN ACTIVE DEV_
 
 - _PLUS_ SNV/SV calling options at other sensitivities / extensive sample + batch QC reporting / performance & cost reporting + budgeting  
 
-- Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliably and at scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [~90m installation](docs/install/video_guide.md), you will be ready to begin processing up to thousands of genomes an hour. 
+- Daylily provides a single point of contact to the myriad systems which need to be orchestrated in order to run omic analysis reproducibly, reliably and at scale in the cloud. **All you need is a laptop and access to an AWS console**. After a [FULL INSTALLATION](docs/quickinstall.md)  you will be ready to begin processing up to thousands of genomes an hour (pending your AWS quotas). 
 
 - Daylily is open source and free to use(excepting the Sentieon pipeline licensing fees which will be added to that pipeline). I hope some neat tricks I deploy are of help to others [see blog](https://daylily-informatics.github.io/). 
 
@@ -140,7 +143,7 @@ The system is designed to be robust, secure, auditable, and should only take a m
 
 # DOCUMENTATION (WIP)
 
-## [Installation](docs/install/Install.md)
+## [FULL INSTALLATION](docs/quickinstall.md)
 
 ## [Cost Tagging](docs/ops/cost_tagging.md)
 
