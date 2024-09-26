@@ -392,10 +392,27 @@ note: the first time you run a pipeline, if the docker images are not cached, th
 
 Once jobs begin to be submitted, you can monitor from another shell on the headnode with:
 ```bash
-squeue
-
-# or 
+# The compute fleet, only nodes in state 'up' are running spots. 'idle' are defined pools of potential spots not bid on yet.
 sinfo
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+i8*          up   infinite     12  idle~ i8-dy-gb64-[1-12]
+i32          up   infinite     24  idle~ i32-dy-gb64-[1-8],i32-dy-gb128-[1-8],i32-dy-gb256-[1-8]
+i64          up   infinite     16  idle~ i64-dy-gb256-[1-8],i64-dy-gb512-[1-8]
+i96          up   infinite     16  idle~ i96-dy-gb384-[1-8],i96-dy-gb768-[1-8]
+i128         up   infinite     28  idle~ i128-dy-gb256-[1-8],i128-dy-gb512-[1-10],i128-dy-gb1024-[1-10]
+i192         up   infinite      1  down# i192-dy-gb384-1
+i192         up   infinite     29  idle~ i192-dy-gb384-[2-10],i192-dy-gb768-[1-10],i192-dy-gb1536-[1-10]
+
+# running jobs, usually reflecting all running node/spots as the spot teardown idle time is set to 5min default.
+squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+                 1      i192 D-strobe   ubuntu PD       0:00      1 (BeginTime)
+# ST = PD is pending
+# ST = CF is a spot has been instantiated and is being configured
+# PD and CF sometimes toggle as the spot is configured and then begins running jobs.
+# ST = R is running
+
+```
 
 # I find helpful
 watch squeue
@@ -428,3 +445,25 @@ pcluster delete-cluster-instances -n <cluster-name> --region us-west-2
 pcluster delete-cluster -n <cluster-name> --region us-west-2
 ``` 
 - You can monitor the status of the cluster deletion using `pcluster list-clusters --region us-west-2` and/or `pcluster describe-cluster -n <cluster-name> --region us-west-2`. Deletion can take ~10min depending on the complexity of resources created and fsx filesystem size.
+
+
+# Debugging
+- I've had to add `AmazonEC2SpotFleetTaggingRole` policy to the HEadNode
+- Also, I added this inline policy to both the HeadNode and my user
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "spot.amazonaws.com"
+        }
+      }
+    }
+  ]
+}
+```
