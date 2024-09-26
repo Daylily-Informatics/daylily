@@ -36,8 +36,6 @@ dependencies:
   - libffi=3.4.2=h6a678d5_6
   - libgcc-ng=12.2.0=h65d4601_19
   - libiconv=1.17=h166bdaf_0
-  - libmamba=1.4.1=hcea66bb_0
-  - libmambapy=1.4.1=py39hf0aba66_0
   - libnghttp2=1.52.0=h61bc06f_0
   - libnsl=2.0.0=h7f98852_0
   - libsolv=0.7.23=h3eb15da_0
@@ -50,7 +48,6 @@ dependencies:
   - llvm-openmp=16.0.0=h417c0b6_0
   - lz4-c=1.9.4=hcb278e6_0
   - lzo=2.10=h516909a_1000
-  - mamba=1.4.1=py39hc5d2bb1_0
   - ncurses=6.4=h6a678d5_0
   - openssl=3.1.0=h0b41bf4_0
   - packaging=23.0=pyhd8ed1ab_0

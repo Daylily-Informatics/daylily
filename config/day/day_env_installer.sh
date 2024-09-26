@@ -22,11 +22,10 @@ if [[ $1 != "$DY_ENVNAME" ]]; then
 
     The DAY env installs the s/w needed to trigger snakemake and run the day (abbreviated to dy-) CLI.  The tools DAY can run have individual environments which are managed by snakemake. You should not need to worry about them(tm).  This code continues to run on both Navops and local
 
-Two important details:
-(one) if you have conda already installed, the conda install step is skipped and mamba installed if not found, followed by DAY.
+An important detail:
 
-***two*** If you have an existing DAY install, the DAY install will be skipped ==> it must be rebuilt from scratch to save many headaches<==.  To remove the DAY env, activate conda, but not DAY, and run:
-   `mamba env remove DAY`
+***one*** If you have an existing DAY install, the DAY install will be skipped ==> it must be rebuilt from scratch to save many headaches<==.  To remove the DAY env, activate conda, but not DAY, and run:
+   `conda env remove -n DAY`
 
 When that is complete, you may run this script.  If DAY is present and you run this scirpt-- nothing very meaningful should happen.
 
@@ -46,16 +45,12 @@ if [[ "$conda_detected" != "" ]]; then
     export CONDA_DIR=$(dirname $conda_detected)
 
     echo "
-     conda was detected in your path PATH ::  ( $conda_detected ).  First we will confirm mamba is installed to the base, install it if missing, and then will attempt the full DAY env install.
+     conda was detected in your path PATH ::  ( $conda_detected ).  
 
-    >> conda  install  -y -c conda-forge mamba
+
     "
 
-    mamba
-    if [[ "$?" != "0" ]]; then
-        sleep 1.6
-        conda install -y  -c conda-forge mamba
-    fi
+
 
 else
     export CONDA_DIR="$HOME/miniconda3/"
@@ -69,7 +64,6 @@ else
     > ~/conda/bin/conda init bash
     > source ~/.bashrc
     > conda activate
-    > conda install -n base -c conda-forge mamba
     "
 
     wget wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -81,7 +75,7 @@ else
     source ~/.bashrc
 
     conda activate
-    conda install -y -n base -c conda-forge mamba
+
     echo "CONDA install complete."
 
 fi
@@ -109,7 +103,7 @@ if [[ "$mgcnt" == "0" ]]; then
     echo "..."
     sleep 1.4
 
-    export PIP_NO_INPUT=1 && export PIP_INDEX_URL="https://pypi.org/simple" && export PIP_EXTRA_INDEX_URL="https://pypi.org/simple"  &&  mamba env create   -n DAY -f $SCRIPT_DIR/DAY.yaml
+    export PIP_NO_INPUT=1 && export PIP_INDEX_URL="https://pypi.org/simple" && export PIP_EXTRA_INDEX_URL="https://pypi.org/simple"  &&  conda env create   -n DAY -f $SCRIPT_DIR/DAY.yaml
 
     echo "Install exited with > $? < (if not zero, not the best sign)."
     echo "try the following:

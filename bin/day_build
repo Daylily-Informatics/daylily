@@ -47,7 +47,6 @@ else
 
      There is only one argument the script takes 'BUILD'.
         - This will install conda if conda is not detected in your PATH, otherwise the detected conda install is used.
-	- mamba will be installed if not found in the base environment.
 	- DAY will be installed to the active conda install.
 
 

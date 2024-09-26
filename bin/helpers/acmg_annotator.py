@@ -1,5 +1,5 @@
 
-# mamba install -n ACMG -c bioconda pyvcf
+# conda create -n ACMG -c bioconda pyvcf
 
 import sys
 import argparse
