@@ -361,7 +361,48 @@ head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv  > config/analysis
 dy-r produce_snv_concordances -p -k -n
 ```
 
+Which will produce a plan that looks like
+```text
 
+Job stats:
+job                           count    min threads    max threads
+--------------------------  -------  -------------  -------------
+deep_concat_fofn                  1              2              2
+deep_concat_index_chunks          1              4              4
+deepvariant                      24             64             64
+doppelmark_dups                   1            192            192
+dv_sort_index_chunk_vcf          24              4              4
+pre_prep_raw_fq                   1              1              1
+prep_deep_chunkdirs               1              1              1
+prep_for_concordance_check        1             32             32
+prep_results_dirs                 1              1              1
+produce_snv_concordances          1              1              1
+stage_supporting_data             1              1              1
+strobe_align_sort                 1            192            192
+workflow_staging                  1              1              1
+total                            59              1            192
+```
+
+Run the test with
+```bash
+dy-r produce_snv_concordances -p -k 
+```
+note: the first time you run a pipeline, if the docker images are not cached, there can be a delay in starting jobs as the docker images are cached. They are only pulled 1x per cluster lifetime, so subsequent runs will be faster.
+
+
+Once jobs begin to be submitted, you can monitor from another shell on the headnode with:
+```bash
+squeue
+
+# or 
+sinfo
+
+# I find helpful
+watch squeue
+
+# also for the headnode
+glances
+```
 
 
 ##### SSH Into Compute Nodes
