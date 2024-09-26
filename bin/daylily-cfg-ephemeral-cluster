@@ -239,13 +239,15 @@ bash  bin/other/regsub_yaml.sh $regsub_vals $target_conf;
 # Run a dry run to validate the cluster creation
 echo "Running a cluster creation dry run..."
 pccmd="pcluster create-cluster -n $cluster_name -c $target_conf --dryrun true --region $region"
-echo "running $pccmd"
-return 1
 
-echo "If the dry run was successful, proceed to create the cluster."
-echo -n "\nAre you ready to create the cluster (yes | no)? " 
+echo "running $pccmd"
+pcluster create-cluster -n $cluster_name -c $target_conf --dryrun true --region $region
+
+
+echo "\n\tPLEASE CONFIRM THE DRY RUN RETURNED WITH SUCCESS\n!!!!\n\t... then\n"
+echo -n "\nAre you ready to create the cluster (y|n)? " 
 read ready_to_create
-if [[ "$ready_to_create" != "yes" ]]; then
+if [[ "$ready_to_create" != "y" ]]; then
     echo "Exiting without creating the cluster."
     return 0
 fi
@@ -253,6 +255,10 @@ fi
 # Create the cluster
 echo "Creating the cluster '$cluster_name'... in region $region"
 pccreate_cmd = "pcluster create-cluster -n $cluster_name -c $target_conf --region $region"
+echo "running $pccreate_cmd"
+
+pcluster create-cluster -n $cluster_name -c $target_conf --region $region
+
 
 # Monitoring cluster creation
 echo "Waiting for the cluster to complete creation. This may take 10-15 minutes."
@@ -267,4 +273,4 @@ echo " ";
 echo " ";
 echo "\n\tNext, configuring your head node.\n";
 sleep 1;
-bin/daylily-init-headnode $pem_file
+source bin/daylily-init-headnode $pem_file $region

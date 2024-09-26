@@ -2,7 +2,7 @@
 latency-wait: 77
 keep-remote: true
 use-conda: true
-conda-frontend: "mamba"
+conda-frontend: conda
 conda-prefix: "/fsx/resources/environments/conda/USER_REGSUB/HOSTNAME"
 force-use-threads: true
 restart-times: 0  # set this to  2 once stable.  now, fail fasst

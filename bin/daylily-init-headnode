@@ -1,84 +1,122 @@
 #!/bin/bash
 
-# Daylily Headnode Configure
+# Daylily Headnode Configuration Script
 
-
-# Check if the script is sourced
+# Ensure the script is sourced, not executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "This script should be sourced, not executed directly. Please use 'source THISSCRIPT' to run."
     exit 1
 fi
 
-duser="ubuntu";
+# Capture arguments for PEM file and region
+pem_file=$1
+region=$2
+duser="ubuntu"
 
-echo "clusters detected:";
-pcluster list-clusters | grep clusterName;
-echo " ";
+# Ensure both PEM file and region are provided
+if [[ -z "$pem_file" || -z "$region" ]]; then
+    echo "Error: You must provide both the PEM file path and the AWS region."
+    echo "Usage: source $0 /path/to/pem_file region"
+    return 1
+fi
 
-echo "Enter your cluster name:";
-read cluster_name;
+# List available clusters in the specified region
+echo "Clusters detected in region $region:"
+cluster_names=$(pcluster list-clusters --region $region | grep clusterName | awk '{print $2}' | cut -d '"' -f 2)
 
-cluster_ip_address=$(pcluster describe-cluster-instances -n $cluster_name | grep publicIpAddress | perl -p -e 's/[ |\"|\,]//g;' | cut -d ':' -f 2);
+# Check if there are any clusters detected
+if [[ -z "$cluster_names" ]]; then
+    echo "Error: No clusters found in region $region."
+    return 1
+fi
 
-
-echo "A";
-echo "Cluster $cluster name is $cluster_ip_address.";
-echo " ";
-echo " ";
-echo "Detected PEM files:";
-ls -1 ~/.ssh/*pem;
-
-echo "Enter the full absolute path to your PEM file";
-
-pem_file=$1;
-if [[ "$1" != "" ]]; then
-    echo "setting pem file to $1";
-else
-    read pem_file;
-fi;
-
-# Create ssh key for headnode user, to be saved to github
-ssh -i $pem_file ubuntu@$cluster_ip_address echo """ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N \'\' <<< $'\ny'  | sudo su - $duser""";
-
-echo 'You must have a github account, and access to the daylily repo. The ubuntu user public ssh key must be stored as a new valid ssh key in github: https://github.com/settings/keys. If logged in to github, click New SSH Key, name the key whatever, leave key type set to Authentication Key, and paste the following string into the Key field.  There should be no linebreaks in the key string.';
-echo " ";
-ssh -i $pem_file ubuntu@$cluster_ip_address "echo 'head ~/.ssh/id_rsa.pub' | sudo su - $duser " ;
-
-echo " ";
-echo " ";
-
-echo "The above string(not including the timestamp) is your public ssh key. Double click on the key string and it should all select w/out linebreaks. Save this ssh key in your github->settings->ssh and gpg keys->New SSH Key.  Once you have saved this on github, please type 'yes' to proceed.";
-read cont;
+# Convert detected cluster names into an array using a shell-compatible method
+cluster_array=()
+while IFS= read -r cluster_name; do
+    cluster_array+=("$cluster_name")
+done <<< "$cluster_names"
 
 
-if [[ "$cont" == "yes" || "$cont" == "y" ]]; then
-    echo "continuing to headnode config.";
-    sleep 2;
-else
-    echo "exiting";
-    return 1;
-fi;
+echo "Select a cluster name:"
+select cluster_name in "${cluster_array[@]}"; do
+    if [[ -n "$cluster_name" ]]; then
+        echo "You selected: $cluster_name"
+        break
+    else
+        echo "Invalid selection, please try again."
+    fi
+done
 
-# clone daylily repo to headnode user. ubuntu is not enabled to run the pipe by default.
-echo "...............cloning repo";
-ssh -i $pem_file  ubuntu@$cluster_ip_address """echo ' mkdir -p ~/projects; cd ~/projects; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git clone  git@github.com:Daylily-Informatics/daylily.git ' | sudo su - $duser"""; 
+# Get the public IP address of the cluster's head node
+cluster_ip_address=$(pcluster describe-cluster-instances -n "$cluster_name" --region "$region" \
+    | grep publicIpAddress | perl -p -e 's/[ |"|,]//g;' | cut -d ':' -f 2)
 
-echo "...............configuring daylily headnode deets";
-# init the first day environment
-ssh -t -i $pem_file ubuntu@$cluster_ip_address "sudo su - $duser -c 'cd ~/projects/daylily && ls -lta . && . dyinit; . bin/day_build'" 
-## if this isnt working, try this one
-###ssh -i $pem_file ubuntu@$cluster_ip_address "echo 'cd ~/projects/daylily; source dyinit && source  config/day/day_env_installer.sh DAY;' | sudo su - $duser" ;
+if [[ -z "$cluster_ip_address" ]]; then
+    echo "Error: Could not retrieve the public IP address of the cluster."
+    return 1
+fi
 
-echo "................running a simple help test of daylily remotely";
+echo "Cluster $cluster_name's public IP is $cluster_ip_address."
+echo " "
 
-# Run simple help test ( will faill at dy-r)
-ssh -t -i $pem_file ubuntu@$cluster_ip_address "sudo su - $duser -c 'cd ~/projects/daylily && ls -lta . && . dyinit; . bin/day_activate local;  dy-r  help'"
+# List available PEM files in the .ssh directory
+echo "Detected PEM files in ~/.ssh:"
+ls -1 ~/.ssh/*.pem
 
-echo " ";
-echo " ";
-echo "You may now ssh into the headnode with : ssh -i $pem_file ubuntu@$cluster_ip_address ";
-echo " ... once logged in, ";
-echo " ...... as ubuntu run: cd ~/projects/daylily; source dyinit; source bin/day_activate local ; dy-r help ";
-echo " .........";
-echo "et voila, fin.";
+# If PEM file is not provided as an argument, prompt the user
+if [[ -z "$pem_file" ]]; then
+    echo "Enter the full absolute path to your PEM file:"
+    read pem_file
+fi
 
+# Ensure the PEM file exists
+if [[ ! -f "$pem_file" ]]; then
+    echo "Error: PEM file '$pem_file' does not exist."
+    return 1
+fi
+
+# Generate SSH key for the head node user
+echo "Generating SSH key on the head node..."
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address" \
+    "ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N '' <<< $'\ny' | sudo su - $duser"
+
+# Display the public key and instruct the user to add it to GitHub
+echo "You must have a GitHub account and access to the Daylily repository."
+echo "Please add the following public SSH key to GitHub:"
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address" "cat ~/.ssh/id_rsa.pub"
+
+echo " "
+echo "Once you have saved this SSH key in GitHub, type 'yes' to proceed."
+read cont
+
+# Confirm continuation after adding SSH key to GitHub
+if [[ "$cont" != "yes" && "$cont" != "y" ]]; then
+    echo "Exiting..."
+    return 1
+fi
+
+# Clone the Daylily repository to the head node
+echo "Cloning Daylily repository to the head node..."
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address" \
+    "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects && GIT_SSH_COMMAND=\"ssh -o StrictHostKeyChecking=no\" git clone git@github.com:Daylily-Informatics/daylily.git'"
+
+# Initialize and configure the Daylily environment on the head node
+echo "Configuring Daylily environment on the head node..."
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" \
+    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit && source bin/day_build'"
+
+# Run a simple help test for Daylily remotely
+echo "Running a simple help test on the head node..."
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" \
+    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit && source bin/day_activate local && dy-r help'"
+
+# Provide final instructions for SSH access to the head node
+echo "You can now SSH into the head node with the following command:"
+echo "ssh -i $pem_file ubuntu@$cluster_ip_address"
+echo "Once logged in, as the 'ubuntu' user, run the following commands:"
+echo "  cd ~/projects/daylily"
+echo "  source dyinit"
+echo "  source bin/day_activate local"
+echo "  dy-r help"
+echo " "
+echo "Setup complete. You can now start working with Daylily on the head node."

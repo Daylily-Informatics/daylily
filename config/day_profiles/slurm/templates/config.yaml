@@ -37,7 +37,7 @@ rerun-incomplete: True
 printshellcmds: True
 scheduler: greedy
 use-conda: True
-conda-frontend: mamba
+conda-frontend: conda
 conda-prefix: "/fsx/resources/environments/conda/USER_REGSUB/HOSTNAME"
 cluster-status: config/day_profiles/slurm/templates/status-scontrols.sh
 cluster-cancel: scancel
