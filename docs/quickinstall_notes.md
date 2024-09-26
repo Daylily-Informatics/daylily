@@ -44,18 +44,21 @@ aws_secret_access_key = <SECRET_ACCESS_KEY>
 
 #### 2. Create A New SSH Key Pair (type: ed25519) & Downloaded `.pem` File
 - Move, copy and chmod: `mv ~/Downloads/<yourkey>.pem  ~/.ssh/<yourkey>.pem && chmod 400 ~/.ssh/<yourkey>.pem`.
-- **please record/take note** of the full path to this file, as it will be needed in the `daycli` setup.
 
-#### 3. Create `YOUR-omics-analysis` s3 Bucket
-- In `us-west-2`.
-- **please record/take note** of the bucket name, as it will be needed in the `daycli` setup.
 
-##### Copy The `daylily` Public References/Resources To Your New Bucket
+#### 3. Create `YOURPREFIX-omics-analysis` s3 Bucket
+- Your new bucket name should end in `-omics-analysis` and be unique to your account. This allows easier auto-detection latter in the `daycli` setup.
+- And it should be created in `us-west-2`.
+
+##### Copy The `daylily` Public References/Resources To Your New Bucket (choose the most recent version)
 From your terminal/shell (and to be safe, in a screen or tmux session as it may run for a while).
 
 Move to the root of the cloned repo, please run the following code (which will prompt you to select the version of the reference data you would like to copy to your bucket).
-**dryrun suggested**
+
 ```bash
+
+echo -n "enter your bucket prefix (ie: myorg): "
+read your_bucket_prefix
 
 s3_reference_bucket_url="s3://rcrf-omics-analysis/daylily"
 
@@ -117,8 +120,8 @@ else
 fi
 
 
-cmda="aws s3 cp s3://rcrf-omics-analysis/daylily/data/$s3_reference_data_version s3://<YOUR>-omics-analysis/data --recursive --request-payer requester "
-cmdb="aws s3 cp s3://rcrf-omics-analysis/daylily/cluster_boot_config/$s3_reference_data_version s3://<YOUR>-omics-analysis/cluster_boot_config --recursive  --request-payer requester "
+cmda="aws s3 cp s3://rcrf-omics-analysis/daylily/data/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/data --recursive --request-payer requester "
+cmdb="aws s3 cp s3://rcrf-omics-analysis/daylily/cluster_boot_config/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/cluster_boot_config --recursive  --request-payer requester "
 
 echo "Now, run the following commands in your shell."
 echo "  $cmda & $cmdb & echo 'waiting for both to complete' & wait "
