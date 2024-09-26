@@ -433,11 +433,14 @@ squeue
 # ST = PD is pending
 # ST = CF is a spot has been instantiated and is being configured
 # PD and CF sometimes toggle as the spot is configured and then begins running jobs.
+
+ squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+                 1      i192 D-strobe   ubuntu  R       5:09      1 i192-dy-gb384-1
 # ST = R is running
 
-```
 
-# I find helpful
+# Also helpful
 watch squeue
 
 # also for the headnode
@@ -447,8 +450,9 @@ glances
 
 ##### SSH Into Compute Nodes
 You can not access compute nodes directly, but can access them via the head node. From the head node, you can determine if there are running compute nodes with `squeue`, and use the node names to ssh into them.
+
 ```bash
-ssh <nodename>
+ssh i192-dy-gb384-1
 ```
 
 
