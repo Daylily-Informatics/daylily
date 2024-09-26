@@ -1,3 +1,0 @@
-# Daylily Document Central
-  - ...
-  
