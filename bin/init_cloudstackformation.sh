@@ -1,5 +1,10 @@
 #!/bin/bash
 
+echo "\n\n\t ALERT 1:::>>> You will need valid aws credentials in your ~/.aws directory in order to proceed.\n\n"
+echo "\n\n\tALERT 2:::>>> Please also be sure to have created a key pair in the AWS console which is ed25519 type & save the resulting .pem file (& chmod 400 it).  This will be needed for creating the cluster after this step completes.\n\n... pausing"
+sleep 3.3
+echo "\n\n\t... continuing\n\n"
+
 # Function to display usage information
 function usage() {
   echo "Usage: $0 TEMPLATE_FILE RESOURCE_PREFIX"
