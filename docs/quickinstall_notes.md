@@ -358,7 +358,7 @@ dy-a slurm
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv  > config/analysis_manifest.csv
 
 # run the test
-dy-r produce_deduplicated_bams -p -n # dryrun
+dy-r produce_snv_concordances -p -k -n
 ```
 
 
