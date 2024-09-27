@@ -36,6 +36,9 @@ rule verifybamid2_contam:
         touch  {output.vb_prefix}.selfSM {output.vb_tsv};
         cp {output.vb_prefix}.selfSM {output.vb_tsv};
         touch {output.vb_prefix};
+        export samplename=$(echo $(basename {output.vb_tsv}) | cut -d'.' -f 1);
+        perl -pi -e 's/^x\t/$samplename\t/g;' {output.vb_prefix}.selfSM;
+        perl -pi -e 's/^x\t/$samplename\t/g;' {output.vb_tsv};
         {latency_wait};
         ls {output};
         """
