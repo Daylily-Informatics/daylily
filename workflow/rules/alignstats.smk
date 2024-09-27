@@ -40,7 +40,7 @@ rule alignstats:
     conda:
         config["alignstats"]["env_yaml"]
     shell:
-        "LD_LIBRARY_PATH=resources/lib resources/alignstats/alignstats  -C -U  -i {input} -o {output.json}  -j bam -v -P {threads} -p {threads} > {log};"
+        "alignstats  -C -U  -i {input} -o {output.json}  -j bam -v -P {threads} -p {threads} > {log};"
 
 
 localrules:

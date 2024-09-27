@@ -8,5 +8,5 @@ dependencies:
   - glances
   - htslib
   - pthread-stubs
-  - alignstats==0.9.1
+  - alignstats==0.10
   - parallel

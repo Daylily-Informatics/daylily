@@ -61,7 +61,7 @@ alignstats:
     threads: 64
     partition: "i64,i96,i128"
     num_reads_in_mem: " "  # 100000
-    env_yaml: "../envs/vanilla_v0.1.yaml"
+    env_yaml: "../envs/alignstats_v0.2.yaml"
     glances: " "
     ld_preload: "  "  # env LD_PRELOAD=./resources/libs/libllalloc.so  "
 

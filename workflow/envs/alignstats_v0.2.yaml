@@ -1,4 +1,15 @@
 channels:
+  - conda-forge
   - bioconda
+  - defaults
 dependencies:
-  - alignstats
+  - alignstats==0.10
+  - parallel=20210822
+  - samtools
+  - pigz
+  - bcftools
+  - isa-l
+  - htslib
+  - bedtools
+  - perl
+  - tabix
