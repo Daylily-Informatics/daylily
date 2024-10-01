@@ -3,7 +3,7 @@ analysis_manifest: .test_data/data/0.01xwgs_HG002.samplesheet.csv
 unit_test: false
 profile_name: slurm
 valid_biome: AWSPC
-genome_build: "hg38"  # or hg38
+genome_build: "hg38"  # or b37
 
 
 

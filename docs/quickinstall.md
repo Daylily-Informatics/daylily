@@ -329,6 +329,9 @@ drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 ```bash
 . dyinit
 dy-a local
+
+head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
+
 dy-r produce_deduplicated_bams -p -j 2 -n # dry run
 dy-r produce_deduplicated_bams -p -j 2 
 ```
@@ -369,7 +372,7 @@ First, create a working directory on the `/fsx/` filesystem.
 # create a working analysis directory
 mkdir -p /fsx/analysis_results/ubuntu/init_test
 cd /fsx/analysis_results/ubuntu/init_test
-git clone git@github.com:Daylily-Informatics/daylily.git
+git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
 cd daylily
 
 #  prepare to run the test
@@ -377,11 +380,11 @@ tmux new -s slurm_test
 . dyinit
 dy-a slurm
 
-# create a test manifest for one giab sample only
-head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv  > config/analysis_manifest.csv
+# create a test manifest for one giab sample only, which will run on the 0.01x test dataset
+head -n 2 .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv > config/analysis_manifest.csv
 
-# run the test
-dy-r produce_snv_concordances -p -k -n
+# run the test, which will auto detect the analysis_manifest.csv file & will run this all via slurm
+dy-r produce_snv_concordances -p -k -j 3 -n
 ```
 
 Which will produce a plan that looks like
@@ -408,12 +411,60 @@ total                            59              1            192
 
 Run the test with
 ```bash
-dy-r produce_snv_concordances -p -k 
+dy-r produce_snv_concordances -p -k -j 6  #  -j 6 will run 6 jobs in parallel max, which is done here b/c the test data runs so quickly we do not need to spin up one spor instance per deepvariant job & since 3 dv jobs can run on a 192 instance, this flag will limit creating only  2 instances at a time.
 ```
-note: the first time you run a pipeline, if the docker images are not cached, there can be a delay in starting jobs as the docker images are cached. They are only pulled 1x per cluster lifetime, so subsequent runs will be faster.
 
+note1: the first time you run a pipeline, if the docker images are not cached, there can be a delay in starting jobs as the docker images are cached. They are only pulled 1x per cluster lifetime, so subsequent runs will be faster.
 
-Once jobs begin to be submitted, you can monitor from another shell on the headnode with:
+note2: The first time a cold cluster requests spot instances, can take some time (~10min) to begin winning spot bids and running jobs. Hang tighe, and see below for monitoring tips.
+
+##### (TO RUN ON A FULL 30x WGS DATA SET)
+###### Specify A Single Sample Manifest
+You may repeat the above, and use the pre-existing analysis_manifest.csv template `.test_data/data/giab_30x_hg38_analysis_manifest.csv`.
+```bash
+tmux new -s slurm_test_30x_single
+
+mkdir /fsx/analysis_results/ubuntu/slurm_single
+cd /fsx/analysis_results/ubuntu/slurm_single
+
+git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
+cd daylily
+
+. dyinit
+dy-a slurm
+
+# TO create a single sample manifest
+head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv > config/analysis_manifest.csv
+
+dy-r produce_snv_concordances -p -k -n  # dry run
+
+dy-r produce_snv_concordances -p -k # run jobs, and wait for completion
+```
+###### Specify A Multi-Sample Manifest (in this case, all 7 GIAB samples)
+```bash
+
+tmux new -s slurm_test_30x_multi
+
+mkdir /fsx/analysis_results/ubuntu/slurm_multi_30x_test
+cd /fsx/analysis_results/ubuntu/slurm_multi_30x_test
+
+git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
+cd daylily
+
+. dyinit
+dy-a slurm
+
+# copy full 30x giab sample template to config/analysis_manifest.csv
+cp .test_data/data/giab_30x_hg38_analysis_manifest.csv  config/analysis_manifest.csv
+
+dy-r produce_snv_concordances -p -k -n  # dry run
+
+dy-r produce_snv_concordances -p -k # run jobs, and wait for completion
+```
+
+##### Monitor Slurm Submitted Jobs
+
+Once jobs begin to be submitted, you can monitor from another shell on the headnode(or any compute node) with:
 ```bash
 # The compute fleet, only nodes in state 'up' are running spots. 'idle' are defined pools of potential spots not bid on yet.
 sinfo
@@ -456,7 +507,6 @@ ssh i192-dy-gb384-1
 ```
 
 
-
 ##### Delete Cluster
 **warning**: this will delete all resources created for the ephemeral cluster, importantly, including the fsx filesystem. You must export any analysis results created in `/fsx/analysis_results` from the `fsx` filesystem  back to `s3` before deleting the cluster. 
 
@@ -473,3 +523,9 @@ pcluster delete-cluster -n <cluster-name> --region us-west-2
 ``` 
 - You can monitor the status of the cluster deletion using `pcluster list-clusters --region us-west-2` and/or `pcluster describe-cluster -n <cluster-name> --region us-west-2`. Deletion can take ~10min depending on the complexity of resources created and fsx filesystem size.
 
+# Other Monitoring Tools
+
+## AWS Cloudwatch
+- The AWS Cloudwatch console can be used to monitor the cluster, and the resources it is using.  This is a good place to monitor the health of the cluster, and in particular the slurm and pcluster logs for the headnode and compute fleet.
+- Navigate to your `cloudwatch` console, then select `dashboards` and there will be a dashboard named for the name you used for the cluster. Follow this link (be sure you are in the `us-west-2` region) to see the logs and metrics for the cluster.
+- Reports are not automaticaly created for spot instances, but you may extend this base report as you like.  This dashboard is automatically created by `pcluster` for each new cluster you create (and will be deleted when the cluster is deleted).

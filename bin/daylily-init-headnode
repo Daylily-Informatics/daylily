@@ -86,19 +86,14 @@ echo "Please add the following public SSH key to GitHub:"
 ssh -i "$pem_file" ubuntu@"$cluster_ip_address" "cat ~/.ssh/id_rsa.pub"
 
 echo " "
-echo "Once you have saved this SSH key in GitHub, type 'yes' to proceed."
-read cont
+echo "(optional) save this SSH key in GitHub to your settings->ssh/gpg keys, which will allow you to push changes back to github if you make any. You can always add this key latter too, find it in you ~/.ssh/id_rsa.pub.\n\n\tSleeping for 15s then proceeding."
+sleep 15
 
-# Confirm continuation after adding SSH key to GitHub
-if [[ "$cont" != "yes" && "$cont" != "y" ]]; then
-    echo "Exiting..."
-    return 1
-fi
 
 # Clone the Daylily repository to the head node
-echo "Cloning Daylily repository to the head node..."
+echo "Cloning Daylily repository usibng https to the head node ~/projects"
 ssh -i "$pem_file" ubuntu@"$cluster_ip_address" \
-    "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects && GIT_SSH_COMMAND=\"ssh -o StrictHostKeyChecking=no\" git clone git@github.com:Daylily-Informatics/daylily.git'"
+    "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects &&  git clone https://github.com/Daylily-Informatics/daylily.git'"
 
 # Initialize and configure the Daylily environment on the head node
 echo "Configuring Daylily environment on the head node..."
@@ -116,7 +111,9 @@ echo "ssh -i $pem_file ubuntu@$cluster_ip_address"
 echo "Once logged in, as the 'ubuntu' user, run the following commands:"
 echo "  cd ~/projects/daylily"
 echo "  source dyinit"
-echo "  source bin/day_activate local"
+echo "  dy-a local"
 echo "  dy-r help"
 echo " "
-echo "Setup complete. You can now start working with Daylily on the head node."
+echo "\t... and please remember to re-clone the repo for each new analysis in the /fsx/analysis_results directory for non-test uses."
+echo " "
+echo "\nSetup complete. You can now start working with Daylily on the head node.\n"
