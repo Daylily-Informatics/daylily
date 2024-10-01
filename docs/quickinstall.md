@@ -574,7 +574,21 @@ pcluster delete-cluster -n <cluster-name> --region us-west-2
 ``` 
 - You can monitor the status of the cluster deletion using `pcluster list-clusters --region us-west-2` and/or `pcluster describe-cluster -n <cluster-name> --region us-west-2`. Deletion can take ~10min depending on the complexity of resources created and fsx filesystem size.
 
-# Other Monitoring Tools
+# Other Stuff
+
+## `goday` `.zshrc` Alias
+Script to help expedite login to headnode.
+```zsh
+
+export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCL\
+I && pcluster list-clusters --region us-west-2 | grep 'clusterName' | perl -pe \
+'s/.*\: \"(.*)\"\,.*/\$1/g;') && cluster_ip=\$(pcluster describe-cluster --regi\
+on us-west-2 -n \$cluster_name | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.\
+*)\"\,.*/\$1/g;') && ssh -i ~/.ssh/rcrf-omics-analysis-b.pem ubuntu@\$cluster_i\
+p"
+
+alias goday="$goday_cmd"
+```
 
 ## AWS Cloudwatch
 - The AWS Cloudwatch console can be used to monitor the cluster, and the resources it is using.  This is a good place to monitor the health of the cluster, and in particular the slurm and pcluster logs for the headnode and compute fleet.
