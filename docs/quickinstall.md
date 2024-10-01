@@ -27,12 +27,15 @@ _bash and zsh are known to work_
 ## Only Necessary To Follow Once Per AWS Acount
 ### AWS 
 #### 0. AWS Quotas (VERY IMPORTANT)
-- **AWS Quotas**: You must request increases to the default quotas for the resources `pcluster` will use.  This is a critical step, and you should do this before attempting to create a cluster.  [See Section On AWS Quotas](#critically-important-words-on-quotas----you-must-request-increases-from-the-defaults) for specifics on common default quotas that need to be increased. tldr:
+- You must request increases to the default quotas for the resources `pcluster` requires to be available.  
+- This is a critical step, and you should do this before attempting to create a cluster.  
+  - And, you should monitor your usage and request additional increases as your needs grow.
+- [See Section On AWS Quotas](#critically-important-words-on-quotas----you-must-request-increases-from-the-defaults) for specifics on common default quotas that need to be increased. tldr:
 > **dedicated instances**
 > - `Running Dedicated r7i Hosts` >= 1 **!!(AWS default is 0) !!**
 > - `Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances` must be >= 16 **!!(AWS default is 5) !!** just to run the headnode, and will need to be increased further for ANY other dedicated instances you (presently)/(will) run.
 > **spot instances**
-> - `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 286 (and preferable >=2958) **!!(AWS default is 0) !!**
+> - `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 310 (and preferable >=2958) **!!(AWS default is 5) !!**
 > **fsx lustre**
 > - should minimally allow creation of a FSX Lustre filesystem with >= 4.8 TB storage, which should be the default.
 
@@ -254,7 +257,7 @@ Quotas are applied by class of instance and by total number `vCPU` used across t
 > - This is the max total number of vcpus allowed for standard dedicated instances to hold for your account in this region.
 
 > **spot instances**
-> `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 286 (and preferable >=2958) **!!(AWS default is 0) !!**
+> `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 310 (and preferable >=2958) **!!(AWS default is 5) !!**
 > - This is the max total number of vcpus allowed for spot instances to hold for your account in this region.
 
 ###### FSX Lustre Quotas
@@ -376,6 +379,11 @@ head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
 dy-r produce_deduplicated_bams -p -j 2 -n # dry run
 dy-r produce_deduplicated_bams -p -j 2 
 ```
+
+###### More On The `-j` Flag
+**do not set above 10 until you know you want this set above 10 and undesrstand the implications**
+The `-j` flag specified in `dy-r` limits the number of jobs submitted to slurm. For out of the box settings, the advised range for `-j` is 1 to 10. You may omit this flag, and allow submitting all potnetial jobs to slurm, which slurm, /fsx, and the instances can handle growing to the 10s or even 100 thousands of instances... however, various quotas will begin causing problems before then.  The `local` defauly is set to `-j 1` and `slurm` is set to `-j 10`, `-j` may be set to any int > 0.
+
 This will produce a job plan, and then begin executing. The sample manifest can be found in `.test_data/data/0.01x_3_wgs_HG002.samplesheet.csv` (i am aware this is not a `.tsv` :-P ). Runtime on the default small test data runnin locally on the default headnode instance type should be ~5min.
 ```text
 
@@ -479,9 +487,9 @@ dy-a slurm
 # TO create a single sample manifest
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv > config/analysis_manifest.csv
 
-dy-r produce_snv_concordances -p -k -n  # dry run
+dy-r produce_snv_concordances -p -k -j 10 -n  # dry run
 
-dy-r produce_snv_concordances -p -k # run jobs, and wait for completion
+dy-r produce_snv_concordances -p -k -j 10 # run jobs, and wait for completion
 ```
 ###### Specify A Multi-Sample Manifest (in this case, all 7 GIAB samples)
 ```bash
@@ -500,9 +508,9 @@ dy-a slurm
 # copy full 30x giab sample template to config/analysis_manifest.csv
 cp .test_data/data/giab_30x_hg38_analysis_manifest.csv  config/analysis_manifest.csv
 
-dy-r produce_snv_concordances -p -k -n  # dry run
+dy-r produce_snv_concordances -p -k -j 10 -n  # dry run
 
-dy-r produce_snv_concordances -p -k # run jobs, and wait for completion
+dy-r produce_snv_concordances -p -k -j 10 # run jobs, and wait for completion
 ```
 
 ##### Monitor Slurm Submitted Jobs

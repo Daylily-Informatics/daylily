@@ -8,7 +8,7 @@ force-use-threads: true
 restart-times: 0  # set this to  2 once stable.  now, fail fasst
 cores: 16
 scheduler: greedy
-jobs: 10
+jobs: 1
 max-jobs-per-second: 5
 max-status-checks-per-second: 10
 stats: "day_stats.json"
