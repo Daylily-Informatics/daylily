@@ -26,6 +26,16 @@ _bash and zsh are known to work_
 
 ## Only Necessary To Follow Once Per AWS Acount
 ### AWS 
+#### 0. AWS Quotas (VERY IMPORTANT)
+- **AWS Quotas**: You must request increases to the default quotas for the resources `pcluster` will use.  This is a critical step, and you should do this before attempting to create a cluster.  [See Section On AWS Quotas](#critically-important-words-on-quotas----you-must-request-increases-from-the-defaults) for specifics on common default quotas that need to be increased. tldr:
+> **dedicated instances**
+> - `Running Dedicated r7i Hosts` >= 1 **!!(AWS default is 0) !!**
+> - `Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances` must be >= 16 **!!(AWS default is 5) !!** just to run the headnode, and will need to be increased further for ANY other dedicated instances you (presently)/(will) run.
+> **spot instances**
+> - `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 286 (and preferable >=2958) **!!(AWS default is 0) !!**
+> **fsx lustre**
+> - should minimally allow creation of a FSX Lustre filesystem with >= 4.8 TB storage, which should be the default.
+
 #### 1. Install / Configure The AWS CLI
 _Create And Save AWS CLI Credentials In `.aws`_
 - For your terminal/shell account these files `~/.aws/{credentials,config}` should exist.
@@ -192,7 +202,7 @@ ssh -i /Users/daylily/.ssh/omics-analysis-b.pem ubuntu@52.24.138.65
 Once logged in, as the 'ubuntu' user, run the following commands:
   cd ~/projects/daylily
   source dyinit
-  source bin/day_activate local
+  dy-a local
   dy-r help
  
 Setup complete. You can now start working with Daylily on the head node.
@@ -215,7 +225,43 @@ pcluster list-clusters --region us-west-2
 > 
 
 ### Working With The Ephemeral Clusters (via `pcluster`)
-_**note**: AWS quotas limit many of the resoureces used by pcluster, please be aware of these quotas and monitor your usage. You may need to request increases to these quotas to run larger clusters._
+
+#### Critically Important Words On Quotas -- You Must Request Increases From The Defaults
+* AWS assigned default quotas will not allow creating a pcluser cluster.
+* AWS quotas limit many of the resources needed by pcluster to build and run ephemeral clusters. 
+* The default resource quotas on a standard AWS account may not be sufficent to run an ephemeral cluster. 
+* Please review you account quotas, monitor your usage, and if you are encountering strange behaviour with getting clusters to build, or spot instances to spin up, this is _one_ place to look first.
+
+**Proactively Request Quota Increases Before You Encounter Problems**
+  
+##### A Few Important Quotas To Monitor
+**quotas are applied by region. be sure you are looking at the `us-west-2` region quotas && be sure when you make quota increase requests you are doing so in `us-west-2`**
+- The following are important quotas to review, but is not exhaustive as quota assignment can vary unpredictably by account.
+
+
+###### VPC Quotas / Networking
+- [VPC Quotas Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/vpc/quotas)
+If there are problems with VPC or networking quotas, these should cause hard fails very early in setting up daylily clusters. There are restrictive limits to the number of VPCs, subnets, and security groups you can create in a region.
+
+###### EC2 Quotas
+- [EC2 Quotas Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/ec2/quotas)
+Quotas are applied by class of instance and by total number `vCPU` used across the class which a quota applies. 
+
+> **dedicated instances** 
+> `Running Dedicated r7i Hosts` >= 1 **!!(AWS default is 0) !!**
+> - This allows the r7i type headnode to be created.  If you alter the headnode instance type in the cluster config, you may need to adjust a different dedicated instance quota.
+> `Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances` must be >= 16 **!!(AWS default is 5) !!** just to run the headnode, and will need to be increased further for ANY other dedicated instances you (presently)/(will) run. 
+> - This is the max total number of vcpus allowed for standard dedicated instances to hold for your account in this region.
+
+> **spot instances**
+> `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 286 (and preferable >=2958) **!!(AWS default is 0) !!**
+> - This is the max total number of vcpus allowed for spot instances to hold for your account in this region.
+
+###### FSX Lustre Quotas
+Default FSX quotas should be 
+- [FSX Lustre Quota Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/fsx/quotas)
+- This is the max total number of vcpus allowed for spot instances to hold for your account in this region.
+
 #### Activate The DAYCLI Conda Environment
 ```bash
 conda activate DAYCLI
@@ -414,6 +460,8 @@ note1: the first time you run a pipeline, if the docker images are not cached, t
 note2: The first time a cold cluster requests spot instances, can take some time (~10min) to begin winning spot bids and running jobs. Hang tighe, and see below for monitoring tips.
 
 ##### (TO RUN ON A FULL 30x WGS DATA SET)
+
+###### First, A Comment On
 ###### Specify A Single Sample Manifest
 You may repeat the above, and use the pre-existing analysis_manifest.csv template `.test_data/data/giab_30x_hg38_analysis_manifest.csv`.
 ```bash
