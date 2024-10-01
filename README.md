@@ -1,6 +1,6 @@
  
 # [DAYLILY](http://daylilyinformatics.com/) && [(blog)](https://daylily-informatics.github.io/)
-_v0.6.30  --- STILL IN ACTIVE DEV_ 
+_v0.7.0  --- STILL IN ACTIVE DEV_ 
 
 ## COMPLETE INSTALLATION STEPS (updated)
 - [FULL INSTALLATION](docs/quickinstall.md)  
