@@ -576,6 +576,20 @@ pcluster delete-cluster -n <cluster-name> --region us-west-2
 
 # Other Monitoring Tools
 
+## `goday` `.zshrc` Alias ( to expedite ssh login to headnode )
+_this should work for `.bashrc` as well, but untested_
+```zsh
+
+export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCL\
+I && pcluster list-clusters --region us-west-2 | grep 'clusterName' | perl -pe \
+'s/.*\: \"(.*)\"\,.*/\$1/g;') && cluster_ip=\$(pcluster describe-cluster --regi\
+on us-west-2 -n \$cluster_name | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.\
+*)\"\,.*/\$1/g;') && ssh -i ~/.ssh/rcrf-omics-analysis-b.pem ubuntu@\$cluster_i\
+p"
+
+alias goday="$goday_cmd"
+```
+
 ## AWS Cloudwatch
 - The AWS Cloudwatch console can be used to monitor the cluster, and the resources it is using.  This is a good place to monitor the health of the cluster, and in particular the slurm and pcluster logs for the headnode and compute fleet.
 - Navigate to your `cloudwatch` console, then select `dashboards` and there will be a dashboard named for the name you used for the cluster. Follow this link (be sure you are in the `us-west-2` region) to see the logs and metrics for the cluster.
