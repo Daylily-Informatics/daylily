@@ -1,4 +1,3 @@
- 
 # [DAYLILY](http://daylilyinformatics.com/) && [(blog)](https://daylily-informatics.github.io/)
 _v0.7.0  --- STILL IN ACTIVE DEV_ 
 
