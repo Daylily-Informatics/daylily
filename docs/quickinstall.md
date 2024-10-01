@@ -578,6 +578,7 @@ pcluster delete-cluster -n <cluster-name> --region us-west-2
 
 ## `goday` `.zshrc` Alias ( to expedite ssh login to headnode )
 _this should work for `.bashrc` as well, but untested_
+- The alias will need to be modified if running >1 cluster.
 ```zsh
 
 export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCL\
