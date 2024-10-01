@@ -161,16 +161,11 @@ Assumes all of the setup steps above have been completed.
 ### Local `pcluster` DAYCLI Setup & Ephemeral Cluster Initialization
 
 #### 1. Install The `DAYCLI` Conda Environment (if not present) & Initialize The Ephemeral Cluster
-- From the `daylily` repository root:
-  - Your AWS cli credentials are automatically detected via the aws cli, and you will be informed of success/fail for this step. You can simply hit enter to proceed through this.
-  - You will be prompted to select the correct PEM file.
-  - 
-  - **full path to your .ssh/<mykey>.pm**,  _so on a Mac `/Users/<you>/.ssh/<mykey>.pem`_
-
+- From the `daylily` repository root, run the following command
     ```bash
     source bin/daylily-cfg-ephemeral-cluster
     ``` 
-    - You will be prompted to:
+    - Your aws credentials will be auto-detected and used to query appropriate resources to select from to proceed. You will be prompted to:
       - select the full path to your $HOME/.ssh/<mykey>.pem (from detected .pem files)
       - select the `s3` bucket you created and seeded, options presented will be any with names ending in `-omics-analysis`. Or you may select `1` and manually enter a s3 url.
       - select the `Public Subnet ID` created when the cloudstack formation script was run earlier.
