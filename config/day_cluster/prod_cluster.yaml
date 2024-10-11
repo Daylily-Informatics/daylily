@@ -362,6 +362,45 @@ Scheduling:
             EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
+    - Name: a192
+      CapacityType: SPOT
+      AllocationStrategy: lowest-price
+      ComputeResources:
+        - Name: all
+          Instances:
+            - InstanceType: c6a.48xlarge
+            - InstanceType: c6a.metal
+            - InstanceType: m6a.metal
+            - InstanceType: m6a.48xlarge
+            - InstanceType: c7a.metal-48xl
+            - InstanceType: c7a.48xlarge
+            - InstanceType: r6a.48xlarge
+            - InstanceType: r6a.metal
+            - InstanceType: m7a.48xlarge
+            - InstanceType: m7a.metal-48xl
+            - InstanceType: r7a.48xlarge
+            - InstanceType: r7a.metal-48xl
+          MinCount: 0
+          MaxCount: 10
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+      Networking:
+        SubnetIds:
+          - REGSUB_PRIVATE_SUBNET
+      CustomActions:
+        OnNodeConfigured:
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
+          Args:
+            - REGSUB_S3_BUCKET_NAME
+      Iam:
+        S3Access:
+          - BucketName: REGSUB_S3_BUCKET_NAME
+            EnableWriteAccess: false
+        AdditionalIamPolicies:
+          - Policy: REGSUB_S3_IAM_POLICY
 Monitoring:
   DetailedMonitoring: true
   Logs:
