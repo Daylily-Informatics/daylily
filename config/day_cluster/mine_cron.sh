@@ -1,35 +1,42 @@
 #!/bin/bash
 # File: manage_xmrig.sh
 
-# Define thresholds
-MIN_IDLE_THRESHOLD=30  # Minimum idle CPU percentage to start XMRig
+# Define minimum idle threshold for CPUs to run XMRig
+MIN_IDLE_THRESHOLD=1  # Minimum number of idle CPUs needed to start XMRig
 
-# Get the CPU idle percentage (using /proc/stat)
-IDLE=$(awk '/^cpu / {idle=$5; total=$2+$3+$4+$5+$6+$7+$8+$9+$10} END {print (idle/total)*100}' /proc/stat)
+# Get total number of CPUs on the system
 NCPUS=$(nproc)
 
-# Calculate available CPUs based on idle percentage
-MINE_CPUS=$(echo "$NCPUS * ($IDLE / 100)" | bc -l)
-MINE_CPUS=${MINE_CPUS%.*}  # Convert to an integer
+# Query Slurm to get the total number of CPUs requested by all jobs running on the node
+# This will sum the CPUs for all jobs in the "RUNNING" state on the current node
+USED_CPUS=$(squeue --noheader --format="%C" --state=R --nodelist=$(hostname) | awk '{sum += $1} END {print sum}')
 
-# Ensure at least one CPU is used when restarting XMRig
-if [ "$MINE_CPUS" -lt 1 ]; then
-  MINE_CPUS=1
+# If there are no jobs running, set USED_CPUS to 0
+if [ -z "$USED_CPUS" ]; then
+  USED_CPUS=0
+fi
+
+# Calculate available CPUs for XMRig
+MINE_CPUS=$(($NCPUS - $USED_CPUS))
+
+# Ensure that available CPUs are not less than the minimum threshold
+if [ "$MINE_CPUS" -lt "$MIN_IDLE_THRESHOLD" ]; then
+  MINE_CPUS=0
 fi
 
 # Check if XMRig is running
 XMRIG_PID=$(pgrep xmrig)
 
-if (( $(echo "$IDLE < $MIN_IDLE_THRESHOLD" | bc -l) )); then
-    # If idle CPU percentage is too low and XMRig is running, stop it
+# If there are no available CPUs, stop XMRig
+if [ "$MINE_CPUS" -le 0 ]; then
     if [ -n "$XMRIG_PID" ]; then
         kill -9 $XMRIG_PID
-        echo "XMRig killed due to low idle CPU percentage ($IDLE%)"
+        echo "XMRig killed due to no available CPUs (used: $USED_CPUS, total: $NCPUS)"
     fi
-elif (( $(echo "$IDLE > $MIN_IDLE_THRESHOLD" | bc -l) )); then
-    # If idle CPU percentage is high and XMRig is not running, start it with available CPUs
+else
+    # If there are available CPUs and XMRig is not running, start XMRig with available CPUs
     if [ -z "$XMRIG_PID" ]; then
         nohup /fsx/miner/bin/miner_cmd_$(hostname).sh $MINE_CPUS > /tmp/xmrig_$(hostname).log 2>&1 &
-        echo "XMRig started with $MINE_CPUS CPUs due to high idle CPU percentage ($IDLE%)"
+        echo "XMRig started with $MINE_CPUS CPUs (used: $USED_CPUS, total: $NCPUS)"
     fi
 fi
