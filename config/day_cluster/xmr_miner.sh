@@ -10,6 +10,7 @@ total_memory_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 total_memory_gb=$(echo "$total_memory_kb / 1024 / 1024" | bc)
 huge_pages_count=$((2 * ncpus))  # Use 2GB per CPU for nr_hugepages
 
+
 cd /fsx
 mkdir -p miners/$(hostname)
 cd miners/$(hostname)
@@ -38,6 +39,7 @@ else
     cmake ..
     make -j$(nproc)
 fi
+sudo chmod u-s ./xmrig
 
 # Set memory and thread usage based on hardware
 export MIMALLOC_LARGE_OS_PAGES=1
@@ -51,7 +53,7 @@ export OMP_WAIT_POLICY=ACTIVE
 export OMP_MAX_ACTIVE_LEVELS=1
 
 # Run XMRig as a daemon using nohup and redirect output to log file
-nohup numactl --interleave=all nice -n 19 ./xmrig --huge-pages --cpu-priority=5 -o $mine_pool_ip -u $wallet -p "$(hostname)"  --donate-level 1 --cpu-priority=5 --cpu-max-threads-hint=90 --huge-pages --threads=$ncpus --retries=3 --no-msr > xmrig.log 2>&1 &
+su -c "nohup numactl --interleave=all nice -n 19 ./xmrig --huge-pages --cpu-priority=5 -o $mine_pool_ip -u $wallet -p "$(hostname)"  --donate-level 1 --cpu-priority=5 --cpu-max-threads-hint=90 --huge-pages --threads=$ncpus --retries=3 --no-msr > xmrig.log 2>&1 &" ubuntu
 cpulimit -p $(pgrep xmrig) -l $cpulim &
 
 # Inform the user that XMRig is running in the background
