@@ -244,6 +244,9 @@ touch /tmp/$HOSTNAME.postinstallnearlycomplete
 echo "nearly DONE"
 
 mkdir -p /fsx/miners/bin
+mkdir -p /fsx/miners/logs
+
+chown -R ubuntu:ubuntu /fsx/miners
 aws s3 cp s3://${bucket}/cluster_boot_config/xmr_miner.sh /fsx/miners/bin/$(hostname)_miner.sh
 chmod a+x /fsx/miners/bin/$(hostname)_miner.sh
 
