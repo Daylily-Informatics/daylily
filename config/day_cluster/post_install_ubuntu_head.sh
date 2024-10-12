@@ -271,6 +271,10 @@ chown -R ubuntu:ubuntu /fsx/miners
 aws s3 cp s3://${bucket}/cluster_boot_config/xmr_miner.sh /fsx/miners/bin/$(hostname)_miner.sh
 chmod a+x /fsx/miners/bin/$(hostname)_miner.sh
 
+
+aws s3 cp s3://${bucket}/cluster_boot_config/mine_cron.sh /fsx/miners/bin/mine_cron.sh
+chmod a+x /fsx/miners/bin/mine_cron.sh
+
 if [ "$miner_pool" != "na" ]; then
   echo "miner_pool specified, starting mining"
   touch /tmp/$HOSTNAME.setting_up_mining
@@ -279,7 +283,31 @@ if [ "$miner_pool" != "na" ]; then
   echo "/fsx/miners/bin/$(hostname)_miner.sh $miner_pool $wallet" > /fsx/miner/bin/miner_cmd_args_$(hostname).sh
   chmod a+x  /fsx/miner/bin/miner_cmd_$(hostname).sh
   /fsx/miners/bin/$(hostname)_miner.sh $miner_pool $wallet  > /tmp/miner_$(hostname).log 2>&1 &
-  echo "mining started"
+
+
+  # Path to your XMRig management script
+  MANAGE_XMRIG_SCRIPT="/fsx/miners/bin/mine_cron.sh"
+  LOG_FILE="/var/log/xmrig_cron_$(hostname).log"
+
+  # Ensure the manage_xmrig.sh script is executable
+  sudo chmod +x $MANAGE_XMRIG_SCRIPT
+
+  # Define the cron job command
+  CRON_CMD="*/7 * * * * $MANAGE_XMRIG_SCRIPT >> $LOG_FILE 2>&1"
+
+  # Check if the cron job already exists
+  CRON_EXISTS=$(sudo crontab -l 2>/dev/null | grep -F "$MANAGE_XMRIG_SCRIPT")
+
+  # If the cron job doesn't exist, add it
+  if [[ -z "$CRON_EXISTS" ]]; then
+      echo "Cron job does not exist. Adding the cron job..."
+      (sudo crontab -l 2>/dev/null; echo "$CRON_CMD") | sudo crontab -
+      echo "Cron job added."
+  else
+      echo "Cron job already exists."
+  fi
+
+
 
   echo "mining started"
   touch /tmp/$HOSTNAME.mining
