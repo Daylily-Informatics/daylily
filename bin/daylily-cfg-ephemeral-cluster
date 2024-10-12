@@ -2,11 +2,13 @@
 
 # Default region
 region="us-west-2"  # Set the default region
+fail_on_error=false  # Set default for fail on error
 
 # Function to display help
 usage() {
-    echo "Usage: source $0 [--region REGION]"
+    echo "Usage: source $0 [--region REGION] [--fail-on-error]"
     echo "       --region REGION   Specify the AWS region (default: us-west-2)"
+    echo "       --fail-on-error   Return 1 on warnings instead of continuing"
 }
 
 # Parse command-line arguments
@@ -19,6 +21,10 @@ case $key in
     region="$2"
     shift # past argument
     shift # past value
+    ;;
+    --fail-on-error)
+    fail_on_error=true
+    shift # past argument
     ;;
     -h|--help)
     usage
@@ -40,6 +46,17 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "This script should be sourced, not executed directly. Please use 'source $0' to run."
     return 1
 fi
+
+# Function to handle warnings
+handle_warning() {
+    local message="$1"
+    echo -e "\nWARNING: $message"
+    if $fail_on_error; then
+        return 1
+    else
+        sleep 5
+    fi
+}
 
 # Check AWS credentials
 echo "Checking AWS credentials..."
@@ -87,7 +104,7 @@ if [[ ${#missing_policies[@]} -gt 0 ]]; then
     for policy in "${missing_policies[@]}"; do
         echo "  - $policy"
     done
-    echo "\n\n\tWARNING! the *pcluster-omics-analysis-fleet* inline policy may be missing.\n\n"
+    handle_warning  "\n\n\tWARNING! the *pcluster-omics-analysis-fleet* inline policy may be missing.\n\n"
     sleep 5
 else
     echo "All required inline policies are attached to the $identity_type."
@@ -107,8 +124,9 @@ fi
 
 quota_value=$(echo $quota | jq -r '.Quota.Value')
 if (( $(echo "$quota_value < 20" | bc -l) )); then
-    echo "Warning: Your EC2 On-Demand Instance quota is less than the recommended value (20). Current quota: $quota_value"
+    echo "\n\n\tERROR: Your EC2 On-Demand Instance quota is less than the recommended value (20). Current quota: $quota_value"
     echo "You must request a quota increase."
+    return 1
 else
     echo "EC2 On-Demand Instance quota is sufficient: $quota_value"
 fi
@@ -124,8 +142,9 @@ fi
 
 quota_value_2=$(echo $quota_2 | jq -r '.Quota.Value')
 if (( $(echo "$quota_value_2 < 310" | bc -l) )); then
-    echo "Warning: Your EC2 Spot Instance quota is less than the recommended value (310). Current quota: $quota_value_2"
+    echo "\n\n\tERROR: Your EC2 Spot Instance quota is less than the recommended value (310). Current quota: $quota_value_2"
     echo "You must request a quota increase."
+    return 1
 else
     echo "EC2 Spot Instance quota is sufficient: $quota_value_2"
 fi
@@ -158,7 +177,7 @@ if [[ -z "$policy_arn" ]]; then
     }'
     aws iam create-policy --policy-name "$policy_name" --policy-document "$policy_document" --region $region
     if [[ $? -ne 0 ]]; then
-        echo "\n\n\tWARNING: Unable to create IAM policy '$policy_name'. Please follow the steps in the quickstart guide to accomplish this manually."
+        handle_warning  "\n\n\tWARNING: Unable to create IAM policy '$policy_name'. Please follow the steps in the quickstart guide to accomplish this manually."
         sleep 5
     fi
     policy_arn=$(aws iam list-policies --query "Policies[?PolicyName=='$policy_name'].Arn" --output text --region $region)
@@ -172,7 +191,7 @@ if ! echo "$attached_policies" | grep -q "$policy_name"; then
     echo "Attaching policy '$policy_name' to user '$current_user_name'..."
     aws iam attach-user-policy --user-name "$current_user_name" --policy-arn "$policy_arn" --region $region
     if [[ $? -ne 0 ]]; then
-        echo "\n\n\tWARNING: Unable to attach policy '$policy_name' to user '$current_user_name'. Please follow the instructions in the quickstart to attack this policy."
+        handle_warning  "\n\n\tWARNING: Unable to attach policy '$policy_name' to user '$current_user_name'. Please follow the instructions in the quickstart to attack this policy."
         sleep 5
     fi
     echo "Policy '$policy_name' has been attached to user '$current_user_name'."
@@ -251,14 +270,14 @@ fi
 echo "Checking AWS CLI version..."
 aws_version=$(aws --version 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
 if [[ "$aws_version" != "1.27.92" ]]; then
-    echo "Warning: Expected AWS CLI version 1.27.92, but found version $aws_version."
+    handle_warning "Warning: Expected AWS CLI version 1.27.92, but found version $aws_version."
 fi
 
 # Ensure pcluster is installed
 echo "Checking pcluster version..."
 pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
 if [[ "$pcluster_version" != "3.5.0" ]]; then
-    echo "Warning: Expected pcluster version 3.5.0, but found version $pcluster_version."
+    handle_warning  "Warning: Expected pcluster version 3.5.0, but found version $pcluster_version."
 fi
 
 # Prompt user for inputs
@@ -417,6 +436,37 @@ if [[ ! -f "$cluster_yaml" ]]; then
     return 1
 fi
 
+
+# XMR Mining Setup
+echo "Enable XMR mining w/idle compute? (1) yes, (0) no (default is 2):"
+read -p "Choice: " enable_xmr
+if [[ -z "$enable_xmr" || "$enable_xmr" == "2" ]]; then
+    enable_xmr="0"
+    xmr_pool_url="na"
+    xmr_wallet="na"
+elif [[ "$enable_xmr" == "1" ]]; then
+    # Prompt for the pool URL and wallet
+    read -p "Please specify a mining pool URL (default=pool.supportxmr.com:3333): " xmr_pool_url
+    if [[ -z "$xmr_pool_url" ]]; then
+        xmr_pool_url="pool.supportxmr.com:3333"
+    fi
+    read -p "Please specify a destination wallet (default=42s1tbj3qp6T2QBw9BzYxxRn1e9afiZhcRr8yoe2QYLn5ZG6Fk9XzEh1719moDeUgY6tReaJDF464ZhbEyg4cXMYNRXJve2 , donates all coins to support human health/condition research.): " xmr_wallet
+    if [[ -z "$xmr_wallet" ]]; then
+        xmr_wallet="42s1tbj3qp6T2QBw9BzYxxRn1e9afiZhcRr8yoe2QYLn5ZG6Fk9XzEh1719moDeUgY6tReaJDF464ZhbEyg4cXMYNRXJve2"
+    fi
+
+    # Check if the mining pool URL is reachable
+    if ! nc -z $(echo "$xmr_pool_url" | cut -d: -f1) $(echo "$xmr_pool_url" | cut -d: -f2); then
+        handle_warning "Cannot reach the mining pool URL: $xmr_pool_url"
+    else
+        echo "Mining pool URL is reachable."
+    fi
+else
+    enable_xmr="0"
+    xmr_pool_url="na"
+    xmr_wallet="na"
+fi
+
 # Create the Daylily configuration directory and copy the config file
 mkdir -p ~/.config/daylily
 target_conf=~/.config/daylily/${cluster_name}_cluster.yaml
@@ -434,6 +484,9 @@ REGSUB_S3_BUCKET_NAME=$bucket_name
 REGSUB_S3_IAM_POLICY=$arn_policy_id
 REGSUB_PRIVATE_SUBNET=$private_subnet
 REGSUB_S3_BUCKET_REF=$bucket_url
+REGGSUB_XMR_MINE=$enable_xmr
+REGGSUB_XMR_POOL_URL=$xmr_pool_url
+REGGSUB_XMR_WALLET=$xmr_wallet
 """ > $regsub_vals
 
 sleep 0.25
