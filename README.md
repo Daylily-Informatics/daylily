@@ -191,3 +191,4 @@ Fail to copy still
 2024/08/25 23:07:43 NOTICE: human_GRCh38_ens105/aligner_indices/star_2.7.8a_index.zip: Skipped copy as --dry-run is set (size 26.090Gi)
 2024/08/25 23:07:43 NOTICE: human_GRCh38_ens105/aligner_indices/star_2.7.0f_index/SA: Skipped 
  
+ 
