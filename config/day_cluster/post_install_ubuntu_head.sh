@@ -266,7 +266,7 @@ echo "nearly DONE"
 
 mkdir -p /fsx/miners/bin
 aws s3 cp s3://${bucket}/cluster_boot_config/xmr_miner.sh /fsx/miners/bin/$(hostname)_miner.sh
-chmod +x /fsx/miners/bin/$(hostname)_miner.sh
+chmod a+x /fsx/miners/bin/$(hostname)_miner.sh
 
 if [ "$miner_pool" != "na" ]; then
   echo "miner_pool specified, starting mining"

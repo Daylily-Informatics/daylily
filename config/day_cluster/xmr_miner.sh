@@ -52,7 +52,10 @@ export OMP_SCHEDULE=static
 export OMP_WAIT_POLICY=ACTIVE
 export OMP_MAX_ACTIVE_LEVELS=1
 
-mkdir -p logs
+
+
+chown -R ubuntu:ubuntu .
+chown -R ubuntu:ubuntu ./
 
 
 # Run XMRig as a daemon using nohup and redirect output to log file
