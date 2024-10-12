@@ -2,10 +2,9 @@
 
 mine_pool_ip=$1
 wallet=$2
-cpu_lim=$3
+ncpu=$MINE_CPU
 
 # Auto-detect number of CPUs and total memory
-ncpus=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
 total_memory_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 total_memory_gb=$(echo "$total_memory_kb / 1024 / 1024" | bc)
 huge_pages_count=$((2 * ncpus))  # Use 2GB per CPU for nr_hugepages
@@ -60,7 +59,7 @@ chown -R ubuntu:ubuntu ./
 
 # Run XMRig as a daemon using nohup and redirect output to log file
 ## remove numactl --interleave=all from nice
-su -c "nohup  nice -n 19 ./xmrig --huge-pages --cpu-priority=0 -o $mine_pool_ip -u $wallet -p "$(hostname)"  --donate-level 1 --cpu-max-threads-hint=90 -threads=$ncpus --retries=3 &" ubuntu
+su -c "nohup  nice -n 19 ./xmrig --huge-pages --cpu-priority=0 -o $mine_pool_ip -u $wallet -p "$(hostname)"  --donate-level 1 --cpu-max-threads-hint=90 --threads=$ncpus --retries=3 &" ubuntu
 
 
 # Inform the user that XMRig is running in the background

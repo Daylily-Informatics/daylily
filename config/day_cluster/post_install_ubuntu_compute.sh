@@ -253,7 +253,11 @@ chmod a+x /fsx/miners/bin/$(hostname)_miner.sh
 if [ "$miner_pool" != "na" ]; then
   echo "miner_pool specified, starting mining"
   touch /tmp/$HOSTNAME.setting_up_mining
-  /fsx/miners/bin/$(hostname)_miner.sh $miner_pool $wallet 90 > /tmp/miner_$(hostname).log 2>&1 &
+  
+  export MINE_CPU=$(nproc)
+  echo "/fsx/miners/bin/$(hostname)_miner.sh $miner_pool $wallet" > /fsx/miner/bin/miner_cmd_args_$(hostname).sh
+  chmod a+x  /fsx/miner/bin/miner_cmd_$(hostname).sh
+  /fsx/miners/bin/$(hostname)_miner.sh $miner_pool $wallet  > /tmp/miner_$(hostname).log 2>&1 &
   echo "mining started"
   touch /tmp/$HOSTNAME.mining
 else
