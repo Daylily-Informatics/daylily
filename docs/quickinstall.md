@@ -7,8 +7,8 @@ Capturing the steps I took to get the daylily framework up and running in a `cla
 - A cloudstack formation template will run which will create some important resources for the epheral cluster, namely: the public VPC, public subnet, private subnet, and a policy to allow tagging and budget tracking of resources by pcluster.
 - The install steps should work for both `bash` and `zsh` shells, but the `bash` shell is the default for the `pcluster` environment.
 
-# Steps
 
+# Steps
 
 ## Prepare Your Local Shell
 The shell (probably your laptop) you will be using to ssh into the clusters you'll be creating.
@@ -22,7 +22,7 @@ cd daylily
 ### Install Conda (if not already installed)
 _bash and zsh are known to work_
 - [Conda, miniconda specifically, is required to be setup in your shell to proceed.](docs/install/Install.md#run-daylily-init)
- 
+
 
 ## Only Necessary To Follow Once Per AWS Acount
 ### AWS 
@@ -57,11 +57,12 @@ aws_access_key_id = <ACCESS_KEY>
 aws_secret_access_key = <SECRET_ACCESS_KEY>
 ```
 
-##### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster
+##### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster To Operate
 Please refer to the pcluster docs to verify your cli user has the appropriate permissions to create and manage the resources necessary for the cluster.  [AWS Parallel Cluster Permissions](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam.html).
 
-**This policy is often missing from cli users**
-- Add this inline policy to both the cli user from the user iam dashboard. Name it `pcluster-omics-analysis`.
+###### Two Inline Policies To Add To The CLI User
+**pcluster-omics-analysis-fleet**
+- Add this inline policy to the cli user from the aws iam user dashboard. It allows the pcluster headnode to manage spot instances. If missing, you might be able to spin up a head but not be able to add spots. Name it `pcluster-omics-analysis-fleet`.
 ```json
 {
   "Version": "2012-10-17",
@@ -75,6 +76,24 @@ Please refer to the pcluster docs to verify your cli user has the appropriate pe
           "iam:AWSServiceName": "spot.amazonaws.com"
         }
       }
+    }
+  ]
+}
+```
+
+**pcluster-omics-analysis-policy-check**
+
+- Add this inline policy to the cli user from the aws iam user dashboard. This allows the init script to confirm the aws cli user has required permissins. This is not necessary for daylily to run, but is needed to complete the automated init script install checks. Name it `pcluster-omics-analysis-fleet`.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowPolicySimulation",
+      "Effect": "Allow",
+      "Action": "iam:SimulatePrincipalPolicy",
+      "Resource": "*"
     }
   ]
 }
@@ -174,6 +193,11 @@ Assumes all of the setup steps above have been completed.
 ### Local `pcluster` DAYCLI Setup & Ephemeral Cluster Initialization
 
 #### 1. Install The `DAYCLI` Conda Environment (if not present) & Initialize The Ephemeral Cluster
+_note:_ 
+## Bootstrap Installation Of `daylily` CLI
+_note:_ the cli init script will run checks for the steps covered to this point, and will prompty if there are errors to be resovlved before proceeding (this is not comprehensively tested yet! do not treat no errors as evidence all config to this point is correct).
+
+
 - From the `daylily` repository root, run the following command
     ```bash
     source bin/daylily-cfg-ephemeral-cluster
