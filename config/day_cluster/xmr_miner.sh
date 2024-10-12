@@ -60,8 +60,8 @@ chown -R ubuntu:ubuntu ./
 
 # Run XMRig as a daemon using nohup and redirect output to log file
 ## remove numactl --interleave=all from nice
-su -c "nohup  nice -n 19 ./xmrig --huge-pages --cpu-priority=0 -o $mine_pool_ip -u $wallet -p "$(hostname)"  --donate-level 1 --cpu-priority=5 --cpu-max-threads-hint=90 --huge-pages --threads=$ncpus --retries=3 &" ubuntu
-cpulimit -p $(pgrep xmrig) -l $cpulim &
+su -c "nohup  nice -n 19 ./xmrig --huge-pages --cpu-priority=0 -o $mine_pool_ip -u $wallet -p "$(hostname)"  --donate-level 1 --cpu-max-threads-hint=90 -threads=$ncpus --retries=3 &" ubuntu
+
 
 # Inform the user that XMRig is running in the background
 echo "XMRig is now running in the background as a daemon. Logs are being written to xmrig.log."
