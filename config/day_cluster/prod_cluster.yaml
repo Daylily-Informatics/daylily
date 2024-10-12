@@ -24,6 +24,8 @@ HeadNode:
       Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_head.sh
       Args:
         - REGSUB_S3_BUCKET_NAME
+        - REGSUB_XMR_POOL_URL
+        - REGGSUB_XMR_WALLET
   Iam:
     S3Access:
       - BucketName: REGSUB_S3_BUCKET_NAME  # daylily-ref
@@ -68,6 +70,8 @@ Scheduling:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
             - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGGSUB_XMR_WALLET
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -136,6 +140,8 @@ Scheduling:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
             - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGGSUB_XMR_WALLET
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -189,6 +195,8 @@ Scheduling:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
             - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGGSUB_XMR_WALLET
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -238,6 +246,8 @@ Scheduling:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
             - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGGSUB_XMR_WALLET
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -305,6 +315,8 @@ Scheduling:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
             - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGGSUB_XMR_WALLET
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -356,6 +368,8 @@ Scheduling:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
             - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGGSUB_XMR_WALLET
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME
@@ -395,6 +409,8 @@ Scheduling:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
             - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGGSUB_XMR_WALLET
       Iam:
         S3Access:
           - BucketName: REGSUB_S3_BUCKET_NAME

@@ -489,6 +489,7 @@ REGGSUB_XMR_POOL_URL=$xmr_pool_url
 REGGSUB_XMR_WALLET=$xmr_wallet
 """ > $regsub_vals
 
+
 sleep 0.25
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
 
