@@ -8,8 +8,14 @@ fail_on_error=false  # Set default for fail on error
 usage() {
     echo "Usage: source $0 [--region REGION] [--fail-on-error]"
     echo "       --region REGION   Specify the AWS region (default: us-west-2)"
-    echo "       --fail-on-error   Return 1 on warnings instead of continuing"
+    echo "       --fail-on-warning   return as error  on warnings instead of continuing with warn msg. (default:false)"
 }
+
+# Check if script is sourced with no arguments
+if [[ $# -eq 0 ]]; then
+    usage
+    return 0
+fi
 
 # Parse command-line arguments
 while [[ $# -gt 0 ]]
@@ -290,7 +296,7 @@ if [[ ${#pem_files[@]} -eq 0 ]]; then
     echo "No PEM files found in ~/.ssh. Please ensure you have your PEM file there."
     return 1
 fi
-
+ 
 echo ""
 echo "Select a PEM file to use:"
 select pem_file in "${pem_files[@]}"; do
@@ -299,8 +305,8 @@ select pem_file in "${pem_files[@]}"; do
         # Check if PEM file is of type ed25519
         key_type=$(ssh-keygen -l -f "$pem_file" 2>/dev/null | awk '{print $4}')
         if [[ "$key_type" != "ED25519" ]]; then
-            echo "Error: The selected PEM file is not of type ed25519, which is required for Ubuntu hosts."
-            return 1
+            handle_warning "\n\n\tWARNING: The selected PEM file MAY not be of type ed25519, which is required for Ubuntu hosts.\n"
+            sleep 5
         else
             echo "PEM file is of type ed25519."
         fi
@@ -309,6 +315,7 @@ select pem_file in "${pem_files[@]}"; do
         echo "Invalid selection, please try again."
     fi
 done
+
 
 # Query available S3 buckets that match "omics-analysis"
 matching_buckets=($(aws s3api list-buckets --query "Buckets[?contains(Name, 'omics-analysis')].Name" --output text --region $region))
@@ -321,8 +328,8 @@ else
     bucket_url=na
     echo "\nSelect a matching S3 bucket or choose '0' to manually enter an S3 bucket:"
     options=("Manually enter an S3 bucket" "${matching_buckets[@]}")
-    select bucket_choice in "${options[@]}"; do
-        if [[ "$REPLY" == "1" ]]; then
+    select bucket_choice in "Manually Enter s3 string" "${matching_buckets[@]}"; do
+        if [[ "$REPLY" == "0" ]]; then
             echo -n "\nEnter the S3 bucket URL for references and init scripts (e.g., s3://BUCKET-NAME): "
             read bucket_url
             bucket_name=$(echo "$bucket_url" | sed 's/s3\:\/\///g' | sed 's/\/$//')
@@ -436,36 +443,46 @@ if [[ ! -f "$cluster_yaml" ]]; then
     return 1
 fi
 
-
 # XMR Mining Setup
-echo "Enable XMR mining w/idle compute? (1) yes, (0) no (default is 2):"
-read -p "Choice: " enable_xmr
-if [[ -z "$enable_xmr" || "$enable_xmr" == "2" ]]; then
-    enable_xmr="0"
-    xmr_pool_url="na"
-    xmr_wallet="na"
-elif [[ "$enable_xmr" == "1" ]]; then
-    # Prompt for the pool URL and wallet
-    read -p "Please specify a mining pool URL (default=pool.supportxmr.com:3333): " xmr_pool_url
-    if [[ -z "$xmr_pool_url" ]]; then
-        xmr_pool_url="pool.supportxmr.com:3333"
-    fi
-    read -p "Please specify a destination wallet (default=42s1tbj3qp6T2QBw9BzYxxRn1e9afiZhcRr8yoe2QYLn5ZG6Fk9XzEh1719moDeUgY6tReaJDF464ZhbEyg4cXMYNRXJve2 , donates all coins to support human health/condition research.): " xmr_wallet
-    if [[ -z "$xmr_wallet" ]]; then
-        xmr_wallet="42s1tbj3qp6T2QBw9BzYxxRn1e9afiZhcRr8yoe2QYLn5ZG6Fk9XzEh1719moDeUgY6tReaJDF464ZhbEyg4cXMYNRXJve2"
-    fi
+echo ""
+echo "Enable XMR mining with idle compute? Select 1 for No, 2 for Yes:"
+select enable_xmr in "No" "Yes"; do
+    case $REPLY in
+        2)
+            enable_xmr="1"
+            # Prompt for the pool URL and wallet
+            echo -n "Please specify a mining pool URL (default=pool.supportxmr.com:3333): "
+            read xmr_pool_url
+            if [[ -z "$xmr_pool_url" ]]; then
+                xmr_pool_url="pool.supportxmr.com:3333"
+            fi
 
-    # Check if the mining pool URL is reachable
-    if ! nc -z $(echo "$xmr_pool_url" | cut -d: -f1) $(echo "$xmr_pool_url" | cut -d: -f2); then
-        handle_warning "Cannot reach the mining pool URL: $xmr_pool_url"
-    else
-        echo "Mining pool URL is reachable."
-    fi
-else
-    enable_xmr="0"
-    xmr_pool_url="na"
-    xmr_wallet="na"
-fi
+            echo -n "Please specify a destination wallet (default=42s1tbj3qp6T2QBw9BzYxxRn1e9afiZhcRr8yoe2QYLn5ZG6Fk9XzEh1719moDeUgY6tReaJDF464ZhbEyg4cXMYNRXJve2, donates all coins to support human health/condition research.): "
+            read xmr_wallet
+            if [[ -z "$xmr_wallet" ]]; then
+                xmr_wallet="42s1tbj3qp6T2QBw9BzYxxRn1e9afiZhcRr8yoe2QYLn5ZG6Fk9XzEh1719moDeUgY6tReaJDF464ZhbEyg4cXMYNRXJve2"
+            fi
+
+            # Check if the mining pool URL is reachable
+            if ! nc -z $(echo "$xmr_pool_url" | cut -d: -f1) $(echo "$xmr_pool_url" | cut -d: -f2); then
+                handle_warning "Cannot reach the mining pool URL: $xmr_pool_url"
+            else
+                echo "Mining pool URL is reachable."
+            fi
+            break
+            ;;
+        1)
+            enable_xmr="0"
+            xmr_pool_url="na"
+            xmr_wallet="na"
+            echo "XMR mining is disabled."
+            break
+            ;;
+        *)
+            echo "Invalid selection, please try again."
+            ;;
+    esac
+done
 
 # Create the Daylily configuration directory and copy the config file
 mkdir -p ~/.config/daylily
