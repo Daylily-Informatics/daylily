@@ -60,7 +60,7 @@ handle_warning() {
     if $fail_on_error; then
         return 1
     else
-        sleep 5
+        sleep 1.5
     fi
 }
 
@@ -111,7 +111,7 @@ if [[ ${#missing_policies[@]} -gt 0 ]]; then
         echo "  - $policy"
     done
     handle_warning  "\n\n\tWARNING! the *pcluster-omics-analysis-fleet* inline policy may be missing.\n\n"
-    sleep 5
+    sleep 1.5
 else
     echo "All required inline policies are attached to the $identity_type."
 fi
@@ -184,7 +184,7 @@ if [[ -z "$policy_arn" ]]; then
     aws iam create-policy --policy-name "$policy_name" --policy-document "$policy_document" --region $region
     if [[ $? -ne 0 ]]; then
         handle_warning  "\n\n\tWARNING: Unable to create IAM policy '$policy_name'. Please follow the steps in the quickstart guide to accomplish this manually."
-        sleep 5
+        sleep 1.5
     fi
     policy_arn=$(aws iam list-policies --query "Policies[?PolicyName=='$policy_name'].Arn" --output text --region $region)
 fi
@@ -197,8 +197,8 @@ if ! echo "$attached_policies" | grep -q "$policy_name"; then
     echo "Attaching policy '$policy_name' to user '$current_user_name'..."
     aws iam attach-user-policy --user-name "$current_user_name" --policy-arn "$policy_arn" --region $region
     if [[ $? -ne 0 ]]; then
-        handle_warning  "\n\n\tWARNING: Unable to attach policy '$policy_name' to user '$current_user_name'. Please follow the instructions in the quickstart to attack this policy."
-        sleep 5
+        handle_warning  "\n\n\tWARNING: Unable to attach policy '$policy_name' to user '$current_user_name'. Please follow the instructions in the quickstart to h this policy."
+        sleep 1.5
     fi
     echo "Policy '$policy_name' has been attached to user '$current_user_name'."
 else
@@ -306,7 +306,7 @@ select pem_file in "${pem_files[@]}"; do
         key_type=$(ssh-keygen -l -f "$pem_file" 2>/dev/null | awk '{print $4}')
         if [[ "$key_type" != "ED25519" ]]; then
             handle_warning "\n\n\tWARNING: The selected PEM file MAY not be of type ed25519, which is required for Ubuntu hosts.\n"
-            sleep 5
+            sleep 1.5
         else
             echo "PEM file is of type ed25519."
         fi
@@ -347,7 +347,7 @@ else
 fi
 
 echo "\n\n\tPUBLIC & PRIVATE subnets, as well as BUDGET POLICY ARN will be discovered automatically & should have been created by running the stackformation script previously. If nothing is presented, please run the stackformation and confirm the resources are being created.\n\n"
-sleep 2
+sleep 1
 
 # Display public subnets with names and IDs for selection
 echo "\nSelect a Public Subnet:"
@@ -501,9 +501,9 @@ REGSUB_S3_BUCKET_NAME=$bucket_name
 REGSUB_S3_IAM_POLICY=$arn_policy_id
 REGSUB_PRIVATE_SUBNET=$private_subnet
 REGSUB_S3_BUCKET_REF=$bucket_url
-REGGSUB_XMR_MINE=$enable_xmr
-REGGSUB_XMR_POOL_URL=$xmr_pool_url
-REGGSUB_XMR_WALLET=$xmr_wallet
+REGSUB_XMR_MINE=$enable_xmr
+REGSUB_XMR_POOL_URL=$xmr_pool_url
+REGSUB_XMR_WALLET=$xmr_wallet
 """ > $regsub_vals
 
 
