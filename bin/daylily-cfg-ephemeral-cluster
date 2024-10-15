@@ -291,7 +291,7 @@ fi
 if [[ ! -f "$cluster_yaml" ]]; then
     echo "Error: YAML file '$cluster_yaml' does not exist."
     return 1
-fi
+fi 
 
 # XMR Mining Setup
 echo "Enable XMR mining with idle compute? (1) No (2) Yes:"
