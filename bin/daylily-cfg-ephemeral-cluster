@@ -327,7 +327,7 @@ if [[ ${#matching_buckets[@]} -eq 0 ]]; then
 else
     bucket_url=na
     echo "\nSelect a matching S3 bucket or type 'm' to manually enter an S3 bucket:"
-    options=("${matching_buckets[@]}")
+    options=("${matching_buckets[@]}" "type m")
     select bucket_choice in "Manually Enter s3 string" "${matching_buckets[@]}"; do
         if [[ "$REPLY" == "N" ]]; then
             echo -n "\nEnter the S3 bucket URL for references and init scripts (e.g., s3://BUCKET-NAME): "
