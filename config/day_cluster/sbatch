@@ -21,7 +21,7 @@ parameters=$@
 #enable or disable the budget checks for the projects
 budget="no"
 
-account_id=670484050738
+account_id=670484050738 # Replace with your account id
 
 if [ -z "${project}" ];then
   export project=$(echo $@ | sed -n -e 's/.*comment //p' | awk '{print $1}')
