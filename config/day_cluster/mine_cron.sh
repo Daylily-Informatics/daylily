@@ -1,42 +1,49 @@
 #!/bin/bash
-# File: manage_xmrig.sh
 
-# Define minimum idle threshold for CPUs to run XMRig
-MIN_IDLE_THRESHOLD=1  # Minimum number of idle CPUs needed to start XMRig
+# Path to your XMRig binary and options
+XMRIG_PATH_AND_OPTS=$1
+# User running XMRig
+USER="ubuntu"
 
-# Get total number of CPUs on the system
-NCPUS=$(nproc)
-
-# Query Slurm to get the total number of CPUs requested by all jobs running on the node
-# This will sum the CPUs for all jobs in the "RUNNING" state on the current node
-USED_CPUS=$(squeue --noheader --format="%C" --state=R --nodelist=$(hostname) | awk '{sum += $1} END {print sum}')
-
-# If there are no jobs running, set USED_CPUS to 0
-if [ -z "$USED_CPUS" ]; then
-  USED_CPUS=0
-fi
-
-# Calculate available CPUs for XMRig
-MINE_CPUS=$(($NCPUS - $USED_CPUS))
-
-# Ensure that available CPUs are not less than the minimum threshold
-if [ "$MINE_CPUS" -lt "$MIN_IDLE_THRESHOLD" ]; then
-  MINE_CPUS=0
-fi
-
-# Check if XMRig is running
-XMRIG_PID=$(pgrep xmrig)
-
-# If there are no available CPUs, stop XMRig
-if [ "$MINE_CPUS" -le 0 ]; then
-    if [ -n "$XMRIG_PID" ]; then
-        kill -9 $XMRIG_PID
-        echo "XMRig killed due to no available CPUs (used: $USED_CPUS, total: $NCPUS)"
+# Function to start XMRig
+start_xmrig() {
+    if ! pgrep -u $USER xmrig > /dev/null; then
+        echo "Starting XMRig with $1 threads..."
+        export MINE_CPU=$1
+        $XMRIG_PATH_AND_OPTS > /fsx/miners/logs/${hostname}_xmrig_run.log &
     fi
-else
-    # If there are available CPUs and XMRig is not running, start XMRig with available CPUs
-    if [ -z "$XMRIG_PID" ]; then
-        nohup /fsx/miner/bin/miner_cmd_$(hostname).sh $MINE_CPUS > /tmp/xmrig_$(hostname).log 2>&1 &
-        echo "XMRig started with $MINE_CPUS CPUs (used: $USED_CPUS, total: $NCPUS)"
+}
+
+# Function to stop XMRig
+stop_xmrig() {
+    if pgrep -u $USER xmrig > /dev/null; then
+        echo "Stopping XMRig..."
+        pkill -u $USER xmrig
     fi
-fi
+}
+
+# Main logic
+while true; do
+    # Number of total CPUs
+    total_cpus=$(nproc)
+
+    # Get the total number of busy CPUs allocated by SLURM
+    busy_cpus=$(squeue --noheader --format="%C" | awk '{s+=$1} END {print s}')
+    busy_cpus=${busy_cpus:-0}  # Default to 0 if no jobs are running
+    
+    # Calculate available CPUs
+    available_cpus=$((total_cpus - busy_cpus - 1))
+
+    # Adjust XMRig based on available CPUs
+    if [ "$available_cpus" -gt 0 ]; then
+        start_xmrig "$available_cpus"
+    else
+        stop_xmrig
+    fi
+
+    # Sleep for a specified interval before checking again
+    sleep 333
+
+    stop_xmrig
+
+done

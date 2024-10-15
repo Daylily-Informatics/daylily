@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Source me!
+
 mine_pool_ip=$1
 wallet=$2
 ncpu=$MINE_CPU
