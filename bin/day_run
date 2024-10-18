@@ -81,12 +81,11 @@ if [[ "$?" != "0" ]]; then
   mkcmd2="mkdir -p $conda_prefix_dir";
   echo "Attempting To Create Conda Prefix Dir: $conda_prefix_dir ...." 1>&2
   $mkcmd2 || echo "WARNING, v2 command failed: $mkcmd2 ....." 1>&2; sleep 6;
-    sleep 3
-    chmod a+wrx /fsx/resources/environments/conda/$USER || echo "Warning, chmod failed to conda dir: /fsx/resources/environments/conda/$USER " 1>&2;
-    chmod a+wrx /fsx/resources/environments/container/$USER || echo "Warning, chmod failed to container dir: /fsx/resources/environments/container/$USER " 1>&2;
-    chown -R $USER:$USER /fsx/resources/environments/conda/$USER || echo "Warning, chown failed to conda dir: /fsx/resources/environments/conda/$USER " 1>&2;
-    chown -R $USER:$USER /fsx/resources/environments/container/$USER || echo "Warning, chown failed to container dir: /fsx/resources/environments/container/$USER " 1>&2;
-  fi
+  sleep 3
+  chmod a+wrx /fsx/resources/environments/conda/$USER || echo "Warning, chmod failed to conda dir: /fsx/resources/environments/conda/$USER " 1>&2;
+  chmod a+wrx /fsx/resources/environments/container/$USER || echo "Warning, chmod failed to container dir: /fsx/resources/environments/container/$USER " 1>&2;
+  chown -R $USER:$USER /fsx/resources/environments/conda/$USER || echo "Warning, chown failed to conda dir: /fsx/resources/environments/conda/$USER " 1>&2;
+  chown -R $USER:$USER /fsx/resources/environments/container/$USER || echo "Warning, chown failed to container dir: /fsx/resources/environments/container/$USER " 1>&2;  
 fi
 
 # If there are no profile config files present, create from templates. Else, skip
