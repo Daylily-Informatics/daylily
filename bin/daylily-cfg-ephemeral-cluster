@@ -62,6 +62,9 @@ handle_warning() {
 }
 
 validate_region() {
+ echo "NOTE:  you are advised to run _aws configure set region $1_ to set the region for use with the pcluster CLI, to avoid the errors you will cause when the _region_ flag is not used."
+  sleep 2.3
+
  if [[ "$1" == "us-west-2" ]]; then
     echo "Region '$1' confirmed as valid."
     return 0

@@ -297,6 +297,8 @@ conda activate DAYCLI
 ```
 
 #### `pcluster` CLI Usage
+**WARNING:**  you are advised to run `aws configure set region <REGION>` to set the region for use with the pcluster CLI, to avoid the errors you will cause when the `--region` flag is omitted.
+
 ```text
 pcluster -h  
 usage: pcluster [-h]

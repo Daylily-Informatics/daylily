@@ -367,7 +367,7 @@ Scheduling:
             - InstanceType: p5e.48xlarge   # 192 vCPUs, 2048 GiB
           MinCount: 0
           MaxCount: 10
-          MaxSpotPrice: DYNAMIC_CALCULATE_A192_SPOT  # ie: 50% of the cheapest dedicated in this pool, ie $98.32
+          MaxSpotPrice: 5.4432  # 50% of $10.8864
           Networking:
             PlacementGroup:
               Enabled: false
