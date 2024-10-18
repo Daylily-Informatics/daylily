@@ -57,12 +57,17 @@ if [[ -z "$REGION" ]]; then
   return 1
 fi
 
+
+
 validate_region() {
-  aws s3api list-buckets --query "Buckets[].Name" --output text --region "$1" &> /dev/null
-  if [[ $? -ne 0 ]]; then
-    echo "Error: '$1' is not a valid or reachable AWS region."
-    echo "Please provide a valid region (e.g., us-east-1, us-west-2)."
-    return 1
+ if [[ "$1" == "us-west-2" ]]; then
+    echo "Region '$1' confirmed as valid."
+    return 0
+  else
+    echo "Warning: Region '$1' is not 'us-west-2'."
+    echo "It is recommended to use 'us-west-2' for this operation."
+    echo "Proceeding with caution..."
+    sleep .67
   fi
 }
 

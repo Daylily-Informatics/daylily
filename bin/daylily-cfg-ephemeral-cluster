@@ -61,6 +61,21 @@ handle_warning() {
     fi
 }
 
+validate_region() {
+ if [[ "$1" == "us-west-2" ]]; then
+    echo "Region '$1' confirmed as valid."
+    return 0
+  else
+    echo "Warning: Region '$1' is not 'us-west-2'."
+    echo "It is recommended to use 'us-west-2' for this operation."
+    echo "Proceeding with caution..."
+    sleep .67
+  fi
+}
+
+# Call the region validation function
+validate_region "$REGION" || return 1
+
 # Check AWS credentials
 echo "Verifying AWS credentials..."
 if ! aws sts get-caller-identity --region "$region" &> /dev/null; then
