@@ -16,6 +16,19 @@ wallet="$4"  # specified in the cluster yaml, wallet
 
 aws configure set region $region
 
+
+# Function to log spot price
+log_spot_price() {
+  instance_type=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type)
+  spot_price=$(aws ec2 describe-spot-price-history \
+    --instance-types "$instance_type" \
+    --region "$region" \
+    --product-description "Linux/UNIX" \
+    --query 'SpotPriceHistory[0].SpotPrice' \
+    --output text)
+  echo "Spot price for instance type $instance_type: $spot_price USD/hour" >> /tmp/$HOSTNAME_spot_price.log
+}
+
 mkdir -p /tmp/jobs
 chmod -R a+wrx /tmp/jobs
 
@@ -36,9 +49,14 @@ if [ "${cfn_node_type}" == "ComputeFleet" ]; then
   # Set up cron job for monitoring
   echo "* * * * * /opt/slurm/sbin/check_tags.sh" | sudo tee /var/spool/cron/crontabs/root
 
+  log_spot_price
+
 else
   # Head Node Configuration
   echo "Configuring head node..."
+
+  # Log the spot price
+  log_spot_price
 
   # Create and configure the check_tags.sh script for head node
   cat <<'EOF' | sudo tee /opt/slurm/sbin/check_tags.sh
