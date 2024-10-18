@@ -135,7 +135,7 @@ create_budget() {
 # Query AWS budgets
 BUDGETS=$(aws budgets describe-budgets --account-id $AWS_ACCOUNT_ID --region "$REGION" 2>/dev/null)
 
-if [[ -z "$BUDGETS" ]]; then
+if [[ -z "$BUDGETS" && "$SKIP_PROJECT_CHECK" != "true" ]]; then
   echo "Error: Unable to retrieve any budgets from AWS. Please check your AWS permissions or configuration."
   return 3
 fi
