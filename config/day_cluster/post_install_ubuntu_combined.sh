@@ -213,10 +213,25 @@ sudo tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
 
 sudo ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
 
-# Create directories and set permissions
-for dir in /fsx/{tmp,analysis_results/{daylily,ubuntu,cromwell_executions},resources/{environments/{conda,containers}},scratch,miners/bin,miners/logs}; do
-  mkdir -p $dir && chmod -R a+wrx $dir
-done
+# Create necessary directories
+
+mkdir -p /fsx/analysis_results/cromwell_executions  
+mkdir -p /fsx/analysis_results/ubuntu  
+mkdir -p /fsx/analysis_results/daylily              
+mkdir -p /fsx/miners/logs  
+mkdir -p /fsx/tmp
+mkdir -p /fsx/miners/bin               
+mkdir -p /fsx/scratch
+mkdir -p /fsx/resources/environments/conda/ubuntu/$USER/$(hostname)
+mkdir -p /fsx/resources/environments/containers/$USER/$(hostname)
+chmod -R a+wrx /fsx/analysis_results
+chmod -R a+wrx /fsx/scratch
+chmod -R a+wrx /fsx/miners
+chmod -R a+wrx /fsx/tmp
+chown -R ubuntu:ubuntu /fsx/miners
+
+
+
 
 # Mining Setup (if miner_pool is specified)
 if [ "$miner_pool" != "na" ]; then
