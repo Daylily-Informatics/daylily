@@ -41,6 +41,7 @@ Resources:
               - 'ec2:DeleteTags'
               - 'ec2:DescribeTags'
               - 'ec2:CreateTags'
+              - 'ec2:DescribeSpotPriceHistory'
             Resource: '*'
           - Effect: Allow
             Action:
