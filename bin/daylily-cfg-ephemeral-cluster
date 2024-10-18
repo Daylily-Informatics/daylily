@@ -380,5 +380,5 @@ python bin/helpers/watch_cluster_status.py "$region"
 
 echo "\nOnce the cluster is complete, configure the head node by running './bin/daylily-init-headnode $pem_file'."
 echo "\n\t....trying this now!\n"
-
-./bin/daylily-init-headnode $pem_file $regions
+sleep 2
+. ./bin/daylily-init-headnode $pem_file $regions

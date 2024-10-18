@@ -35,7 +35,7 @@ if mg_biome in ['na']:
     mg_biome = "AWSPC"
 
 if mg_biome in ['na'] or mg_profile in ['na']:
-    print("please run 'source mginit; day-activate (profile);' ", file=sys.stderr )
+    print("please run 'source dyinit; day-activate (profile);' ", file=sys.stderr )
 
 # set work dir to the executing	dir ('..' from the Snakefile)
 wd=os.path.abspath('.')
@@ -66,7 +66,7 @@ try:
 
 except Exception as e:
     print('MISSING DAY_BIOME OR DAY_PROFILE',e,  mg_biome)
-    raise Exception(f"ERROR: {e}\n\n have you executed: 'source mginit; dy-a (profilename)'?  is the profile activated valid for this environment? ")
+    raise Exception(f"ERROR: {e}\n\n have you executed: 'source dyinit; dy-a (profilename)'?  is the profile activated valid for this environment? ")
 
 
 # Import the global and help SMK files. The global and common SMK files

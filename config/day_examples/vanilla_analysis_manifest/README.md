@@ -99,7 +99,7 @@ Rclone is a very feature rich tool.  You can find the docs here.  In addition to
 
 ```
 cd $DAY_ROOT
-source mginit
+source dyinit
 mg-a local
 rclone -L --config config/day_example_analysis_manifests/rclone_xxx_local_example.conf cat localxxx:/fsx/data/external_data/research_experiments/ManualRuns/EX3636/b37/wgs_data/SQ42092_LS1585266_RE2698_G3/Lib_for_SequenceIndex_SQ42092.aligned.deduped.sort.bam | samtools view -H
 ```

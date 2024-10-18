@@ -99,7 +99,7 @@ conda config --add channels bioconda
 
 mgcnt=$(ls -d1 "$(dirname $(which conda))"/../envs/DAY | wc -l)
 if [[ "$mgcnt" == "0" ]]; then
-    echo "Installing DAY \(which will be sourced for you when you \'source mginit\' \(see docs\)  you should not need to source MG directly.  Beginning install... "
+    echo "Installing DAY \(which will be sourced for you when you \'source dyinit\' \(see docs\)  you should not need to source MG directly.  Beginning install... "
     echo "..."
     sleep 1.4
 
@@ -108,7 +108,7 @@ if [[ "$mgcnt" == "0" ]]; then
     echo "Install exited with > $? < (if not zero, not the best sign)."
     echo "try the following:
 
-       source mginit; dy-a local; dy-r help;
+       source dyinit; dy-a local; dy-r help;
 
        #initialized the day CLI, activate the local env settings, runs day to get basic help info on targets
        "
@@ -127,6 +127,6 @@ fi;
 
 echo "==="
 echo "___"
-echo 'you should log out of this shell and log back into a fresh shell, run source mginit, dy-a *****, etc.'
+echo 'you should log out of this shell and log back into a fresh shell, run source dyinit, dy-a *****, etc.'
 
 return 0

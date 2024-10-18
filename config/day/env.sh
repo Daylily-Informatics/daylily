@@ -2,7 +2,7 @@ conda activate || echo NOCONDA
 conda_bin=$(which conda)
 conda_dir=$(dirname $conda_bin)
 if [[ $conda_dir == "" ]]; then
-    echo" >>> ERROR: conda has not been found in your PATH.  If you do not have conda installed, you may run the mod installer+build command: source mginit && mod-activate BUILD_all"
+    echo" >>> ERROR: conda has not been found in your PATH.  If you do not have conda installed, you may run the mod installer+build command: source dyinit && mod-activate BUILD_all"
 fi
 
 

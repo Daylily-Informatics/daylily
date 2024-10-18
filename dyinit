@@ -3,17 +3,17 @@
 # Ensure the script is sourced, not executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "Error: This script must be sourced, not executed directly."
-  echo "Usage: source $0 --project <project> --region <region>"
+  echo "Usage: source $0 --project <project> --region <region> [--skip-project-check]"
   return 3
 fi
 
 # Function to display usage and return
 usage() {
-  echo "This script initializes the day CLI."
-  echo "Usage: source $0 --project <project> --region <region>"
+  echo "This script initializes the Day CLI."
+  echo "Usage: source $0 --project <project> --region <region> [--skip-project-check]"
   echo " ... project == AWS budget"
   echo "Valid projects: $(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2)"
-  echo "Valid regions: Use a valid AWS region (e.g., us-east-1, us-west-2).x"
+  echo "Valid regions: Use a valid AWS region (e.g., us-east-1, us-west-2)."
   return 3
 }
 
@@ -29,10 +29,12 @@ if ! command_exists aws; then
 fi
 
 # Parse input arguments
+SKIP_PROJECT_CHECK=false
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     --project) PROJECT="$2"; shift 2;;
     --region) REGION="$2"; shift 2;;
+    --skip-project-check) SKIP_PROJECT_CHECK=true; shift 1;;
     *) echo "Unknown parameter passed: $1"; usage; return 3;;
   esac
 done
@@ -44,27 +46,15 @@ export DAY_PROJECT=$PROJECT
 REGION="${REGION:-$DAY_AWS_REGION}"
 export DAY_AWS_REGION=$REGION
 
-# Validate project and region
-if [[ -z "$PROJECT" ]]; then
-  echo "Error: --project is required or set DAY_PROJECT environment variable."
-  usage
-  return 3
-fi
-
-if [[ -z "$REGION" ]]; then
-  echo "Error: --region is required or set DAY_AWS_REGION environment variable."
-  usage
-  return 3
-fi
-
+# Validate region input
 validate_region() {
- if [[ "$1" == "us-west-2" ]]; then
+  if [[ "$1" == "us-west-2" ]]; then
     echo "Region '$1' confirmed as valid."
     return 0
   else
     echo "Warning: Region '$1' is not 'us-west-2'."
     echo "It is recommended to use 'us-west-2' for this operation."
-    return 3
+    return 0
   fi
 }
 
@@ -73,12 +63,17 @@ validate_region "$REGION" || return 3
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
-# Ensure the project is valid for the current user
-USER_PROJECTS=$(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2 | tr -d ' ')
-if [[ ! ",${USER_PROJECTS}," =~ ",${PROJECT}," ]]; then
-  echo "Error: Project '$PROJECT' is not valid for user '$USER'."
-  echo "Valid projects for $USER: $USER_PROJECTS"
-  return 3
+# Skip project check if the flag is provided
+if [[ "$SKIP_PROJECT_CHECK" == false ]]; then
+  # Ensure the project is valid for the current user
+  USER_PROJECTS=$(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2 | tr -d ' ')
+  if [[ ! ",${USER_PROJECTS}," =~ ",${PROJECT}," ]]; then
+    echo "Error: Project '$PROJECT' is not valid for user '$USER'."
+    echo "Valid projects for $USER: $USER_PROJECTS"
+    return 3
+  fi
+else
+  echo "Skipping project validation as --skip-project-check was passed."
 fi
 
 # Function to create a new AWS budget

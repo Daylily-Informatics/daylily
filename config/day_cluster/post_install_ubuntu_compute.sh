@@ -14,7 +14,7 @@ bucket="$2"  # specified in the cluster yaml, bucket-name, no s3:// prefix
 miner_pool="$3"  # specified in the cluster yaml, miner_pool
 wallet="$4"  # specified in the cluster yaml, wallet
 aws configure set region $region
-
+ 
 mkdir -p /tmp/jobs
 chmod -R a+wrx /tmp/jobs
 
@@ -22,9 +22,9 @@ chmod -R a+wrx /tmp/jobs
 echo "vm.nr_hugepages=2048" | sudo tee -a /etc/sysctl.conf
 echo "vm.hugetlb_shm_group=27" | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
-
+ 
 sudo adduser --uid 1002 --disabled-password --gecos "" daylily || echo daylily user add fails
-
+ 
 # For Apptainer (formerly Singularity)
 echo "kernel.unprivileged_userns_clone=1" | sudo tee /etc/sysctl.d/00-local-userns.conf
 echo "user.max_user_namespaces=15076" | sudo tee -a /etc/sysctl.conf
