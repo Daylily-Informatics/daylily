@@ -175,10 +175,14 @@ fi
 PERCENT_USED=$(awk "BEGIN {print ($USED / $TOTAL) * 100}")
 
 # Display budget information
+echo ""
+echo "________________________________________________________"
 echo "AWS Budget for project '$PROJECT' in region '$REGION':"
 echo "  Total: $TOTAL USD"
 echo "  Used: $USED USD"
 echo "  Percent Used: $PERCENT_USED%"
+echo "________________________________________________________"
+sleep 1.3
 
 # Check if the budget is exhausted
 if (( $(echo "$PERCENT_USED >= 100" | bc -l) )); then
