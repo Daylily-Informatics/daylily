@@ -81,7 +81,7 @@ create_budget() {
 
   # Create the budget using AWS CLI
   aws budgets create-budget \
-    --account-id <YOUR_ACCOUNT_ID> \
+    --account-id $(aws sts get-caller-identity --query "Account" --output text) \
     --region "$REGION" \
     --budget "{
       \"BudgetName\": \"$BUDGET_NAME\",
