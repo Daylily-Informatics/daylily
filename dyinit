@@ -212,6 +212,7 @@ export PATH=$PATH:$PWD/bin/:.
 source bin/tabcomp.bash
 
 # Aliases for the daycli
+# approach refactoring the CLI with caution, they have a lot of cross-links in gnarly places in snakemake.
 alias day-activate="source bin/day_activate"
 alias day-deactivate="source bin/day_deactivate"
 alias day-build="source bin/day_build"
