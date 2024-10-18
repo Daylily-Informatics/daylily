@@ -57,6 +57,15 @@ if [[ -z "$REGION" ]]; then
   return 1
 fi
 
+
+# Validate the AWS region
+VALID_REGIONS=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text)
+if ! echo "$VALID_REGIONS" | grep -qw "$REGION"; then
+  echo "Error: '$REGION' is not a valid AWS region."
+  echo "Valid regions are: $VALID_REGIONS"
+  return 1
+fi
+
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
 # Ensure the project is valid for the current user
