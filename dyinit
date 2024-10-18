@@ -143,7 +143,7 @@ fi
 # Check if the specified project budget exists
 MATCHING_BUDGET=$(echo "$BUDGETS" | jq -r ".Budgets[] | select(.BudgetName==\"$PROJECT\")")
 
-if [[ -z "$MATCHING_BUDGET" and "$SKIP_PROJECT_CHECK" != "true" ]]; then
+if [[ -z "$MATCHING_BUDGET" && "$SKIP_PROJECT_CHECK" != "true" ]]; then
   echo "No matching AWS budget found for project '$PROJECT' in region '$REGION'."
   echo "Available AWS Budgets (which may be specified with the --project flag):"
   echo "$BUDGETS" | jq -r '.Budgets[].BudgetName'
