@@ -219,7 +219,7 @@ if [[ ${#pem_files[@]} -eq 0 ]]; then
     echo "No PEM files found in ~/.ssh. Please ensure you have your PEM file there."
     return 1
 fi
-
+ 
 echo ""
 echo "Select a PEM file to use (you must have downloaded your ED25519 KEYNAME.pem file to ~/.ssh for it to appear here):"
 select pem_file in "${pem_files[@]}"; do
