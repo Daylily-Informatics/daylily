@@ -382,7 +382,8 @@ pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --region "$regi
 echo "Monitoring cluster creation... this may take 10-15 minutes."
 python bin/helpers/watch_cluster_status.py "$region"
 
-echo "\nOnce the cluster is complete, configure the head node by running './bin/daylily-cfg-headnode $pem_file'."
+echo "\nOnce the cluster is complete, configure the head node by running '. ./bin/daylily-cfg-headnode $pem_file'."
 echo "\n\t....trying this now!\n"
 sleep 2
 . ./bin/daylily-cfg-headnode $pem_file $regions
+echo "\n\t....fin!\n"
