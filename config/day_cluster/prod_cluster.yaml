@@ -324,7 +324,7 @@ Scheduling:
             - InstanceType: c7a.metal-48xl # 192 vCPUs, 384 GiB
           MinCount: 0
           MaxCount: 10
-          MaxSpotPrice: 3.6720  # 50% of $7.3440
+          SpotPrice: 3.6720  # 50% of $7.3440
           Networking:
             PlacementGroup:
               Enabled: false
@@ -336,11 +336,9 @@ Scheduling:
             - InstanceType: m6a.metal      # 192 vCPUs, 768 GiB
             - InstanceType: m7a.48xlarge   # 192 vCPUs, 768 GiB
             - InstanceType: m7a.metal-48xl # 192 vCPUs, 768 GiB
-            - InstanceType: g5.48xlarge    # 192 vCPUs, 768 GiB, 7600 GB NVMe
-            - InstanceType: inf2.48xlarge  # 192 vCPUs, 768 GiB
           MinCount: 0
           MaxCount: 10
-          MaxSpotPrice: 4.1472  # 50% of $8.2944
+          SpotPrice: 4.1472  # 50% of $8.2944
           Networking:
             PlacementGroup:
               Enabled: false
@@ -352,22 +350,9 @@ Scheduling:
             - InstanceType: r6a.metal      # 192 vCPUs, 1536 GiB
             - InstanceType: r7a.48xlarge   # 192 vCPUs, 1536 GiB
             - InstanceType: r7a.metal-48xl # 192 vCPUs, 1536 GiB
-            - InstanceType: g6e.48xlarge   # 192 vCPUs, 1536 GiB, 7600 GB NVMe
           MinCount: 0
           MaxCount: 10
-          MaxSpotPrice: 5.4432  # 50% of $10.8864
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-        - Name: gb2048
-          Instances:
-            - InstanceType: p5.48xlarge    # 192 vCPUs, 2048 GiB, 30400 GB NVMe
-            - InstanceType: p5e.48xlarge   # 192 vCPUs, 2048 GiB
-          MinCount: 0
-          MaxCount: 10
-          MaxSpotPrice: 5.4432  # 50% of $10.8864
+          SpotPrice: 5.4432  # 50% of $10.8864
           Networking:
             PlacementGroup:
               Enabled: false

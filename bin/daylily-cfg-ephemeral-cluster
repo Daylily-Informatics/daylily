@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Default configuration
-region="us-west-2"  # Default AWS region
 fail_on_error=false  # Default for error on warning
 
 # Function to display help
@@ -62,7 +61,8 @@ handle_warning() {
 }
 
 validate_region() {
- echo "NOTE:  you are advised to run _aws configure set region $1_ to set the region for use with the pcluster CLI, to avoid the errors you will cause when the _region_ flag is not used."
+  echo "RGN:" $1
+  echo "NOTE:  you are advised to run _aws configure set region $1 _ to set the region for use with the pcluster CLI, to avoid the errors you will cause when the _region_ flag is not used."
   sleep 2.3
 
  if [[ "$1" == "us-west-2" ]]; then
@@ -77,7 +77,7 @@ validate_region() {
 }
 
 # Call the region validation function
-validate_region "$REGION" || return 1
+validate_region "$region" || return 1
 
 # Check AWS credentials
 echo "Verifying AWS credentials..."
@@ -221,7 +221,7 @@ if [[ ${#pem_files[@]} -eq 0 ]]; then
 fi
 
 echo ""
-echo "Select a PEM file to use:"
+echo "Select a PEM file to use (you must have downloaded your ED25519 KEYNAME.pem file to ~/.ssh for it to appear here):"
 select pem_file in "${pem_files[@]}"; do
     if [[ -n "$pem_file" ]]; then
         echo "You selected: $pem_file"
