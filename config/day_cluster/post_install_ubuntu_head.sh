@@ -9,9 +9,11 @@ touch /tmp/$HOSTNAME.postinstallBEGIN
 
 . "/etc/parallelcluster/cfnconfig"
 
-bucket="$1"  # specified in the cluster yaml, bucket-name, no s3:// prefix
-miner_pool="$2"  # specified in the cluster yaml, miner_pool
-wallet="$3"  # specified in the cluster yaml, wallet
+region="$1"
+bucket="$2"  # specified in the cluster yaml, bucket-name, no s3:// prefix
+miner_pool="$3"  # specified in the cluster yaml, miner_pool
+wallet="$4"  # specified in the cluster yaml, wallet
+aws configure set region $region
 
 mkdir -p /tmp/jobs
 chmod -R a+wrx /tmp/jobs
@@ -48,8 +50,6 @@ source /etc/profile
 
 TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')
 itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type)
-region=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region)
-aws configure set region $region
 
 update=0
 tag_userid=""
@@ -108,10 +108,11 @@ else
 fi
 
 if [ ${update} -eq 1 ]; then
+  TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')
   MyInstID=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
-  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-username,Value="${tag_userid}"
-  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-jobid,Value="${tag_jobid}"
-  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-project,Value="${tag_project}"
+  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-username,Value="${tag_userid}" --region ${region}
+  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-jobid,Value="${tag_jobid}" --region ${region}
+  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-project,Value="${tag_project}" --region ${region}
 fi
 EOF
 
