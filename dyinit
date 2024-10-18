@@ -101,11 +101,22 @@ create_budget() {
   fi
 }
 
-# Query AWS budget
-BUDGET=$(aws budgets describe-budgets --account-id $AWS_ACCOUNT_ID --region "$REGION" 2>/dev/null)
+# Query AWS budgets
+BUDGETS=$(aws budgets describe-budgets --account-id $AWS_ACCOUNT_ID --region "$REGION" 2>/dev/null)
 
-if [[ -z "$BUDGET" ]]; then
-  echo "No AWS budget found for project '$PROJECT' in region '$REGION'."
+if [[ -z "$BUDGETS" ]]; then
+  echo "Error: Unable to retrieve any budgets from AWS. Please check your AWS permissions or configuration."
+  return 1
+fi
+
+# Check if the specified project budget exists
+MATCHING_BUDGET=$(echo "$BUDGETS" | jq -r ".Budgets[] | select(.BudgetName==\"$PROJECT\")")
+
+if [[ -z "$MATCHING_BUDGET" ]]; then
+  echo "No matching AWS budget found for project '$PROJECT' in region '$REGION'."
+  echo "Available AWS Budgets:"
+  echo "$BUDGETS" | jq -r '.Budgets[].BudgetName'
+
   read -p "Would you like to create a new budget? (y/n): " RESPONSE
   if [[ "$RESPONSE" =~ ^[Yy]$ ]]; then
     create_budget || return 1
@@ -115,12 +126,12 @@ if [[ -z "$BUDGET" ]]; then
   fi
 fi
 
-# Extract budget details
-TOTAL=$(echo "$BUDGET" | jq -r ".Budgets[] | select(.BudgetName==\"$PROJECT\") | .BudgetLimit.Amount")
-USED=$(echo "$BUDGET" | jq -r ".Budgets[] | select(.BudgetName==\"$PROJECT\") | .CalculatedSpend.ActualSpend.Amount")
+# Extract budget details for the matching budget
+TOTAL=$(echo "$MATCHING_BUDGET" | jq -r ".BudgetLimit.Amount")
+USED=$(echo "$MATCHING_BUDGET" | jq -r ".CalculatedSpend.ActualSpend.Amount")
 
 if [[ -z "$TOTAL" || -z "$USED" ]]; then
-  echo "Error: Unable to retrieve budget information for project '$PROJECT'."
+  echo "Error: Unable to retrieve budget details for project '$PROJECT'."
   return 1
 fi
 
@@ -129,16 +140,15 @@ PERCENT_USED=$(awk "BEGIN {print ($USED / $TOTAL) * 100}")
 
 # Display budget information
 echo "AWS Budget for project '$PROJECT' in region '$REGION':"
-echo "  Total: $TOTAL"
-echo "  Used: $USED"
+echo "  Total: $TOTAL USD"
+echo "  Used: $USED USD"
 echo "  Percent Used: $PERCENT_USED%"
 
-# Check if budget is exhausted
+# Check if the budget is exhausted
 if (( $(echo "$PERCENT_USED >= 100" | bc -l) )); then
   echo "Warning: Budget for project '$PROJECT' is exhausted!"
 fi
 
-return 0
 
 
 ## export DAY_PROJECT="daylily-dev"
