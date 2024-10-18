@@ -222,12 +222,13 @@ mkdir -p /fsx/miners/logs
 mkdir -p /fsx/tmp
 mkdir -p /fsx/miners/bin               
 mkdir -p /fsx/scratch
-mkdir -p /fsx/resources/environments/conda/ubuntu/$USER/$(hostname)
-mkdir -p /fsx/resources/environments/containers/$USER/$(hostname)
+mkdir -p /fsx/resources/environments/container/
+mkdir -p /fsx/resources/environments/conda/
 chmod -R a+wrx /fsx/analysis_results
 chmod -R a+wrx /fsx/scratch
 chmod -R a+wrx /fsx/miners
 chmod -R a+wrx /fsx/tmp
+chmod -R a+wrx /fsx/resources
 chown -R ubuntu:ubuntu /fsx/miners
 
 
