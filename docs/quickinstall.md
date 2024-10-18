@@ -6,6 +6,7 @@ Capturing the steps I took to get the daylily framework up and running in a `cla
 - `daylily` was tuned to run in the `us-west-2c` AZ, for cost and availabiliyu of some specific compute resources not found in all AZs. The install should all build and proceed using the `us-west-2c` AZ.
 - A cloudstack formation template will run which will create some important resources for the epheral cluster, namely: the public VPC, public subnet, private subnet, and a policy to allow tagging and budget tracking of resources by pcluster.
 - The install steps should work for both `bash` and `zsh` shells, but the `bash` shell is the default for the `pcluster` environment.
+- Daylily `projects` are synonymous with AWS `budgets`. When initializing daylily `. dyinit`, the project specified will be checked vs the slurm registry of projects, found `/opt/slurm/etc/projects_list.conf` and be checked to confirm there is a matching AWS budget of the specified name. If not, you will be prompted to create a budget (which may also be completed via the AWS dashboard). for now, you willneed to update the `projects_list.conf` file manually with each new budget added, *importantly* both in the current ephemeral cluster conf file as well as the s3 bucket hosted version which is used to build new nodes.
 
 
 # Steps
@@ -185,7 +186,7 @@ bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml <short-res
 - The script should block the terminal while running, and report back on success.  If failure, go to the cloudformation console and look at the logs for the stack to see what went wrong & delete the stack before attempting again.
 - **please record/take note** of the `Public Subnet ID`, `Private Subnet ID`, and `Policy ARN` will be reported here and needed in the `daycli` setup.
 
-
+## 
 ## Local DAYCLI Setup & Ephemeral Cluster Initialization (only need to do this once per new cluster)
 Your local/laptop shell.
 Assumes all of the setup steps above have been completed.
