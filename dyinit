@@ -57,6 +57,8 @@ if [[ -z "$REGION" ]]; then
   return 1
 fi
 
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+
 # Ensure the project is valid for the current user
 USER_PROJECTS=$(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2 | tr -d ' ')
 if [[ ! ",${USER_PROJECTS}," =~ ",${PROJECT}," ]]; then
@@ -81,7 +83,7 @@ create_budget() {
 
   # Create the budget using AWS CLI
   aws budgets create-budget \
-    --account-id $(aws sts get-caller-identity --query "Account" --output text) \
+    --account-id $AWS_ACCOUNT_ID \
     --region "$REGION" \
     --budget "{
       \"BudgetName\": \"$BUDGET_NAME\",
@@ -100,7 +102,7 @@ create_budget() {
 }
 
 # Query AWS budget
-BUDGET=$(aws budgets describe-budgets --account-id <YOUR_ACCOUNT_ID> --region "$REGION" 2>/dev/null)
+BUDGET=$(aws budgets describe-budgets --account-id $AWS_ACCOUNT_ID --region "$REGION" 2>/dev/null)
 
 if [[ -z "$BUDGET" ]]; then
   echo "No AWS budget found for project '$PROJECT' in region '$REGION'."
