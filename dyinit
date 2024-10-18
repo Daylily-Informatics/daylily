@@ -162,7 +162,7 @@ TOTAL=$(echo "$MATCHING_BUDGET" | jq -r ".BudgetLimit.Amount")
 USED=$(echo "$MATCHING_BUDGET" | jq -r ".CalculatedSpend.ActualSpend.Amount")
 
 if [[ -z "$TOTAL" || -z "$USED" && "$SKIP_PROJECT_CHECK" != "true" ]]; then
-  echo "Error: Unable to calculate budget details for project '$PROJECT'."
+  echo "Error: Unable to calculate budget details for project '$PROJECT'.  $SKIP_PROJECT_CHECK"
   return 3
 fi
 
