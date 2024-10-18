@@ -81,7 +81,13 @@ create_budget() {
     return 1
   fi
 
-  # Create the budget using AWS CLI
+  read -p "Enter the email address for budget notifications: " BUDGET_EMAIL
+  if ! [[ "$BUDGET_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+    echo "Error: Invalid email address format."
+    return 1
+  fi
+
+  # Create the budget using AWS CLI with a notification and subscriber
   aws budgets create-budget \
     --account-id $AWS_ACCOUNT_ID \
     --region "$REGION" \
@@ -90,10 +96,26 @@ create_budget() {
       \"BudgetLimit\": {\"Amount\": \"$BUDGET_TOTAL\", \"Unit\": \"USD\"},
       \"TimeUnit\": \"ANNUALLY\",
       \"BudgetType\": \"COST\"
-    }" &> /dev/null
+    }" \
+    --notifications-with-subscribers "[
+      {
+        \"Notification\": {
+          \"NotificationType\": \"ACTUAL\",
+          \"ComparisonOperator\": \"GREATER_THAN\",
+          \"Threshold\": 100,
+          \"ThresholdType\": \"PERCENTAGE\"
+        },
+        \"Subscribers\": [
+          {
+            \"SubscriptionType\": \"EMAIL\",
+            \"Address\": \"$BUDGET_EMAIL\"
+          }
+        ]
+      }
+    ]" &> /dev/null
 
   if [[ $? -eq 0 ]]; then
-    echo "Success: Budget '$BUDGET_NAME' created with a total of $BUDGET_TOTAL USD."
+    echo "Success: Budget '$BUDGET_NAME' created with a total of $BUDGET_TOTAL USD and notifications sent to $BUDGET_EMAIL."
     return 0
   else
     echo "Error: Failed to create budget. Check your AWS permissions and try again."
@@ -148,8 +170,6 @@ echo "  Percent Used: $PERCENT_USED%"
 if (( $(echo "$PERCENT_USED >= 100" | bc -l) )); then
   echo "Warning: Budget for project '$PROJECT' is exhausted!"
 fi
-
-
 
 ## export DAY_PROJECT="daylily-dev"
 export APPTAINER_HOME=/fsx/environments;
