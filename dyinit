@@ -57,7 +57,17 @@ if [[ -z "$REGION" ]]; then
   return 1
 fi
 
+validate_region() {
+  aws s3api list-buckets --query "Buckets[].Name" --output text --region "$1" &> /dev/null
+  if [[ $? -ne 0 ]]; then
+    echo "Error: '$1' is not a valid or reachable AWS region."
+    echo "Please provide a valid region (e.g., us-east-1, us-west-2)."
+    return 1
+  fi
+}
 
+# Call the region validation function
+validate_region "$REGION" || return 1
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
