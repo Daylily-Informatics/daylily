@@ -9,9 +9,9 @@ fi
 
 # Function to display usage and return
 usage() {
-  echo "This script inits the day cli."
+  echo "This script initializes the day CLI."
   echo "Usage: source $0 --project <project> --region <region>"
-  echo " ... project==aws budget"
+  echo " ... project == AWS budget"
   echo "Valid projects: $(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2)"
   echo "Valid regions: Use a valid AWS region (e.g., us-east-1, us-west-2)."
   return 1
@@ -42,17 +42,19 @@ PROJECT="${PROJECT:-$DAY_PROJECT}"
 export DAY_PROJECT=$PROJECT
 
 REGION="${REGION:-$DAY_AWS_REGION}"
-export DAY_REGION=$REGION
+export DAY_AWS_REGION=$REGION
 
 # Validate project and region
 if [[ -z "$PROJECT" ]]; then
   echo "Error: --project is required or set DAY_PROJECT environment variable."
   usage
+  return 1
 fi
 
 if [[ -z "$REGION" ]]; then
   echo "Error: --region is required or set DAY_AWS_REGION environment variable."
   usage
+  return 1
 fi
 
 # Ensure the project is valid for the current user
@@ -90,6 +92,7 @@ create_budget() {
 
   if [[ $? -eq 0 ]]; then
     echo "Success: Budget '$BUDGET_NAME' created with a total of $BUDGET_TOTAL USD."
+    return 0
   else
     echo "Error: Failed to create budget. Check your AWS permissions and try again."
     return 1
@@ -103,12 +106,11 @@ if [[ -z "$BUDGET" ]]; then
   echo "No AWS budget found for project '$PROJECT' in region '$REGION'."
   read -p "Would you like to create a new budget? (y/n): " RESPONSE
   if [[ "$RESPONSE" =~ ^[Yy]$ ]]; then
-    create_budget
+    create_budget || return 1
   else
     echo "Exiting without creating a budget."
     return 1
   fi
-  return 0
 fi
 
 # Extract budget details
@@ -133,6 +135,9 @@ echo "  Percent Used: $PERCENT_USED%"
 if (( $(echo "$PERCENT_USED >= 100" | bc -l) )); then
   echo "Warning: Budget for project '$PROJECT' is exhausted!"
 fi
+
+return 0
+
 
 ## export DAY_PROJECT="daylily-dev"
 export APPTAINER_HOME=/fsx/environments;
