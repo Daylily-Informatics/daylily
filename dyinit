@@ -63,7 +63,7 @@ validate_region "$REGION" || return 3
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
-# Skip project check if the flag is provided
+# Skip project check and budget validation if the flag is set
 if [[ "$SKIP_PROJECT_CHECK" == false ]]; then
   # Ensure the project is valid for the current user
   USER_PROJECTS=$(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2 | tr -d ' ')
@@ -72,9 +72,36 @@ if [[ "$SKIP_PROJECT_CHECK" == false ]]; then
     echo "Valid projects for $USER: $USER_PROJECTS"
     return 3
   fi
-else
-  echo "Skipping project validation as --skip-project-check was passed."
-fi
+
+  # Query AWS budgets
+  BUDGETS=$(aws budgets describe-budgets --account-id $AWS_ACCOUNT_ID --region "$REGION" 2>/dev/null)
+
+  if [[ -z "$BUDGETS" ]]; then
+    echo "Error: Unable to retrieve any budgets from AWS. Please check your AWS permissions or configuration."
+    return 3
+  fi
+
+  # Check if the specified project budget exists
+  MATCHING_BUDGET=$(echo "$BUDGETS" | jq -r ".Budgets[] | select(.BudgetName==\"$PROJECT\")")
+
+  if [[ -z "$MATCHING_BUDGET" ]]; then
+    echo "No matching AWS budget found for project '$PROJECT' in region '$REGION'."
+    echo "Available AWS Budgets (which may be specified with the --project flag):"
+    echo "$BUDGETS" | jq -r '.Budgets[].BudgetName'
+
+    # Skip budget creation prompt if the flag is set
+    if [[ "$SKIP_PROJECT_CHECK" == false ]]; then
+      read -p "Would you like to create a new budget? (y/n): " RESPONSE
+      if [[ "$RESPONSE" =~ ^[Yy]$ ]]; then
+        create_budget || return 3
+      else
+        echo "Exiting without creating a budget."
+        return 3
+      fi
+    else
+      echo "Skipping budget creation as --skip-project-check was passed."
+    fi
+  fi
 
 # Function to create a new AWS budget
 create_budget() {
