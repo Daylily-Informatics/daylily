@@ -118,7 +118,7 @@ create_budget() {
     echo "Success: Budget '$BUDGET_NAME' created with a total of $BUDGET_TOTAL USD and notifications sent to $BUDGET_EMAIL."
     return 0
   else
-    echo "Error: Failed to create budget. Check your AWS permissions and try again."
+    echo "Error: Failed to create budget. Check your AWS permissions and try again, or create via the AWS console (monthly spend budget)."
     return 1
   fi
 }
@@ -136,7 +136,7 @@ MATCHING_BUDGET=$(echo "$BUDGETS" | jq -r ".Budgets[] | select(.BudgetName==\"$P
 
 if [[ -z "$MATCHING_BUDGET" ]]; then
   echo "No matching AWS budget found for project '$PROJECT' in region '$REGION'."
-  echo "Available AWS Budgets:"
+  echo "Available AWS Budgets (which may be specified with the --project flag):"
   echo "$BUDGETS" | jq -r '.Budgets[].BudgetName'
 
   read -p "Would you like to create a new budget? (y/n): " RESPONSE
