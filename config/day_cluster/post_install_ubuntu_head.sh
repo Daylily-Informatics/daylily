@@ -253,7 +253,7 @@ sudo chmod +x /opt/slurm/etc/shutdown_script_ubuntu_head.sh
 cat <<'EOF' | sudo tee /etc/systemd/system/custom-shutdown.service
 [Unit]
 Description=Custom Shutdown Script
-Before=shutdown.target reboot.target
+Before=shutdown.target reboot.target 
 
 [Service]
 Type=oneshot

@@ -225,6 +225,11 @@ EOF
   sudo systemctl daemon-reload && sudo systemctl enable custom-shutdown.service
 fi
 
+# Copy cached data from S3
+cp -r /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/$USER/$(hostname)/
+cp -r /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/$USER/$(hostname)/
+
+
 # Finalization
 touch /tmp/$HOSTNAME.postinstallcomplete
 echo "Post-installation complete."

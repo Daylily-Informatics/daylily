@@ -73,33 +73,17 @@ fi
 # start day
 profile_dir=$DAY_ROOT/config/day_profiles/$DAY_PROFILE/
 
-if [[ "$DAY_BIOME" == "AWSHPC" ]]; then
 
-    conda_prefix_dir="/fsx/environments/$USER/$HOSTNAME"
-    ls -1 $conda_prefix_dir > /dev/null 2>&1;
+conda_prefix_dir="/fsx/resources/environments/conda/$USER/$HOSTNAME";
+ls -1 $conda_prefix_dir > /dev/null 2>&1;
 
-    if  [[ "$?" != "0" ]]; then
-	mkcmd="mkdir -p $conda_prefix_dir"
-	echo "Attempting to create conda prefix dir: $conda_prefix_dir....." 1>&2
-	$mkcmd || echo "WARNING, command failed: $mkcmd ..." 1>&2; sleep 6;
-	sleep 3
-	chmod a+wrx /fsx/environments/$USER || echo "Warning, chmod failed to conda dir" 1>&2;
-    fi
-
-else
-
-    conda_prefix_dir="/fsx/environments/$USER/$HOSTNAME";
-    ls -1 $conda_prefix_dir > /dev/null 2>&1;
-
-    if [[ "$?" != "0" ]]; then
-	mkcmd2="mkdir -p $conda_prefix_dir";
-	echo "Attempting To Create Conda Prefix Dir: $conda_prefix_dir ...." 1>&2
-	$mkcmd2 || echo "WARNING, v2 command failed: $mkcmd2 ....." 1>&2; sleep 6;
-	sleep 3
-	chmod a+wrx /fsx/environments/$USER || echo "Warning, chmod failed to conda dir" 1>&2;
-
-    fi
-
+if [[ "$?" != "0" ]]; then
+  mkcmd2="mkdir -p $conda_prefix_dir";
+  echo "Attempting To Create Conda Prefix Dir: $conda_prefix_dir ...." 1>&2
+  $mkcmd2 || echo "WARNING, v2 command failed: $mkcmd2 ....." 1>&2; sleep 6;
+  sleep 3
+  chmod a+wrx /fsx/resources/environments/conda/conda/$USER || echo "Warning, chmod failed to conda dir" 1>&2;
+  fi
 fi
 
 # If there are no profile config files present, create from templates. Else, skip

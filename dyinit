@@ -185,7 +185,7 @@ if (( $(echo "$PERCENT_USED >= 100" | bc -l) )); then
 fi
 
 ## export DAY_PROJECT="daylily-dev"
-export APPTAINER_HOME=/fsx/environments;
+export APPTAINER_HOME=/fsx/resources/environments/containers/$USER/$(hostname)/
 
 # needed by daycli
 export DAY_BIOME=AWSPC 
