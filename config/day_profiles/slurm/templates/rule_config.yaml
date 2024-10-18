@@ -102,11 +102,11 @@ bcl2fq:
     ld_preload: "  "
     b2fq_addl_flags: ''
     2fq_use_bases_mask: ''
-    partition: "i32"
+    partition: "i64"
 
 bcl2fq_by_lane:
     threads: 16
-    partition: "i32"
+    partition: "i64"
 
 
 bwa_mem2a_aln_sort:
@@ -182,7 +182,7 @@ bwa_mem2meme_aln_sort:
 
 clean:
     env_yaml: "envs/vanilla_v0.1.yaml"  # no ./../ b/c it's being referenced from Snakefile
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 deepvariant:
     threads: 64
@@ -199,7 +199,7 @@ duphold:
     env_yaml: "../envs/duphold_v0.1.yaml"
     numactl: "none"
     ld_preload: "  "
-    partition: "i32,i64,i96"
+    partition: "i64,i96"
 
 doppelmark:
     threads: 192
@@ -224,7 +224,7 @@ dysgu:
 
 dysgu_sort_index:
     threads: 8
-    partition: "i32,i64"
+    partition: "i64"
 
 fastp:
     threads: 16
@@ -239,7 +239,7 @@ fastqc:
     env_yaml: "../envs/fastqc_v0.1.yaml"
     extract: "  "
     ld_preload: " "
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 fastv:
     threads: 16
@@ -262,29 +262,29 @@ kat:
 
 manta_sort_and_index:
     threads: 16
-    partition: "i32,i64"
+    partition: "i64"
 
 manta:
     threads: 16
     env_yaml: "../envs/manta_v0.1.yaml"
     numactl: "none"
     ld_preload: "  "
-    partition: "i32,i8,i32,i96"
+    partition: "i8,i96"
 
 mosdepth:
     threads: 16
     env_yaml: "../envs/mosdepth_v0.1.yaml"
     depth_bins: "0,1,3,5,10,15,20,30,40"
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 duphold_sort_index:
     threads: 8
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 tiddit_sort_index:
     threads: 8
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so "
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 merge_bam:
     threads: 127
@@ -337,7 +337,7 @@ octopus:
     max_reference_cache_footprint: " -X 12000M  "  #  dynamically set
     target_read_buffer_footprint: "   -B 360M  "  #  dynamically set
     addl_options: "  --max-variant-size 51 --downsample-above 41 --downsample-target 40 --min-mapping-quality 6 --use-wide-hmm-scores  "  #  --assemble-all --keep-unfiltered-calls --max-region-to-assemble 600/2000 --max-assembly-region-size ### --assemble-all--downsample-above 50 --downsample-target 50 --max-variant-size 2000 --min-mapping-quality 6 --use-wide-hmm-scores "   # --min-mapping-quality 6 --max-variant-size 50  --downsample-above 50 --downsample-target 50 "  #--max-variant-size 2000  --downsample-above 57 --downsample-target 56 --no-adapter-contaminated-reads  --ignore-unmapped-contigs  --mask-low-quality-tails 6 --mask-soft-clipped-boundary-bases 3  --mask-inverted-soft-clipping --mask-3prime-shifted-soft-clipped-heads --use-wide-hmm-scores --min-candidate-credible-vaf-probability 0.36 --allow-secondary-alignments --allow-supplementary-alignments --consider-unmapped-reads "  # from 0.35 bk is new  ## First set of options to explore:: --use-wide-hmm-scores --consider-unmapped-reads  "  ## --refcall BLOCKED --mask-low-quality-tails 5 --min-mapping-quality 8 --allow-secondary-alignments --min-supporting-reads 3 --max-variant-size 1500 --min-candidate-credible-vaf-probability 0.35"  # --max-read-length n --disable-read-preprocessing / --consider-unmapped-reads  --allow-supplementary-alignments  --downsample-target 100 --downsample-above 500  --num-fallback-kmers 20 --kmer-sizes 10,15,20...19,24,29,34 5 10 15 20 25 30 35 40 45 50       --fallback-kmer-gap 5  --max-region-to-assemble large value finds bigger events at loss of sens of smaller....   --assembler-mask-base-quality  --downsample-above 51 --downsample-target 50  #  --use-wide-hmm-scores --allow-supplementary-alignments --downsample-target 9 --downsample-above 10
-    partition: "i32"
+    partition: "i64"
 
 
 sentD:
@@ -353,28 +353,28 @@ sentD:
 sort_index_sentD_chunk_vcf:
     threads: 16
     env_yaml: "../envs/vanilla_v0.1.yaml"
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 concat_index_sentD_chunks:
     threads: 16
     env_yaml: "../envs/vanilla_v0.1.yaml"
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 peddy:
     threads: 16
     env_yaml: "../envs/peddy_v0.1.yaml"
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i8,i32,i64,i96,i128"
+    partition: "i8,i64,i96,i128"
 
 
 prep_for_concordance_check:
     threads: 4
-    partition: "i8,i64,i32,i96,i128"
+    partition: "i8,i64,i96,i128"
 
 picard:
     threads: 16
     env_yaml: "../envs/picard_v0.1.yaml"
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 qualimap:
     threads: 16
@@ -382,7 +382,7 @@ qualimap:
     env_yaml: "../envs/qualimap_v0.1.yaml"
     glances: " "
     numactl: "none"
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 rtg_vcfeval:
     threads: 32
@@ -462,35 +462,35 @@ stargazer:
     threads: 16
     benchmark_runs: 0
     env_yaml: "../envs/stargazer_v0.1.yaml"
-    partition: "i32,i64"
+    partition: "i64"
 
 tiddit:
     threads: 16
     min_sv_size: 10  # default is 100, min 10.
     env_yaml: "../envs/tiddit_v0.1.yaml"
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i32,i64,i96"
+    partition: "i64,i96"
 
 vanilla:
     threads: 8
     env_yaml: "../envs/vanilla_v0.1.yaml"
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i8,i64,i8,i32,i96"
+    partition: "i8,i64,i8,i96"
 
 verifybamid2_contam:
     env_yaml: "../envs/verifybamid2_v0.1.yaml"
     threads: 16
     ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 gen_samstats:
     threads: 16
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 sentieon_qc_metrics:
     threads: 16
-    partition: "i32,i64,i96,i128"
+    partition: "i64,i96,i128"
 
 svaba:
     orig_threads: 96
@@ -502,12 +502,12 @@ svaba:
 svaba_sort_index:
     threads: 4
     ld_preload: "  "
-    partition: "i8,i64,i32,i8"
+    partition: "i8,i64,i8"
 
 calc_coverage_evenness:
     threads: 16
     ld_preload: " "
-    partition: "i32,i64,i8,i96"
+    partition: "i64,i8,i96"
 
 produce_fastqs_from_bams:
     threads: 4
@@ -518,7 +518,7 @@ svim_asm:
     threads: 16
     env_yaml: "../envs/svim_asm_v0.1.yaml"
     ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i32,i64,i8,i96,i128"
+    partition: "i64,i8,i96,i128"
 
 hisat2:
     threads: 128
@@ -534,8 +534,8 @@ seqfu:
     threads: 16
     env_yaml: "../envs/fastqc_v0.1.yaml"
     ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i32,i64,i8,i96,i128"
+    partition: "i64,i8,i96,i128"
 
 vep:
     threads: 32
-    partition: "i32,i64,i96" 
+    partition: "i64,i96" 

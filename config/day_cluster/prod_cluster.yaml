@@ -23,6 +23,7 @@ HeadNode:
     OnNodeConfigured:
       Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_head.sh
       Args:
+        - REGSUB_REGION
         - REGSUB_S3_BUCKET_NAME
         - REGSUB_XMR_POOL_URL
         - REGSUB_XMR_WALLET
@@ -69,76 +70,7 @@ Scheduling:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
-            - REGSUB_S3_BUCKET_NAME
-            - REGSUB_XMR_POOL_URL
-            - REGSUB_XMR_WALLET
-      Iam:
-        S3Access:
-          - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: false
-        AdditionalIamPolicies:
-          - Policy: REGSUB_S3_IAM_POLICY
-    - Name: i32
-      CapacityType: SPOT
-      AllocationStrategy: lowest-price
-      ComputeResources:
-        - Name: gb64
-          Instances:
-            - InstanceType: c6i.8xlarge # 32 vCPUs, 64 GiB, $1.3600 hourly, $0.4781 spot
-            - InstanceType: c7i.8xlarge # 32 vCPUs, 64 GiB, $1.4280 hourly, $0.5055 spot
-            - InstanceType: c6id.8xlarge # 32 vCPUs, 64 GiB, $1.6128 hourly, $0.5638 spot, 1900 GB NVMe
-            - InstanceType: c6in.8xlarge # 32 vCPUs, 64 GiB, $1.8144 hourly, $0.7672 spot, 50 Gigabit
-          MinCount: 0
-          MaxCount: 8
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-        - Name: gb128
-          Instances:
-            - InstanceType: m7i-flex.8xlarge # 32 vCPUs, 128 GiB, $1.5322 hourly, $0.5659 spot
-            - InstanceType: m5.8xlarge # 32 vCPUs, 128 GiB, $1.5360 hourly, $0.5201 spot
-            - InstanceType: m6i.8xlarge # 32 vCPUs, 128 GiB, $1.5360 hourly, $0.5225 spot
-            - InstanceType: m7i.8xlarge # 32 vCPUs, 128 GiB, $1.6128 hourly, $0.5817 spot
-            - InstanceType: m5d.8xlarge # 32 vCPUs, 128 GiB, $1.8080 hourly, $0.7627 spot, 1200 GB NVMe
-            - InstanceType: m6id.8xlarge # 32 vCPUs, 128 GiB, $1.8984 hourly, $0.7110 spot, 1900 GB NVMe
-            - InstanceType: m6in.8xlarge # 32 vCPUs, 128 GiB, $2.2277 hourly, $1.0006 spot, 50 Gigabit
-            - InstanceType: m6idn.8xlarge # 32 vCPUs, 128 GiB, $2.5459 hourly, $1.0409 spot, 1900 GB NVMe, 50 Gigabit
-          MinCount: 0
-          MaxCount: 8
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-        - Name: gb256
-          Instances:
-            - InstanceType: r5.8xlarge # 32 vCPUs, 256 GiB, $2.0160 hourly, $0.6653 spot
-            - InstanceType: r6i.8xlarge # 32 vCPUs, 256 GiB, $2.0160 hourly, $0.6317 spot
-            - InstanceType: r7i.8xlarge # 32 vCPUs, 256 GiB, $2.1168 hourly, $0.6483 spot
-            - InstanceType: r5d.8xlarge # 32 vCPUs, 256 GiB, $2.3040 hourly, $0.7832 spot, 1200 GB NVMe
-            - InstanceType: r5b.8xlarge # 32 vCPUs, 256 GiB, $2.3840 hourly, $1.0337 spot
-            - InstanceType: r5n.8xlarge # 32 vCPUs, 256 GiB, $2.3840 hourly, $0.7143 spot, 25 Gigabit
-            - InstanceType: r6id.8xlarge # 32 vCPUs, 256 GiB, $2.4192 hourly, $0.8227 spot, 1900 GB NVMe
-            - InstanceType: r6in.8xlarge # 32 vCPUs, 256 GiB, $2.7893 hourly, $1.1189 spot, 50 Gigabit
-            - InstanceType: r7iz.8xlarge # 32 vCPUs, 256 GiB, $2.9760 hourly, $1.1909 spot
-            - InstanceType: r6idn.8xlarge # 32 vCPUs, 256 GiB, $3.1262 hourly, $1.0301 spot, 1900 GB NVMe, 50 Gigabit
-            - InstanceType: i4i.8xlarge # 32 vCPUs, 256 GiB, $2.7460 hourly, $0.9075 spot, 7500 GB NVMe
-          MinCount: 0
-          MaxCount: 8
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-      Networking:
-        SubnetIds:
-          - REGSUB_PRIVATE_SUBNET
-      CustomActions:
-        OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
-          Args:
+            - REGSUB_REGION
             - REGSUB_S3_BUCKET_NAME
             - REGSUB_XMR_POOL_URL
             - REGSUB_XMR_WALLET
@@ -194,6 +126,7 @@ Scheduling:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
+            - REGSUB_REGION
             - REGSUB_S3_BUCKET_NAME
             - REGSUB_XMR_POOL_URL
             - REGSUB_XMR_WALLET
@@ -245,6 +178,7 @@ Scheduling:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
+            - REGSUB_REGION
             - REGSUB_S3_BUCKET_NAME
             - REGSUB_XMR_POOL_URL
             - REGSUB_XMR_WALLET
@@ -314,6 +248,7 @@ Scheduling:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
+            - REGSUB_REGION
             - REGSUB_S3_BUCKET_NAME
             - REGSUB_XMR_POOL_URL
             - REGSUB_XMR_WALLET
@@ -367,6 +302,7 @@ Scheduling:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
+            - REGSUB_REGION
             - REGSUB_S3_BUCKET_NAME
             - REGSUB_XMR_POOL_URL
             - REGSUB_XMR_WALLET
@@ -380,22 +316,58 @@ Scheduling:
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: all
+        - Name: gb384
           Instances:
-            - InstanceType: c6a.48xlarge
-            - InstanceType: c6a.metal
-            - InstanceType: m6a.metal
-            - InstanceType: m6a.48xlarge
-            - InstanceType: c7a.metal-48xl
-            - InstanceType: c7a.48xlarge
-            - InstanceType: r6a.48xlarge
-            - InstanceType: r6a.metal
-            - InstanceType: m7a.48xlarge
-            - InstanceType: m7a.metal-48xl
-            - InstanceType: r7a.48xlarge
-            - InstanceType: r7a.metal-48xl
+            - InstanceType: c6a.48xlarge   # 192 vCPUs, 384 GiB
+            - InstanceType: c6a.metal      # 192 vCPUs, 384 GiB
+            - InstanceType: c7a.48xlarge   # 192 vCPUs, 384 GiB
+            - InstanceType: c7a.metal-48xl # 192 vCPUs, 384 GiB
           MinCount: 0
           MaxCount: 10
+          MaxSpotPrice: 3.6720  # 50% of $7.3440
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb768
+          Instances:
+            - InstanceType: m6a.48xlarge   # 192 vCPUs, 768 GiB
+            - InstanceType: m6a.metal      # 192 vCPUs, 768 GiB
+            - InstanceType: m7a.48xlarge   # 192 vCPUs, 768 GiB
+            - InstanceType: m7a.metal-48xl # 192 vCPUs, 768 GiB
+            - InstanceType: g5.48xlarge    # 192 vCPUs, 768 GiB, 7600 GB NVMe
+            - InstanceType: inf2.48xlarge  # 192 vCPUs, 768 GiB
+          MinCount: 0
+          MaxCount: 10
+          MaxSpotPrice: 4.1472  # 50% of $8.2944
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb1536
+          Instances:
+            - InstanceType: r6a.48xlarge   # 192 vCPUs, 1536 GiB
+            - InstanceType: r6a.metal      # 192 vCPUs, 1536 GiB
+            - InstanceType: r7a.48xlarge   # 192 vCPUs, 1536 GiB
+            - InstanceType: r7a.metal-48xl # 192 vCPUs, 1536 GiB
+            - InstanceType: g6e.48xlarge   # 192 vCPUs, 1536 GiB, 7600 GB NVMe
+          MinCount: 0
+          MaxCount: 10
+          MaxSpotPrice: 5.4432  # 50% of $10.8864
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: gb2048
+          Instances:
+            - InstanceType: p5.48xlarge    # 192 vCPUs, 2048 GiB, 30400 GB NVMe
+            - InstanceType: p5e.48xlarge   # 192 vCPUs, 2048 GiB
+          MinCount: 0
+          MaxCount: 10
+          MaxSpotPrice: DYNAMIC_CALCULATE_A192_SPOT  # ie: 50% of the cheapest dedicated in this pool, ie $98.32
           Networking:
             PlacementGroup:
               Enabled: false
@@ -408,6 +380,7 @@ Scheduling:
         OnNodeConfigured:
           Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_compute.sh
           Args:
+            - REGSUB_REGION
             - REGSUB_S3_BUCKET_NAME
             - REGSUB_XMR_POOL_URL
             - REGSUB_XMR_WALLET

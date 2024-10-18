@@ -24,7 +24,7 @@ rule tiddit:
     threads: 16
     resources:
         vcpu=1,
-        partition="i8,i32,i64,i96",
+        partition="i8,i64,i96",
         threads=16
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.tiddit.sv.vcf.bench.tsv"
@@ -58,7 +58,7 @@ rule tiddit_sort_index:
     priority: 8
     resources:
         vcpu=8,
-        partition="i8,i8,i32,i64,i96",
+        partition="i8,i8,i64,i96",
         threads=8
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.tiddit.sv.vcf.sort.bench.tsv"

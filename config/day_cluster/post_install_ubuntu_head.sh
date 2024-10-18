@@ -186,13 +186,15 @@ sudo apt install -y --allow-downgrades --allow-remove-essential --allow-change-h
 
 
 # Install Cromwell
-CROMWELL_VER=87  # Replace with the latest Cromwell version
-sudo wget https://github.com/broadinstitute/cromwell/releases/download/${CROMWELL_VER}/cromwell-${CROMWELL_VER}.jar -O /usr/local/bin/cromwell.jar
-
+#CROMWELL_VER=87  # Replace with the latest Cromwell version
+#sudo wget https://github.com/broadinstitute/cromwell/releases/download/${CROMWELL_VER}/cromwell-${CROMWELL_VER}.jar -O /usr/local/bin/cromwell.jar
 # Download WOMtool (optional, for validating WDL scripts)
-sudo wget https://github.com/broadinstitute/cromwell/releases/download/${CROMWELL_VER}/womtool-${CROMWELL_VER}.jar -O /usr/local/bin/womtool.jar
+#sudo wget https://github.com/broadinstitute/cromwell/releases/download/${CROMWELL_VER}/womtool-${CROMWELL_VER}.jar -O /usr/local/bin/womtool.jar
 
-
+## CACHED Cromwell and WOMtool
+cp /fsx/data/tool_specific_resources/cromwell_87.jar  /usr/local/bin/cromwell.jar
+cp /fsx/data/tool_specific_resources/womtool_87.jar /usr/local/bin/womtool.jar
+ 
 # Docker setup
 sudo groupadd docker
 sudo usermod -aG docker ubuntu
@@ -202,7 +204,9 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 # Install Go
-wget https://dl.google.com/go/go1.20.4.linux-amd64.tar.gz
+# wget https://dl.google.com/go/go1.20.4.linux-amd64.tar.gz
+## CACHE Go
+cp /fsx/data/tool_specific_resources/go1.20.4.linux-amd64.tar.gz .
 sudo tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
 sudo ln -s /usr/local/go/bin/go /usr/bin/go
 sudo ln -s /usr/local/go/bin/gofmt /usr/bin/gofmt
@@ -211,7 +215,10 @@ sudo echo "APPTAINER START" > /tmp/$HOSTNAME.apptainerinstall
 
 # Install Apptainer (formerly Singularity)
 export AVERSION=1.3.1  # Replace with the latest Apptainer version
-sudo wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+#sudo wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+
+# USING CACHED VERSION !!
+cp /fsx/data/tool_specific_resources/apptainer-1.3.1.tar.gz .
 sudo tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
 cd apptainer-${AVERSION} >> /tmp/$HOSTNAME.apptainerinstall 2>&1
 sudo ./mconfig >> /tmp/$HOSTNAME.apptainerinstall 2>&1
