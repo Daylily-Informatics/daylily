@@ -365,7 +365,7 @@ bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin
 
 # Dry run cluster creation
 echo "Running a cluster creation dry run..."
-pcluster create-cluster -n "$cluster_name" -c "$target_conf" --dryrun true --region "$region"
+pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --dryrun true --region "$region"
 
 echo -n "Are you ready to create the cluster (y/n)? "
 read ready_to_create
@@ -376,7 +376,7 @@ fi
 
 # Create the cluster
 echo "Creating the cluster '$cluster_name' in region $region"
-pcluster create-cluster -n "$cluster_name" -c "$target_conf" --region "$region"
+pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --region "$region"
 
 # Monitor cluster creation
 echo "Monitoring cluster creation... this may take 10-15 minutes."
