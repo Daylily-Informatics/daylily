@@ -4,7 +4,7 @@
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "Error: This script must be sourced, not executed directly."
   echo "Usage: source $0 --project <project> --region <region>"
-  return 1
+  return 3
 fi
 
 # Function to display usage and return
@@ -14,7 +14,7 @@ usage() {
   echo " ... project == AWS budget"
   echo "Valid projects: $(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2)"
   echo "Valid regions: Use a valid AWS region (e.g., us-east-1, us-west-2).x"
-  return 1
+  return 3
 }
 
 # Check if a command exists
@@ -25,7 +25,7 @@ command_exists() {
 # Ensure AWS CLI is installed
 if ! command_exists aws; then
   echo "Error: AWS CLI is not installed. Please install it first."
-  return 1
+  return 3
 fi
 
 # Parse input arguments
@@ -33,7 +33,7 @@ while [[ "$#" -gt 0 ]]; do
   case "$1" in
     --project) PROJECT="$2"; shift 2;;
     --region) REGION="$2"; shift 2;;
-    *) echo "Unknown parameter passed: $1"; usage; return 1;;
+    *) echo "Unknown parameter passed: $1"; usage; return 3;;
   esac
 done
 
@@ -48,13 +48,13 @@ export DAY_AWS_REGION=$REGION
 if [[ -z "$PROJECT" ]]; then
   echo "Error: --project is required or set DAY_PROJECT environment variable."
   usage
-  return 1
+  return 3
 fi
 
 if [[ -z "$REGION" ]]; then
   echo "Error: --region is required or set DAY_AWS_REGION environment variable."
   usage
-  return 1
+  return 3
 fi
 
 validate_region() {
@@ -64,13 +64,12 @@ validate_region() {
   else
     echo "Warning: Region '$1' is not 'us-west-2'."
     echo "It is recommended to use 'us-west-2' for this operation."
-    echo "Proceeding with caution..."
     return 3
   fi
 }
 
 # Call the region validation function
-validate_region "$REGION" || return 1
+validate_region "$REGION" || return 3
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
@@ -79,7 +78,7 @@ USER_PROJECTS=$(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -
 if [[ ! ",${USER_PROJECTS}," =~ ",${PROJECT}," ]]; then
   echo "Error: Project '$PROJECT' is not valid for user '$USER'."
   echo "Valid projects for $USER: $USER_PROJECTS"
-  return 1
+  return 3
 fi
 
 # Function to create a new AWS budget
@@ -87,19 +86,19 @@ create_budget() {
   read -p "Enter the new budget name: " BUDGET_NAME
   if [[ ! "$BUDGET_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then
     echo "Error: Budget name must only contain letters, numbers, hyphens, and underscores."
-    return 1
+    return 3
   fi
 
   read -p "Enter the total budget amount in USD: " BUDGET_TOTAL
   if ! [[ "$BUDGET_TOTAL" =~ ^[0-9]+(\.[0-9]{2})?$ ]]; then
     echo "Error: Invalid budget total. Enter a valid number (e.g., 500.00)."
-    return 1
+    return 3
   fi
 
   read -p "Enter the email address for budget notifications: " BUDGET_EMAIL
   if ! [[ "$BUDGET_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
     echo "Error: Invalid email address format."
-    return 1
+    return 3
   fi
 
   # Create the budget using AWS CLI with a notification and subscriber
@@ -134,7 +133,7 @@ create_budget() {
     return 0
   else
     echo "Error: Failed to create budget. Check your AWS permissions and try again, or create via the AWS console (monthly spend budget)."
-    return 1
+    return 3
   fi
 }
 
@@ -143,7 +142,7 @@ BUDGETS=$(aws budgets describe-budgets --account-id $AWS_ACCOUNT_ID --region "$R
 
 if [[ -z "$BUDGETS" ]]; then
   echo "Error: Unable to retrieve any budgets from AWS. Please check your AWS permissions or configuration."
-  return 1
+  return 3
 fi
 
 # Check if the specified project budget exists
@@ -156,10 +155,10 @@ if [[ -z "$MATCHING_BUDGET" ]]; then
 
   read -p "Would you like to create a new budget? (y/n): " RESPONSE
   if [[ "$RESPONSE" =~ ^[Yy]$ ]]; then
-    create_budget || return 1
+    create_budget || return 3
   else
     echo "Exiting without creating a budget."
-    return 1
+    return 3
   fi
 fi
 
@@ -169,7 +168,7 @@ USED=$(echo "$MATCHING_BUDGET" | jq -r ".CalculatedSpend.ActualSpend.Amount")
 
 if [[ -z "$TOTAL" || -z "$USED" ]]; then
   echo "Error: Unable to retrieve budget details for project '$PROJECT'."
-  return 1
+  return 3
 fi
 
 # Calculate usage percentage
@@ -206,7 +205,7 @@ fi
 
 if [[ ! -f "./dyinit" ]]; then
     echo "ERROR: 'dyinit' must be sourced from its directory with argument OTHER or AWSPC."
-    return 11
+    return 31
 fi
 
 post_strip=$(echo $SHELL | perl -pe 's/bash//g;')
