@@ -1,5 +1,5 @@
 # [DAYLILY](http://daylilyinformatics.com/) && [(blog)](https://daylily-informatics.github.io/)
-_v0.7.0  --- STILL IN ACTIVE DEV_ 
+_v0.7.7 --- ACTIVE DEV_ *&* _branch for snakemake v8.x port is underway_
 
 ## COMPLETE INSTALLATION STEPS (updated)
 - [FULL INSTALLATION](docs/quickinstall.md)  
