@@ -336,7 +336,8 @@ done
 
 # Prepare configuration
 mkdir -p ~/.config/daylily
-target_conf=~/.config/daylily/${cluster_name}_cluster.yaml
+target_conf=~/.config/daylily/${cluster_name}_cluster.yaml.init
+target_conf_fin=~/.config/daylily/${cluster_name}_cluster.yaml
 regsub_vals=~/.config/daylily/${cluster_name}_cluster_init_vals.txt
 
 cp "$cluster_yaml" "$target_conf"
@@ -358,6 +359,9 @@ REGSUB_XMR_WALLET=$xmr_wallet
 EOF
 
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
+
+echo "Calculating max spot bid prices per partition resource group..."
+bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin
 
 # Dry run cluster creation
 echo "Running a cluster creation dry run..."
