@@ -66,10 +66,10 @@ validate_region() {
     echo "Region '$1' confirmed as valid."
     return 0
   else
-    echo "Warning: Region '$1' is not 'us-west-2'."
+    handle_warning "Warning: Region '$1' is not 'us-west-2'."
     echo "It is recommended to use 'us-west-2' for this operation."
-    echo "Proceeding with caution..."
-    sleep .67
+    sleep 2
+    return 1
   fi
 }
 
