@@ -98,19 +98,20 @@ ssh -i "$pem_file" ubuntu@"$cluster_ip_address" \
 # Initialize and configure the Daylily environment on the head node
 echo "Configuring Daylily environment on the head node..."
 ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" \
-    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit && source bin/day_build'"
+    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check --region $region && source bin/day_build'"
 
 # Run a simple help test for Daylily remotely
 echo "Running a simple help test on the head node..."
 ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" \
-    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit && source bin/day_activate local && dy-r help'"
+    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check --region $region && source bin/day_activate local && dy-r help'"
 
 # Provide final instructions for SSH access to the head node
 echo "You can now SSH into the head node with the following command:"
 echo "ssh -i $pem_file ubuntu@$cluster_ip_address"
 echo "Once logged in, as the 'ubuntu' user, run the following commands:"
 echo "  cd ~/projects/daylily"
-echo "  source dyinit"
+echo "  source dyinit --h "
+echo "  source dyinit --project <PROJECT> --region <REGION>"
 echo "  dy-a local"
 echo "  dy-r help"
 echo " "

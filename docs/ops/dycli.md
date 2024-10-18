@@ -4,7 +4,8 @@
 ```bash
 
 # init the dy-cli
-source dyinit
+source dyinit -h
+source dyinit  --project <PROJECT> --region <REGION>
 
 # activate the local or slurm running environment
 dy-a local # or slurm  # tab complete for avail envs
@@ -17,4 +18,4 @@ dy-d reset
 
 ```
 
-- more to come
+
