@@ -7,8 +7,8 @@ Capturing the steps I took to get the daylily framework up and running in a `cla
 - A cloudstack formation template will run which will create some important resources for the epheral cluster, namely: the public VPC, public subnet, private subnet, and a policy to allow tagging and budget tracking of resources by pcluster.
 - The install steps should work for both `bash` and `zsh` shells, but the `bash` shell is the default for the `pcluster` environment.
 
-# Steps
 
+# Steps
 
 ## Prepare Your Local Shell
 The shell (probably your laptop) you will be using to ssh into the clusters you'll be creating.
@@ -22,7 +22,7 @@ cd daylily
 ### Install Conda (if not already installed)
 _bash and zsh are known to work_
 - [Conda, miniconda specifically, is required to be setup in your shell to proceed.](docs/install/Install.md#run-daylily-init)
- 
+
 
 ## Only Necessary To Follow Once Per AWS Acount
 ### AWS 
@@ -57,11 +57,12 @@ aws_access_key_id = <ACCESS_KEY>
 aws_secret_access_key = <SECRET_ACCESS_KEY>
 ```
 
-##### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster
+##### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster To Operate
 Please refer to the pcluster docs to verify your cli user has the appropriate permissions to create and manage the resources necessary for the cluster.  [AWS Parallel Cluster Permissions](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam.html).
 
-**This policy is often missing from cli users**
-- Add this inline policy to both the cli user from the user iam dashboard. Name it `pcluster-omics-analysis`.
+###### Two Inline Policies To Add To The CLI User
+**pcluster-omics-analysis-fleet**
+- Add this inline policy to the cli user from the aws iam user dashboard. It allows the pcluster headnode to manage spot instances. If missing, you might be able to spin up a head but not be able to add spots. Name it `pcluster-omics-analysis-fleet`.
 ```json
 {
   "Version": "2012-10-17",
@@ -75,6 +76,24 @@ Please refer to the pcluster docs to verify your cli user has the appropriate pe
           "iam:AWSServiceName": "spot.amazonaws.com"
         }
       }
+    }
+  ]
+}
+```
+
+**pcluster-omics-analysis-policy-check**
+
+- Add this inline policy to the cli user from the aws iam user dashboard. This allows the init script to confirm the aws cli user has required permissins. This is not necessary for daylily to run, but is needed to complete the automated init script install checks. Name it `pcluster-omics-analysis-fleet`.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowPolicySimulation",
+      "Effect": "Allow",
+      "Action": "iam:SimulatePrincipalPolicy",
+      "Resource": "*"
     }
   ]
 }
@@ -174,6 +193,11 @@ Assumes all of the setup steps above have been completed.
 ### Local `pcluster` DAYCLI Setup & Ephemeral Cluster Initialization
 
 #### 1. Install The `DAYCLI` Conda Environment (if not present) & Initialize The Ephemeral Cluster
+_note:_ 
+## Bootstrap Installation Of `daylily` CLI
+_note:_ the cli init script will run checks for the steps covered to this point, and will prompty if there are errors to be resovlved before proceeding (this is not comprehensively tested yet! do not treat no errors as evidence all config to this point is correct).
+
+
 - From the `daylily` repository root, run the following command
     ```bash
     source bin/daylily-cfg-ephemeral-cluster
@@ -186,6 +210,7 @@ Assumes all of the setup steps above have been completed.
       - select the `Policy ARN` created when the cloudstack formation script was run earlier.
       - enter a name to asisgn your new ephemeral cluster (ie: `<myorg>-omics-analysis`)
       - enter the path to a pcluser config file (ie: `config/day_cluster/pcluster_config.yaml`), enter selects the default.
+      - _experimental_: specify if you wish to use idle compute (in both head and compute nodes) to mine [Monero, XMR](https://en.wikipedia.org/wiki/Monero) and send coins to your wallet of choice. The default wallet, `42s1tbj3qp6T2QBw9BzYxxRn1e9afiZhcRr8yoe2QYLn5ZG6Fk9XzEh1719moDeUgY6tReaJDF464ZhbEyg4cXMYNRXJve2`, is/will be visible to the public(todo) and all XMR deposited passed on to charitable organizations in the clinical genomics/human health arenas (how, stay tuned!). At the very least, for now, you can watch the wallet if this is enabled via [supportxmr.com](https://supportxmr.com/) and see progress, plus, you may watch the cluster nodes appear as miners on this dash. Little risk is involved in this,  but please do not use this if you feel weird about monetizing your compute resources in this way. This is largely a stunt, but was an easy stunt, and there is a future where enabling this results in free analysis _we'll see_.
   - The configuration script will then create  `_cluster.yaml` and `cluster_init_vals.txt` files in `~/.config/daylily/` and these will be used to create the new ephemeral cluster.
   - First, a dryrun `pcluster create-clsuter` command will be run to ensure the configuration is correct. You will be informed of success/fail for this step, and asked if you wish to proceed in actual creation of the cluster, enter `y`.
   - The ephemeral cluster creation will begin and a monitoring script will watch for its completion.  This may take 10-20min. You may exit the process at this time, and can check on the cluster via the pcluster cli, or the cloudformation console.

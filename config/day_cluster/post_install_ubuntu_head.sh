@@ -10,6 +10,8 @@ touch /tmp/$HOSTNAME.postinstallBEGIN
 . "/etc/parallelcluster/cfnconfig"
 
 bucket="$1"  # specified in the cluster yaml, bucket-name, no s3:// prefix
+miner_pool="$2"  # specified in the cluster yaml, miner_pool
+wallet="$3"  # specified in the cluster yaml, wallet
 
 mkdir -p /tmp/jobs
 chmod -R a+wrx /tmp/jobs
@@ -43,7 +45,10 @@ else
 #!/bin/bash
 source /etc/profile
 
-region=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
+
+TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')
+itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type)
+region=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region)
 aws configure set region $region
 
 update=0
@@ -103,7 +108,7 @@ else
 fi
 
 if [ ${update} -eq 1 ]; then
-  MyInstID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+  MyInstID=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
   aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-username,Value="${tag_userid}"
   aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-jobid,Value="${tag_jobid}"
   aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-project,Value="${tag_project}"
@@ -163,7 +168,6 @@ EOF
   sudo systemctl restart slurmctld
 fi
 
-
 touch /tmp/$HOSTNAME.postinstallaptinstalls
 
 export DEBIAN_FRONTEND=noninteractive
@@ -177,7 +181,7 @@ sudo apt install -y --allow-downgrades --allow-remove-essential --allow-change-h
                         uuid-dev  libgpgme-dev \
                         squashfs-tools libseccomp-dev \
                         pkg-config cryptsetup runc libglib2.0-dev libseccomp-dev  \
-                        openjdk-11-jdk wget unzip squashfuse nasm yasm isal fuse2fs gocryptfs 
+                        openjdk-11-jdk wget unzip squashfuse nasm yasm isal fuse2fs gocryptfs cpulimit
 
 
 # Install Cromwell
@@ -229,6 +233,9 @@ chmod -R a+wrx /fsx/resources
 mkdir -p /fsx/environments
 chmod -R a+wrx /fsx/environments
 
+mkdir -p /fsx/scratch
+chmod -R a+wrx /fsx/scratch
+
 touch /tmp/$HOSTNAME.postinstallaptinstalls
 
 aws s3 cp s3://daylily-references/cluster_boot_config/shutdown_script_ubuntu_head.sh /opt/slurm/etc/shutdown_script_ubuntu_head.sh
@@ -254,6 +261,36 @@ sudo systemctl daemon-reload
 sudo systemctl enable custom-shutdown.service
 
 # Final steps
-touch /tmp/$HOSTNAME.postinstallcomplete
+touch /tmp/$HOSTNAME.postinstallnearlycomplete
+echo "nearly DONE"
+
+mkdir -p /fsx/miners/bin
+mkdir -p /fsx/miners/logs
+
+chown -R ubuntu:ubuntu /fsx/miners
+aws s3 cp s3://${bucket}/cluster_boot_config/xmr_miner.sh /fsx/miners/bin/$(hostname)_miner.sh
+chmod a+x /fsx/miners/bin/$(hostname)_miner.sh
+
+aws s3 cp s3://${bucket}/cluster_boot_config/mine_cron.sh /fsx/miners/bin/mine_cron.sh
+chmod a+x /fsx/miners/bin/mine_cron.sh
+
+if [ "$miner_pool" != "na" ]; then
+  echo "miner_pool specified, starting mining"
+  touch /tmp/$HOSTNAME.setting_up_mining
+
+  export MINE_CPU=$(nproc)
+  echo "/fsx/miners/bin/$(hostname)_miner.sh $miner_pool $wallet" > /fsx/miners/bin/miner_cmd_args_$(hostname).sh
+  chmod a+x  /fsx/miners/bin/miner_cmd_args_$(hostname).sh
+  
+  /fsx/miners/bin/miner_cmd_args_$(hostname).sh  > /tmp/miner_$(hostname).log 2>&1 &
+
+  echo "mining started"
+  touch /tmp/$HOSTNAME.mining
+else
+  touch /tmp/$HOSTNAME.notmining
+  echo "no miner_pool specified, passing on mining"
+fi
 echo "DONE"
+touch /tmp/$HOSTNAME.postinstallcomplete
+
 exit 0
