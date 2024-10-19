@@ -36,57 +36,58 @@ mkdir -p /tmp/jobs
 chmod -R a+wrx /tmp/jobs
 
 # Configure hugepages and namespaces (common to both head and compute nodes)
-echo "vm.nr_hugepages=2048" | sudo tee -a /etc/sysctl.conf
-echo "vm.hugetlb_shm_group=27" | sudo tee -a /etc/sysctl.conf
-echo "kernel.unprivileged_userns_clone=1" | sudo tee /etc/sysctl.d/00-local-userns.conf
-echo "user.max_user_namespaces=15076" | sudo tee -a /etc/sysctl.conf
-sudo sysctl -p
+echo "vm.nr_hugepages=2048" | tee -a /etc/sysctl.conf
+echo "vm.hugetlb_shm_group=27" | tee -a /etc/sysctl.conf
+echo "kernel.unprivileged_userns_clone=1" | tee /etc/sysctl.d/00-local-userns.conf
+echo "user.max_user_namespaces=15076" | tee -a /etc/sysctl.conf
+sysctl -p
 
 # Ensure the user exists
-sudo adduser --uid 1002 --disabled-password --gecos "" daylily || echo "daylily user add failed"
+adduser --uid 1002 --disabled-password --gecos "" daylily || echo "daylily user add failed"
 
 log_spot_price
 
+mv /opt/slurm/bin/sbatch /opt/slurm/sbin/sbatch
 aws s3 cp s3://${bucket}/cluster_boot_config/sbatch /opt/slurm/bin/sbatch
-sudo chmod +x /opt/slurm/bin/sbatch
+chmod +x /opt/slurm/bin/sbatch
 
-(sudo mv /opt/slurm/bin/srun /opt/slurm/sbin/srun) || echo "mv failed: mv /opt/slurm/bin/srun /opt/slurm/sbin/srun"
-sudo ln -s /opt/slurm/bin/sbatch /opt/slurm/bin/srun
+mv /opt/slurm/bin/srun /opt/slurm/sbin/srun
+ln -s /opt/slurm/bin/sbatch /opt/slurm/bin/srun
 
 aws s3 cp s3://${bucket}/cluster_boot_config/projects_list.conf /opt/slurm/etc/projects_list.conf
 
 # Restart SLURM Controller
-sudo systemctl restart slurmctld
+systemctl restart slurmctld
 touch /tmp/$HOSTNAME.postslurmcfg
 
 
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
-sudo apt update -y
-sudo apt install -y tmux emacs rclone parallel atop htop glances fd-find docker.io \
+apt update -y
+apt install -y tmux emacs rclone parallel atop htop glances fd-find docker.io \
                     build-essential libssl-dev uuid-dev libgpgme-dev squashfs-tools \
                     libseccomp-dev pkg-config openjdk-11-jdk wget unzip nasm yasm isal \
                     fuse2fs gocryptfs cpulimit
 
 # Docker setup
-sudo groupadd docker
-sudo usermod -aG docker ubuntu root
-sudo systemctl enable docker && sudo systemctl start docker
+groupadd docker
+usermod -aG docker ubuntu root
+systemctl enable docker && systemctl start docker
 
 
 # Install Apptainer (formerly Singularity)
 export AVERSION=1.3.1  # Replace with the latest Apptainer version
-# sudo wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+# wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
 
 # USING CACHED VERSION !!
 cp /fsx/data/tool_specific_resources/apptainer-1.3.1.tar.gz .
-sudo tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
 cd apptainer-${AVERSION} >> /tmp/$HOSTNAME.apptainerinstall 2>&1
-sudo ./mconfig >> /tmp/$HOSTNAME.apptainerinstall 2>&1
-sudo make -C builddir >> /tmp/$HOSTNAME.apptainerinstall 2>&1
-sudo make -C builddir install >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+./mconfig >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+make -C builddir >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+make -C builddir install >> /tmp/$HOSTNAME.apptainerinstall 2>&1
 cd ..
-sudo echo "APPTAINER END" >> /tmp/$HOSTNAME.apptainerinstall
+echo "APPTAINER END" >> /tmp/$HOSTNAME.apptainerinstall
 
 
 
@@ -96,9 +97,9 @@ ln -s /fsx/data/tool_specific_resources/womtool_87.jar /usr/local/bin/womtool.ja
 chmod a+r /usr/local/bin/cromwell.jar /usr/local/bin/womtool.jar
 # go
 cp /fsx/data/tool_specific_resources/go1.20.4.linux-amd64.tar.gz .
-sudo tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
+tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
 rm /usr/bin/{go,gofmt}
-sudo ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
+ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
 
 # Create necessary directories
 
@@ -280,8 +281,6 @@ EOF
    
    systemctl restart slurmctld
 fi
-
-
 
 # Finalization
 touch /tmp/$HOSTNAME.postinstallcomplete
