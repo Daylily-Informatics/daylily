@@ -18,7 +18,7 @@
 
 . "/etc/parallelcluster/cfnconfig"
 
-bucket=$1
+#bucket=$1
 
 if [ "${cfn_node_type}" == "ComputeFleet" ];then
 
@@ -163,7 +163,7 @@ EOF
    echo "Epilog=/opt/slurm/sbin/epilog.sh" >> /opt/slurm/etc/slurm.conf
    
    # Configure sbatch wrapper
-   This done previously
+   #This done previously
    #mv /opt/slurm/bin/sbatch /opt/slurm/sbin/sbatch
    #aws s3 cp s3://${bucket}/sbatch /opt/slurm/bin/sbatch
    #chmod +x /opt/slurm/bin/sbatch
