@@ -163,7 +163,6 @@ done
 
 cmda="aws s3 cp s3://daylily-references-public/data/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/data --recursive --request-payer requester "
 cmdb="aws s3 cp s3://daylily-references-public/cluster_boot_config/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/cluster_boot_config --recursive  --request-payer requester "
-cmdb="aws s3 cp s3://daylily-references-public/cached_envs/$s3_cached_envs_version s3://${your_bucket_prefix}-omics-analysis/cached_envs--recursive  --request-payer requester "
 
 echo " Now, run the following commands in your shell:\n\n\t"
 echo "  $cmda & $cmdb & echo 'waiting for both to complete' & wait \n\n"
@@ -174,7 +173,6 @@ The above is composing the commands to copy the current versions of the referenc
 ```bash
 aws s3 cp s3://daylily-references-public/data/v0.9 s3://<YOURPREFIX>-omics-analysis/data --recursive --request-payer requester 
 aws s3 cp s3://daylily-references-public/cluster_boot_config/v0.9 s3://<YOURPREFIX>-omics-analysis/cluster_boot_config --recursive  --request-payer requester
-aws s3 cp s3://daylily-references-public/cached_envs/v0.9 s3://<YOURPREFIX>-omics-analysis/cached_envs --recursive  --request-payer requester 
 
 ```
 
