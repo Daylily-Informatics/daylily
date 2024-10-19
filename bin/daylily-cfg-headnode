@@ -77,13 +77,13 @@ fi
 
 # Generate SSH key for the head node user
 echo "Generating SSH key on the head node..."
-ssh -i "$pem_file" ubuntu@"$cluster_ip_address" \
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address"   -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
     "ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N '' <<< $'\ny' | sudo su - $duser"
 
 # Display the public key and instruct the user to add it to GitHub
 echo "You must have a GitHub account and access to the Daylily repository."
 echo "Please add the following public SSH key to GitHub:"
-ssh -i "$pem_file" ubuntu@"$cluster_ip_address" "cat ~/.ssh/id_rsa.pub"
+ssh -i "$pem_file"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null ubuntu@"$cluster_ip_address" "cat ~/.ssh/id_rsa.pub"
 
 echo " "
 echo "(optional) save this SSH key in GitHub to your settings->ssh/gpg keys, which will allow you to push changes back to github if you make any. You can always add this key latter too, find it in you ~/.ssh/id_rsa.pub.\n\n\tSleeping for 15s then proceeding."
@@ -92,17 +92,17 @@ sleep 15
 
 # Clone the Daylily repository to the head node
 echo "Cloning Daylily repository usibng https to the head node ~/projects"
-ssh -i "$pem_file" ubuntu@"$cluster_ip_address" \
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
     "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects &&  git clone https://github.com/Daylily-Informatics/daylily.git'"
 
 # Initialize and configure the Daylily environment on the head node
 echo "Configuring Daylily environment on the head node..."
-ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" \
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
     "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check --region $region && source bin/day_build'"
 
 # Run a simple help test for Daylily remotely
 echo "Running a simple help test on the head node..."
-ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" \
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
     "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check --region $region && source bin/day_activate local && dy-r help'"
 
 # Provide final instructions for SSH access to the head node

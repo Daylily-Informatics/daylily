@@ -103,12 +103,12 @@ if [[ "$mgcnt" == "0" ]]; then
     echo "..."
     sleep 1.4
 
-    export PIP_NO_INPUT=1 && export PIP_INDEX_URL="https://pypi.org/simple" && export PIP_EXTRA_INDEX_URL="https://pypi.org/simple"  &&  conda env create   -n DAY -f $SCRIPT_DIR/DAY.yaml
+    (export PIP_NO_INPUT=1 && export PIP_INDEX_URL="https://pypi.org/simple" && export PIP_EXTRA_INDEX_URL="https://pypi.org/simple"  &&  conda env create   -n DAY -f $SCRIPT_DIR/DAY.yaml && echo "DAY env created") || echo "DAY env not created"
 
     echo "Install exited with > $? < (if not zero, not the best sign)."
     echo "try the following:
 
-       source   --project <PROJECT> --region <REGION>; dy-a local; dy-r help;
+       source dyinit  --project <PROJECT> --region <REGION>; dy-a local; dy-r help;
 
        #initialized the day CLI, activate the local env settings, runs day to get basic help info on targets
        "

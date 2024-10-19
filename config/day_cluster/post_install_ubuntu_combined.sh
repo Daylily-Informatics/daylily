@@ -6,7 +6,7 @@
 
 # The script configures the Slurm cluster after the deployment.
 
-touch /tmp/$HOSTNAME.postinstallBEGIN
+touch /tmp/$(hostname).postinstallBEGIN
 
 . "/etc/parallelcluster/cfnconfig"
 
@@ -29,7 +29,7 @@ log_spot_price() {
     --product-description "Linux/UNIX" \
     --query 'SpotPriceHistory[0].SpotPrice' \
     --output text)
-  echo "Spot price for instance type $instance_type: $spot_price USD/hour" >> /fsx/scratch/$HOSTNAME_spot_price.log
+  echo "Spot price for instance type $instance_type: $spot_price USD/hour" >> /fsx/scratch/$(hostname)_spot_price.log
 }
 
 mkdir -p /tmp/jobs
@@ -58,7 +58,7 @@ aws s3 cp s3://${bucket}/cluster_boot_config/projects_list.conf /opt/slurm/etc/p
 
 # Restart SLURM Controller
 systemctl restart slurmctld
-touch /tmp/$HOSTNAME.postslurmcfg
+touch /tmp/$(hostname).postslurmcfg
 
 
 # Update and install necessary packages
@@ -77,17 +77,17 @@ systemctl enable docker && systemctl start docker
 
 # Install Apptainer (formerly Singularity)
 export AVERSION=1.3.1  # Replace with the latest Apptainer version
-# wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+# wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$(hostname).apptainerinstall 2>&1
 
 # USING CACHED VERSION !!
 cp /fsx/data/tool_specific_resources/apptainer-1.3.1.tar.gz .
-tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
-cd apptainer-${AVERSION} >> /tmp/$HOSTNAME.apptainerinstall 2>&1
-./mconfig >> /tmp/$HOSTNAME.apptainerinstall 2>&1
-make -C builddir >> /tmp/$HOSTNAME.apptainerinstall 2>&1
-make -C builddir install >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$(hostname).apptainerinstall 2>&1
+cd apptainer-${AVERSION} >> /tmp/$(hostname).apptainerinstall 2>&1
+./mconfig >> /tmp/$(hostname).apptainerinstall 2>&1
+make -C builddir >> /tmp/$(hostname).apptainerinstall 2>&1
+make -C builddir install >> /tmp/$(hostname).apptainerinstall 2>&1
 cd ..
-echo "APPTAINER END" >> /tmp/$HOSTNAME.apptainerinstall
+echo "APPTAINER END" >> /tmp/$(hostname).apptainerinstall
 
 
 
@@ -283,6 +283,6 @@ EOF
 fi
 
 # Finalization
-touch /tmp/$HOSTNAME.postinstallcomplete
+touch /tmp/$(hostname).postinstallcomplete
 echo "Post-installation complete."
 exit 0
