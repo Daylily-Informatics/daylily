@@ -1,7 +1,7 @@
 # [DAYLILY](http://daylilyinformatics.com/) && [(blog)](https://daylily-informatics.github.io/)
-_v0.7.7 --- ACTIVE DEV_ *&* _branch for snakemake v8.x port is underway_
+_v0.7.8 --- ACTIVE DEV_ *&* _branch for snakemake v8.x port is underway_
 
-## COMPLETE INSTALLATION STEPS (updated)
+## COMPLETE INSTALLATION STEPS (updated!)
 - [FULL INSTALLATION](docs/quickinstall.md)  
 
 ## Free, Fast(~60m), Frugal(from $3.34 EC2)\^1 & Cloud Native Multi-omics Analysis Framework
