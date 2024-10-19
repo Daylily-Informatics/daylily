@@ -130,7 +130,7 @@ fi
 
 ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/$(hostname)/
 ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/ubuntu/$(hostname)/
-ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/daylily/$(hostname)/
+ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/daylily/$(hostname)/
 ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/daylily/$(hostname)/
 
 
