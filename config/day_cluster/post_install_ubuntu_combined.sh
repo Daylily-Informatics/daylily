@@ -199,18 +199,31 @@ sudo groupadd docker
 sudo usermod -aG docker ubuntu root
 sudo systemctl enable docker && sudo systemctl start docker
 
-# Install Apptainer
-export AVERSION=1.3.1
-cp /fsx/data/tool_specific_resources/apptainer-${AVERSION}.tar.gz .
-tar -xzf apptainer-${AVERSION}.tar.gz && cd apptainer-${AVERSION}
-sudo ./mconfig && sudo make -C builddir && sudo make -C builddir install
+
+# Install Apptainer (formerly Singularity)
+export AVERSION=1.3.1  # Replace with the latest Apptainer version
+# sudo wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+
+# USING CACHED VERSION !!
+cp /fsx/data/tool_specific_resources/apptainer-1.3.1.tar.gz .
+sudo tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+cd apptainer-${AVERSION} >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+sudo ./mconfig >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+sudo make -C builddir >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+sudo make -C builddir install >> /tmp/$HOSTNAME.apptainerinstall 2>&1
+cd ..
+sudo echo "APPTAINER END" >> /tmp/$HOSTNAME.apptainerinstall
+
+
 
 # Install Cromwell and Go (using cached versions)
-cp /fsx/data/tool_specific_resources/cromwell_87.jar /usr/local/bin/cromwell.jar
-cp /fsx/data/tool_specific_resources/womtool_87.jar /usr/local/bin/womtool.jar
+ln -s /fsx/data/tool_specific_resources/cromwell_87.jar /usr/local/bin/cromwell.jar
+ln -s /fsx/data/tool_specific_resources/womtool_87.jar /usr/local/bin/womtool.jar
+chmod a+r /usr/local/bin/cromwell.jar /usr/local/bin/womtool.jar
+# go
 cp /fsx/data/tool_specific_resources/go1.20.4.linux-amd64.tar.gz .
 sudo tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
-
+rm /usr/bin/{go,gofmt}
 sudo ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
 
 # Create necessary directories
@@ -222,8 +235,8 @@ mkdir -p /fsx/miners/logs
 mkdir -p /fsx/tmp
 mkdir -p /fsx/miners/bin               
 mkdir -p /fsx/scratch
-mkdir -p /fsx/resources/environments/container/
-mkdir -p /fsx/resources/environments/conda/
+mkdir -p /fsx/resources/environments/containers/{ubuntu,daylily}/$(hostname)/
+mkdir -p /fsx/resources/environments/conda/{ubuntu,daylily}/$(hostname)/
 chmod -R a+wrx /fsx/analysis_results
 chmod -R a+wrx /fsx/scratch
 chmod -R a+wrx /fsx/miners
@@ -262,8 +275,8 @@ EOF
 fi
 
 # Copy cached data from S3
-cp -r /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/$USER/$(hostname)/
-cp -r /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/$USER/$(hostname)/
+ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/{ubuntu,daylily}/$(hostname)/
+ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/{ubuntu,daylily}/$(hostname)/
 
 
 # Finalization
