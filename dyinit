@@ -78,58 +78,11 @@ fi
 
 # Function to create a new AWS budget
 create_budget() {
-  read -p "Enter the new budget name: " BUDGET_NAME
-  if [[ ! "$BUDGET_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-    echo "Error: Budget name must only contain letters, numbers, hyphens, and underscores."
-    return 3
-  fi
 
-  read -p "Enter the total budget amount in USD: " BUDGET_TOTAL
-  if ! [[ "$BUDGET_TOTAL" =~ ^[0-9]+(\.[0-9]{2})?$ ]]; then
-    echo "Error: Invalid budget total. Enter a valid number (e.g., 500.00)."
-    return 3
-  fi
-
-  read -p "Enter the email address for budget notifications: " BUDGET_EMAIL
-  if ! [[ "$BUDGET_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-    echo "Error: Invalid email address format."
-    return 3
-  fi
-
-  # Create the budget using AWS CLI with a notification and subscriber
-  aws budgets create-budget \
-    --account-id $AWS_ACCOUNT_ID \
-    --region "$REGION" \
-    --budget "{
-      \"BudgetName\": \"$BUDGET_NAME\",
-      \"BudgetLimit\": {\"Amount\": \"$BUDGET_TOTAL\", \"Unit\": \"USD\"},
-      \"TimeUnit\": \"ANNUALLY\",
-      \"BudgetType\": \"COST\"
-    }" \
-    --notifications-with-subscribers "[
-      {
-        \"Notification\": {
-          \"NotificationType\": \"ACTUAL\",
-          \"ComparisonOperator\": \"GREATER_THAN\",
-          \"Threshold\": 100,
-          \"ThresholdType\": \"PERCENTAGE\"
-        },
-        \"Subscribers\": [
-          {
-            \"SubscriptionType\": \"EMAIL\",
-            \"Address\": \"$BUDGET_EMAIL\"
-          }
-        ]
-      }
-    ]" &> /dev/null
-
-  if [[ $? -eq 0 ]]; then
-    echo "Success: Budget '$BUDGET_NAME' created with a total of $BUDGET_TOTAL USD and notifications sent to $BUDGET_EMAIL."
-    return 0
-  else
-    echo "Error: Failed to create budget. Check your AWS permissions and try again, or create via the AWS console (monthly spend budget)."
-    return 3
-  fi
+  echo "To create budget, please exit and run the following command:"
+  echo "bash bin/create_budget.sh --amount <AMOUNT> --project <budgetAWSname> --region <REGION>"   
+  echo "...you will then need to add the new project name to /opt/slurm/etc/projects_list.conf"
+  return 3
 }
 
 # Query AWS budgets
