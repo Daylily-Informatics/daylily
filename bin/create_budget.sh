@@ -75,41 +75,9 @@ BUDGET_JSON=$(echo "$BUDGET_TEMPLATE" | \
     sed "s/<amount>/$AMOUNT/g" | \
     sed "s/<project_name>/$PROJECT_NAME/g")
 
-# Generate budget alert JSON
-generate_alerts_json() {
-  local thresholds="$1"
-  local email="$2"
-  local alerts=()
-
-  IFS=',' read -ra THRESHOLD_ARRAY <<< "$thresholds"
-  for threshold in "${THRESHOLD_ARRAY[@]}"; do
-    alert='{
-      "Notification": {
-        "ComparisonOperator": "GREATER_THAN",
-        "NotificationType": "ACTUAL",
-        "Threshold": '"$threshold"',
-        "ThresholdType": "PERCENTAGE"
-      },
-      "Subscribers": [
-        {
-          "Address": "'"$email"'",
-          "SubscriptionType": "EMAIL"
-        }
-      ]
-    }'
-    alerts+=("$alert")
-  done
-
-  # Join alerts into a valid JSON array
-  echo "[${alerts[*]}]" | sed 's/}{/},{/g'
-}
-
-# Save budget and alerts JSON to temporary files
+# Save budget JSON to a temporary file
 TEMP_BUDGET_JSON=$(mktemp)
-TEMP_ALERTS_JSON=$(mktemp)
-
 echo "$BUDGET_JSON" > "$TEMP_BUDGET_JSON"
-generate_alerts_json "$THRESHOLDS" "$EMAIL" > "$TEMP_ALERTS_JSON"
 
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 
@@ -122,22 +90,27 @@ aws budgets create-budget --account-id "$ACCOUNT_ID" \
 if [[ $? -eq 0 ]]; then
   echo "Successfully created budget for project: $PROJECT_NAME"
 
-  # Create budget alerts
+  # Create budget alerts using the correct AWS CLI syntax
   echo "Creating budget alerts..."
-  aws budgets create-notification --account-id "$ACCOUNT_ID" \
-      --budget-name "$PROJECT_NAME" --notifications-with-subscribers file://"$TEMP_ALERTS_JSON" \
-      --region "$REGION"
+  IFS=',' read -ra THRESHOLD_ARRAY <<< "$THRESHOLDS"
+  for threshold in "${THRESHOLD_ARRAY[@]}"; do
+    echo P:$PROJECT_NAME T:$threshold E:$EMAIL R:$REGION A:$AMOUNT AI:$ACCOUNT_ID 
+    aws budgets create-notification --account-id "$ACCOUNT_ID" \
+      --budget-name "$PROJECT_NAME" \
+      --notification '{"ComparisonOperator":"GREATER_THAN","NotificationType":"ACTUAL","Threshold":'"$threshold"',"ThresholdType":"PERCENTAGE"}' \
+      --region "$REGION"   --subscribers '[{"Address":"'"$EMAIL"'","SubscriptionType":"EMAIL"}]' 
 
-  if [[ $? -eq 0 ]]; then
-    echo "Successfully created alerts for project: $PROJECT_NAME"
-  else
-    echo "ERROR: Failed to create alerts. Please check your AWS credentials and permissions."
-  fi
+    if [[ $? -eq 0 ]]; then
+      echo "Successfully created alert for threshold: $threshold%"
+    else
+      echo "ERROR: Failed to create alert for threshold: $threshold%. Please check your AWS credentials and permissions."
+    fi
+  done
 
   echo "You will need to add this budget name to the projects file found in the s3:*-omics-analysis/cluster_boot_config/projects_list.conf so it will be included in new clusters. For already running clusters, you will need to edit the file found in /opt/slurm/etc/projects_list.conf as well."
 else
   echo "ERROR: Failed to create budget. Please check your AWS credentials, permissions, and region."
 fi
 
-# Clean up temporary JSON files
-rm "$TEMP_BUDGET_JSON" "$TEMP_ALERTS_JSON"
+# Clean up temporary JSON file
+rm "$TEMP_BUDGET_JSON"
