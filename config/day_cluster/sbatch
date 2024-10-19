@@ -56,6 +56,6 @@ if [ $? -eq 0 ];then
     /opt/slurm/sbin/${slurm_command} --export=ALL $@
   fi
 else
- echo "You are not allowed to use the project ${project}"
+ echo "You are not allowed to use the project/budget ${project}"
  exit 1
 fi

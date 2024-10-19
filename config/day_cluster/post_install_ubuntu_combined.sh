@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# built upon: https://github.com/Daylily-Informatics/aws-parallelcluster-cost-allocation-tags
 # MIT No Attribution
 # Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
@@ -44,10 +45,7 @@ sudo sysctl -p
 # Ensure the user exists
 sudo adduser --uid 1002 --disabled-password --gecos "" daylily || echo "daylily user add failed"
 
-
 log_spot_price
-
-
 
 aws s3 cp s3://${bucket}/cluster_boot_config/sbatch /opt/slurm/bin/sbatch
 sudo chmod +x /opt/slurm/bin/sbatch
@@ -128,31 +126,161 @@ else
   echo "No miner pool specified, skipping mining."
 fi
 
-## Custom Shutdown Script (Head Node Only)
-#if [ "${cfn_node_type}" != "ComputeFleet" ]; then
-#  cat <<'EOF' | sudo tee /etc/systemd/system/custom-shutdown.service
-#[Unit]
-#Description=Custom Shutdown Script
-#Before=shutdown.target reboot.target
-#
-#[Service]
-#Type=oneshot
-#ExecStart=/opt/slurm/etc/shutdown_script_ubuntu_head.sh
-#RemainAfterExit=true
-#
-#[Install]
-#WantedBy=halt.target reboot.target
-#EOF
-#
-#  sudo systemctl daemon-reload && sudo systemctl enable custom-shutdown.service
-#fi
-
 # Copy cached data from S3
 
 ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/ubuntu/$(hostname)/
 ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/ubuntu/$(hostname)/
 ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/daylily/$(hostname)/
 ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/daylily/$(hostname)/
+
+
+# Tagging crap
+
+if [ "${cfn_node_type}" == "ComputeFleet" ];then
+
+  # Create the folder used to save jobs information
+
+  mkdir -p /tmp/jobs
+
+  # Configure the script to run every minute
+  echo "
+* * * * * /opt/slurm/sbin/check_tags.sh
+" | crontab -
+  exit 0
+else
+
+  # Cron script used to update the instance tags
+
+  cat <<'EOF' > /opt/slurm/sbin/check_tags.sh
+#!/bin/bash
+
+source /etc/profile
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+region=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region)
+aws configure set region $region
+
+update=0
+tag_userid=""
+tag_jobid=""
+tag_project=""
+
+if [ ! -f /tmp/jobs/jobs_users ] || [ ! -f /tmp/jobs/jobs_ids ]; then
+  exit 0
+fi
+
+active_users=$(cat /tmp/jobs/jobs_users | sort | uniq )
+active_jobs=$(cat /tmp/jobs/jobs_ids | sort )
+echo $active_users > /tmp/jobs/tmp_jobs_users
+echo $active_jobs > /tmp/jobs/tmp_jobs_ids
+if [ -f /tmp/jobs/jobs_projects ]; then
+  active_projects=$(cat /tmp/jobs/jobs_projects | sort | uniq )
+  echo $active_projects > /tmp/jobs/tmp_jobs_projects
+fi
+
+
+if [ ! -f /tmp/jobs/tag_userid ] || [ ! -f /tmp/jobs/tag_jobid ]; then
+
+  echo $active_users > /tmp/jobs/tag_userid
+  echo $active_jobs > /tmp/jobs/tag_jobid
+  echo $active_projects > /tmp/jobs/tag_project
+  update=1
+
+else
+
+  active_users=$(cat /tmp/jobs/tmp_jobs_users)
+  active_jobs=$(cat /tmp/jobs/tmp_jobs_ids)
+  if [ -f /tmp/jobs/tmp_jobs_projects ]; then
+    active_projects=$(cat /tmp/jobs/tmp_jobs_projects)
+  fi 
+  tag_userid=$(cat /tmp/jobs/tag_userid)
+  tag_jobid=$(cat /tmp/jobs/tag_jobid)
+  if [ -f /tmp/jobs/tag_project ]; then
+    tag_project=$(cat /tmp/jobs/tag_project)
+  fi
+  
+  if [ "${active_users}" != "${tag_userid}" ]; then
+    tag_userid="${active_users}"
+    echo ${tag_userid} > /tmp/jobs/tag_userid
+    update=1
+  fi
+  
+  if [ "${active_jobs}" != "${tag_jobid}" ]; then
+    tag_jobid="${active_jobs}"
+    echo ${tag_jobid} > /tmp/jobs/tag_jobid
+    update=1
+  fi
+  
+  if [ "${active_projects}" != "${tag_project}" ]; then
+    tag_project="${active_projects}"
+    echo ${tag_project} > /tmp/jobs/tag_project
+    update=1
+  fi
+
+fi
+
+if [ ${update} -eq 1 ]; then
+  
+  # Instance ID
+
+  TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+  MyInstID=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
+  tag_userid=$(cat /tmp/jobs/tag_userid)
+  tag_jobid=$(cat /tmp/jobs/tag_jobid)
+  tag_project=$(cat /tmp/jobs/tag_project)
+  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-username,Value="${tag_userid}" --region ${region}
+  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-jobid,Value="${tag_jobid}" --region ${region}
+  aws ec2 create-tags --resources ${MyInstID} --tags Key=aws-parallelcluster-project,Value="${tag_project}" --region ${region}  
+fi
+
+EOF
+
+   chmod a+x /opt/slurm/sbin/check_tags.sh
+   
+   # Create Prolog and Epilog to tag the instances
+   cat <<'EOF' > /opt/slurm/sbin/prolog.sh
+#!/bin/bash
+
+#slurm directory
+export SLURM_ROOT=/opt/slurm
+echo "${SLURM_JOB_USER}" >> /tmp/jobs/jobs_users
+echo "${SLURM_JOBID}" >> /tmp/jobs/jobs_ids
+
+#load the comment of the job.
+Project=$($SLURM_ROOT/bin/scontrol show job ${SLURM_JOB_ID} | grep Comment | awk -F'=' '{print $2}')
+Project_Tag=""
+if [ ! -z "${Project}" ];then
+  echo "${Project}" >> /tmp/jobs/jobs_projects
+fi
+
+EOF
+
+   cat <<'EOF' > /opt/slurm/sbin/epilog.sh
+#!/bin/bash
+#slurm directory
+export SLURM_ROOT=/opt/slurm
+sed -i "0,/${SLURM_JOB_USER}/d" /tmp/jobs/jobs_users
+sed -i "0,/${SLURM_JOBID}/d" /tmp/jobs/jobs_ids
+
+#load the comment of the job.
+Project=$($SLURM_ROOT/bin/scontrol show job ${SLURM_JOB_ID} | grep Comment | awk -F'=' '{print $2}')
+Project_Tag=""
+if [ ! -z "${Project}" ];then
+  sed -i "0,/${Project}/d" /tmp/jobs/jobs_projects
+fi
+
+EOF
+
+   chmod a+x /opt/slurm/sbin/prolog.sh
+   chmod a+x /opt/slurm/sbin/epilog.sh
+   
+   # Configure slurm to use Prolog and Epilog
+   echo "PrologFlags=Alloc" >> /opt/slurm/etc/slurm.conf
+   echo "Prolog=/opt/slurm/sbin/prolog.sh" >> /opt/slurm/etc/slurm.conf
+   echo "Epilog=/opt/slurm/sbin/epilog.sh" >> /opt/slurm/etc/slurm.conf
+   
+   systemctl restart slurmctld
+fi
+
 
 
 # Finalization
