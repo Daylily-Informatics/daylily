@@ -1,18 +1,19 @@
 #!/bin/bash
 
-echo "\n\n\t ALERT 1:::>>> You will need valid aws credentials in your ~/.aws directory in order to proceed.\n\n"
-echo "\n\n\tALERT 2:::>>> Please also be sure to have created a key pair in the AWS console which is ed25519 type & save the resulting .pem file (& chmod 400 it).  This will be needed for creating the cluster after this step completes.\n\n... pausing"
+echo -e "\n\n\t ALERT 1:::>>> You will need valid AWS credentials in your ~/.aws directory in order to proceed.\n\n"
+echo -e "\n\n\tALERT 2:::>>> Please also be sure to have created a key pair in the AWS console which is ed25519 type & saved the resulting .pem file (chmod 400 it). This will be needed for creating the cluster after this step completes.\n\n... pausing"
 sleep 3.3
-echo "\n\n\t... continuing\n\n"
+echo -e "\n\n\t... continuing\n\n"
 
 # Function to display usage information
 function usage() {
-  echo "Usage: $0 TEMPLATE_FILE RESOURCE_PREFIX"
+  echo "Usage: $0 TEMPLATE_FILE RESOURCE_PREFIX AVAILABILITY_ZONE"
   echo
   echo "Arguments:"
   echo "  TEMPLATE_FILE      Full path to the CloudFormation template file (e.g., ./config/day_cluster/pcluster_env.yml)"
   echo "  RESOURCE_PREFIX    A prefix for all resources created by the stack (alphabets and dashes only)"
-  echo
+  echo "  AVAILABILITY_ZONE  The AWS availability zone (e.g., us-west-2a)"
+  echo "  REGION             The AWS region (e.g., us-west-2)"
   echo "Options:"
   echo "  --help             Display this help message and exit"
 }
@@ -24,15 +25,21 @@ if [[ "$1" == "--help" ]]; then
 fi
 
 # Check for missing arguments
-if [[ -z "$1" || -z "$2" ]]; then
+if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
   echo "Error: Missing required arguments."
   usage
   exit 1
 fi
 
-TEMPLATE_FILE=$1 # full path to the CloudFormation template file, probably ./config/day_cluster/pcluster_env.yml
-RESOURCES_PREFIX=$2 # a prefix for all resources created by the stack, only alphamum and dash alloed, be succinct
+TEMPLATE_FILE=$1      # Full path to the CloudFormation template file
+RESOURCES_PREFIX=$2   # A prefix for all resources created by the stack
+AVAILABILITY_ZONE=$3  # Availability zone, e.g., us-west-2a
+REGION=$4  # Extract region from AZ by removing the trailing letter
+STACK_NAME="pcluster-vpc-stack"
 
+VPC_CIDR="10.0.0.0/16"
+PUBLIC_SUBNET_CIDR="10.0.0.0/24"
+PRIVATE_SUBNET_CIDR="10.0.1.0/24"
 
 # Validate if the template file exists
 if [[ ! -f "$TEMPLATE_FILE" ]]; then
@@ -46,21 +53,13 @@ if [[ ! "$RESOURCES_PREFIX" =~ ^[a-zA-Z-]+$ ]]; then
   exit 1
 fi
 
-# Variables
-STACK_NAME="pcluster-vpc-stack"
-REGION="us-west-2"  # resources are tuned for us-west-2c, it is not advised to change zones
-AVAILABILITY_ZONE="us-west-2c"
-VPC_CIDR="10.0.0.0/16"
-PUBLIC_SUBNET_CIDR="10.0.0.0/24"
-PRIVATE_SUBNET_CIDR="10.0.1.0/24"
-
-
 # Validate that the availability zone starts with the region
 if [[ "$AVAILABILITY_ZONE" != "$REGION"* ]]; then
   echo "Error: Availability zone ($AVAILABILITY_ZONE) does not match the region ($REGION)."
   exit 1
 fi
 
+echo RP: $RESOURCES_PREFIX AZ: $AVAILABILITY_ZONE REGION: $REGION STACK_NAME: $STACK_NAME VPC_CIDR: $VPC_CIDR PUBLIC_SUBNET_CIDR: $PUBLIC_SUBNET_CIDR PRIVATE_SUBNET_CIDR: $PRIVATE_SUBNET_CIDR
 # Create the CloudFormation Stack
 aws cloudformation create-stack \
   --stack-name $STACK_NAME \

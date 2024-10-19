@@ -52,10 +52,12 @@ output = json
 ```
 
 **credentials** should look like:
+Setting your region will help avoid error caused when a --region flag is omitted from a pcluster command.
 ```
 [default]
 aws_access_key_id = <ACCESS_KEY>
 aws_secret_access_key = <SECRET_ACCESS_KEY>
+region = <REGION>
 ```
 
 ##### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster To Operate
@@ -82,23 +84,6 @@ Please refer to the pcluster docs to verify your cli user has the appropriate pe
 }
 ```
 
-**pcluster-omics-analysis-policy-check**
-
-- Add this inline policy to the cli user from the aws iam user dashboard. This allows the init script to confirm the aws cli user has required permissins. This is not necessary for daylily to run, but is needed to complete the automated init script install checks. Name it `pcluster-omics-analysis-fleet`.
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowPolicySimulation",
-      "Effect": "Allow",
-      "Action": "iam:SimulatePrincipalPolicy",
-      "Resource": "*"
-    }
-  ]
-}
-```
 
 #### 2. Create A New SSH Key Pair (type: ed25519) & Downloaded `.pem` File
 Move, copy and chmod: 
@@ -179,13 +164,34 @@ aws s3 cp s3://daylily-references-public/cluster_boot_config/v0.9 s3://<YOURPREF
 
 
 #### 4. Create A New `pcluster` Stack
-From the `daylily` repository root:
+##### **but first, choose the most affordable avaiability zone**
+The `region` is important for pcluster to run, but the `availability zone` is important for cost.  Daylily defaults to `us-west-2c` as it is consistently cheaper to run in, but the costs per AZ can vary by 2-3x. Please note, running in AZ's outside us-west-2 has **NOT** been tested, it should be trivial to tweak config to work outsize us-west-2, however, I believe the biggest pain will be that the S3 bucket must be in the same region as the `FSX` filesystem created by pcluster.  In anycase, this script presents a table to give you a feel for costs of running in different AZ's.
+_build the `DAYCLI` environment to run the following script_
+
+`bin/check_current_spot_market_by_zones.py -i config/day_cluster/prod_cluster.yaml -o ./zones.tsv --zones us-west-2a,us-west-2b,us-west-2c,us-west-2d,us-east-1a,us-east-1b,us-east-1c,us-east-1d --approx-spot-hours-per-30x-genome 3`
+
+###### Spot Price Statistics (example)
+| Zone       | Total Instances Considered | Instances with Pricing | Median Spot Price | Mean Spot Price | Min Spot Price | Max Spot Price | Avg of Lowest 3 Prices | Harmonic Mean Price | Estimated EC2 Cost / Genome (no FSX or S3 costs included here) | Stability (Max-Min Spread) |
+|------------|----------------------------|------------------------|-------------------|----------------|---------------|---------------|------------------------|--------------------|-----------------------------|----------------------------|
+| us-east-1d | 6                          | 6                      | **2.2443**         | **2.6635**      | **1.2944**    | 6.0426        | **1.5202**              | **2.0483**         | **4.5605**                  | 4.7482                     |
+| us-east-1b | 6                          | 6                      | 2.5682             | 3.1314         | 1.8549         | 6.8788        | 1.9998                 | 2.5703              | 5.9994                      | 5.0239                     |
+| us-west-2c | 6                          | 6                      | 3.2456             | 3.4618         | 1.3648         | **5.6738**    | 2.2753                 | 2.8179              | 6.8259                      | **4.3090**                 |
+| us-west-2d | 6                          | 6                      | 3.0717             | 3.3662         | 1.7559         | 5.8005        | 2.2841                 | 2.8928              | 6.8523                      | 4.0446                     |
+| us-east-1c | 6                          | 6                      | 3.9424             | 3.8837         | 2.1061         | 5.4064        | 3.1122                 | 3.5621              | 9.3365                      | **3.3003**                 |
+| us-west-2b | 6                          | 6                      | 3.9970             | 4.4728         | 2.3100         | 9.1402        | 2.8915                 | 3.6808              | 8.6745                      | 6.8302                     |
+| us-east-1a | 6                          | 6                      | 3.5854             | 4.0252         | 2.9681         | 6.8254        | 3.2490                 | 3.7470              | 9.7470                      | 3.8573                     |
+| us-west-2a | 6                          | 6                      | 3.9594             | 4.8392         | 3.4149         | 8.8822        | 3.4376                 | 4.2998              | 10.3128                     | 5.4673                     |
+
+* I will proceed with `us-west-2c`.
+
+##### **Create The Cloudformation Stack**
+From the `daylily` repository root dir, run the following command (it will take up to 10min to complete! This step does not need to be repeated for each new cluster, but only when you are setting up in a new AZ, which quotas will likely limit you to just one at a time).:
 ```bash
-bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml <short-resource-prefix-to-use>
+bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml <short-resource-prefix-to-use> <availability-zone> <region>
 ```
 - This will run and create a VPC, private and public subnet as well as an IAM policy which allows pcluster to tag resources for budget tracking and allow budget tools to see these tags.
 - The script should block the terminal while running, and report back on success.  If failure, go to the cloudformation console and look at the logs for the stack to see what went wrong & delete the stack before attempting again.
-- **please record/take note** of the `Public Subnet ID`, `Private Subnet ID`, and `Policy ARN` will be reported here and needed in the `daycli` setup.
+- **the resources created here will be presented to you when you run the daycli init**: `Public Subnet ID`, `Private Subnet ID`, and `Policy ARN` will be reported to STDOUT upon success.
 
 ## 
 ## Local DAYCLI Setup & Ephemeral Cluster Initialization (only need to do this once per new cluster)
