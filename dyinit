@@ -20,8 +20,8 @@ fi
 usage() {
   echo "This script initializes the Day CLI."
   echo "Region is autodetected as $cfn_region"
-  echo "Usage: source $0 --project <project> [--skip-project-check]"
-  echo " ... project == AWS budget"
+  echo "Usage: $0 [--project <project_name>] [--skip-project-check]"
+  echo " ... if --project is not specified, the defauly budget for the region is used: daylily-omics-analysis-${cfg_region}."
   echo "Valid projects: $(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2)"
   echo "Valid regions: Use a valid AWS region (e.g., us-east-1, us-west-2)."
   return 3
@@ -41,17 +41,33 @@ if ! command_exists aws; then
 fi
 
 # Parse input arguments
+
+# Parse input arguments
 SKIP_PROJECT_CHECK=false
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     --project) PROJECT="$2"; shift 2;;
     --skip-project-check) SKIP_PROJECT_CHECK=true; shift 1;;
-    *) echo "Unknown parameter passed: $1"; usage; return 3;;
+    *) echo "Unknown parameter passed: $1"; usage;;
   esac
 done
-echo "SKIP? _ $SKIP_PROJECT_CHECK _"
+
+# Set default project name if not provided
+if [[ -z "$PROJECT" ]]; then
+    if [[ -z "$region" ]]; then
+        echo "Error: Region is not set. Please set the 'region' variable."
+        exit 1
+    fi
+    PROJECT="daylily-omics-analysis-${region}"
+    echo "Notice: --project not set. Using default project name: $PROJECT"
+fi
+
+# Example output to confirm the parsed values
+echo "Project: $PROJECT"
+echo "Skip Project Check: $SKIP_PROJECT_CHECK"
+
 # Use environment variables if flags are not set
-PROJECT="${PROJECT:-$DAY_PROJECT}"
+
 export DAY_PROJECT=$PROJECT
 
 export DAY_AWS_REGION=$region
