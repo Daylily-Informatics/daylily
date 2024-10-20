@@ -100,67 +100,19 @@ chmod 400 ~/.ssh/<yourkey>.pem`
 ##### Copy The `daylily` Public References/Resources To Your New Bucket (choose the most recent version)
 From your terminal/shell (and to be safe, in a screen or tmux session as it may run for a while).
 
-Move to the root of the cloned repo, please run the following code (which will prompt you to select the version of the reference data you would like to copy to your bucket).
+You will need to copy the daylily ephemeral cluster s3 data to a bucket named `daylily-omics-analysis-REGION` in your account. There will need to be one of these per region you intende to run in. Default is `us-west-2`. This locality dependence is due to the `Fsx` filesystem requiring the S3 bucket it mounts to be in the same region as it and the subnets.
 
+**only needs to be done 1x per region**
 ```bash
+./bin/create_daylily_omics_analysis_s3.sh -h
 
-echo -n "enter your bucket prefix (ie: myorg): "
-read your_bucket_prefix
+Usage: ./bin/create_daylily_omics_analysis_s3.sh [--daylily-s3-version <version>] [--region <region>] [--dryrun] [--help]
 
-s3_reference_bucket_url="s3://rcrf-omics-analysis/daylily"
+./bin/create_daylily_omics_analysis_s3.sh --region us-west-2 --daylily-s3-version v0.9 --dryrun
 
-# Prompt user to select an S3 reference data version
-echo "Select the S3 reference data version from the list below:"
-
-# Check if the version file exists
-version_file="config/day_cluster/s3_ref_data.versions"
-if [[ ! -f "$version_file" ]]; then
-    echo "Error: Version file '$version_file' does not exist. Exiting."
-    return 1
-fi
-
-
-# Read versions from the file into an array using a while loop for compatibility
-versions=()
-while IFS= read -r line; do
-    versions+=("$line")
-done < "$version_file"
-
-
-# Check if any versions were read
-if [[ ${#versions[@]} -eq 0 ]]; then
-    echo "Error: No versions found in '$version_file'. Exiting."
-    return 1
-fi
-
-# Present the list of versions for selection
-select version_choice in "${versions[@]}"; do
-    if [[ -n "$version_choice" ]]; then
-        echo "You selected version: $version_choice"
-        s3_reference_data_version=$version_choice
-        break
-    else
-        echo "Invalid selection, please try again."
-    fi
-done
-
-
-
-cmda="aws s3 cp s3://daylily-references-public/data/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/data --recursive --request-payer requester "
-cmdb="aws s3 cp s3://daylily-references-public/cluster_boot_config/$s3_reference_data_version s3://${your_bucket_prefix}-omics-analysis/cluster_boot_config --recursive  --request-payer requester "
-
-echo " Now, run the following commands in your shell:\n\n\t"
-echo "  $cmda & $cmdb & echo 'waiting for both to complete' & wait \n\n"
-
+# Run it for real, may take a while to run! be in tmux or screen...
+./bin/create_daylily_omics_analysis_s3.sh --region us-west-2 --daylily-s3-version v0.9 
 ```
-
-The above is composing the commands to copy the current versions of the reference and config files to your local s3 bucket. This is the gist of it (using `v0.9`):
-```bash
-aws s3 cp s3://daylily-references-public/data/v0.9 s3://<YOURPREFIX>-omics-analysis/data --recursive --request-payer requester 
-aws s3 cp s3://daylily-references-public/cluster_boot_config/v0.9 s3://<YOURPREFIX>-omics-analysis/cluster_boot_config --recursive  --request-payer requester
-
-```
-
 
 
 #### 4. Create A New `pcluster` Stack
