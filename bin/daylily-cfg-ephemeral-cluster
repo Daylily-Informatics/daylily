@@ -174,9 +174,10 @@ check_quota() {
     local resource_name="$1"
     local quota_code="$2"
     local recommended_count="$3"
+    local sccode="$4"
     
     echo "Checking quota for $resource_name..."
-    quota=$(aws service-quotas get-service-quota --service-code ec2 --quota-code "$quota_code" --region "$region" 2>/dev/null)
+    quota=$(aws service-quotas get-service-quota --service-code $sccode --quota-code "$quota_code" --region "$region" 2>/dev/null)
 
     if [[ $? -ne 0 ]]; then
         handle_warning "Error: Unable to retrieve quota for $resource_name."
@@ -196,22 +197,22 @@ check_quota() {
 echo "Performing AWS quota checks..."
 
 # Dedicated Instances
-check_quota "Spot vCPU Max" "L-1216C47A" 20
+check_quota "Spot vCPU Max" "L-1216C47A" 20 ec2
 
 # Spot vCPU Max Quota 
-check_quota "Spot vCPU Max" "L-34B43A08" 310
+check_quota "Spot vCPU Max" "L-34B43A08" 310 ec2
 
 # VPC Quota (Default: 5 per region)
-check_quota "VPCs" "L-F678F1CE" 4
+check_quota "VPCs" "L-F678F1CE" 4 vpc
 
 # Elastic IP Quota (Default: 5 per region)
-check_quota "Elastic IPs" "L-0263D0A3" 4
+check_quota "Elastic IPs" "L-0263D0A3" 4 ec2
 
 # NAT Gateway Quota (Default: 5 per AZ)
-check_quota "NAT Gateways" "L-FE5A380F" 4
+check_quota "NAT Gateways" "L-FE5A380F" 4 vpc
 
 # Internet Gateway Quota (Default: 5 per region)
-check_quota "Internet Gateways" "L-AE7E82AC" 4
+check_quota "Internet Gateways" "L-A4707A72" 4 vpc
 
 # Check for 'pcluster-omics-analysis' policy and create if necessary
 echo "Checking for required IAM policy 'pcluster-omics-analysis'..."
@@ -282,13 +283,17 @@ fi
 
 
 # Query available S3 buckets and present only those in the correct region
-echo "Fetching S3 buckets matching 'omics-analysis'..."
-buckets=$(aws s3api list-buckets --query "Buckets[].{Name: Name, Region: Region}" --output json | jq -r '.[] | "\(.Name) (\(.Region))"')
+echo "Fetching S3 buckets matching 'omics-analysis' in $region..."
+buckets=$(aws s3api list-buckets --query "Buckets[].Name" --output text | tr '\t' '\n' | \
+while read -r bucket; do \
+  region=$(aws s3api get-bucket-location --bucket "$bucket" --query "LocationConstraint" --output text); \
+  echo "$bucket ($region)" | grep "omics-analysis"; \
+done)
 
 matching_buckets=()
-while IFS= read -r bucket; do
+while IFS= read  bucket; do
     bucket_region=$(echo "$bucket" | awk '{print $NF}')
-    if [[ "$bucket_region" == "$region" ]]; then
+    if [[ "$bucket_region" == "($region)" ]]; then
         matching_buckets+=("$bucket")
     fi
 done <<< "$buckets"
@@ -305,12 +310,43 @@ select bucket_choice in "${matching_buckets[@]}"; do
     break
 done
 
+bucket=$(echo $bucket_choice | cut -f 1 -d " " )
+
+
+# Check if the required folders exist in the bucket
+check_s3_folder() {
+    local bucket=$1
+    local folder=$2
+
+    if aws s3 ls "s3://$bucket/$folder/" > /dev/null 2>&1; then
+        echo "Folder s3://$bucket/$folder/ exists."
+    else
+        echo "ERROR: Folder s3://$bucket/$folder/ does not exist."
+        return 1
+    fi
+}
+
+echo "Validating required folders in bucket: $selected_bucket"
+check_s3_folder "$bucket" "data" || return 3
+check_s3_folder "$bucket" "cluster_boot_config" || return 3 
+
+echo "All required folders exist in $bucket."
+
+## TODO: add a check to confirim the bucket has the expected s3://%{bucket}/data and s3://%{bucket}/cluster_boot_config folders
 
 # Query for public and private subnets and ARN
 echo "Checking subnets and ARN in the specified AZ: $region_az..."
 
-public_subnets=$(aws ec2 describe-subnets --query "Subnets[?AvailabilityZone=='$region_az' && Tags[?Value=='Public']].SubnetId" --region "$region" --output text)
-private_subnets=$(aws ec2 describe-subnets --query "Subnets[?AvailabilityZone=='$region_az' && Tags[?Value=='Private']].SubnetId" --region "$region" --output text)
+public_subnets=$(aws ec2 describe-subnets \
+  --query "Subnets[?AvailabilityZone=='$region_az'].{ID: SubnetId, Name: Tags[?Key=='Name']|[0].Value}" \
+  --region "$region" --output text | grep "Public Subnet"
+  )
+  
+private_subnets=$(aws ec2 describe-subnets \
+  --query "Subnets[?AvailabilityZone=='$region_az'].{ID: SubnetId, Name: Tags[?Key=='Name']|[0].Value}" \
+  --region "$region" --output text | grep "Private Subnet"
+)
+
 arn_count=$(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region" | wc -l)
 
 if [[ -z "$public_subnets" && -z "$private_subnets" && $arn_count -eq 0 ]]; then
@@ -325,14 +361,8 @@ fi
 
 echo "Setup complete. Proceeding with the remaining steps..."
 
-
-public_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text | grep "Public Subnet" | grep $region_az)
-    
-private_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text | grep "Public Subnet" | grep $region_az)
-
-arn_count_new=$(aws iam list-roles --query "Roles[?RoleName=='pclusterTagsAndBudget'].Arn" --output text --region "$region" | wc -l)
-
 # Select public and private subnets
+public_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text | grep "Public Subnet" | grep $region_az)
 echo "Select a Public Subnet:"
 public_subnet_choices=()
 while read -r subnet_id subnet_name; do
@@ -346,7 +376,7 @@ select public_subnet_choice in "${public_subnet_choices[@]}"; do
 done
 
 echo "Select a Private Subnet:"
-private_subnets=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0]]" --region "$region" --output text | grep "Private Subnet")
+private_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text | grep "Public Subnet" | grep $region_az)
 private_subnet_choices=()
 while read -r subnet_id subnet_name; do
     private_subnet_choices+=("$subnet_name ($subnet_id)")
@@ -360,7 +390,6 @@ done
 
 # Select an IAM policy ARN for 'pclusterTagsAndBudget'
 policy_arns=($(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region"))
-
 echo "Select an IAM policy ARN for 'pclusterTagsAndBudget':"
 select arn_policy_id in "${policy_arns[@]}"; do
     echo "You selected: $arn_policy_id"
@@ -389,6 +418,9 @@ if [[ ! -f "$cluster_yaml" ]]; then
     return 3
 fi 
 
+xmr_pool_url=na
+xmr_wallet=na
+
 # XMR Mining Setup
 echo "Enable XMR mining with idle compute? (1) No (2) Yes:"
 select enable_xmr in "No" "Yes"; do
@@ -412,6 +444,7 @@ select enable_xmr in "No" "Yes"; do
     break
 done
 
+
 # Prepare configuration
 mkdir -p ~/.config/daylily
 target_conf=~/.config/daylily/${cluster_name}_cluster.yaml.init
@@ -420,6 +453,9 @@ regsub_vals=~/.config/daylily/${cluster_name}_cluster_init_vals.txt
 
 cp "$cluster_yaml" "$target_conf"
 pem_name=$(basename "$pem_file" | cut -d '.' -f 1)
+
+bucket_url="s3://$selected_bucket"
+bucket_name=$bucket
 
 # Write variables to config
 cat <<EOF > $regsub_vals

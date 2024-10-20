@@ -6,81 +6,75 @@ import argparse
 from copy import deepcopy
 
 def parse_arguments():
-    """Parse command-line arguments for input and output files."""
-    parser = argparse.ArgumentParser(description="Calculate and insert average spot prices into config.yaml.")
-    parser.add_argument("-i", "--input", required=True, help="Path to the input YAML configuration file.")
-    parser.add_argument("-o", "--output", required=True, help="Path to the output YAML configuration file.")
-    parser.add_argument("--subnet-id", required=True, help="Subnet ID to determine the AZ (e.g., subnet-1234abcd).")
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description="Insert average spot prices into config.yaml.")
+    parser.add_argument("-i", "--input", required=True, help="Input YAML configuration file path.")
+    parser.add_argument("-o", "--output", required=True, help="Output YAML configuration file path.")
+    parser.add_argument("--subnet-id", required=True, help="Subnet ID to determine the AZ.")
     return parser.parse_args()
 
-def get_availability_zone(subnet_id):
-    """Retrieve the availability zone for the specified subnet ID."""
+def run_aws_command(command):
+    """Run an AWS CLI command and return the result as a string."""
     try:
-        az = subprocess.check_output([
-            "aws", "ec2", "describe-subnets",
-            "--subnet-ids", subnet_id,
-            "--query", "Subnets[0].AvailabilityZone",
-            "--output", "text"
-        ]).decode("utf-8").strip()
-        return az
+        return subprocess.check_output(command, text=True).strip()
     except subprocess.CalledProcessError as e:
-        print(f"Error retrieving AZ for subnet {subnet_id}: {e}")
+        print(f"Error executing {' '.join(command)}: {e}")
         return None
+
+def get_availability_zone(subnet_id):
+    """Retrieve the AZ for the given subnet ID."""
+    command = [
+        "aws", "ec2", "describe-subnets", 
+        "--subnet-ids", subnet_id, 
+        "--query", "Subnets[0].AvailabilityZone", 
+        "--output", "text"
+    ]
+    return run_aws_command(command)
 
 def get_spot_price(instance_type, az):
-    """Query AWS to get the current spot price of an instance type in a specific AZ."""
-    region = az[:-1]  # Extract region from AZ
-    try:
-        result = subprocess.check_output([
-            "aws", "ec2", "describe-spot-price-history",
-            "--instance-types", instance_type,
-            "--availability-zone", az,
-            "--product-description", "Linux/UNIX",
-            "--query", "SpotPriceHistory[0].SpotPrice",
-            "--output", "text"
-        ]).decode("utf-8").strip()
-        return float(result)
-    except subprocess.CalledProcessError as e:
-        print(f"Error querying spot price for {instance_type} in {az}: {e}")
-        return None
+    """Retrieve the spot price for an instance type in a specific AZ."""
+    region = az[:-1]  # Derive region from AZ
+    command = [
+        "aws", "ec2", "describe-spot-price-history", 
+        "--instance-types", instance_type, 
+        "--availability-zone", az, 
+        "--product-description", "Linux/UNIX", 
+        "--query", "SpotPriceHistory[0].SpotPrice", 
+        "--output", "text"
+    ]
+    result = run_aws_command(command)
+    return float(result) if result else None
 
-def process_instance_group(group, az):
-    """Process each compute resource group to calculate the average spot price."""
-    for resource in group.get('ComputeResources', []):
-        spot_prices = []
-        for instance in resource.get('Instances', []):
-            instance_type = instance.get('InstanceType')
-            spot_price = get_spot_price(instance_type, az)
-            if spot_price is not None:
-                spot_prices.append(spot_price)
+def calculate_average_spot_price(resource, az):
+    """Calculate the average spot price for all instances in the compute resource."""
+    spot_prices = [
+        get_spot_price(instance.get('InstanceType'), az)
+        for instance in resource.get('Instances', [])
+        if get_spot_price(instance.get('InstanceType'), az) is not None
+    ]
+    if spot_prices:
+        resource['SpotPrice'] = round(statistics.mean(spot_prices), 4)
 
-        if spot_prices:
-            # Calculate the average spot price
-            avg_spot_price = statistics.mean(spot_prices)
-            # Insert the SpotPrice tag
-            resource['SpotPrice'] = round(avg_spot_price, 4)
+def process_slurm_queues(config, az):
+    """Process all Slurm queues to calculate and update spot prices."""
+    for queue in config.get('Scheduling', {}).get('SlurmQueues', []):
+        for resource in queue.get('ComputeResources', []):
+            calculate_average_spot_price(resource, az)
 
 def main():
     args = parse_arguments()
 
-    # Detect the AZ from the provided subnet ID
     az = get_availability_zone(args.subnet_id)
     if not az:
-        print("Error: Could not determine the availability zone from the subnet ID.")
+        print("Error: Could not determine the AZ for the provided subnet ID.")
         return
 
-    # Load the input YAML configuration file
     with open(args.input, 'r') as f:
         config = yaml.safe_load(f)
 
-    # Deepcopy the config to avoid modifying the original during iteration
     new_config = deepcopy(config)
+    process_slurm_queues(new_config, az)
 
-    # Iterate over all slurm queues and process each one
-    for queue in new_config.get('Scheduling', {}).get('SlurmQueues', []):
-        process_instance_group(queue, az)
-
-    # Write the updated configuration to the output file
     with open(args.output, 'w') as f:
         yaml.dump(new_config, f, sort_keys=False)
 
