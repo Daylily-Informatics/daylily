@@ -11,6 +11,8 @@ FILES=(
     "mine_cron.sh"
     "post_install_ubuntu_combined.sh"
     "sleep_test.sh"
+    "projects_list.conf"
+    "sbatch"
 )
 
 # Iterate over the files and copy each one using rclone
