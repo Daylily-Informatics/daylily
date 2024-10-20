@@ -47,8 +47,11 @@ create_bucket() {
     if [ "$dryrun" = true ]; then
         echo "[Dry-run] Skipping bucket creation."
     else
-        aws s3api create-bucket --bucket "$new_bucket" --region "$region" \
-            --create-bucket-configuration LocationConstraint="$region"
+        if [ "$region" = "us-east-1" ]; then
+            aws s3api create-bucket --bucket "$new_bucket" --region "$region"
+        else
+            aws s3api create-bucket --bucket "$new_bucket" --region "$region" --create-bucket-configuration LocationConstraint="$region"
+        fi
         echo "Bucket '$new_bucket' created successfully."
     fi
 }

@@ -66,10 +66,8 @@ validate_region() {
     echo "Region '$1' confirmed as valid."
     return 0
   else
-    handle_warning "Warning: Region '$1' is not 'us-west-2'."
+    echo "Warning: Region '$1' is not 'us-west-2'."
     echo "It is recommended to use 'us-west-2' for this operation."
-    sleep 2
-    return 3
   fi
 }
 
@@ -531,13 +529,19 @@ fi
 
 # Dry run cluster creation
 echo "Running a cluster creation dry run..."
-pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --dryrun true --region "$region"
+json_response=$(pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --dryrun true --region "$region")
 
-echo -n "Are you ready to create the cluster (y/n)? "
-read ready_to_create
-if [[ "$ready_to_create" != "y" ]]; then
-    echo "Exiting without creating the cluster."
+message=$(echo "$json_response" | jq -r '.message')
+
+# Validate the message
+if [[ "$message" == "Request would have succeeded, but DryRun flag is set." ]]; then
+    echo "Dry run successful. Proceeding with cluster creation."
+elif [[ "$DAY_BREAK" == "1" ]]; then
+    echo "DAY_BREAK == '1'.  Exiting without creating the cluster."
     return 0
+else
+    echo "Error: Dry run failed (  pcluster create-cluster -n $cluster_name -c $target_conf_fin --dryrun true --region $region ). Exiting."
+    return 3
 fi
 
 # Create the cluster

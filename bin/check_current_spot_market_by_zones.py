@@ -14,20 +14,20 @@ NEON_ORANGE = (255, 140, 0)
 BRIGHT_GRAY = (211, 211, 211)
 
 def parse_arguments():
-    """Parse command-line arguments for input YAML, output TSV, and zones."""
+    """Parse command-line arguments for input YAML, output TSV, and zones. """
     parser = argparse.ArgumentParser(description="Look up spot prices for instances in the i192 partition.")
-    parser.add_argument("-i", "--input", required=True, help="Path to the input YAML configuration file.")
+    parser.add_argument("-i", "--input", default="config/day_cluster/prod_cluster.yaml", help="Path to the input YAML configuration file. default( config/day_cluster/prod_cluster.yaml)")
     parser.add_argument("-o", "--output", required=True, help="Path to the output TSV file.")
     parser.add_argument(
         "--zones",
-        required=True,
-        help="Comma-separated list of availability zones (e.g., us-west-2a,us-west-2b)."
-    )
+        default="us-west-2a,us-west-2b,us-west-2c,us-west-2d,us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-2a,us-east-2b,us-east-2c,us-west-1a,us-west-1a,us-west-1c",
+        help="Comma-separated list of availability zones (default us-west-2a,us-west-2b,us-west-2c,us-west-2d,us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-2a,us-east-2b,us-east-2c,us-west-1a,us-west-1c). HOWEVER, this is the current list of all AZs with the 192vcpu instances we need: ap-south-1a,ap-south-1b,ap-south-1c,ap-northeast-1a,ap-northeast-1c,ap-northeast-1d,ap-northeast-2a,ap-northeast-2b,ap-northeast-2c,ap-northeast-2d,ap-southeast-1a,ap-southeast-1b,ap-southeast-1c,ap-southeast-2a,ap-southeast-2b,ap-southeast-2c,ca-central-1a,ca-\
+central-1b,ca-central-1d,eu-central-1a,eu-central-1b,eu-central-1c,eu-north-1a,eu-north-1b,eu-north-1c,eu-west-1a,eu-west-1b,eu-west-1c,eu-west-2a,eu-west-2b,eu-west-2c,eu-west-3a,eu-west-3b,eu-west-3c,sa-east-1a,sa-east-1b,sa-east-1c,us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1f,us-east-2a,us-east-2b,us-east-2c,us-west-1a,us-west-1c,us-west-2a,us-west-2b,us-west-2c,us-west-2d")
     parser.add_argument(
         "--approx-spot-hours-per-30x-genome",
         type=float,
-        required=True,
-        help="Estimated spot instance hours required for processing a 30x genome."
+        default=3,
+        help="Estimated spot instance hours required for processing a 30x genome. (default: 3)"
     )
     return parser.parse_args()
 
@@ -47,7 +47,11 @@ def get_spot_price(instance_type, zone):
             "--query", "SpotPriceHistory[0].SpotPrice",
             "--output", "text", "--region", region
         ]).decode("utf-8").strip()
-        return float(result)
+        try:
+            return float(result)
+        except Exception as e:
+            print(f"Error converting spot price for {instance_type} in {zone}: {e}")
+            return 100
     except subprocess.CalledProcessError as e:
         print(f"Error querying spot price for {instance_type} in {zone}: {e}")
         return None
