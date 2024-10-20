@@ -86,12 +86,15 @@ Please refer to the pcluster docs to verify your cli user has the appropriate pe
 
 
 #### 2. Create A New SSH Key Pair (type: ed25519) & Downloaded `.pem` File
+_keypairs are region specific, and you will need to create a new keypair for each region you intend to run in_
+
+```bash
 Move, copy and chmod: 
 ```bash
 mv ~/Downloads/<yourkey>.pem  ~/.ssh/<yourkey>.pem 
 chmod 400 ~/.ssh/<yourkey>.pem`
 ```
-
+* Your keypair will need to be available in ~/.ssh/
 
 #### 3. Create `YOURPREFIX-omics-analysis` s3 Bucket
 - Your new bucket name should end in `-omics-analysis` and be unique to your account. This allows easier auto-detection latter in the `daycli` setup.

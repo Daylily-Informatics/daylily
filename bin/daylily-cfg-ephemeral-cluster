@@ -238,31 +238,56 @@ if [[ -z "$policy_arn" ]]; then
     aws iam create-policy --policy-name "$policy_name" --policy-document "$policy_document" --region "$region"
 fi
 
-# Prompt user for PEM file selection
-pem_files=($(find ~/.ssh -type f -name "*.pem"))
 
-if [[ ${#pem_files[@]} -eq 0 ]]; then
-    echo "No PEM files found in ~/.ssh. Please ensure you have your PEM file there."
-    return 3
-fi
+# Fetch all key pairs in the given region
+key_data=$(aws ec2 describe-key-pairs --region "$region" --query 'KeyPairs[*].[KeyName, KeyType]' --output text | grep omics)
 
+# Filter for keys with the required suffix
+filtered_keys=()
+while IFS=$'\t' read -r key_name key_type; do
+    if [[ $key_type == "ed25519" ]]; then
+        pem_file_t=$HOME/.ssh/"${key_name}.pem"
+        pem_status="NOT FOUND"
+        [[ -f "$pem_file_t" ]] && pem_status="FOUND"
+        filtered_keys+=("$key_name|$key_type|$pem_status|$pem_file_t")
+    fi
+done <<< "$key_data"
 
-echo ""
-echo "Select a PEM file to use (you must have downloaded your ED25519 KEYNAME.pem file to ~/.ssh for it to appear here):"
-select pem_file in "${pem_files[@]}"; do
-    if [[ -n "$pem_file" ]]; then
-        echo "You selected: $pem_file"
-        key_type=$(ssh-keygen -l -f "$pem_file" 2>/dev/null | awk '{print $4}')
-        if [[ "$key_type" != "ED25519" ]]; then
-            handle_warning "The selected PEM file may not be of type ED25519, which is required for Ubuntu hosts."
-        else
-            echo "PEM file is of type ED25519."
-        fi
-        break
-    else
-        echo "Invalid selection, please try again."
+# Present valid keys to the user
+echo "Available ED25519 keys with matching PEM files:"
+valid_keys=()
+index=1
+for key_info in "${filtered_keys[@]}"; do
+    IFS='|' read -r key_name key_type pem_status pem_file <<< "$key_info"
+    if [[ $pem_status == "FOUND" ]]; then
+        valid_keys+=("$key_name")
+        echo "[$index] Key: $key_name | Type: $key_type | PEM: $pem_status"
+        ((index++))
     fi
 done
+
+# Check if no valid keys were found
+if [[ ${#valid_keys[@]} -eq 0 ]]; then
+    echo "No valid ED25519 keys with matching PEM files were found."
+    exit 1
+fi
+
+# Prompt the user to select a key
+read -p "Select a key by entering the corresponding number: " choice
+if ! [[ "$choice" =~ ^[0-9]+$ ]] || ((choice < 1 || choice > ${#valid_keys[@]})); then
+    echo "Invalid selection. Exiting."
+    exit 1
+fi
+
+# Retrieve the selected key name
+selected_key="${valid_keys[$((choice - 1))]}"
+echo "You selected: $selected_key"
+
+# Proceed with further operations using the selected key
+# Example: connect to an instance or perform other operations
+pem_file=$HOME/.ssh/"${selected_key}.pem"
+echo "Using key: $selected_key with PEM file: $pem_file"
+
 
 echo "Checking if the 'daylily-omics-analysis-${region}' budget exists..."
 budget_name="daylily-omics-analysis-${region}"
@@ -452,10 +477,10 @@ done
 
 
 # Prepare configuration
-mkdir -p ~/.config/daylily
-target_conf=~/.config/daylily/${cluster_name}_cluster.yaml.init
-target_conf_fin=~/.config/daylily/${cluster_name}_cluster.yaml
-regsub_vals=~/.config/daylily/${cluster_name}_cluster_init_vals.txt
+mkdir -p $HOME/.config/daylily
+target_conf=$HOME/.config/daylily/${cluster_name}_cluster.yaml.init
+target_conf_fin=$HOME/.config/daylily/${cluster_name}_cluster.yaml
+regsub_vals=$HOME/.config/daylily/${cluster_name}_cluster_init_vals.txt
 
 cp "$cluster_yaml" "$target_conf"
 pem_name=$(basename "$pem_file" | cut -d '.' -f 1)
