@@ -6,7 +6,7 @@ Capturing the steps I took to get the daylily framework up and running in a `cla
 - `daylily` was tuned to run in the `us-west-2c` AZ, for cost and availabiliyu of some specific compute resources not found in all AZs. The install should all build and proceed using the `us-west-2c` AZ.
 - A cloudstack formation template will run which will create some important resources for the epheral cluster, namely: the public VPC, public subnet, private subnet, and a policy to allow tagging and budget tracking of resources by pcluster.
 - The install steps should work for both `bash` and `zsh` shells, but the `bash` shell is the default for the `pcluster` environment.
-- Daylily `projects` are synonymous with AWS `budgets`. When initializing daylily `. dyinit  --project PROJECT --region REGION`, the project specified will be checked vs the slurm registry of projects, found `/opt/slurm/etc/projects_list.conf` and be checked to confirm there is a matching AWS budget of the specified name. If not, you will be prompted to create a budget (which may also be completed via the AWS dashboard, use a simplified `monthly spend` type). for now, you willneed to update the `projects_list.conf` file manually with each new budget added, *importantly* both in the current ephemeral cluster conf file as well as the s3 bucket hosted version which is used to build new nodes.
+- Daylily `projects` are synonymous with AWS `budgets`. When initializing daylily `. dyinit  --project PROJECT`, the project specified will be checked vs the slurm registry of projects, found `/opt/slurm/etc/projects_list.conf` and be checked to confirm there is a matching AWS budget of the specified name. If not, you will be prompted to create a budget (which may also be completed via the AWS dashboard, use a simplified `monthly spend` type). for now, you willneed to update the `projects_list.conf` file manually with each new budget added, *importantly* both in the current ephemeral cluster conf file as well as the s3 bucket hosted version which is used to build new nodes.
 
 
 # Steps
@@ -238,7 +238,7 @@ ssh -i /Users/daylily/.ssh/omics-analysis-b.pem ubuntu@52.24.138.65
 Once logged in, as the 'ubuntu' user, run the following commands:
   cd ~/projects/daylily
   source dyinit -h
-  source dyinit  --project PROJECT --region REGION
+  source dyinit  --project PROJECT
   dy-a local
   dy-r help
  
@@ -407,7 +407,7 @@ drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 
 **run a local test**
 ```bash
-. dyinit  --project PROJECT --region REGION
+. dyinit  --project PROJECT
 dy-a local
 
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
@@ -462,7 +462,7 @@ cd daylily
 
 #  prepare to run the test
 tmux new -s slurm_test
-. dyinit  --project PROJECT --region REGION
+. dyinit  --project PROJECT
 dy-a slurm
 
 # create a test manifest for one giab sample only, which will run on the 0.01x test dataset
@@ -517,7 +517,7 @@ cd /fsx/analysis_results/ubuntu/slurm_single
 git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
 cd daylily
 
-. dyinit  --project PROJECT --region REGION
+. dyinit  --project PROJECT 
 dy-a slurm
 
 # TO create a single sample manifest
@@ -538,7 +538,7 @@ cd /fsx/analysis_results/ubuntu/slurm_multi_30x_test
 git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
 cd daylily
 
-. dyinit  --project PROJECT --region REGION
+. dyinit  --project PROJECT 
 dy-a slurm
 
 # copy full 30x giab sample template to config/analysis_manifest.csv

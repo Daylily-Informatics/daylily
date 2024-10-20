@@ -5,7 +5,7 @@
 
 # init the dy-cli
 source dyinit -h
-source dyinit  --project <PROJECT> --region <REGION>
+source dyinit  --project <PROJECT>
 
 # activate the local or slurm running environment
 dy-a local # or slurm  # tab complete for avail envs

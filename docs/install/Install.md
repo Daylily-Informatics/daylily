@@ -85,7 +85,7 @@ Miniconda3-latest-Linux-x86_64.sh
     ```bash
     You may now ssh into the head node with : ssh -i /Users/$USERNAME/.ssh/$PEMNAME.pem ubuntu@$IP-ADDRESS 
     ... once logged in, run : sudo su - daylily 
-    ...... then as daylily run: cd projects/daylily; source dyinit  --project <PROJECT> --region <REGION>; dy-a local && dy-r help 
+    ...... then as daylily run: cd projects/daylily; source dyinit  --project <PROJECT>; dy-a local && dy-r help 
     ```
        
    - note: you should not run daylily from ~ for production, but create a new subdir in `/fsx/analysis_results/daylily`.
@@ -132,7 +132,7 @@ Miniconda3-latest-Linux-x86_64.sh
   cd daylily
 
   # source dy-cli
-  source dyinit  --project <PROJECT> --region <REGION>
+  source dyinit  --project <PROJECT> 
 
   # Build daylily if not done so already
   dy-b

@@ -35,7 +35,7 @@ if mg_biome in ['na']:
     mg_biome = "AWSPC"
 
 if mg_biome in ['na'] or mg_profile in ['na']:
-    print("please run 'source dyinit  --project <PROJECT> --region <REGION>; day-activate (profile);' ", file=sys.stderr )
+    print("please run 'source dyinit  --project <PROJECT> ; day-activate (profile);' ", file=sys.stderr )
 
 # set work dir to the executing	dir ('..' from the Snakefile)
 wd=os.path.abspath('.')
@@ -66,7 +66,7 @@ try:
 
 except Exception as e:
     print('MISSING DAY_BIOME OR DAY_PROFILE',e,  mg_biome)
-    raise Exception(f"ERROR: {e}\n\n have you executed: 'source dyinit  --project <PROJECT> --region <REGION>; dy-a (profilename)'?  is the profile activated valid for this environment? ")
+    raise Exception(f"ERROR: {e}\n\n have you executed: 'source dyinit  --project <PROJECT> ; dy-a (profilename)'?  is the profile activated valid for this environment? ")
 
 
 # Import the global and help SMK files. The global and common SMK files
@@ -329,7 +329,7 @@ rule all:  # TARGET : Prompt user to run help
         echo 'Hello!  To learn how to run daylily, execute the following:' ;
 	echo ' ';
         echo ' ';
-        echo 'source dyinit  --project <PROJECT> --region <REGION>';
+        echo 'source dyinit  --project <PROJECT> ';
         echo 'dy-a local/slurm';
         echo 'dy-r help';
         """
