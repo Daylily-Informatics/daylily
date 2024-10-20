@@ -9,7 +9,7 @@ dryrun=false  # Default to false
 
 # Usage function
 usage() {
-    echo "Usage: $0 [--daylily-s3-version <version>] [--region <region>] [--dryrun] [--help]"
+    echo "Usage: $0 [--bucket-prefix <prefix> --daylily-s3-version <version> (default v0.9)] [--region <region> (default us-west-2)] [--dryrun] [--help]"
     exit 1
 }
 
@@ -19,14 +19,19 @@ while [[ "$#" -gt 0 ]]; do
     --daylily-s3-version) s3_reference_data_version="$2"; shift 2;;
     --region) region="$2"; shift 2;;
     --dryrun) dryrun=true; shift 1;;
+    --bucket-prefix) bucket_prefix="$2"; shift 2;;
     --help) usage;;
     *) echo "Unknown parameter: $1"; usage;;
   esac
 done
 
-echo "The following script will create the necessary S3 buckets for the Daylily ephemeral cluster to run."
+if [[ -z "$bucket_prefix" ]]; then
+    echo "Error: Bucket prefix is required."
+    usage
+fi
 
-new_bucket="daylily-omics-analysis-${region}"
+new_bucket="${bucket_prefix}-omics-analysis-${region}"
+echo "Creating bucket: $new_bucket"
 
 # Check if the bucket with the specified prefix already exists
 check_bucket_exists() {

@@ -115,9 +115,9 @@ chmod 400 ~/.ssh/<yourkey>.pem`
 ```
 * Your keypair will need to be available in ~/.ssh/
 
-#### 3. Create `YOURPREFIX-omics-analysis` s3 Bucket
-- Your new bucket name should end in `-omics-analysis` and be unique to your account. This allows easier auto-detection latter in the `daycli` setup.
-- And it should be created in `us-west-2`.
+#### 3. Create `YOURPREFIX-omics-analysis-REGION` s3 Bucket
+- Your new bucket name should end in `-omics-analysis-REGION` and be unique to your account. This allows easier auto-detection latter in the `daycli` setup.
+- And it should be created in the region you intend to run in. Default is `us-west-2`.
 
 ##### Copy The `daylily` Public References/Resources To Your New Bucket (choose the most recent version)
 From your terminal/shell (and to be safe, in a screen or tmux session as it may run for a while).
@@ -128,12 +128,12 @@ You will need to copy the daylily ephemeral cluster s3 data to a bucket named `d
 ```bash
 ./bin/create_daylily_omics_analysis_s3.sh -h
 
-Usage: ./bin/create_daylily_omics_analysis_s3.sh [--daylily-s3-version <version>] [--region <region>] [--dryrun] [--help]
+Usage: ./bin/create_daylily_omics_analysis_s3.sh --prefix <PREFIX> [--daylily-s3-version <version>] [--region <region>] [--dryrun] [-h]
 
-./bin/create_daylily_omics_analysis_s3.sh --region us-west-2 --daylily-s3-version v0.9 --dryrun
+./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.9 --dryrun
 
 # Run it for real, may take a while to run! be in tmux or screen...
-./bin/create_daylily_omics_analysis_s3.sh --region us-west-2 --daylily-s3-version v0.9 
+./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.9 
 ```
 
 
