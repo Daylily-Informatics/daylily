@@ -10,7 +10,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Insert average spot prices into config.yaml.")
     parser.add_argument("-i", "--input", required=True, help="Input YAML configuration file path.")
     parser.add_argument("-o", "--output", required=True, help="Output YAML configuration file path.")
-    parser.add_argument("--subnet-id", required=True, help="Subnet ID to determine the AZ.")
+    parser.add_argument("--az", required=True, help="availability zone")
     return parser.parse_args()
 
 def run_aws_command(command):
@@ -38,6 +38,7 @@ def get_spot_price(instance_type, az):
         "aws", "ec2", "describe-spot-price-history", 
         "--instance-types", instance_type, 
         "--availability-zone", az, 
+        "--region", region,
         "--product-description", "Linux/UNIX", 
         "--query", "SpotPriceHistory[0].SpotPrice", 
         "--output", "text"
@@ -64,10 +65,7 @@ def process_slurm_queues(config, az):
 def main():
     args = parse_arguments()
 
-    az = get_availability_zone(args.subnet_id)
-    if not az:
-        print("Error: Could not determine the AZ for the provided subnet ID.")
-        return
+    az = args.az
 
     with open(args.input, 'r') as f:
         config = yaml.safe_load(f)

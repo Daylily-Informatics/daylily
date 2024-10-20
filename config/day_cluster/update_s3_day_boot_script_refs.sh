@@ -3,7 +3,7 @@
 bucket=$1
 # Define the source and destination paths
 REF_PATH="daylily2:daylily-references-public/cluster_boot_config/v0.9/"
-ACTIVE_PATH="daylily2:daylily-omics-analysis/cluster_boot_config/"
+ACTIVE_PATH="rcrf:rcrf-omics-analysis/cluster_boot_config/"
 
 # List of files to copy
 FILES=(

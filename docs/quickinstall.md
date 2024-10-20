@@ -64,6 +64,8 @@ region = <REGION>
 Please refer to the pcluster docs to verify your cli user has the appropriate permissions to create and manage the resources necessary for the cluster.  [AWS Parallel Cluster Permissions](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam.html).
 
 ###### Two Inline Policies To Add To The CLI User
+Add 'inline json' policies to the user who will be running the `pcluster` commands.  These policies are necessary for the `pcluster` headnode to manage spot instances and query spot price histories.
+
 **pcluster-omics-analysis-fleet**
 - Add this inline policy to the cli user from the aws iam user dashboard. It allows the pcluster headnode to manage spot instances. If missing, you might be able to spin up a head but not be able to add spots. Name it `pcluster-omics-analysis-fleet`.
 ```json
@@ -81,6 +83,23 @@ Please refer to the pcluster docs to verify your cli user has the appropriate pe
       }
     }
   ]
+}
+```
+
+**spot-price-history**
+Your user must have the ability to query spot price histories. Add the following inline policy, and name it with the suffix `omics-analysis-spot-price-history`.
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeSpotPriceHistory"
+            ],
+            "Resource": "*"
+        }
+    ]
 }
 ```
 
@@ -105,7 +124,7 @@ From your terminal/shell (and to be safe, in a screen or tmux session as it may 
 
 You will need to copy the daylily ephemeral cluster s3 data to a bucket named `daylily-omics-analysis-REGION` in your account. There will need to be one of these per region you intende to run in. Default is `us-west-2`. This locality dependence is due to the `Fsx` filesystem requiring the S3 bucket it mounts to be in the same region as it and the subnets.
 
-**only needs to be done 1x per region**
+**only needs to be done 1x per region** _and will take an hour or so to run_
 ```bash
 ./bin/create_daylily_omics_analysis_s3.sh -h
 

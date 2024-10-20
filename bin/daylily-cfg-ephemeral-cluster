@@ -239,6 +239,7 @@ if [[ -z "$policy_arn" ]]; then
 fi
 
 
+## PEM File Check
 # Fetch all key pairs in the given region
 key_data=$(aws ec2 describe-key-pairs --region "$region" --query 'KeyPairs[*].[KeyName, KeyType]' --output text | grep omics)
 
@@ -246,10 +247,10 @@ key_data=$(aws ec2 describe-key-pairs --region "$region" --query 'KeyPairs[*].[K
 filtered_keys=()
 while IFS=$'\t' read -r key_name key_type; do
     if [[ $key_type == "ed25519" ]]; then
-        pem_file_t=$HOME/.ssh/"${key_name}.pem"
-        pem_status="NOT FOUND"
-        [[ -f "$pem_file_t" ]] && pem_status="FOUND"
-        filtered_keys+=("$key_name|$key_type|$pem_status|$pem_file_t")
+        pem_file_f=$HOME/.ssh/"${key_name}.pem"
+        pem_status="pem - NOT FOUND"
+        [[ -f "$pem_file_f" ]] && pem_status="pem - FOUND"
+        filtered_keys+=("$key_name|$key_type|$pem_status|$pem_file_f")
     fi
 done <<< "$key_data"
 
@@ -259,7 +260,7 @@ valid_keys=()
 index=1
 for key_info in "${filtered_keys[@]}"; do
     IFS='|' read -r key_name key_type pem_status pem_file <<< "$key_info"
-    if [[ $pem_status == "FOUND" ]]; then
+    if [[ $pem_status == "pem - FOUND" ]]; then
         valid_keys+=("$key_name")
         echo "[$index] Key: $key_name | Type: $key_type | PEM: $pem_status"
         ((index++))
@@ -269,26 +270,38 @@ done
 # Check if no valid keys were found
 if [[ ${#valid_keys[@]} -eq 0 ]]; then
     echo "No valid ED25519 keys with matching PEM files were found."
-    exit 1
+    return 3
 fi
+# Present valid keys to the user using 'select'
+echo "Select a valid ED25519 key with a matching PEM file:"
+PS3="Enter the corresponding number: "
+select key_info in "${filtered_keys[@]}"; do
+    if [[ -n "$key_info" ]]; then
+        # Extract the key name from the selected item
+        selected_key=$(echo "$key_info" | awk -F'|' '{print $1}')
+        echo "You selected: $selected_key"
+        break
+    else
+        echo "Invalid selection. Please try again."
+    fi
+done
 
-# Prompt the user to select a key
-read -p "Select a key by entering the corresponding number: " choice
-if ! [[ "$choice" =~ ^[0-9]+$ ]] || ((choice < 1 || choice > ${#valid_keys[@]})); then
-    echo "Invalid selection. Exiting."
-    exit 1
-fi
-
-# Retrieve the selected key name
-selected_key="${valid_keys[$((choice - 1))]}"
-echo "You selected: $selected_key"
 
 # Proceed with further operations using the selected key
 # Example: connect to an instance or perform other operations
 pem_file=$HOME/.ssh/"${selected_key}.pem"
-echo "Using key: $selected_key with PEM file: $pem_file"
+
+# Check if the file exists
+if [[ -e "$pem_file" ]]; then
+    echo "File $pem_file exists. Proceeding with further operations."
+else
+    echo "File $pem_file does not exist. Exiting."
+    return 3  # Use 'exit 1' if outside a function
+fi
+echo "Using key: $selected_key with PEM file $pem_file"
 
 
+# Region Check
 echo "Checking if the 'daylily-omics-analysis-${region}' budget exists..."
 budget_name="daylily-omics-analysis-${region}"
 
@@ -506,7 +519,15 @@ EOF
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
 
 echo "Calculating max spot bid prices per partition resource group..."
-bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --subnet-id $private_subnet
+bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az
+
+# Check the exit status of the previous command
+if [[ $? -ne 0 ]]; then
+    echo "Error: Failed to calculate spot bid prices."
+    echo "This is likely due to a policy/permissions issue in AWS."
+    echo "Please refer to the quickstart guide for more information on required policies."
+    return 3  # Use 'exit 3' if outside a function or script
+fi
 
 # Dry run cluster creation
 echo "Running a cluster creation dry run..."
