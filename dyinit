@@ -6,13 +6,13 @@ region=$cfg_region
 # Ensure the script is sourced, not executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "Error: This script must be sourced, not executed directly."
-  echo "Usage: source $0 --project <project> --region <region> [--skip-project-check]"
+  echo "Usage: source $0 --project <project> [--skip-project-check]"
   return 3
 fi
 
 
 # Check if $cfn_region is unset or null
-if [[ -z "$cfn_region" ]]; then
+if [[ -z "$region" ]]; then
   echo "Error: cfn_region is not set or is empty."
   return 3
 fi
@@ -20,9 +20,9 @@ fi
 # Function to display usage and return
 usage() {
   echo "This script initializes the Day CLI."
-  echo "Region is autodetected as $cfn_region"
+  echo "Region is autodetected as $region"
   echo "Usage: $0 [--project <project_name>] [--skip-project-check]"
-  echo " ... if --project is not specified, the defauly budget for the region is used: daylily-omics-analysis-${cfg_region}."
+  echo " ... if --project is not specified, the defauly budget for the region is used: daylily-omics-analysis-${region}."
   echo "Valid projects: $(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2)"
   echo "Valid regions: Use a valid AWS region (e.g., us-east-1, us-west-2)."
   return 3
