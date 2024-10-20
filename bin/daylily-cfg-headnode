@@ -29,23 +29,29 @@ if [[ -z "$cluster_names" ]]; then
     echo "Error: No clusters found in region $region."
     return 1
 fi
-
-# Convert detected cluster names into an array using a shell-compatible method
+# Convert detected cluster names into an array
 cluster_array=()
 while IFS= read -r cluster_name; do
     cluster_array+=("$cluster_name")
 done <<< "$cluster_names"
 
+# Auto-select if there is only one cluster, otherwise prompt for selection
+if [[ ${#cluster_array[@]} -eq 1 ]]; then
+    selected_cluster=$cluster_array
+    echo "Only one cluster found: $selected_cluster. Auto-selecting it."
+else
+    echo "Select a cluster name:"
+    select selected_cluster in "${cluster_array[@]}"; do
+        if [[ -n "$selected_cluster" ]]; then
+            echo "You selected: $selected_cluster"
+            break
+        else
+            echo "Invalid selection, please try again."
+        fi
+    done
+fi
+cluster_name=$selected_cluster
 
-echo "Select a cluster name:"
-select cluster_name in "${cluster_array[@]}"; do
-    if [[ -n "$cluster_name" ]]; then
-        echo "You selected: $cluster_name"
-        break
-    else
-        echo "Invalid selection, please try again."
-    fi
-done
 
 # Get the public IP address of the cluster's head node
 cluster_ip_address=$(pcluster describe-cluster-instances -n "$cluster_name" --region "$region" \
