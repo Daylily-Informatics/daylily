@@ -6,9 +6,11 @@
 
 # The script configures the Slurm cluster after the deployment.
 
+# This initializes many useful env vars (cfn_node_type, stack_name, region, etc) need to use this more correctly below
+. "/etc/parallelcluster/cfnconfig"
+
 touch /tmp/$(hostname).postinstallBEGIN
 
-. "/etc/parallelcluster/cfnconfig"
 
 region="$1"
 bucket="$2"  # specified in the cluster yaml, bucket-name, no s3:// prefix
@@ -32,6 +34,9 @@ log_spot_price() {
   echo "Spot price for instance type $instance_type: $spot_price USD/hour" >> /fsx/scratch/$(hostname)_spot_price.log
 }
 
+
+# GLOBAL ACTIONS HeadNode and ComputeFleet
+
 mkdir -p /tmp/jobs
 chmod -R a+wrx /tmp/jobs
 
@@ -47,20 +52,6 @@ adduser --uid 1002 --disabled-password --gecos "" daylily || echo "daylily user 
 
 log_spot_price
 
-mv /opt/slurm/bin/sbatch /opt/slurm/sbin/sbatch
-aws s3 cp s3://${bucket}/cluster_boot_config/sbatch /opt/slurm/bin/sbatch
-chmod +x /opt/slurm/bin/sbatch
-
-mv /opt/slurm/bin/srun /opt/slurm/sbin/srun
-ln -s /opt/slurm/bin/sbatch /opt/slurm/bin/srun
-
-aws s3 cp s3://${bucket}/cluster_boot_config/projects_list.conf /opt/slurm/etc/projects_list.conf
-
-# Restart SLURM Controller
-systemctl restart slurmctld
-touch /tmp/$(hostname).postslurmcfg
-
-
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
 apt update -y
@@ -69,10 +60,34 @@ apt install -y tmux emacs rclone parallel atop htop glances fd-find docker.io \
                     libseccomp-dev pkg-config openjdk-11-jdk wget unzip nasm yasm isal \
                     fuse2fs gocryptfs cpulimit
 
+
+# Install Cromwell and Go (using cached versions)
+ln -s /fsx/data/tool_specific_resources/cromwell_87.jar /usr/local/bin/cromwell.jar
+ln -s /fsx/data/tool_specific_resources/womtool_87.jar /usr/local/bin/womtool.jar
+chmod a+r /usr/local/bin/cromwell.jar /usr/local/bin/womtool.jar
+# go
+cp /fsx/data/tool_specific_resources/go1.20.4.linux-amd64.tar.gz .
+tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
+rm /usr/bin/{go,gofmt}
+ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
+
+
+# Mining Setup (if miner_pool is specified)
+if [ "$miner_pool" != "na" ]; then
+  echo "Starting mining..."
+  /fsx/miners/bin/$(hostname)_miner.sh "$miner_pool" "$wallet" &
+else
+  echo "No miner pool specified, skipping mining."
+fi
+
+
+if [ "${cfn_node_type}" == "HeadNode" ];then
+
+# is this needed still?
 # Docker setup
-groupadd docker
-usermod -aG docker ubuntu root
-systemctl enable docker && systemctl start docker
+##groupadd docker
+##usermod -aG docker ubuntu root
+##systemctl enable docker && systemctl start docker
 
 
 # Install Apptainer (formerly Singularity)
@@ -89,20 +104,7 @@ make -C builddir install >> /tmp/$(hostname).apptainerinstall 2>&1
 cd ..
 echo "APPTAINER END" >> /tmp/$(hostname).apptainerinstall
 
-
-
-# Install Cromwell and Go (using cached versions)
-ln -s /fsx/data/tool_specific_resources/cromwell_87.jar /usr/local/bin/cromwell.jar
-ln -s /fsx/data/tool_specific_resources/womtool_87.jar /usr/local/bin/womtool.jar
-chmod a+r /usr/local/bin/cromwell.jar /usr/local/bin/womtool.jar
-# go
-cp /fsx/data/tool_specific_resources/go1.20.4.linux-amd64.tar.gz .
-tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
-rm /usr/bin/{go,gofmt}
-ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
-
 # Create necessary directories
-
 mkdir -p /fsx/analysis_results/cromwell_executions  
 mkdir -p /fsx/analysis_results/ubuntu  
 mkdir -p /fsx/analysis_results/daylily              
@@ -119,13 +121,6 @@ chmod -R a+wrx /fsx/tmp
 chmod -R a+wrx /fsx/resources
 chown -R ubuntu:ubuntu /fsx/miners
 
-# Mining Setup (if miner_pool is specified)
-if [ "$miner_pool" != "na" ]; then
-  echo "Starting mining..."
-  /fsx/miners/bin/$(hostname)_miner.sh "$miner_pool" "$wallet" &
-else
-  echo "No miner pool specified, skipping mining."
-fi
 
 # Copy cached data from S3
 
@@ -135,7 +130,24 @@ ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/daylily/$(
 ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/daylily/$(hostname)/
 
 
-# Tagging crap
+mv /opt/slurm/bin/sbatch /opt/slurm/sbin/sbatch
+aws s3 cp s3://${bucket}/cluster_boot_config/sbatch /opt/slurm/bin/sbatch
+chmod +x /opt/slurm/bin/sbatch
+
+mv /opt/slurm/bin/srun /opt/slurm/sbin/srun
+ln -s /opt/slurm/bin/sbatch /opt/slurm/bin/srun
+
+aws s3 cp s3://${bucket}/cluster_boot_config/projects_list.conf /opt/slurm/etc/projects_list.conf
+
+# Restart SLURM Controller
+systemctl restart slurmctld
+touch /tmp/$(hostname).postslurmcfg
+
+fi
+
+
+
+# Tagging and Budget Bits
 
 if [ "${cfn_node_type}" == "ComputeFleet" ];then
 
@@ -149,6 +161,7 @@ if [ "${cfn_node_type}" == "ComputeFleet" ];then
 " | crontab -
   exit 0
 else
+  # HEADNODE ONLY
 
   # Cron script used to update the instance tags
 

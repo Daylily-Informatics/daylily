@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Default configuration
-fail_on_error=false  # Default for error on warning
+pass_on_warn=false  # Default for warnings causing failures
 
 # Function to display help
 usage() {
-    echo "Usage: source $0 [--region REGION] [--fail-on-error]"
-    echo "       --region REGION   Specify the AWS region (default: us-west-2)"
-    echo "       --fail-on-error   Exit on warnings instead of continuing (default: false)"
+    echo "Usage: source $0 [--region-az REGION-AZ] [--pass-on-warn]"
+    echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (default: us-west-2d)"
+    echo "       --pass-on-warn          Allow warnings to pass without failure (default: false)"
 }
 
 # Check if script is sourced with no arguments
@@ -19,12 +19,13 @@ fi
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --region)
-            region="$2"
+        --region-az)
+            region_az="$2"
+            region="${region_az%-*}"  # Extract region from region-az
             shift 2
             ;;
-        --fail-on-error)
-            fail_on_error=true
+        --pass-on-warn)
+            pass_on_warn=true
             shift
             ;;
         -h|--help)
@@ -34,29 +35,25 @@ while [[ $# -gt 0 ]]; do
         *)
             echo "Error: Unknown option: $1"
             usage
-            return 1
+            return 3
             ;;
     esac
 done
 
-echo "Welcome to the Daylily CLI Setup"
-echo "Daylily is configured to run in the $region region."
-echo "Please ensure your ~/.aws/config file matches this region."
 
-# Check if the script is sourced
+# Ensure the script is sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-    return 1
+    return 3
 fi
 
 # Function to handle warnings
 handle_warning() {
     local message="$1"
     echo -e "\nWARNING: $message"
-    if $fail_on_error; then
-        return 1
-    else
-        sleep 1.5
+    echo "If appropriate, consider setting --pass-on-warn to continue without failure."
+    if ! $pass_on_warn; then
+        return 3
     fi
 }
 
@@ -72,21 +69,73 @@ validate_region() {
     handle_warning "Warning: Region '$1' is not 'us-west-2'."
     echo "It is recommended to use 'us-west-2' for this operation."
     sleep 2
-    return 1
+    return 3
   fi
 }
 
-# Call the region validation function
-validate_region "$region" || return 1
+echo "Welcome to the Daylily CLI Setup"
+echo "Daylily is configured to run in region $region (AZ: $region_az)."
+echo "Please ensure your ~/.aws/config file matches this region."
+
+### Conda Environment Setup
+
+# Ensure Conda exists
+if ! command -v conda &> /dev/null; then
+    echo "Error: Conda is not available in this shell. Please install miniconda (see docs). Exiting."
+    return 3
+fi
+
+# Activate or create the Daylily CLI conda environment
+if conda env list | grep -q "^DAYCLI "; then
+    echo "Conda environment 'DAYCLI' already exists. Activating it."
+else
+    echo "Creating 'DAYCLI' environment."
+    conda create -y -n DAYCLI -c conda-forge python parallel nodejs==18.15.0 aws-parallelcluster==3.10.1 flask=2.2.5
+fi
+conda activate DAYCLI
+pip install colr==0.9.1 pyyaml==6.0.2 tabulate==0.9.0
+
+# Check if GNU Parallel is installed
+echo "Checking if GNU Parallel is installed..."
+if ! parallel --version &> /dev/null; then
+    echo "Error: GNU Parallel is not installed. Please install it (e.g., 'conda install -c conda-forge parallel'). Exiting."
+    return 3
+else
+    echo "GNU Parallel found."
+    parallel --citation <<< "will cite"
+fi
+
+
+# Ensure AWS CLI is installed
+echo "Checking AWS CLI version..."
+aws_version=$(aws --version 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
+if [[ "$aws_version" != "1.27.92" ]]; then
+    handle_warning "Warning: Expected AWS CLI version 1.27.92, but found version $aws_version."
+fi
+
+# Ensure pcluster is installed
+echo "Checking pcluster version..."
+pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
+if [[ "$pcluster_version" != "3.5.0" ]]; then
+    handle_warning "Warning: Expected pcluster version 3.5.0, but found version $pcluster_version."
+fi
+
+### AWS Configuration Setup
+
 
 # Check AWS credentials
 echo "Verifying AWS credentials..."
 if ! aws sts get-caller-identity --region "$region" &> /dev/null; then
     echo "Error: AWS credentials are invalid or do not have access to the AWS account in region $region."
-    return 1
+    return 3
 else
     echo "AWS credentials verified successfully."
 fi
+
+# Call the region validation function
+validate_region "$region" || return 3
+
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 
 # Get AWS caller identity
 caller_identity_arn=$(aws sts get-caller-identity --query 'Arn' --output text --region "$region")
@@ -120,34 +169,49 @@ else
     echo "All required policies are attached."
 fi
 
-# AWS Quotas Check
-echo "Checking AWS service quotas..."
-quota_code="L-1216C47A"
-quota=$(aws service-quotas get-service-quota --service-code ec2 --quota-code "$quota_code" --region "$region")
-if [[ $? -ne 0 ]]; then
-    echo "Error: Unable to retrieve EC2 quota."
-    return 1
-fi
+# AWS Quota Check Function
+check_quota() {
+    local resource_name="$1"
+    local quota_code="$2"
+    local recommended_count="$3"
+    
+    echo "Checking quota for $resource_name..."
+    quota=$(aws service-quotas get-service-quota --service-code ec2 --quota-code "$quota_code" --region "$region" 2>/dev/null)
 
-quota_value=$(echo "$quota" | jq -r '.Quota.Value')
-if (( $(echo "$quota_value < 20" | bc -l) )); then
-    echo "Error: EC2 On-Demand Instance quota is below the recommended 20. Current quota: $quota_value"
-    return 1
-else
-    echo "EC2 On-Demand Instance quota is sufficient: $quota_value"
-fi
+    if [[ $? -ne 0 ]]; then
+        handle_warning "Error: Unable to retrieve quota for $resource_name."
+        return 3
+    fi
 
-# Spot instance quota check
-echo "Checking EC2 Spot Instance quota..."
-quota_code_2="L-34B43A08"
-quota_2=$(aws service-quotas get-service-quota --service-code ec2 --quota-code "$quota_code_2" --region "$region")
-quota_value_2=$(echo "$quota_2" | jq -r '.Quota.Value')
-if (( $(echo "$quota_value_2 < 310" | bc -l) )); then
-    echo "Error: EC2 Spot Instance quota is below the recommended 310. Current quota: $quota_value_2"
-    return 1
-else
-    echo "EC2 Spot Instance quota is sufficient: $quota_value_2"
-fi
+    quota_value=$(echo "$quota" | jq -r '.Quota.Value')
+
+    if (( $(echo "$quota_value < $recommended_count" | bc -l) )); then
+        handle_warning "Warning: $resource_name quota is below the recommended $recommended_count. Current quota: $quota_value."
+    else
+        echo "$resource_name quota is sufficient: $quota_value."
+    fi
+}
+
+# Quota Checks for Key AWS Resources
+echo "Performing AWS quota checks..."
+
+# Dedicated Instances
+check_quota "Spot vCPU Max" "L-1216C47A" 20
+
+# Spot vCPU Max Quota 
+check_quota "Spot vCPU Max" "L-34B43A08" 310
+
+# VPC Quota (Default: 5 per region)
+check_quota "VPCs" "L-F678F1CE" 4
+
+# Elastic IP Quota (Default: 5 per region)
+check_quota "Elastic IPs" "L-0263D0A3" 4
+
+# NAT Gateway Quota (Default: 5 per AZ)
+check_quota "NAT Gateways" "L-FE5A380F" 4
+
+# Internet Gateway Quota (Default: 5 per region)
+check_quota "Internet Gateways" "L-AE7E82AC" 4
 
 # Check for 'pcluster-omics-analysis' policy and create if necessary
 echo "Checking for required IAM policy 'pcluster-omics-analysis'..."
@@ -173,54 +237,15 @@ if [[ -z "$policy_arn" ]]; then
     aws iam create-policy --policy-name "$policy_name" --policy-document "$policy_document" --region "$region"
 fi
 
-# Ensure Conda exists
-if ! command -v conda &> /dev/null; then
-    echo "Error: Conda is not available in this shell. Exiting."
-    return 1
-fi
-
-# Activate or create the Daylily CLI conda environment
-if conda env list | grep -q "^DAYCLI "; then
-    echo "Conda environment 'DAYCLI' already exists. Activating it."
-else
-    echo "Creating 'DAYCLI' environment."
-    conda create -y -n DAYCLI -c conda-forge python parallel nodejs==18.15.0 aws-parallelcluster==3.10.1 flask=2.2.5
-fi
-conda activate DAYCLI
-pip install colr==0.9.1 pyyaml==6.0.2 tabulate==0.9.0
-
-# Check if GNU Parallel is installed
-echo "Checking if GNU Parallel is installed..."
-if ! parallel --version &> /dev/null; then
-    echo "Error: GNU Parallel is not installed. Please install it (e.g., 'conda install -c conda-forge parallel'). Exiting."
-    return 1
-else
-    echo "GNU Parallel found."
-    parallel --citation <<< "will cite"
-fi
-
-# Ensure AWS CLI is installed
-echo "Checking AWS CLI version..."
-aws_version=$(aws --version 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
-if [[ "$aws_version" != "1.27.92" ]]; then
-    handle_warning "Warning: Expected AWS CLI version 1.27.92, but found version $aws_version."
-fi
-
-# Ensure pcluster is installed
-echo "Checking pcluster version..."
-pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
-if [[ "$pcluster_version" != "3.5.0" ]]; then
-    handle_warning "Warning: Expected pcluster version 3.5.0, but found version $pcluster_version."
-fi
-
 # Prompt user for PEM file selection
 pem_files=($(find ~/.ssh -type f -name "*.pem"))
 
 if [[ ${#pem_files[@]} -eq 0 ]]; then
     echo "No PEM files found in ~/.ssh. Please ensure you have your PEM file there."
-    return 1
+    return 3
 fi
- 
+
+
 echo ""
 echo "Select a PEM file to use (you must have downloaded your ED25519 KEYNAME.pem file to ~/.ssh for it to appear here):"
 select pem_file in "${pem_files[@]}"; do
@@ -238,29 +263,81 @@ select pem_file in "${pem_files[@]}"; do
     fi
 done
 
-# Query available S3 buckets that match "omics-analysis"
-matching_buckets=($(aws s3api list-buckets --query "Buckets[?contains(Name, 'omics-analysis')].Name" --output text --region "$region"))
+# Check for required budget
+echo "Checking if the 'daylily-omics-analysis' budget exists..."
+budget_name="daylily-omics-analysis"
+if ! aws budgets describe-budgets --query "Budgets[?BudgetName=='$budget_name']" --output text --region "$region" --account-id $ACCOUNT_ID; then
+    echo "Budget '$budget_name' not found."
+    echo -n "Enter an email address to receive alerts: "
+    read user_email
+    echo -n "Enter a budget amount (default: 500): "
+    read amount
+    amount=${amount:-500}
+
+    echo "Creating the budget..."
+    bin/create_budget.sh -p "$budget_name" -r "$region" -t 75 -e "$user_email" -a "$amount"
+else
+    echo "Budget '$budget_name' exists."
+fi
+
+
+# Query available S3 buckets and present only those in the correct region
+echo "Fetching S3 buckets matching 'omics-analysis'..."
+buckets=$(aws s3api list-buckets --query "Buckets[].{Name: Name, Region: Region}" --output json | jq -r '.[] | "\(.Name) (\(.Region))"')
+
+matching_buckets=()
+while IFS= read -r bucket; do
+    bucket_region=$(echo "$bucket" | awk '{print $NF}')
+    if [[ "$bucket_region" == "$region" ]]; then
+        matching_buckets+=("$bucket")
+    fi
+done <<< "$buckets"
 
 if [[ ${#matching_buckets[@]} -eq 0 ]]; then
-    echo "No S3 buckets matching 'omics-analysis' found."
-    sleep 1
-else
-    echo "Select a matching S3 bucket:"
-    select bucket_choice in "${matching_buckets[@]}"; do
-        bucket_url="s3://$bucket_choice"
-        bucket_name=$bucket_choice
-        echo "You selected: $bucket_url"
-        break
-    done
+    echo "No matching buckets found in region $region."
+    return 1
 fi
+
+echo "Select a matching S3 bucket:"
+select bucket_choice in "${matching_buckets[@]}"; do
+    selected_bucket=$(echo "$bucket_choice" | awk '{print $1}')
+    echo "You selected: $selected_bucket"
+    break
+done
+
+
+# Query for public and private subnets and ARN
+echo "Checking subnets and ARN in the specified AZ: $region_az..."
+
+public_subnets=$(aws ec2 describe-subnets --query "Subnets[?AvailabilityZone=='$region_az' && Tags[?Value=='Public']].SubnetId" --region "$region" --output text)
+private_subnets=$(aws ec2 describe-subnets --query "Subnets[?AvailabilityZone=='$region_az' && Tags[?Value=='Private']].SubnetId" --region "$region" --output text)
+arn_count=$(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region" | wc -l)
+
+if [[ -z "$public_subnets" && -z "$private_subnets" && $arn_count -eq 0 ]]; then
+    echo "All required resources are missing. Running the initialization script..."
+    bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml "daylily-cloudstack-$region_az" "$region_az" "$region"
+elif [[ -z "$public_subnets" || -z "$private_subnets" || $arn_count -eq 0 ]]; then
+    echo "Error: Incomplete setup. Ensure public and private subnets and the required ARN are available."
+    return 1
+else
+    echo "All required resources are available."
+fi
+
+echo "Setup complete. Proceeding with the remaining steps..."
+
+
+public_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text | grep "Public Subnet" | grep $region_az)
+    
+private_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text | grep "Public Subnet" | grep $region_az)
+
+arn_count_new=$(aws iam list-roles --query "Roles[?RoleName=='pclusterTagsAndBudget'].Arn" --output text --region "$region" | wc -l)
 
 # Select public and private subnets
 echo "Select a Public Subnet:"
-public_subnets=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0]]" --region "$region" --output text | grep "Public Subnet")
 public_subnet_choices=()
 while read -r subnet_id subnet_name; do
     public_subnet_choices+=("$subnet_name ($subnet_id)")
-done <<< "$public_subnets"
+done <<< "$public_subnets_new"
 
 select public_subnet_choice in "${public_subnet_choices[@]}"; do
     public_subnet=$(echo "$public_subnet_choice" | sed -n 's/.*(\(.*\)).*/\1/p')
@@ -273,7 +350,7 @@ private_subnets=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?
 private_subnet_choices=()
 while read -r subnet_id subnet_name; do
     private_subnet_choices+=("$subnet_name ($subnet_id)")
-done <<< "$private_subnets"
+done <<< "$private_subnets_new"
 
 select private_subnet_choice in "${private_subnet_choices[@]}"; do
     private_subnet=$(echo "$private_subnet_choice" | sed -n 's/.*(\(.*\)).*/\1/p')
@@ -295,7 +372,7 @@ echo -n "Enter the name for your cluster (alphanumeric and '-'): "
 read cluster_name
 if [[ ! "$cluster_name" =~ ^[a-zA-Z0-9\-]+$ ]]; then
     echo "Error: Invalid cluster name."
-    return 1
+    return 3
 fi
 
 # Cluster config file input
@@ -309,7 +386,7 @@ fi
 
 if [[ ! -f "$cluster_yaml" ]]; then
     echo "Error: YAML file '$cluster_yaml' does not exist."
-    return 1
+    return 3
 fi 
 
 # XMR Mining Setup

@@ -1,35 +1,56 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: This template deploys a VPC, with a public and private subnets. It deploys an internet gateway, with a default
-  route on the public subnets. It deploys a NAT gateway,
-  and default routes for it in the private subnet. In addition it creates the ParallelCluster additional policies required to tag the instances.
+Description: Deploys a VPC with public and private subnets, an internet gateway, and a NAT gateway.
+  Creates the ParallelCluster additional policy if it doesn't already exist.
+
 Parameters:
   EnvironmentName:
-    Description: An environment name that is prefixed to resource names
+    Description: An environment name prefixed to resource names.
     Type: String
 
   VpcCIDR:
-    Description: Please enter the IP range (CIDR notation) for this VPC
+    Description: IP range (CIDR notation) for this VPC.
     Type: String
     Default: 10.0.0.0/16
 
   PublicSubnetCIDR:
-    Description: Please enter the IP range (CIDR notation) for the public subnet
+    Description: IP range (CIDR notation) for the public subnet.
     Type: String
     Default: 10.0.0.0/24
 
   PrivateSubnetCIDR:
-    Description: Please enter the IP range (CIDR notation) for the private subnet
+    Description: IP range (CIDR notation) for the private subnet.
     Type: String
     Default: 10.0.1.0/24
 
   AvailabilityZone:
-    Description: Please enter the availability zone for the subnets (e.g., us-west-2c)
+    Description: Availability zone for the subnets (e.g., us-west-2c).
     Type: String
     Default: us-west-2c
 
 Resources:
+  ### Check VPC Existence ###
+  CheckVPCExistence:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt CheckVPCLambda.Arn
+      VPCName: !Sub "${EnvironmentName}-${AWS::Region}"
+
+  ### VPC (Conditional Creation) ###
+  VPC:
+    Type: AWS::EC2::VPC
+    Condition: CreateVPCCondition
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-${AWS::Region}"
+
+  ### IAM Policy (Global Resource, Condition Applied) ###
   pclusterManageTags:
     Type: 'AWS::IAM::ManagedPolicy'
+    Condition: CreatePolicyCondition
     Properties:
       ManagedPolicyName: pclusterTagsAndBudget
       Path: /
@@ -48,22 +69,20 @@ Resources:
               - 'budgets:ViewBudget'
             Resource: 'arn:aws:budgets::*:budget/*'
 
-  VPC:
-    Type: AWS::EC2::VPC
+  ### Internet Gateway (Conditional Creation) ###
+  CheckInternetGatewayExistence:
+    Type: AWS::CloudFormation::CustomResource
     Properties:
-      CidrBlock: !Ref VpcCIDR
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
-      Tags:
-        - Key: Name
-          Value: !Ref EnvironmentName
+      ServiceToken: !GetAtt CheckGatewayLambda.Arn
+      GatewayName: !Sub "${EnvironmentName}-${AWS::Region}-IGW"
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
+    Condition: CreateInternetGatewayCondition
     Properties:
       Tags:
         - Key: Name
-          Value: !Ref EnvironmentName
+          Value: !Sub "${EnvironmentName}-${AWS::Region}-IGW"
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -71,8 +90,16 @@ Resources:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
 
+  ### Public Subnet (With AZ Suffix, Conditional Creation) ###
+  CheckPublicSubnetExistence:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt CheckSubnetLambda.Arn
+      SubnetName: !Sub "${EnvironmentName}-${AvailabilityZone}-Public"
+
   PublicSubnet:
     Type: AWS::EC2::Subnet
+    Condition: CreatePublicSubnetCondition
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Ref AvailabilityZone
@@ -80,10 +107,18 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet
+          Value: !Sub "${EnvironmentName}-${AvailabilityZone} Public Subnet"
+
+  ### Private Subnet (With AZ Suffix, Conditional Creation) ###
+  CheckPrivateSubnetExistence:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt CheckSubnetLambda.Arn
+      SubnetName: !Sub "${EnvironmentName}-${AvailabilityZone}-Private"
 
   PrivateSubnet:
     Type: AWS::EC2::Subnet
+    Condition: CreatePrivateSubnetCondition
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Ref AvailabilityZone
@@ -91,8 +126,9 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet
+          Value: !Sub "${EnvironmentName}-${AvailabilityZone} Private Subnet"
 
+  ### NAT Gateway (Conditional Creation) ###
   NatGatewayEIP:
     Type: AWS::EC2::EIP
     DependsOn: InternetGatewayAttachment
@@ -105,13 +141,15 @@ Resources:
       AllocationId: !GetAtt NatGatewayEIP.AllocationId
       SubnetId: !Ref PublicSubnet
 
+  ### Route Tables and Associations (With Region Suffix) ###
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
+    Condition: CreatePublicRouteTableCondition
     Properties:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Routes
+          Value: !Sub "${EnvironmentName}-${AWS::Region} Public Routes"
 
   DefaultPublicRoute:
     Type: AWS::EC2::Route
@@ -121,46 +159,35 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
-  PublicSubnetRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet
+  ### Conditions Section ###
+Conditions:
+  CreateVPCCondition:
+    !Equals [ !Ref VPCExists, "false" ]
+  CreatePolicyCondition:
+    !Equals [ !Ref PolicyExists, "false" ]
+  CreateInternetGatewayCondition:
+    !Equals [ !Ref InternetGatewayExists, "false" ]
+  CreatePublicSubnetCondition:
+    !Equals [ !Ref PublicSubnetExists, "false" ]
+  CreatePrivateSubnetCondition:
+    !Equals [ !Ref PrivateSubnetExists, "false" ]
+  CreatePublicRouteTableCondition:
+    !Equals [ !Ref PublicRouteTableExists, "false" ]
 
-  PrivateRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName} Private Routes
-
-  DefaultPrivateRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
-
-  PrivateSubnetRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !Ref PrivateSubnet
-
+# Outputs Section
 Outputs:
   VPC:
-    Description: A reference to the created VPC
+    Description: A reference to the created VPC.
     Value: !Ref VPC
 
-  PublicSubnets:
-    Description: Public Subnet
+  PublicSubnet:
+    Description: Public Subnet.
     Value: !Ref PublicSubnet
 
   PrivateSubnet:
-    Description: Private Subnet
+    Description: Private Subnet.
     Value: !Ref PrivateSubnet
-    
+
   PclusterPolicy:
-    Description: PclusterPolicy
-    Value: !Sub ${pclusterManageTags}
+    Description: PclusterPolicy.
+    Value: !Sub "${pclusterManageTags}"
