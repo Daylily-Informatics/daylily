@@ -54,8 +54,7 @@ echo "SKIP? _ $SKIP_PROJECT_CHECK _"
 PROJECT="${PROJECT:-$DAY_PROJECT}"
 export DAY_PROJECT=$PROJECT
 
-REGION="${REGION:-$DAY_AWS_REGION}"
-export DAY_AWS_REGION=$REGION
+export DAY_AWS_REGION=$region
 
 # Validate region input
 validate_region() {
@@ -70,7 +69,7 @@ validate_region() {
 }
 
 # Call the region validation function
-validate_region "$REGION" || return 3
+validate_region "$region" || return 3
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
@@ -97,7 +96,7 @@ create_budget() {
 }
 
 # Query AWS budgets
-BUDGETS=$(aws budgets describe-budgets --account-id $AWS_ACCOUNT_ID --region "$REGION" 2>/dev/null)
+BUDGETS=$(aws budgets describe-budgets --account-id $AWS_ACCOUNT_ID --region "$region" 2>/dev/null)
 
 if [[ -z "$BUDGETS" && "$SKIP_PROJECT_CHECK" != "true" ]]; then
   echo "Error: Unable to retrieve any budgets from AWS. Please check your AWS permissions or configuration."
@@ -108,7 +107,7 @@ fi
 MATCHING_BUDGET=$(echo "$BUDGETS" | jq -r ".Budgets[] | select(.BudgetName==\"$PROJECT\")")
 
 if [[ -z "$MATCHING_BUDGET" && "$SKIP_PROJECT_CHECK" != "true" ]]; then
-  echo "No matching AWS budget found for project '$PROJECT' in region '$REGION'."
+  echo "No matching AWS budget found for project '$PROJECT' in region '$region'."
   echo "Available AWS Budgets (which may be specified with the --project flag):"
   echo "$BUDGETS" | jq -r '.Budgets[].BudgetName'
 
@@ -136,7 +135,7 @@ PERCENT_USED=$(awk "BEGIN {print ($USED / $TOTAL) * 100}")
 # Display budget information
 echo ""
 echo "________________________________________________________"
-echo "AWS Budget for project '$PROJECT' in region '$REGION':"
+echo "AWS Budget for project '$PROJECT' in region '$region':"
 echo "  Total: $TOTAL USD"
 echo "  Used: $USED USD"
 echo "  Percent Used: $PERCENT_USED%"
@@ -211,7 +210,7 @@ if [[ "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
     return 0
 fi
 
-echo "Day CLI initialized for project '$PROJECT' in region '$REGION'."
+echo "Day CLI initialized for project '$PROJECT' in region '$region'."
 echo -e "The Daylily CLI is now available. \n"
 echo -e "The following commands are available:\n\t**TAB COMPLETION(single and double tabbing) IS ENABLED FOR ALL CLI COMMANDS AND ARGUMENTS**\n"
 
