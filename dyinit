@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. "/etc/parallelcluster/cfnconfig"
+
 # Ensure the script is sourced, not executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "Error: This script must be sourced, not executed directly."
