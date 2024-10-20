@@ -58,19 +58,28 @@ apt update -y
 apt install -y tmux emacs rclone parallel atop htop glances fd-find docker.io \
                     build-essential libssl-dev uuid-dev libgpgme-dev squashfs-tools \
                     libseccomp-dev pkg-config openjdk-11-jdk wget unzip nasm yasm isal \
-                    fuse2fs gocryptfs cpulimit
+                    fuse2fs gocryptfs cpulimit golang-go
 
+# Add Apptainer PPA
+add-apt-repository -y ppa:apptainer/ppa
+
+# Update package lists
+apt update
+
+# Install Apptainer
+apt install -y apptainer
 
 # Install Cromwell and Go (using cached versions)
 ln -s /fsx/data/tool_specific_resources/cromwell_87.jar /usr/local/bin/cromwell.jar
 ln -s /fsx/data/tool_specific_resources/womtool_87.jar /usr/local/bin/womtool.jar
 chmod a+r /usr/local/bin/cromwell.jar /usr/local/bin/womtool.jar
-# go
-cp /fsx/data/tool_specific_resources/go1.20.4.linux-amd64.tar.gz .
-tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
-rm /usr/bin/{go,gofmt}
-ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
 
+# go
+## cp /fsx/data/tool_specific_resources/go1.20.4.linux-amd64.tar.gz .
+## tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
+## rm /usr/bin/{go,gofmt}
+## ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
+## . chmod a+x /usr/bin/{go,gofmt}
 
 # Mining Setup (if miner_pool is specified)
 if [ "$miner_pool" != "na" ]; then
@@ -83,69 +92,78 @@ fi
 
 if [ "${cfn_node_type}" == "HeadNode" ];then
 
-# is this needed still?
-# Docker setup
-##groupadd docker
-##usermod -aG docker ubuntu root
-##systemctl enable docker && systemctl start docker
+  # is this needed still?
+  # Docker setup
+  ##groupadd docker
+  ##usermod -aG docker ubuntu root
+  ##systemctl enable docker && systemctl start docker
+
+  ##export HOME=/root
+  ##export GOCACHE=$HOME/.cache/go-build
+  ##export XDG_CACHE_HOME=$HOME/.cache
+  ##mkdir -p $GOCACHE $XDG_CACHE_HOME
+
+  # Install Apptainer (formerly Singularity)
+  ##export AVERSION=1.3.1  # Replace with the latest Apptainer version
+  # wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$(hostname).apptainerinstall 2>&1
+
+  # USING CACHED VERSION !!
+  ##cp /fsx/data/tool_specific_resources/apptainer-1.3.1.tar.gz .
+  ##tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$(hostname).apptainerinstall 2>&1
+  
+  ##chmod -R a+rx apptainer-${AVERSION}
+  ##chmod +x apptainer-${AVERSION}/scripts/*
+
+  ##cd apptainer-${AVERSION} 
+
+  ##./mconfig >> /tmp/$(hostname).apptainerinstall 2>&1
+  ##make -C builddir -j1  >> /tmp/$(hostname).apptainerinstall 2>&1
+  ##make -C builddir install  >> /tmp/$(hostname).apptainerinstall 2>&1
+  ##cd ..
+  ##echo "APPTAINER END" >> /tmp/$(hostname).apptainerinstall
+
+  # Create necessary directories
+  mkdir -p /fsx/analysis_results/cromwell_executions  
+  mkdir -p /fsx/analysis_results/ubuntu  
+  mkdir -p /fsx/analysis_results/daylily              
+  mkdir -p /fsx/miners/logs  
+  mkdir -p /fsx/tmp
+  mkdir -p /fsx/miners/bin               
+  mkdir -p /fsx/scratch
+  mkdir -p /fsx/resources/environments/containers/{ubuntu,daylily}/$(hostname)/
+  mkdir -p /fsx/resources/environments/conda/{ubuntu,daylily}/$(hostname)/
+  chmod -R a+wrx /fsx/analysis_results
+  chmod -R a+wrx /fsx/scratch
+  chmod -R a+wrx /fsx/miners
+  chmod -R a+wrx /fsx/tmp
+  chmod -R a+wrx /fsx/resources
+  chown -R ubuntu:ubuntu /fsx/miners
 
 
-# Install Apptainer (formerly Singularity)
-export AVERSION=1.3.1  # Replace with the latest Apptainer version
-# wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$(hostname).apptainerinstall 2>&1
+  # Copy cached data from S3
 
-# USING CACHED VERSION !!
-cp /fsx/data/tool_specific_resources/apptainer-1.3.1.tar.gz .
-tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$(hostname).apptainerinstall 2>&1
-cd apptainer-${AVERSION} >> /tmp/$(hostname).apptainerinstall 2>&1
-./mconfig >> /tmp/$(hostname).apptainerinstall 2>&1
-make -C builddir >> /tmp/$(hostname).apptainerinstall 2>&1
-make -C builddir install >> /tmp/$(hostname).apptainerinstall 2>&1
-cd ..
-echo "APPTAINER END" >> /tmp/$(hostname).apptainerinstall
-
-# Create necessary directories
-mkdir -p /fsx/analysis_results/cromwell_executions  
-mkdir -p /fsx/analysis_results/ubuntu  
-mkdir -p /fsx/analysis_results/daylily              
-mkdir -p /fsx/miners/logs  
-mkdir -p /fsx/tmp
-mkdir -p /fsx/miners/bin               
-mkdir -p /fsx/scratch
-mkdir -p /fsx/resources/environments/containers/{ubuntu,daylily}/$(hostname)/
-mkdir -p /fsx/resources/environments/conda/{ubuntu,daylily}/$(hostname)/
-chmod -R a+wrx /fsx/analysis_results
-chmod -R a+wrx /fsx/scratch
-chmod -R a+wrx /fsx/miners
-chmod -R a+wrx /fsx/tmp
-chmod -R a+wrx /fsx/resources
-chown -R ubuntu:ubuntu /fsx/miners
+  ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/$(hostname)/
+  ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/ubuntu/$(hostname)/
+  ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/daylily/$(hostname)/
+  ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/daylily/$(hostname)/
 
 
-# Copy cached data from S3
+  mv /opt/slurm/bin/sbatch /opt/slurm/sbin/sbatch
+  aws s3 cp s3://${bucket}/cluster_boot_config/sbatch /opt/slurm/bin/sbatch
+  chmod +x /opt/slurm/bin/sbatch
 
-ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/ubuntu/$(hostname)/
-ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/ubuntu/$(hostname)/
-ln -s /fsx/data/cached_envs/conda/* /fsx/resources/environments/conda/daylily/$(hostname)/
-ln -s /fsx/data/cached_envs/containers/* /fsx/resources/environments/containers/daylily/$(hostname)/
+  mv /opt/slurm/bin/srun /opt/slurm/sbin/srun
+  ln -s /opt/slurm/bin/sbatch /opt/slurm/bin/srun
 
+  aws s3 cp s3://${bucket}/cluster_boot_config/projects_list.conf /opt/slurm/etc/projects_list.conf
 
-mv /opt/slurm/bin/sbatch /opt/slurm/sbin/sbatch
-aws s3 cp s3://${bucket}/cluster_boot_config/sbatch /opt/slurm/bin/sbatch
-chmod +x /opt/slurm/bin/sbatch
-
-mv /opt/slurm/bin/srun /opt/slurm/sbin/srun
-ln -s /opt/slurm/bin/sbatch /opt/slurm/bin/srun
-
-aws s3 cp s3://${bucket}/cluster_boot_config/projects_list.conf /opt/slurm/etc/projects_list.conf
-
-aws s3 cp s3://${bucket}/cluster_boot_config/sleep_test.sh /opt/slurm/bin/sleep_test.sh
-chmod a+x /opt/slurm/bin/sleep_test.sh
+  aws s3 cp s3://${bucket}/cluster_boot_config/sleep_test.sh /opt/slurm/bin/sleep_test.sh
+  chmod a+x /opt/slurm/bin/sleep_test.sh
 
 
-# Restart SLURM Controller
-systemctl restart slurmctld
-touch /tmp/$(hostname).postslurmcfg
+  # Restart SLURM Controller
+  systemctl restart slurmctld
+  touch /tmp/$(hostname).postslurmcfg
 
 fi
 
