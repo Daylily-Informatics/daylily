@@ -10,6 +10,7 @@ FILES=(
     "xmr_miner.sh"
     "mine_cron.sh"
     "post_install_ubuntu_combined.sh"
+    "sleep_test.sh"
 )
 
 # Iterate over the files and copy each one using rclone

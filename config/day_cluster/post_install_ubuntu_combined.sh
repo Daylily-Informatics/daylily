@@ -139,6 +139,10 @@ ln -s /opt/slurm/bin/sbatch /opt/slurm/bin/srun
 
 aws s3 cp s3://${bucket}/cluster_boot_config/projects_list.conf /opt/slurm/etc/projects_list.conf
 
+aws s3 cp s3://${bucket}/cluster_boot_config/sleep_test.sh /opt/slurm/bin/sleep_test.sh
+chmod a+x /opt/slurm/bin/sleep_test.sh
+
+
 # Restart SLURM Controller
 systemctl restart slurmctld
 touch /tmp/$(hostname).postslurmcfg
