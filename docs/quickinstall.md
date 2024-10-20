@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.8))
+# Daylily AWS Ephemeral Cluster Setup (0.7.14))
 
 Capturing the steps I took to get the daylily framework up and running in a `classic` AWS environment.
 
