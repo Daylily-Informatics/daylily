@@ -264,10 +264,16 @@ select pem_file in "${pem_files[@]}"; do
     fi
 done
 
-# Check for required budget
-echo "Checking if the 'daylily-omics-analysis' budget exists..."
-budget_name="daylily-omics-analysis"
-if ! aws budgets describe-budgets --query "Budgets[?BudgetName=='$budget_name']" --output text --region "$region" --account-id $ACCOUNT_ID; then
+echo "Checking if the 'daylily-omics-analysis-${region}' budget exists..."
+budget_name="daylily-omics-analysis-${region}"
+
+# Query AWS for the budget
+budget_exists=$(aws budgets describe-budgets \
+    --query "Budgets[?BudgetName=='$budget_name'] | [0].BudgetName" \
+    --output text --region "$region" --account-id "$ACCOUNT_ID")
+
+# Check if the output is empty
+if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
     echo "Budget '$budget_name' not found."
     echo -n "Enter an email address to receive alerts: "
     read user_email
@@ -278,7 +284,7 @@ if ! aws budgets describe-budgets --query "Budgets[?BudgetName=='$budget_name']"
     echo "Creating the budget..."
     bin/create_budget.sh -p "$budget_name" -r "$region" -t 75 -e "$user_email" -a "$amount"
 else
-    echo "Budget '$budget_name' exists."
+    echo "Default budget '$budget_name' exists. Proceeding"
 fi
 
 
