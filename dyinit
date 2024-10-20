@@ -56,7 +56,7 @@ done
 if [[ -z "$PROJECT" ]]; then
     if [[ -z "$region" ]]; then
         echo "Error: Region is not set. Please set the 'region' variable."
-        exit 1
+        return 3
     fi
     PROJECT="daylily-omics-analysis-${region}"
     echo "Notice: --project not set. Using default project name: $PROJECT"
