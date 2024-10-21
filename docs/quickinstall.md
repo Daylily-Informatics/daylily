@@ -436,7 +436,7 @@ cd daylily
 
 #  prepare to run the test
 tmux new -s slurm_test
-. dyinit  --project PROJECT
+. dyinit 
 dy-a slurm
 
 # create a test manifest for one giab sample only, which will run on the 0.01x test dataset
@@ -591,12 +591,7 @@ _this should work for `.bashrc` as well, but untested_
 - The alias will need to be modified if running >1 cluster.
 ```zsh
 
-export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCL\
-I && pcluster list-clusters --region us-west-2 | grep 'clusterName' | perl -pe \
-'s/.*\: \"(.*)\"\,.*/\$1/g;') && cluster_ip=\$(pcluster describe-cluster --regi\
-on us-west-2 -n \$cluster_name | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.\
-*)\"\,.*/\$1/g;') && ssh -i ~/.ssh/rcrf-omics-analysis-b.pem ubuntu@\$cluster_i\
-p"
+export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCLI && pcluster list-clusters --region us-west-2 | grep 'clusterName' | perl -pe 's/.*\: \"(.*)\"\,.*/\$1/g;') && cluster_ip=\$(pcluster describe-cluster --region us-west-2 -n \$cluster_name | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.*)\"\,.*/\$1/g;') && ssh -i ~/.ssh/rcrf-omics-analysis-b.pem ubuntu@\$cluster_ip"
 
 alias goday="$goday_cmd"
 ```
