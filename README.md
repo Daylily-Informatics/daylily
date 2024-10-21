@@ -1,6 +1,8 @@
 # Daylily AWS Ephemeral Cluster Setup (0.7.14))
 
-**~$10 30x WGS Analysis In ~1hr**
+## ~$3 30x FASTQ->BAM->BAM.deduplicated->snv.VCF+sv.VCF (add $0.35 for a raft of QC reports)
+**1.3h walltime**
+
 _a **from scratch** &  **dynamically scalaling** & **region and availability zone flexible** ephemeral cluster running in ~30min each time you need it, and requires ~3hr of initial setup to run repeatedly as you require it_
 ... process from 1 to 1000's of samples in parallel, and then shut down when you are done. 
 
