@@ -7,7 +7,7 @@ fi
 
 # Display usage information
 usage() {
-  echo "Usage: $0 -p SAMPLE_MATCH_PATTERN -i INPUT_DIR -o OUTPUT_DIR"
+  echo "Usage: $0 -s SAMPLENAME -p SAMPLE_MATCH_PATTERN -i INPUT_DIR -o OUTPUT_DIR"
   exit 1
 }
 
@@ -17,6 +17,7 @@ while getopts ":p:i:o:" opt; do
     p) SAMPLE_MATCH_PATTERN=$OPTARG ;;
     i) INPUT_DIR=$OPTARG ;;
     o) OUTPUT_DIR=$OPTARG ;;
+    s) SAMPLE=$OPTARG ;;    
     *) usage ;;
   esac
 done
@@ -76,8 +77,8 @@ for ((i = 0; i < ${#R1_FILES[@]}; i++)); do
 done
 
 # Define output file paths
-FQR1="$OUTPUT_DIR/${SAMPLE_MATCH_PATTERN}_R1.fastq.gz"
-FQR2="$OUTPUT_DIR/${SAMPLE_MATCH_PATTERN}_R2.fastq.gz"
+FQR1="$OUTPUT_DIR/${SAMPLE}_${SAMPLE_MATCH_PATTERN}_R1.fastq.gz"
+FQR2="$OUTPUT_DIR/${SAMPLE}_${SAMPLE_MATCH_PATTERN}_R2.fastq.gz"
 
 
 echo "Concatenating R1 and R2 files..."
