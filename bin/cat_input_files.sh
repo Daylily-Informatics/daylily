@@ -1,16 +1,17 @@
 #!/bin/bash
 
 # Define directories and output file paths
-DATA_DIR="/fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene"
-OUTPUT_DIR=./cat/
+SAMPLE=$1
+DATA_DIR=$2
+OUTPUT_DIR=$3
 
 # Create output files for WES tumor, WES normal, and RNA tumor
-WES_TUMOR_R1="$OUTPUT_DIR/cat_WES-tumor-lr2.R1.fastq.gz"
-WES_TUMOR_R2="$OUTPUT_DIR/cat_WES-tumor-lr2.R2.fastq.gz"
-WES_NORMAL_R1="$OUTPUT_DIR/cat_WES-normal-lr2.R1.fastq.gz"
-WES_NORMAL_R2="$OUTPUT_DIR/cat_WES-normal-lr2.R2.fastq.gz"
-RNA_TUMOR_R1="$OUTPUT_DIR/cat_RNA-tumor-lr2.R1.fastq.gz"
-RNA_TUMOR_R2="$OUTPUT_DIR/cat_RNA-tumor-lr2.R2.fastq.gz"
+WES_TUMOR_R1="$OUTPUT_DIR/WES-tumor-$SAMPLE.R1.fastq.gz"
+WES_TUMOR_R2="$OUTPUT_DIR/WES-tumor-$SAMPLE.R2.fastq.gz"
+WES_NORMAL_R1="$OUTPUT_DIR/WES-normal-$SAMPLE.R1.fastq.gz"
+WES_NORMAL_R2="$OUTPUT_DIR/WES-normal-$SAMPLE.R2.fastq.gz"
+RNA_TUMOR_R1="$OUTPUT_DIR/RNA-tumor-$SAMPLE.R1.fastq.gz  "
+RNA_TUMOR_R2="$OUTPUT_DIR/RNA-tumor-$SAMPLE.R2.fastq.gz"
 
 # Function to concatenate files based on the pattern
 
