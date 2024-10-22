@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Default configuration
 pass_on_warn=false  # Default for warnings causing failures

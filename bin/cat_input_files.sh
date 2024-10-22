@@ -1,46 +1,86 @@
 #!/bin/bash
 
-# Define directories and output file paths
-SAMPLE=$1
-DATA_DIR=$2
-OUTPUT_DIR=$3
+# Ensure compatibility with zsh and bash
+if [ -n "$ZSH_VERSION" ]; then
+  emulate -LR bash  # Ensure bash-like behavior in zsh
+fi
 
-# Create output files for WES tumor, WES normal, and RNA tumor
-WES_TUMOR_R1="$OUTPUT_DIR/WES-tumor-$SAMPLE.R1.fastq.gz"
-WES_TUMOR_R2="$OUTPUT_DIR/WES-tumor-$SAMPLE.R2.fastq.gz"
-WES_NORMAL_R1="$OUTPUT_DIR/WES-normal-$SAMPLE.R1.fastq.gz"
-WES_NORMAL_R2="$OUTPUT_DIR/WES-normal-$SAMPLE.R2.fastq.gz"
-RNA_TUMOR_R1="$OUTPUT_DIR/RNA-tumor-$SAMPLE.R1.fastq.gz  "
-RNA_TUMOR_R2="$OUTPUT_DIR/RNA-tumor-$SAMPLE.R2.fastq.gz"
+# Display usage information
+usage() {
+  echo "Usage: $0 -p SAMPLE_MATCH_PATTERN -i INPUT_DIR -o OUTPUT_DIR"
+  exit 1
+}
 
-# Function to concatenate files based on the pattern
+# Parse command-line arguments
+while getopts ":p:i:o:" opt; do
+  case $opt in
+    p) SAMPLE_MATCH_PATTERN=$OPTARG ;;
+    i) INPUT_DIR=$OPTARG ;;
+    o) OUTPUT_DIR=$OPTARG ;;
+    *) usage ;;
+  esac
+done
 
-echo "Concatenating $pattern R1 and R2 files..."
+# Check if all required arguments are provided
+if [[ -z "$SAMPLE_MATCH_PATTERN" || -z "$INPUT_DIR" || -z "$OUTPUT_DIR" ]]; then
+  usage
+fi
 
+# Check if directories exist
+if [[ ! -d "$INPUT_DIR" ]]; then
+  echo "Error: Input directory $INPUT_DIR does not exist."
+  exit 1
+fi
 
-# WES TUMOR
-#ls -lt /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/WES-tumor-A01231_3A917_3AHGGMFDSXC_*_1.fastq.gz
-#ls -lt /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/WES-tumor-A01231_3A917_3AHGGMFDSXC_*_2.fastq.gz
-# Find and concatenate R1 files
-cat /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/WES-tumor-A01231_3A917_3AHGGMFDSXC_*_1.fastq.gz > $WES_TUMOR_R1 &
-cat /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/WES-tumor-A01231_3A917_3AHGGMFDSXC_*_2.fastq.gz > $WES_TUMOR_R2 &
+if [[ ! -d "$OUTPUT_DIR" ]]; then
+  echo "Error: Output directory $OUTPUT_DIR does not exist."
+  exit 1
+fi
 
-# WES Normal R1 and R2
-#ls -lt /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/WES-normal-A01599_3A214_3AHCMJKDRX2_*_1.fastq.gz
-#ls -lt /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/WES-normal-A01599_3A214_3AHCMJKDRX2_*_2.fastq.gz
+echo ""
+echo ">>>  >> > THIS IS A SIMPLE UTILITY AND NOT PRODUCTION TESTED FOR YOUR USE CASE < <<  <<<"
+echo ""
+sleep 2
 
-cat /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/WES-normal-A01599_3A214_3AHCMJKDRX2_*_1.fastq.gz > $WES_NORMAL_R1 &
-cat /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/WES-normal-A01599_3A214_3AHCMJKDRX2_*_2.fastq.gz > $WES_NORMAL_R2 &
+# Use a shell-agnostic way to store found files in arrays
+R1_FILES=($(find "$INPUT_DIR" -name "${SAMPLE_MATCH_PATTERN}*_1.fastq.gz" | sort))
+R2_FILES=($(find "$INPUT_DIR" -name "${SAMPLE_MATCH_PATTERN}*_2.fastq.gz" | sort))
 
+# Check if numbers of R1 and R2 files match
+if [[ ${#R1_FILES[@]} -ne ${#R2_FILES[@]} ]]; then
+  echo "Error: Mismatched number of R1 and R2 files."
+  exit 1
+fi
 
-# RNA Tumor R1 and R2
-# ls -lt /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/RNASeq-tumor-*_1.fastq.gz
-# ls -lt /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/RNASeq-tumor-*_2.fastq.gz
-
-cat /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/RNASeq-tumor-*_1.fastq.gz > $RNA_TUMOR_R1 &
-cat /fsx/data/tmp_inputs/lr1/2024-10-14-BostonGene/RNASeq-tumor-*_2.fastq.gz > $RNA_TUMOR_R2 &
+# Display found files and their sizes
+echo "Found the following R1 and R2 files:"
+for ((i = 0; i < ${#R1_FILES[@]}; i++)); do
+  R1_FILE="${R1_FILES[$i]}"
+  R2_FILE="${R2_FILES[$i]}"
   
+  R1_SIZE=$(du -h "$R1_FILE" | cut -f1)
+  R2_SIZE=$(du -h "$R2_FILE" | cut -f1)
+
+  echo -e "$R1_FILE\t($R1_SIZE)"
+  echo -e "$R2_FILE\t($R2_SIZE)"
+  echo "------------------------------------------"
+
+  # Check if files are size 0
+  if [[ $R1_SIZE == "0" || $R2_SIZE == "0" ]]; then
+    echo "Error: One or more files are of size 0."
+    exit 1
+  fi
+done
+
+# Define output file paths
+FQR1="$OUTPUT_DIR/concatenated_R1.fastq.gz"
+FQR2="$OUTPUT_DIR/concatenated_R2.fastq.gz"
+
+echo "Concatenating R1 and R2 files..."
+
+# Concatenate R1 and R2 files in parallel
+cat "${R1_FILES[@]}" > "$FQR1" &
+cat "${R2_FILES[@]}" > "$FQR2" &
+
 wait
 echo "Done"
-
-
