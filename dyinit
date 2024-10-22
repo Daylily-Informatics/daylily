@@ -232,7 +232,7 @@ if [[ "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
     return 0
 fi
 
-sq_cmd='squeue -o "%i %P %C %t %N %c %T %m %M %D %p"'
+sq_cmd='squeue -o "%i  %P  %C  %t  %N  %c  %T  %m  %M  %D  %j"'
 sq() {
   if [ $# -eq 0 ]; then
     eval $sq_cmd
