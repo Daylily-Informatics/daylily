@@ -21,10 +21,10 @@ rule tiddit:
         min_sv_size=config["tiddit"]["min_sv_size"],
         cluster_sample=ret_sample_alnr,
         ld_p=config['malloc_alt']['ld_preload'] if 'ld_preload' not in config['tiddit'] else config['tiddit']['ld_preload'],
-    threads: 16
+    threads: 64
     resources:
         vcpu=1,
-        partition="i8,i64,i96",
+        partition="i192",
         threads=16
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.tiddit.sv.vcf.bench.tsv"
@@ -58,7 +58,7 @@ rule tiddit_sort_index:
     priority: 8
     resources:
         vcpu=8,
-        partition="i8,i8,i64,i96",
+        partition="i192"
         threads=8
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.tiddit.sv.vcf.sort.bench.tsv"
