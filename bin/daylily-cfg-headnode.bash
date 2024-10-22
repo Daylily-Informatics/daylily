@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# Daylily Headnode Configuration Script
+# Detect if running in Zsh, and switch to Bash emulation if needed
+if [ -n "$ZSH_VERSION" ]; then
+  emulate -L bash
+fi
 
 # Ensure the script is sourced, not executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -22,13 +25,14 @@ fi
 
 # List available clusters in the specified region
 echo "Clusters detected in region $region:"
-cluster_names=$(pcluster list-clusters --region $region | grep clusterName | awk '{print $2}' | cut -d '"' -f 2)
+cluster_names=$(pcluster list-clusters --region "$region" | grep clusterName | awk '{print $2}' | cut -d '"' -f 2)
 
 # Check if there are any clusters detected
 if [[ -z "$cluster_names" ]]; then
     echo "Error: No clusters found in region $region."
     return 1
 fi
+
 # Convert detected cluster names into an array
 cluster_array=()
 while IFS= read -r cluster_name; do
@@ -37,7 +41,7 @@ done <<< "$cluster_names"
 
 # Auto-select if there is only one cluster, otherwise prompt for selection
 if [[ ${#cluster_array[@]} -eq 1 ]]; then
-    selected_cluster=$cluster_array
+    selected_cluster=${cluster_array[0]}
     echo "Only one cluster found: $selected_cluster. Auto-selecting it."
 else
     echo "Select a cluster name:"
@@ -50,8 +54,8 @@ else
         fi
     done
 fi
-cluster_name=$selected_cluster
 
+cluster_name=$selected_cluster
 
 # Get the public IP address of the cluster's head node
 cluster_ip_address=$(pcluster describe-cluster-instances -n "$cluster_name" --region "$region" \
@@ -72,7 +76,7 @@ ls -1 ~/.ssh/*.pem
 # If PEM file is not provided as an argument, prompt the user
 if [[ -z "$pem_file" ]]; then
     echo "Enter the full absolute path to your PEM file:"
-    read pem_file
+    read -r pem_file
 fi
 
 # Ensure the PEM file exists
@@ -83,44 +87,45 @@ fi
 
 # Generate SSH key for the head node user
 echo "Generating SSH key on the head node..."
-ssh -i "$pem_file" ubuntu@"$cluster_ip_address"   -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
     "ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N '' <<< $'\ny' | sudo su - $duser"
 
 # Display the public key and instruct the user to add it to GitHub
-echo "You must have a GitHub account and access to the Daylily repository."
 echo "Please add the following public SSH key to GitHub:"
-ssh -i "$pem_file"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null ubuntu@"$cluster_ip_address" "cat ~/.ssh/id_rsa.pub"
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    "cat ~/.ssh/id_rsa.pub"
 
 echo " "
-echo "(optional) save this SSH key in GitHub to your settings->ssh/gpg keys, which will allow you to push changes back to github if you make any. You can always add this key latter too, find it in you ~/.ssh/id_rsa.pub.\n\n\tSleeping for 15s then proceeding."
+echo "Add this SSH key to your GitHub account under 'Settings -> SSH/GPG Keys'."
+echo "You can add this key later if needed (find it in ~/.ssh/id_rsa.pub)."
+echo "Sleeping for 15 seconds before proceeding..."
 sleep 15
 
-
-# Clone the Daylily repository to the head node
-echo "Cloning Daylily repository usibng https to the head node ~/projects"
-ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects &&  git clone https://github.com/Daylily-Informatics/daylily.git'"
+# Clone the Daylily repository on the head node
+echo "Cloning the Daylily repository to ~/projects on the head node..."
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects && git clone https://github.com/Daylily-Informatics/daylily.git'"
 
 # Initialize and configure the Daylily environment on the head node
-echo "Configuring Daylily environment on the head node..."
-ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_build'"
+echo "Configuring the Daylily environment on the head node..."
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_build'"
 
 # Run a simple help test for Daylily remotely
 echo "Running a simple help test on the head node..."
-ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local && dy-r help'"
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_activate local && dy-r help'"
 
 # Provide final instructions for SSH access to the head node
-echo "You can now SSH into the head node with the following command:"
+echo "You can now SSH into the head node using the following command:"
 echo "ssh -i $pem_file ubuntu@$cluster_ip_address"
-echo "Once logged in, as the 'ubuntu' user, run the following commands:"
+echo "After logging in, as the 'ubuntu' user, run the following commands:"
 echo "  cd ~/projects/daylily"
-echo "  source dyinit --h "
+echo "  source dyinit --h"
 echo "  source dyinit --project <PROJECT>"
 echo "  dy-a local"
 echo "  dy-r help"
 echo " "
-echo "\t... and please remember to re-clone the repo for each new analysis in the /fsx/analysis_results directory for non-test uses."
+echo "For non-test uses, re-clone the repository into the /fsx/analysis_results directory."
 echo " "
-echo "\nSetup complete. You can now start working with Daylily on the head node.\n"
+echo "Setup complete. You can now start working with Daylily on the head node."
