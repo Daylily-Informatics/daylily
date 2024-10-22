@@ -83,7 +83,12 @@ FQR2="$OUTPUT_DIR/${SAMPLE_MATCH_PATTERN}_R2.fastq.gz"
 echo "Concatenating R1 and R2 files..."
 echo "Output file R1: $FQR1"
 echo "Output file R2: $FQR2"
-
+echo proceed? [y/n]
+read proceed
+if [[ $proceed != "y" ]]; then
+  echo "Exiting..."
+  exit 1
+fi
 # Concatenate R1 and R2 files in parallel
 cat "${R1_FILES[@]}" > "$FQR1" &
 cat "${R2_FILES[@]}" > "$FQR2" &
