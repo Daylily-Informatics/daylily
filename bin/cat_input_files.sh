@@ -21,6 +21,9 @@ while getopts ":p:i:o:" opt; do
   esac
 done
 
+INPUT_DIR=${INPUT_DIR}/
+OUTPUT_DIR=${OUTPUT_DIR}/
+
 # Check if all required arguments are provided
 if [[ -z "$SAMPLE_MATCH_PATTERN" || -z "$INPUT_DIR" || -z "$OUTPUT_DIR" ]]; then
   usage
