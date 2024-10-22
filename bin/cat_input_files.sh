@@ -26,7 +26,7 @@ INPUT_DIR=${INPUT_DIR}/
 OUTPUT_DIR=${OUTPUT_DIR}/
 
 # Check if all required arguments are provided
-if [[ -z "$SAMPLE_MATCH_PATTERN" || -z "$INPUT_DIR" || -z "$OUTPUT_DIR" ]]; then
+if [[ -z "$SAMPLE_MATCH_PATTERN" || -z "$INPUT_DIR" || -z "$OUTPUT_DIR" | -s "$SAMPLE" ]]; then
   usage
 fi
 
