@@ -76,10 +76,13 @@ for ((i = 0; i < ${#R1_FILES[@]}; i++)); do
 done
 
 # Define output file paths
-FQR1="$OUTPUT_DIR/concatenated_R1.fastq.gz"
-FQR2="$OUTPUT_DIR/concatenated_R2.fastq.gz"
+FQR1="$OUTPUT_DIR/${SAMPLE_MATCH_PATTERN}_R1.fastq.gz"
+FQR2="$OUTPUT_DIR/${SAMPLE_MATCH_PATTERN}_R2.fastq.gz"
+
 
 echo "Concatenating R1 and R2 files..."
+echo "Output file R1: $FQR1"
+echo "Output file R2: $FQR2"
 
 # Concatenate R1 and R2 files in parallel
 cat "${R1_FILES[@]}" > "$FQR1" &
