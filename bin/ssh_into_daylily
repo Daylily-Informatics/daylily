@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+echo "NOT TESTED YET"
+sleep 5
 # Detect if running in Zsh and switch to Bash emulation if needed
 if [ -n "$ZSH_VERSION" ]; then
   emulate -L bash  # Switch Zsh to Bash emulation mode
