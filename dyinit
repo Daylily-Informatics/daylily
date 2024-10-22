@@ -232,9 +232,14 @@ if [[ "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
     return 0
 fi
 
-sq() {   if [ $# -eq 0 ]; then
-    squeue -o "%i %P %C %t %N %c %T %m %M %D %p";   else
-    squeue -o "%i %P %C %t %N %c %T %m %M %D %p" -j "$(echo "$@" | tr ' ' ',')";   fi; }
+alias sq_cmd='squeue -o "%i %P %C %t %N %c %T %m %M %D %p"'
+sq() {
+  if [ $# -eq 0 ]; then
+    sq_cmd
+  else
+    sq_cmd -j "$(echo "$@" | tr ' ' ',')"
+  fi
+}
 
 echo "squeue helper alias 'sq' activated"
 
