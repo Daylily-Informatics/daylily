@@ -41,10 +41,6 @@ if [[ ! -d "$OUTPUT_DIR" ]]; then
   exit 1
 fi
 
-# Replace characters requiring escaping (like ':') with '_'
-SAMPLE=$(echo "$SAMPLE" | sed 's/[:]/_/g')
-SAMPLE_MATCH_PATTERN=$(echo "$SAMPLE_MATCH_PATTERN" | sed 's/[:]/_/g')
-
 echo ""
 echo ">>>  >> > THIS IS A SIMPLE UTILITY AND NOT PRODUCTION TESTED FOR YOUR USE CASE < <<  <<<"
 echo ""
@@ -80,9 +76,13 @@ for ((i = 0; i < ${#R1_FILES[@]}; i++)); do
   fi
 done
 
+# Replace characters requiring escaping (like ':') with '_'
+SAMPLE_r=$(echo "$SAMPLE" | sed 's/[:]/_/g')
+SAMPLE_MATCH_PATTERN_r=$(echo "$SAMPLE_MATCH_PATTERN" | sed 's/[:]/_/g')
+
 # Define output file paths, ensuring all special characters are replaced
-FQR1="$OUTPUT_DIR/${SAMPLE}_${SAMPLE_MATCH_PATTERN}_R1.fastq.gz"
-FQR2="$OUTPUT_DIR/${SAMPLE}_${SAMPLE_MATCH_PATTERN}_R2.fastq.gz"
+FQR1="$OUTPUT_DIR/${SAMPLE_r}_${SAMPLE_MATCH_PATTERN_r}_R1.fastq.gz"
+FQR2="$OUTPUT_DIR/${SAMPLE_r}_${SAMPLE_MATCH_PATTERN_r}_R2.fastq.gz"
 
 echo "Concatenating R1 and R2 files..."
 echo "Output file R1: $FQR1"
