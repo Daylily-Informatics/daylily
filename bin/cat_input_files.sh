@@ -12,21 +12,21 @@ usage() {
 }
 
 # Parse command-line arguments
-while getopts ":p:i:o:" opt; do
+while getopts ":s:p:i:o:" opt; do
   case $opt in
+    s) SAMPLE=$OPTARG ;;
     p) SAMPLE_MATCH_PATTERN=$OPTARG ;;
     i) INPUT_DIR=$OPTARG ;;
     o) OUTPUT_DIR=$OPTARG ;;
-    s) SAMPLE=$OPTARG ;;    
     *) usage ;;
   esac
 done
 
-INPUT_DIR=${INPUT_DIR}/
-OUTPUT_DIR=${OUTPUT_DIR}/
+INPUT_DIR=${INPUT_DIR%/}/  # Ensure trailing slash
+OUTPUT_DIR=${OUTPUT_DIR%/}/
 
 # Check if all required arguments are provided
-if [[ -z "$SAMPLE_MATCH_PATTERN" || -z "$INPUT_DIR" || -z "$OUTPUT_DIR" | -s "$SAMPLE" ]]; then
+if [[ -z "$SAMPLE" || -z "$SAMPLE_MATCH_PATTERN" || -z "$INPUT_DIR" || -z "$OUTPUT_DIR" ]]; then
   usage
 fi
 
@@ -80,16 +80,17 @@ done
 FQR1="$OUTPUT_DIR/${SAMPLE}_${SAMPLE_MATCH_PATTERN}_R1.fastq.gz"
 FQR2="$OUTPUT_DIR/${SAMPLE}_${SAMPLE_MATCH_PATTERN}_R2.fastq.gz"
 
-
 echo "Concatenating R1 and R2 files..."
 echo "Output file R1: $FQR1"
 echo "Output file R2: $FQR2"
-echo proceed? [y/n]
+echo "Proceed? [y/n]"
 read proceed
+
 if [[ $proceed != "y" ]]; then
   echo "Exiting..."
   exit 1
 fi
+
 # Concatenate R1 and R2 files in parallel
 cat "${R1_FILES[@]}" > "$FQR1" &
 cat "${R2_FILES[@]}" > "$FQR2" &
