@@ -232,12 +232,12 @@ if [[ "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
     return 0
 fi
 
-alias sq_cmd='squeue -o "%i %P %C %t %N %c %T %m %M %D %p"'
+sq_cmd='squeue -o "%i %P %C %t %N %c %T %m %M %D %p"'
 sq() {
   if [ $# -eq 0 ]; then
-    sq_cmd
+    $sq_cmd
   else
-    sq_cmd -j "$(echo "$@" | tr ' ' ',')"
+    $sq_cmd -j "$(echo "$@" | tr ' ' ',')"
   fi
 }
 
