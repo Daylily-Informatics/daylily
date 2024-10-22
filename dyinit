@@ -1,4 +1,9 @@
-#!/bin/bash
+# Ensure the script is sourced                                                                                                                          
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
+    return 3
+fi
+
 
 . "/etc/parallelcluster/cfnconfig"
 region=$cfn_region
@@ -226,6 +231,13 @@ if [[ "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
     fi;
     return 0
 fi
+
+sq() {   if [ $# -eq 0 ]; then
+    squeue -o "%i %P %C %t %N %c %T %m %M %D %p";   else
+    squeue -o "%i %P %C %t %N %c %T %m %M %D %p" -j "$(echo "$@" | tr ' ' ',')";   fi; }
+
+echo "squeue helper alias 'sq' activated"
+
 
 echo "Day CLI initialized for project '$PROJECT' in region '$region'."
 echo -e "The Daylily CLI is now available. \n"
