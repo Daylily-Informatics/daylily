@@ -235,9 +235,9 @@ fi
 sq_cmd='squeue -o "%i %P %C %t %N %c %T %m %M %D %p"'
 sq() {
   if [ $# -eq 0 ]; then
-    $sq_cmd
+    eval $sq_cmd
   else
-    $sq_cmd -j "$(echo "$@" | tr ' ' ',')"
+    eval $sq_cmd -j "$(echo "$@" | tr ' ' ',')"
   fi
 }
 
