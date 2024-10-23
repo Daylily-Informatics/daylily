@@ -118,14 +118,20 @@ chmod 400 ~/.ssh/<yourkey>.pem`
 #### 3. Create `YOURPREFIX-omics-analysis-REGION` s3 Bucket
 - Your new bucket name should end in `-omics-analysis-REGION` and be unique to your account. This allows easier auto-detection latter in the `daycli` setup.
 - And it should be created in the region you intend to run in. Default is `us-west-2`.
+- The total size of the bucket will be ~1.5TB, and the cost of storage will be ~$30/mo.
+> _note:_ The full reference data s3 includes the 7giab 30x google brain fastqs, as well as references for both `b37` and `hg38`, once you have your copy, you may consider removing the references you do not intend to use to save on storage costs.
+> - You will have better transfer times copying this bucket to other regions you intend to run in if you replicate your copy and enable acceleration on the source and destination buckets.
+
+```bash
 
 ##### Copy The `daylily` Public References/Resources To Your New Bucket (choose the most recent version)
 From your terminal/shell (and to be safe, in a screen or tmux session as it may run for a while).
 
-You will need to copy the daylily ephemeral cluster s3 data to a bucket named `daylily-omics-analysis-REGION` in your account. There will need to be one of these per region you intende to run in. Default is `us-west-2`. This locality dependence is due to the `Fsx` filesystem requiring the S3 bucket it mounts to be in the same region as it and the subnets.
+You will need to copy the daylily ephemeral cluster s3 data to a bucket named `YOURPREFIX-omics-analysis-REGION` in your account. There will need to be one of these per region you intende to run in. Default is `us-west-2`. This locality dependence is due to the `Fsx` filesystem requiring the S3 bucket it mounts to be in the same region as it and the subnets.
 
 **only needs to be done 1x per region** _and will take an hour or so to run_
 ```bash
+
 ./bin/create_daylily_omics_analysis_s3.sh -h
 
 Usage: ./bin/create_daylily_omics_analysis_s3.sh --prefix <PREFIX> [--daylily-s3-version <version>] [--region <region>] [--dryrun] [-h]
@@ -436,7 +442,7 @@ cd daylily
 
 #  prepare to run the test
 tmux new -s slurm_test
-. dyinit  --project PROJECT
+. dyinit 
 dy-a slurm
 
 # create a test manifest for one giab sample only, which will run on the 0.01x test dataset
@@ -591,12 +597,7 @@ _this should work for `.bashrc` as well, but untested_
 - The alias will need to be modified if running >1 cluster.
 ```zsh
 
-export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCL\
-I && pcluster list-clusters --region us-west-2 | grep 'clusterName' | perl -pe \
-'s/.*\: \"(.*)\"\,.*/\$1/g;') && cluster_ip=\$(pcluster describe-cluster --regi\
-on us-west-2 -n \$cluster_name | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.\
-*)\"\,.*/\$1/g;') && ssh -i ~/.ssh/rcrf-omics-analysis-b.pem ubuntu@\$cluster_i\
-p"
+export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCLI && pcluster list-clusters --region us-west-2 | grep 'clusterName' | perl -pe 's/.*\: \"(.*)\"\,.*/\$1/g;') && cluster_ip=\$(pcluster describe-cluster --region us-west-2 -n \$cluster_name | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.*)\"\,.*/\$1/g;') && ssh -i ~/.ssh/rcrf-omics-analysis-b.pem ubuntu@\$cluster_ip"
 
 alias goday="$goday_cmd"
 ```

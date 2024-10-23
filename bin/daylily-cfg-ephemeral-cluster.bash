@@ -1,4 +1,9 @@
-#!/bin/zsh
+#!/bin/bash
+
+# Check if the script is running in Zsh and emulate Zsh behavior
+if [ -n "$ZSH_VERSION" ]; then
+  emulate -L zsh  # Ensure Zsh behaves like Zsh (if required)
+fi
 
 # Default configuration
 pass_on_warn=false  # Default for warnings causing failures
@@ -10,7 +15,13 @@ usage() {
     echo "       --pass-on-warn          Allow warnings to pass without failure (default: false)"
 }
 
-# Check if script is sourced with no arguments
+# Check if the script is sourced
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
+    return 3
+fi
+
+# Check if no arguments are provided and show usage
 if [[ $# -eq 0 ]]; then
     usage
     return 0
@@ -21,7 +32,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --region-az)
             region_az="$2"
-            region="${region_az::-1}"  # Remove the last character from the AZ
+            region="${region_az:0:-1}"  # Remove the last character (Bash and Zsh compatible)
             shift 2
             ;;
         --pass-on-warn)
@@ -40,88 +51,67 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-
-# Ensure the script is sourced
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-    return 3
-fi
-
 # Function to handle warnings
 handle_warning() {
     local message="$1"
     echo -e "\nWARNING: $message"
-    echo "If appropriate, consider setting --pass-on-warn to continue without failure."
+    echo "Consider setting --pass-on-warn to continue without failure."
     if ! $pass_on_warn; then
         return 3
     fi
 }
 
+# Validate AWS region
 validate_region() {
-  echo "RGN:" $1
-  echo "NOTE:  you are advised to run _aws configure set region $1 _ to set the region for use with the pcluster CLI, to avoid the errors you will cause when the _region_ flag is not used."
-  sleep 2.3
+    echo "RGN: $1"
+    echo "NOTE: Run 'aws configure set region $1' to set the region for pcluster CLI usage."
+    sleep 2.3
 
- if [[ "$1" == "us-west-2" ]]; then
-    echo "Region '$1' confirmed as valid."
-    return 0
-  else
-    echo "Warning: Region '$1' is not 'us-west-2'."
-    echo "It is recommended to use 'us-west-2' for this operation."
-  fi
+    if [[ "$1" == "us-west-2" ]]; then
+        echo "Region '$1' confirmed as valid."
+        return 0
+    else
+        echo "Warning: Region '$1' is not 'us-west-2'. It is recommended to use 'us-west-2'."
+    fi
 }
 
+# Main logic
 echo "Welcome to the Daylily CLI Setup"
 echo "Daylily is configured to run in region $region (AZ: $region_az)."
-echo "Please ensure your ~/.aws/config file matches this region."
+echo "Ensure your ~/.aws/config file matches this region."
 
-### Conda Environment Setup
-
-# Ensure Conda exists
+# Ensure Conda is available
 if ! command -v conda &> /dev/null; then
-    echo "Error: Conda is not available in this shell. Please install miniconda (see docs). Exiting."
+    echo "Error: Conda is not installed. Please install Miniconda."
     return 3
 fi
 
-# Activate or create the Daylily CLI conda environment
+# Activate or create the 'DAYCLI' Conda environment
 if conda env list | grep -q "^DAYCLI "; then
-    echo "Conda environment 'DAYCLI' already exists. Activating it."
+    echo "Activating existing 'DAYCLI' environment."
 else
     echo "Creating 'DAYCLI' environment."
-    conda create -y -n DAYCLI -c conda-forge python parallel nodejs==18.15.0 aws-parallelcluster==3.10.1 flask=2.2.5
+    conda create -y -n DAYCLI -c conda-forge python parallel nodejs==18.15.0 aws-parallelcluster==3.10.1 flask==2.2.5
 fi
+
 conda activate DAYCLI
 pip install colr==0.9.1 pyyaml==6.0.2 tabulate==0.9.0
 
 # Check if GNU Parallel is installed
-echo "Checking if GNU Parallel is installed..."
 if ! parallel --version &> /dev/null; then
-    echo "Error: GNU Parallel is not installed. Please install it (e.g., 'conda install -c conda-forge parallel'). Exiting."
+    echo "Error: GNU Parallel is not installed. Please install it via 'conda install -c conda-forge parallel'."
     return 3
 else
-    echo "GNU Parallel found."
     parallel --citation <<< "will cite"
 fi
 
-
-# Ensure AWS CLI is installed
-echo "Checking AWS CLI version..."
-aws_version=$(aws --version 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
+# Check AWS CLI version
+aws_version=$(aws --version 2>&1 | cut -d ' ' -f 1 | sed 's/aws-cli\///g')
 if [[ "$aws_version" != "1.27.92" ]]; then
-    handle_warning "Warning: Expected AWS CLI version 1.27.92, but found version $aws_version."
+    handle_warning "Expected AWS CLI version 1.27.92, but found $aws_version."
 fi
 
-# Ensure pcluster is installed
-echo "Checking pcluster version..."
-pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
-if [[ "$pcluster_version" != "3.5.0" ]]; then
-    handle_warning "Warning: Expected pcluster version 3.5.0, but found version $pcluster_version."
-fi
-
-### AWS Configuration Setup
-
-
-# Check AWS credentials
+# Validate AWS credentials
 echo "Verifying AWS credentials..."
 if ! aws sts get-caller-identity --region "$region" &> /dev/null; then
     echo "Error: AWS credentials are invalid or do not have access to the AWS account in region $region."
@@ -130,8 +120,9 @@ else
     echo "AWS credentials verified successfully."
 fi
 
-# Call the region validation function
+# Call region validation
 validate_region "$region" || return 3
+
 
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 

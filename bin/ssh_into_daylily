@@ -1,0 +1,99 @@
+#!/bin/bash
+
+
+echo "NOT TESTED YET"
+sleep 5
+# Detect if running in Zsh and switch to Bash emulation if needed
+if [ -n "$ZSH_VERSION" ]; then
+  emulate -L bash  # Switch Zsh to Bash emulation mode
+fi
+
+# Ensure the script is sourced, not executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "This script must be sourced, not executed directly. Use 'source THISSCRIPT' to run."
+    exit 1
+fi
+
+# Set AWS region (edit if needed)
+region="us-west-2"
+
+# Function to list PEM files and prompt user to select one
+select_pem_file() {
+    echo "Listing available PEM files in ~/.ssh:"
+    mapfile -t pem_files < <(ls -1 ~/.ssh/*.pem 2>/dev/null)
+
+    if [[ ${#pem_files[@]} -eq 0 ]]; then
+        echo "Error: No PEM files found in ~/.ssh."
+        return 1
+    fi
+
+    echo "Select a PEM file:"
+    select selected_pem in "${pem_files[@]}"; do
+        if [[ -n "$selected_pem" ]]; then
+            echo "You selected: $selected_pem"
+            export DAY_PEM="$selected_pem"
+            break
+        else
+            echo "Invalid selection. Please try again."
+        fi
+    done
+}
+
+# Check if DAY_PEM is set, if not prompt user to select one
+if [[ -z "$DAY_PEM" ]]; then
+    echo "DAY_PEM is not set. Prompting user to select a PEM file..."
+    select_pem_file || return 1  # Exit if no valid selection
+fi
+
+# Function to list clusters and prompt user to select one
+select_cluster_name() {
+    echo "Retrieving available clusters in region $region..."
+    mapfile -t cluster_names < <(pcluster list-clusters --region "$region" \
+        | grep 'clusterName' | perl -pe 's/.*\: \"(.*)\"\,.*/\1/g')
+
+    if [[ ${#cluster_names[@]} -eq 0 ]]; then
+        echo "Error: No clusters found in region $region."
+        return 1
+    fi
+
+    echo "Select a cluster:"
+    select selected_cluster in "${cluster_names[@]}"; do
+        if [[ -n "$selected_cluster" ]]; then
+            echo "You selected: $selected_cluster"
+            export DAY_CLUSTER_NAME="$selected_cluster"
+            break
+        else
+            echo "Invalid selection. Please try again."
+        fi
+    done
+}
+
+# Check if DAY_CLUSTER_NAME is set, if not prompt user to select one
+if [[ -z "$DAY_CLUSTER_NAME" ]]; then
+    echo "DAY_CLUSTER_NAME is not set. Prompting user to select a cluster..."
+    select_cluster_name || return 1  # Exit if no valid selection
+fi
+
+# Retrieve the cluster's public IP address
+echo "Fetching public IP address for cluster '$DAY_CLUSTER_NAME'..."
+cluster_ip=$(pcluster describe-cluster --region "$region" -n "$DAY_CLUSTER_NAME" \
+    | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.*)\"\,.*/\1/g')
+
+if [[ -z "$cluster_ip" ]]; then
+    echo "Error: Unable to retrieve the public IP address of the cluster."
+    return 1
+fi
+
+echo "Cluster IP address: $cluster_ip"
+
+# Activate the Conda environment
+echo "Activating Conda environment 'DAYCLI'..."
+if ! conda activate DAYCLI; then
+    echo "Error: Failed to activate Conda environment 'DAYCLI'. Ensure it's installed correctly."
+    return 1
+fi
+
+# Connect to the head node via SSH using the selected PEM file
+echo "Connecting to the head node at $cluster_ip using PEM: $DAY_PEM..."
+ssh -i "$DAY_PEM" ubuntu@"$cluster_ip" \
+    -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
