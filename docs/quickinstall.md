@@ -40,6 +40,18 @@ _bash and zsh are known to work_
 > **fsx lustre**
 > - should minimally allow creation of a FSX Lustre filesystem with >= 4.8 TB storage, which should be the default.
 
+#### 1. Activate Cost Allocation Tags (optional)
+If you have not created an ephemeral cluster yet, the tags will not be known to your AWS account, you may need to tag something with these tags if not yet known. Someone with 'payer' access to the account will need to activate cost allocation tags.  This is important for the cost tracking and budgeting of the daylily ephemeral clusters.
+
+* [AWS Cost Allocation Tags](https://us-east-1.console.aws.amazon.com/billing/home#/tags)
+* The tags to activate are:
+```text
+aws-parallelcluster-jobid
+aws-parallelcluster-project
+aws-parallelcluster-username
+```
+
+
 #### 1. Install / Configure The AWS CLI
 _Create And Save AWS CLI Credentials In `.aws`_
 - For your terminal/shell account these files `~/.aws/{credentials,config}` should exist.
