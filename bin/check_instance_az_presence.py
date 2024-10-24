@@ -14,6 +14,11 @@ def get_all_regions():
 def check_spot_availability(instance_type, region):
     """Check spot price history to determine if spot instances are available for the given instance type."""
     try:
+        if not os.environ['AWS_PROFILE']:
+            print("Please set the AWS_PROFILE environment variable.", file=sys.stderr)
+            sys.exit(1)
+        print("Checking spot availability for {instance_type} in {region}...{os.environ['AWS_PROFILE']}")
+        
         command = [
             "aws", "ec2", "describe-spot-price-history",
             "--instance-types", instance_type,
@@ -21,7 +26,8 @@ def check_spot_availability(instance_type, region):
             "--region", region,
             "--start-time", "2024-10-20T00:00:00Z",
             "--query", "SpotPriceHistory[*].AvailabilityZone",
-            "--output", "text"
+            "--output", "text", "--profile", os.environ['AWS_PROFILE']
+            
         ]
         result = subprocess.run(command, check=True, capture_output=True, text=True)
 

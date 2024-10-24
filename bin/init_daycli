@@ -13,7 +13,6 @@ if [ -n "$ZSH_VERSION" ]; then
     fi
 fi
 
-
 # Ensure the script is sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."

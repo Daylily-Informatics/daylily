@@ -6,9 +6,9 @@ pass_on_warn=false  # Default for warnings causing failures
 # Function to display help
 usage() {
     echo "Usage: source $0 [--region-az REGION-AZ] [--pass-on-warn]"
-    echo "       -ra --region-az REGION-AZ   Specify the AWS region and availability zone (default: us-west-2d)"
-    echo "       -pw --pass-on-warn          Allow warnings to pass without failure (default: false)"
-    echo "       -pr --profile  aws profile to use"
+    echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (default: us-west-2d)"
+    echo "       --pass-on-warn          Allow warnings to pass without failure (default: false)"
+    echo "       --profile  aws profile to use"
 }
 
 # Check if the script is sourced or executed
@@ -33,12 +33,12 @@ fi
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -ra|--region-az)
+        --region-az)
             region_az="$2"
             region="${region_az::-1}"  # Remove the last character from the AZ
             shift 2
             ;;
-        -pw|--pass-on-warn)
+        --pass-on-warn)
             pass_on_warn=true
             shift
             ;;
@@ -46,7 +46,7 @@ while [[ $# -gt 0 ]]; do
             usage
             exit 0  # Use exit instead of return
             ;;
-        -pr|--profile)
+        --profile)
             AWS_PROFILE="${AWS_PROFILE:-$2}"
             shift 2
             ;;
@@ -68,7 +68,7 @@ fi
 # Function to handle warnings
 handle_warning() {
     local message="$1"
-    echo -e "\nWARNING: $message"
+    echo -e "WARNING: $message"
     echo "If appropriate, consider setting --pass-on-warn to continue without failure."
     if ! $pass_on_warn; then
         return 3
@@ -90,7 +90,7 @@ validate_region() {
 }
 
 echo "Welcome to the Daylily CLI Setup"
-echo "Daylily is configured to run in region $region (AZ: $region_az)."
+echo "Daylily is tested to run in region $region (AZ: $region_az)."
 echo "Please ensure your ~/.aws/config file matches this region."
 
 ### Conda Environment Setup
@@ -106,12 +106,17 @@ if conda env list | grep -q "^DAYCLI "; then
     echo "Conda environment 'DAYCLI' already exists. Activating it."
 else
     echo "Creating 'DAYCLI' environment."
-    source bin/init_daycli.sh
+    source bin/init_daycli
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to create the 'DAYCLI' environment. Exiting."
+        return 3
+    fi
 fi
+conda activate DAYCLI
 
 # Ensure AWS CLI is installed
 echo "Checking AWS CLI version..."
-aws_version=$(aws --version 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
+aws_version=$(aws --version --profile $AWS_PROFILE 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
 if [[ "$aws_version" != "1.27.92" ]]; then
     handle_warning "Warning: Expected AWS CLI version 1.27.92, but found version $aws_version."
 fi
@@ -124,11 +129,9 @@ if [[ "$pcluster_version" != "3.5.0" ]]; then
 fi
 
 ### AWS Configuration Setup
-
-
 # Check AWS credentials
 echo "Verifying AWS credentials..."
-if ! aws sts get-caller-identity --region "$region" &> /dev/null; then
+if ! aws sts get-caller-identity --region "$region" --profile $AWS_PROFILE  &> /dev/null; then
     echo "Error: AWS credentials are invalid or do not have access to the AWS account in region $region."
     return 3
 else
@@ -138,10 +141,10 @@ fi
 # Call the region validation function
 validate_region "$region" || return 3
 
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text  --profile $AWS_PROFILE )
 
 # Get AWS caller identity
-caller_identity_arn=$(aws sts get-caller-identity --query 'Arn' --output text --region "$region")
+caller_identity_arn=$(aws sts get-caller-identity --query 'Arn' --output text --region "$region"  --profile $AWS_PROFILE )
 required_policies=("pcluster-omics-analysis-fleet")
 
 # Check policies function
@@ -151,9 +154,9 @@ check_policies() {
     local policies=()
 
     if [[ "$entity_type" == "user" ]]; then
-        policies=$(aws iam list-user-policies --user-name "$entity_name" --query 'PolicyNames' --output text --region "$region")
+        policies=$(aws iam list-user-policies --user-name "$entity_name" --query 'PolicyNames' --output text --region "$region"  --profile $AWS_PROFILE )
     else
-        policies=$(aws iam list-role-policies --role-name "$entity_name" --query 'PolicyNames' --output text --region "$region")
+        policies=$(aws iam list-role-policies --role-name "$entity_name" --query 'PolicyNames' --output text --region "$region"  --profile $AWS_PROFILE )
     fi
 
     for policy_name in "${required_policies[@]}"; do
@@ -180,7 +183,7 @@ check_quota() {
     local sccode="$4"
     
     echo "Checking quota for $resource_name..."
-    quota=$(aws service-quotas get-service-quota --service-code $sccode --quota-code "$quota_code" --region "$region" 2>/dev/null)
+    quota=$(aws service-quotas get-service-quota --service-code $sccode --quota-code "$quota_code" --region "$region" --profile $AWS_PROFILE  2>/dev/null)
 
     if [[ $? -ne 0 ]]; then
         handle_warning "Error: Unable to retrieve quota for $resource_name."
@@ -220,7 +223,7 @@ check_quota "Internet Gateways" "L-A4707A72" 4 vpc
 # Check for 'pcluster-omics-analysis' policy and create if necessary
 echo "Checking for required IAM policy 'pcluster-omics-analysis'..."
 policy_name="pcluster-omics-analysis"
-policy_arn=$(aws iam list-policies --query "Policies[?PolicyName=='$policy_name'].Arn" --output text --region "$region")
+policy_arn=$(aws iam list-policies --query "Policies[?PolicyName=='$policy_name'].Arn" --output text --region "$region"  --profile $AWS_PROFILE )
 if [[ -z "$policy_arn" ]]; then
     echo "Creating IAM policy '$policy_name'..."
     policy_document='{
@@ -238,13 +241,13 @@ if [[ -z "$policy_arn" ]]; then
         }
       ]
     }'
-    aws iam create-policy --policy-name "$policy_name" --policy-document "$policy_document" --region "$region"
+    aws iam create-policy --policy-name "$policy_name" --policy-document "$policy_document" --region "$region"  --profile $AWS_PROFILE 
 fi
 
 
 ## PEM File Check
 # Fetch all key pairs in the given region
-key_data=$(aws ec2 describe-key-pairs --region "$region" --query 'KeyPairs[*].[KeyName, KeyType]' --output text | grep omics)
+key_data=$(aws ec2 describe-key-pairs --region "$region" --query 'KeyPairs[*].[KeyName, KeyType]' --output text  --profile $AWS_PROFILE | grep omics)
 
 # Filter for keys with the required suffix
 filtered_keys=()
@@ -311,7 +314,7 @@ budget_name="daylily-omics-analysis-${region}"
 # Query AWS for the budget
 budget_exists=$(aws budgets describe-budgets \
     --query "Budgets[?BudgetName=='$budget_name'] | [0].BudgetName" \
-    --output text --region "$region" --account-id "$ACCOUNT_ID")
+    --output text --region "$region" --account-id "$ACCOUNT_ID"  --profile $AWS_PROFILE )
 
 # Check if the output is empty
 if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
@@ -331,9 +334,9 @@ fi
 
 # Query available S3 buckets and present only those in the correct region
 echo "Fetching S3 buckets matching 'omics-analysis' in $region..."
-buckets=$(aws s3api list-buckets --profile $AWS_PROFILE --query "Buckets[].Name" --output text | tr '\t' '\n' | \
+buckets=$(aws s3api list-buckets --profile $AWS_PROFILE --query "Buckets[].Name" --output text  --profile $AWS_PROFILE | tr '\t' '\n' | \
 while read -r bucket; do \
-  region=$(aws s3api get-bucket-location  --profile $AWS_PROFILE --bucket "$bucket" --query "LocationConstraint" --output text); \
+  region=$(aws s3api get-bucket-location  --profile $AWS_PROFILE --bucket "$bucket" --query "LocationConstraint" --output text --profile $AWS_PROFILE ); \
   echo "$bucket ($region)" | grep "omics-analysis"; \
 done)
 
@@ -386,15 +389,15 @@ echo "Checking subnets and ARN in the specified AZ: $region_az..."
 
 public_subnets=$(aws ec2 describe-subnets \
   --query "Subnets[?AvailabilityZone=='$region_az'].{ID: SubnetId, Name: Tags[?Key=='Name']|[0].Value}" \
-  --region "$region" --output text | grep "Public Subnet"
+  --region "$region" --output text  --profile $AWS_PROFILE | grep "Public Subnet"
   )
   
 private_subnets=$(aws ec2 describe-subnets \
   --query "Subnets[?AvailabilityZone=='$region_az'].{ID: SubnetId, Name: Tags[?Key=='Name']|[0].Value}" \
-  --region "$region" --output text | grep "Private Subnet"
+  --region "$region" --output text  --profile $AWS_PROFILE | grep "Private Subnet"
 )
 
-arn_count=$(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region" | wc -l)
+arn_count=$(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region"  --profile $AWS_PROFILE | wc -l)
 
 if [[ -z "$public_subnets" && -z "$private_subnets" && $arn_count -eq 0 ]]; then
     echo "All required resources are missing. Running the initialization script..."
@@ -409,7 +412,7 @@ fi
 echo "Setup complete. Proceeding with the remaining steps..."
 
 # Select public and private subnets
-public_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text | grep "Public Subnet" | grep $region_az)
+public_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text  --profile $AWS_PROFILE | grep "Public Subnet" | grep $region_az)
 echo "Select a Public Subnet:"
 public_subnet_choices=()
 while read -r subnet_id subnet_name; do
@@ -423,7 +426,7 @@ select public_subnet_choice in "${public_subnet_choices[@]}"; do
 done
 
 echo "Select a Private Subnet:"
-private_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text | grep "Public Subnet" | grep $region_az)
+private_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text  --profile $AWS_PROFILE | grep "Public Subnet" | grep $region_az)
 private_subnet_choices=()
 while read -r subnet_id subnet_name; do
     private_subnet_choices+=("$subnet_name ($subnet_id)")
@@ -436,7 +439,7 @@ select private_subnet_choice in "${private_subnet_choices[@]}"; do
 done
 
 # Select an IAM policy ARN for 'pclusterTagsAndBudget'
-policy_arns=($(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region"))
+policy_arns=($(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region" --profile $AWS_PROFILE ))
 echo "Select an IAM policy ARN for 'pclusterTagsAndBudget':"
 select arn_policy_id in "${policy_arns[@]}"; do
     echo "You selected: $arn_policy_id"
@@ -522,7 +525,7 @@ EOF
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
 
 echo "Calculating max spot bid prices per partition resource group..."
-bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az
+bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE
 
 # Check the exit status of the previous command
 if [[ $? -ne 0 ]]; then
@@ -534,7 +537,7 @@ fi
 
 # Dry run cluster creation
 echo "Running a cluster creation dry run..."
-json_response=$(pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --dryrun true --region "$region")
+json_response=$(pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --dryrun true --region "$region"  )
 
 message=$(echo "$json_response" | jq -r '.message')
 
@@ -545,7 +548,7 @@ elif [[ "$DAY_BREAK" == "1" ]]; then
     echo "DAY_BREAK == '1'.  Exiting without creating the cluster."
     return 0
 else
-    echo "Error: Dry run failed (  pcluster create-cluster -n $cluster_name -c $target_conf_fin --dryrun true --region $region ). Exiting."
+    echo "Error: Dry run failed (  pcluster create-cluster -n $cluster_name -c $target_conf_fin --dryrun true --region $region   ). Exiting."
     return 3
 fi
 
@@ -557,8 +560,8 @@ pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --region "$regi
 echo "Monitoring cluster creation... this may take 10-15 minutes."
 python bin/helpers/watch_cluster_status.py "$region"
 
-echo "\nOnce the cluster is complete, configure the head node by running 'source ./bin/daylily-cfg-headnode $pem_file $region'."
-echo "\n\t....trying this now!\n"
+echo "Once the cluster is complete, configure the head node by running 'source ./bin/daylily-cfg-headnode $pem_file $region' $AWS_PROFILE."
+echo "....trying this now!"
 sleep 2
-source ./bin/daylily-cfg-headnode $pem_file $region
-echo "\n\t....fin!\n"
+source ./bin/daylily-cfg-headnode $pem_file $region $AWS_PROFILE
+echo "....fin! "

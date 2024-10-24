@@ -1,4 +1,4 @@
-#!/bin/bash
+
 
 # Check if the script is running in Zsh and emulate Zsh behavior
 if [ -n "$ZSH_VERSION" ]; then
@@ -9,7 +9,7 @@ if [ -n "$ZSH_VERSION" ]; then
         echo "This script is sourced."
     else
         echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-        exit 3
+        return 3
     fi
 fi
 
@@ -24,7 +24,7 @@ fi
 
 if [ -z "$AWS_PROFILE" ]; then
     echo "Error: AWS_PROFILE is not set."
-    return 1  # Exit the function with an error status
+    return 3  # Exit the function with an error status
 fi
 
 # Ensure the script is sourced, not executed directly
@@ -32,11 +32,86 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "This script must be sourced, not executed directly. Use 'source THISSCRIPT' to run."
     exit 1
 fi
+#!/bin/bash
 
-# Set AWS region (edit if needed)
-region="us-west-2"
+# Use a well-known region to query available regions (like us-east-1)
+DEFAULT_REGION="us-east-1"
 
-echo aaaaaa
+#!/bin/bash
+
+# Ensure AWS_PROFILE is set
+if [[ -z "$AWS_PROFILE" ]]; then
+    echo "Error: AWS_PROFILE is not set. Please export AWS_PROFILE and try again."
+    return 3
+fi
+
+# Use a known valid region to retrieve the list of available regions
+DEFAULT_REGION="us-east-1"
+
+#!/bin/bash
+
+# Ensure AWS_PROFILE is set
+if [[ -z "$AWS_PROFILE" ]]; then
+    echo "Error: AWS_PROFILE is not set. Please export AWS_PROFILE and try again."
+    returnt 1
+fi
+
+# Use a known valid region to query available regions
+DEFAULT_REGION="us-east-1"
+
+#!/bin/bash
+
+# Ensure AWS_PROFILE is set
+if [[ -z "$AWS_PROFILE" ]]; then
+    echo "Error: AWS_PROFILE is not set. Please export AWS_PROFILE and try again."
+    return 1
+fi
+
+# Use a valid region to query available regions
+DEFAULT_REGION="us-east-1"
+
+# Function to list AWS regions and prompt user to select one
+select_aws_region() {
+    echo "Retrieving available AWS regions using profile: $AWS_PROFILE..."
+
+    # Retrieve the list of AWS regions, separated by newlines
+    regions=$(aws ec2 describe-regions \
+        --profile "$AWS_PROFILE" \
+        --region "$DEFAULT_REGION" \
+        --query "Regions[].RegionName" \
+        --output text 2>/dev/null | tr '\t' '\n')
+
+    # Check if regions were retrieved successfully
+    if [[ -z "$regions" ]]; then
+        echo "Error: Unable to retrieve AWS regions. Please check your AWS CLI configuration."
+        return 1
+    fi
+
+    # Convert regions into an array
+    region_array=()
+    while IFS= read -r regionopt; do
+        region_array+=("$regionopt")
+    done <<< "$regions"
+
+    # Display the list of regions and prompt user to select one
+    echo "Available AWS Regions:"
+    select region in "${region_array[@]}"; do
+        if [[ -n "$region" ]]; then
+            echo "You selected: $region"
+            export AWS_SELECTED_REGION="$region"
+            break
+        else
+            echo "Invalid selection. Please try again."
+        fi
+    done
+}
+
+# Call the function to list and select AWS region
+select_aws_region
+
+
+
+
 # Function to list PEM files and prompt user to select one
 select_pem_file() {
     echo "Listing available PEM files in ~/.ssh:"
@@ -86,12 +161,13 @@ select_cluster_name() {
     while IFS= read -r line; do
         cluster_name=$(echo "$line" | perl -pe 's/.*\: \"(.*)\"\,.*/\1/g')
         cluster_names+=("$cluster_name")
-    done < <(pcluster list-clusters --region "$region" | grep 'clusterName')
-
+    done < <(pcluster list-clusters --region "$region"  | grep 'clusterName')
+    echo "Cluster names: ${cluster_names}"
     # Check if any clusters were found
     if [[ ${#cluster_names[@]} -eq 0 ]]; then
         echo "Error: No clusters found in region $region."
-        return 1
+        is your AWS_PROFILE set correctly?
+        return 3
     fi
 
     echo "Select a cluster:"
@@ -125,14 +201,13 @@ fi
 
 echo "Cluster IP address: $cluster_ip"
 
-# Activate the Conda environment
-echo "Activating Conda environment 'DAYCLI'..."
-if ! conda activate DAYCLI; then
-    echo "Error: Failed to activate Conda environment 'DAYCLI'. Ensure it's installed correctly."
-    return 1
-fi
-
 # Connect to the head node via SSH using the selected PEM file
 echo "Connecting to the head node at $cluster_ip using PEM: $DAY_PEM..."
 ssh -i "$DAY_PEM" ubuntu@"$cluster_ip" \
     -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+
+unset region
+unset pem_files
+unset selected_pem
+unset cluster_names
+unset selected_cluster

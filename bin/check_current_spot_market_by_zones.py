@@ -18,6 +18,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Look up spot prices for instances in the i192 partition.")
     parser.add_argument("-i", "--input", default="config/day_cluster/prod_cluster.yaml", help="Path to the input YAML configuration file. default( config/day_cluster/prod_cluster.yaml)")
     parser.add_argument("-o", "--output", required=True, help="Path to the output TSV file.")
+    parser.add_argument("--profile", help="AWS CLI profile to use.")
     parser.add_argument(
         "--zones",
         default="us-west-2a,us-west-2b,us-west-2c,us-west-2d,us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-2a,us-east-2b,us-east-2c,us-west-1a,us-west-1a,us-west-1c",
@@ -35,7 +36,7 @@ def get_region_from_zone(zone):
     """Extract the region from the zone by trimming the trailing letter."""
     return zone[:-1]
 
-def get_spot_price(instance_type, zone):
+def get_spot_price(instance_type, zone, profile):
     """Query AWS to get the current spot price of an instance type in a specific AZ."""
     region = get_region_from_zone(zone)
     try:
@@ -45,7 +46,8 @@ def get_spot_price(instance_type, zone):
             "--availability-zone", zone,
             "--product-description", "Linux/UNIX",
             "--query", "SpotPriceHistory[0].SpotPrice",
-            "--output", "text", "--region", region
+            "--output", "text", "--region", region,
+            "--profile", profile,
         ]).decode("utf-8").strip()
         try:
             return float(result)
@@ -87,7 +89,7 @@ def extract_i192_instances(config):
                     instance_types.append(instance.get('InstanceType'))
     return instance_types
 
-def collect_spot_prices(instance_types, zones):
+def collect_spot_prices(instance_types, zones, profile):
     """Collect spot prices and availability for each instance type in specified AZs."""
     spot_data = {}
     availability_data = {zone: 0 for zone in zones}
@@ -95,7 +97,7 @@ def collect_spot_prices(instance_types, zones):
     for instance_type in instance_types:
         spot_data[instance_type] = {}
         for zone in zones:
-            spot_price = get_spot_price(instance_type, zone)
+            spot_price = get_spot_price(instance_type, zone, profile)
             spot_data[instance_type][zone] = spot_price if spot_price is not None else float('nan')
             if spot_price is not None:
                 availability_data[zone] += 1
@@ -170,15 +172,16 @@ def display_statistics(zone_stats):
 def main():
     args = parse_arguments()
 
+    profile = args.profile
     with open(args.input, 'r') as f:
         config = yaml.safe_load(f)
 
     instance_types = extract_i192_instances(config)
     zones = args.zones.split(',')
 
-    spot_data, availability_data = collect_spot_prices(instance_types, zones)
+    spot_data, availability_data = collect_spot_prices(instance_types, zones, profile)
 
-    zone_stats = calculate_statistics(spot_data, zones, args.approx_spot_hours_per_30x_genome)
+    zone_stats = calculate_statistics(spot_data, zones, args.approx_spot_hours_per_30x_genome, profile)
     display_statistics(zone_stats)
 
 if __name__ == "__main__":
