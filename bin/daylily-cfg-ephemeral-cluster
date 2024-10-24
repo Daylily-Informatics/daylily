@@ -417,7 +417,7 @@ if [[ -z "$public_subnets" && -z "$private_subnets" && $arn_count -eq 0 ]]; then
 
     bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml "$res_prefix" "$region_az" "$region" $AWS_PROFILE
 elif [[ -z "$public_subnets" || -z "$private_subnets" || $arn_count -eq 0 ]]; then
-    echo "Error: Incomplete setup. Ensure public and private subnets and the required ARN are available."
+    echo "Error: Incomplete setup. Ensure public and private subnets and the required ARN are available.  You might try running : bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml $res_prefix $region_az $region $AWS_PROFILE"
     return 1
 else
     echo "All required resources are available."
