@@ -3,15 +3,16 @@
 set -e  # Exit on any error
 
 # Default values
-s3_reference_data_version="v0.9"
+s3_reference_data_version="v0.7"
 region="us-west-2"
 dryrun=false  # Default to false
 
 # Usage function
 usage() {
-    echo "Usage: $0 [--bucket-prefix <prefix> --daylily-s3-version <version> (default v0.9)] [--region <region> (default us-west-2)] [--dryrun] [--help]"
+    echo "Usage: $0 [--bucket-prefix <prefix> --daylily-s3-version <version> (default v0.7)] [--region <region> (default us-west-2)] [--dryrun] [--help]"
     exit 1
 }
+
 
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
@@ -24,6 +25,16 @@ while [[ "$#" -gt 0 ]]; do
     *) echo "Unknown parameter: $1"; usage;;
   esac
 done
+
+if [[ "$s3_reference_data_version" != "v0.7" ]]; then
+    echo "Error: Only version 'v0.7' is supported. Exiting."
+    exit 1
+else
+    echo "Using Daylily S3 reference data version: $s3_reference_data_version"
+    source_bucket="daylily-references-public"
+fi
+
+
 
 if [[ -z "$bucket_prefix" ]]; then
     echo "Error: Bucket prefix is required."
