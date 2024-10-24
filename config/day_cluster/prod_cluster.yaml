@@ -32,7 +32,8 @@ HeadNode:
       - BucketName: REGSUB_S3_BUCKET_NAME  # daylily-ref
         EnableWriteAccess: false
     AdditionalIamPolicies:
-      - Policy: REGSUB_S3_IAM_POLICY  
+      - Policy: REGSUB_S3_IAM_POLICY 
+      - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 Scheduling:
   Scheduler: slurm
   SlurmSettings:
