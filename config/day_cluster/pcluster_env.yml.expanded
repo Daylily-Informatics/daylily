@@ -27,11 +27,26 @@ Parameters:
     Type: String
     Default: us-west-2c
 
+  Region:
+    Description: Please enter the region (e.g., us-west-2)
+    Type: String
+    Default: us-west-2
+
+  Policy:
+    Description: Budget Tagging Policy
+    Type: String
+    Default: pclusterTagsAndBudget
+
+  PolicyName:
+    Description: Name of the Managed Policy
+    Type: String
+    Default: pclusterTagsAndBudget
+
 Resources:
   pclusterManageTags:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
-      ManagedPolicyName: pclusterTagsAndBudget
+      ManagedPolicyName: !Ref PolicyName
       Path: /
       PolicyDocument:
         Version: 2012-10-17
@@ -56,14 +71,14 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: !Ref EnvironmentName
+          Value: !Sub ${AvailabilityZone} Vpc
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: !Ref EnvironmentName
+          Value: !Sub ${AvailabilityZone} EnvironmentName
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -80,7 +95,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet
+          Value: !Sub ${AvailabilityZone} Public Subnet
 
   PrivateSubnet:
     Type: AWS::EC2::Subnet
@@ -91,7 +106,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet
+          Value: !Sub ${AvailabilityZone} Private Subnet
 
   NatGatewayEIP:
     Type: AWS::EC2::EIP
@@ -133,7 +148,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Routes
+          Value: !Sub ${Region} Private Routes
 
   DefaultPrivateRoute:
     Type: AWS::EC2::Route

@@ -47,7 +47,7 @@ while [[ $# -gt 0 ]]; do
             exit 0  # Use exit instead of return
             ;;
         --profile)
-            AWS_PROFILE="${AWS_PROFILE:-$2}"
+            AWS_PROFILEIN="$2"
             shift 2
             ;;
         *)
@@ -64,6 +64,18 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
     exit 3
 fi
+
+if [[ -z "$AWS_PROFILE" ]]; then
+    echo "Error: --profile flag not set"
+    return 3  # Exit the function with an error status
+fi
+
+if [[ "$AWS_PROFILE" != "$AWS_PROFILEIN" ]]; then
+    echo "Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
+    return 3  # Exit the function with an error status
+fi
+AWS_PROFILE=$AWS_PROFILE
+echo "YOOUR AWS_PROFILE IS NOW SET TO: $AWS_PROFILE"
 
 # Function to handle warnings
 handle_warning() {
@@ -368,7 +380,7 @@ check_s3_folder() {
     local bucket=$1
     local folder=$2
 
-    if aws s3 ls "s3://$bucket/$folder/" > /dev/null 2>&1; then
+    if aws s3 ls "s3://$bucket/$folder/" --profile $AWS_PROFILE > /dev/null 2>&1; then
         echo "Folder s3://$bucket/$folder/ exists."
     else
         echo "ERROR: Folder s3://$bucket/$folder/ does not exist."
@@ -401,7 +413,9 @@ arn_count=$(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAn
 
 if [[ -z "$public_subnets" && -z "$private_subnets" && $arn_count -eq 0 ]]; then
     echo "All required resources are missing. Running the initialization script..."
-    bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml "daylily-cloudstack-$region_az" "$region_az" "$region"
+    res_prefix=$(echo "daylily-cs-$region_az" | sed -e 's/1/one/g' -e 's/2/two/g' -e 's/3/three/g' -e 's/4/four/g')
+
+    bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml "$res_prefix" "$region_az" "$region" $AWS_PROFILE
 elif [[ -z "$public_subnets" || -z "$private_subnets" || $arn_count -eq 0 ]]; then
     echo "Error: Incomplete setup. Ensure public and private subnets and the required ARN are available."
     return 1
@@ -560,7 +574,7 @@ pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --region "$regi
 echo "Monitoring cluster creation... this may take 10-15 minutes."
 python bin/helpers/watch_cluster_status.py "$region"
 
-echo "Once the cluster is complete, configure the head node by running 'source ./bin/daylily-cfg-headnode $pem_file $region' $AWS_PROFILE."
+echo "Once the cluster is complete, configure the head node by running 'source ./bin/daylily-cfg-headnode $pem_file $region $AWS_PROFILE' ."
 echo "....trying this now!"
 sleep 2
 source ./bin/daylily-cfg-headnode $pem_file $region $AWS_PROFILE

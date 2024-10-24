@@ -15,12 +15,12 @@ aws_profile=$3
 duser="ubuntu"
 
 # Ensure both PEM file and region are provided
-if [[ -z "$pem_file" || -z "$region" || -z "$aws_profile"]]; then
+if [[ -z "$pem_file" || -z "$region" || -z "$aws_profile" ]]; then
     echo "Error: You must provide both the PEM file path and the AWS region."
     echo "Usage: source $0 /path/to/pem_file region profile"
     return 1
 fi
-
+ 
 AWS_PROFILE=$aws_profile
 
 # List available clusters in the specified region
