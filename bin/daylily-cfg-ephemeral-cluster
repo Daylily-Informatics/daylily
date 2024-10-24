@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -h|--help)
             usage
-            exit 0  # Use exit instead of return
+            return 0  # Use exit instead of return
             ;;
         --profile)
             AWS_PROFILEIN="$2"
@@ -53,7 +53,7 @@ while [[ $# -gt 0 ]]; do
         *)
             echo "Error: Unknown option: $1"
             usage
-            exit 3  # Use exit instead of return
+            return 3  # Use exit instead of return
             ;;
     esac
 done
