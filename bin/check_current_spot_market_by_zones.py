@@ -104,7 +104,7 @@ def collect_spot_prices(instance_types, zones, profile):
 
     return spot_data, availability_data
 
-def calculate_statistics(spot_data, zones, hours_per_genome):
+def calculate_statistics(spot_data, zones, hours_per_genome, profile):
     """Calculate statistics for each zone."""
     zone_stats = []
     for zone in zones:

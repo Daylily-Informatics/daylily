@@ -51,6 +51,7 @@ check_and_install() {
 check_and_install "colr" "0.9.1"
 check_and_install "yaml" "6.0.2"   # pyyaml is imported as 'yaml'
 check_and_install "tabulate" "0.9.0"
+check_and_install "docopt" "0.6.2"
 
 
 echo "Daylily CLI environment is ready."
