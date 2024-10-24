@@ -40,7 +40,7 @@ if [ "$disable_warn" != true ]; then
     echo "  - aws s3 cp s3://daylily-references-public/cluster_boot_config s3://<new-bucket>/cluster_boot_config --recursive --request-payer requester"
     echo "  - aws s3 cp s3://daylily-references-public/data s3://<new-bucket>/data --recursive --request-payer requester"
     echo ""
-    echo "You are advised to enable accelerated transfer for the new bucket to speed up data transfer."    
+    echo "ACCELERATED TRANSFER WILL BE USED. "
 fi
 
 if [[ "$s3_reference_data_version" != "v0.7" ]]; then
@@ -55,6 +55,18 @@ if [[ -z "$bucket_prefix" ]]; then
     echo "Error: Bucket prefix is required."
     usage
 fi
+
+
+if [[ "$AWS_PROFILE" == "" ]]; then
+    echo "Please set AWS_PROFILE to continue"
+    exit 1
+fi
+
+echo ""
+echo ""
+echo " >  >>   >>> AWS_PROFILE: $AWS_PROFILE is being used."
+echo ""
+sleep 4
 
 new_bucket="${bucket_prefix}-omics-analysis-${region}"
 echo "Creating bucket: $new_bucket"
@@ -82,6 +94,8 @@ create_bucket() {
     fi
 }
 
+aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled
+
 # Check if the bucket already exists
 echo "Checking if bucket '$new_bucket' exists..."
 check_bucket_exists "$new_bucket"
@@ -99,7 +113,7 @@ fi
 # Compose bucket creation commands
 
 cmda="aws s3 cp s3://${source_bucket}/cluster_boot_config s3://${new_bucket}/cluster_boot_config --recursive  --request-payer requester"
-cmdb="aws s3 cp s3://${source_bucket}/data s3://${new_bucket}/data --recursive --request-payer requester"
+cmdb="aws s3 cp s3://${source_bucket}/data s3://${new_bucket}/data --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
 
 # Execute the commands in parallel
 echo "Creating buckets and copying data..."
