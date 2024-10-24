@@ -1,11 +1,30 @@
 #!/bin/bash
 
-
-echo "NOT TESTED YET"
-sleep 5
-# Detect if running in Zsh and switch to Bash emulation if needed
+# Check if the script is running in Zsh and emulate Zsh behavior
 if [ -n "$ZSH_VERSION" ]; then
-  emulate -L bash  # Switch Zsh to Bash emulation mode
+    emulate -L zsh  # Ensure Zsh behaves like Zsh (if required)
+
+    # Check if the script is sourced or executed
+    if [ -n "$ZSH_EVAL_CONTEXT" ] && [[ "$ZSH_EVAL_CONTEXT" =~ :file$ ]]; then
+        echo "This script is sourced."
+    else
+        echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
+        exit 3
+    fi
+fi
+
+# Activate or create the Daylily CLI conda environment
+if conda env list | grep  "DAYCLI"; then
+    echo "Conda environment 'DAYCLI' already exists."
+    conda activate DAYCLI
+else
+    echo "'DAYCLI' environment not found. Please run 'init_daycli' to create the environment."
+    reuturn 3
+fi
+
+if [ -z "$AWS_PROFILE" ]; then
+    echo "Error: AWS_PROFILE is not set."
+    return 1  # Exit the function with an error status
 fi
 
 # Ensure the script is sourced, not executed directly
@@ -17,11 +36,20 @@ fi
 # Set AWS region (edit if needed)
 region="us-west-2"
 
+echo aaaaaa
 # Function to list PEM files and prompt user to select one
 select_pem_file() {
     echo "Listing available PEM files in ~/.ssh:"
-    mapfile -t pem_files < <(ls -1 ~/.ssh/*.pem 2>/dev/null)
 
+    # Initialize an empty array
+    pem_files=()
+
+    # Populate the array using a loop over the output of ls
+    while IFS= read -r file; do
+        pem_files+=("$file")
+    done < <(ls -1 ~/.ssh/*.pem 2>/dev/null)
+
+    # Check if any PEM files were found
     if [[ ${#pem_files[@]} -eq 0 ]]; then
         echo "Error: No PEM files found in ~/.ssh."
         return 1
@@ -39,6 +67,8 @@ select_pem_file() {
     done
 }
 
+select_pem_file
+
 # Check if DAY_PEM is set, if not prompt user to select one
 if [[ -z "$DAY_PEM" ]]; then
     echo "DAY_PEM is not set. Prompting user to select a PEM file..."
@@ -48,9 +78,17 @@ fi
 # Function to list clusters and prompt user to select one
 select_cluster_name() {
     echo "Retrieving available clusters in region $region..."
-    mapfile -t cluster_names < <(pcluster list-clusters --region "$region" \
-        | grep 'clusterName' | perl -pe 's/.*\: \"(.*)\"\,.*/\1/g')
 
+    # Initialize an empty array for cluster names
+    cluster_names=()
+
+    # Populate the array using a while loop over the command output
+    while IFS= read -r line; do
+        cluster_name=$(echo "$line" | perl -pe 's/.*\: \"(.*)\"\,.*/\1/g')
+        cluster_names+=("$cluster_name")
+    done < <(pcluster list-clusters --region "$region" | grep 'clusterName')
+
+    # Check if any clusters were found
     if [[ ${#cluster_names[@]} -eq 0 ]]; then
         echo "Error: No clusters found in region $region."
         return 1
@@ -67,6 +105,7 @@ select_cluster_name() {
         fi
     done
 }
+
 
 # Check if DAY_CLUSTER_NAME is set, if not prompt user to select one
 if [[ -z "$DAY_CLUSTER_NAME" ]]; then

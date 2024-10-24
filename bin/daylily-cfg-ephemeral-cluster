@@ -6,9 +6,18 @@ pass_on_warn=false  # Default for warnings causing failures
 # Function to display help
 usage() {
     echo "Usage: source $0 [--region-az REGION-AZ] [--pass-on-warn]"
-    echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (default: us-west-2d)"
-    echo "       --pass-on-warn          Allow warnings to pass without failure (default: false)"
+    echo "       -ra --region-az REGION-AZ   Specify the AWS region and availability zone (default: us-west-2d)"
+    echo "       -pw --pass-on-warn          Allow warnings to pass without failure (default: false)"
+    echo "       -pr --profile  aws profile to use"
 }
+
+# Check if the script is sourced or executed
+if [ -n "$ZSH_EVAL_CONTEXT" ] && [[ "$ZSH_EVAL_CONTEXT" =~ :file$ ]]; then
+    echo "This script is sourced."
+else
+    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
+    exit 3
+fi
 
 # Check if script is sourced with no arguments
 if [[ $# -eq 0 ]]; then
@@ -16,26 +25,35 @@ if [[ $# -eq 0 ]]; then
     return 0
 fi
 
+if [ -z "$AWS_PROFILE" ]; then
+    echo "Error: AWS_PROFILE is not set."
+    return 1  # Exit the function with an error status
+fi
+
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --region-az)
+        -ra|--region-az)
             region_az="$2"
             region="${region_az::-1}"  # Remove the last character from the AZ
             shift 2
             ;;
-        --pass-on-warn)
+        -pw|--pass-on-warn)
             pass_on_warn=true
             shift
             ;;
         -h|--help)
             usage
-            return 0
+            exit 0  # Use exit instead of return
+            ;;
+        -pr|--profile)
+            AWS_PROFILE="${AWS_PROFILE:-$2}"
+            shift 2
             ;;
         *)
             echo "Error: Unknown option: $1"
             usage
-            return 3
+            exit 3  # Use exit instead of return
             ;;
     esac
 done
@@ -44,7 +62,7 @@ done
 # Ensure the script is sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-    return 3
+    exit 3
 fi
 
 # Function to handle warnings
@@ -88,21 +106,8 @@ if conda env list | grep -q "^DAYCLI "; then
     echo "Conda environment 'DAYCLI' already exists. Activating it."
 else
     echo "Creating 'DAYCLI' environment."
-    conda create -y -n DAYCLI -c conda-forge python parallel nodejs==18.15.0 aws-parallelcluster==3.10.1 flask=2.2.5
+    source bin/init_daycli.sh
 fi
-conda activate DAYCLI
-pip install colr==0.9.1 pyyaml==6.0.2 tabulate==0.9.0
-
-# Check if GNU Parallel is installed
-echo "Checking if GNU Parallel is installed..."
-if ! parallel --version &> /dev/null; then
-    echo "Error: GNU Parallel is not installed. Please install it (e.g., 'conda install -c conda-forge parallel'). Exiting."
-    return 3
-else
-    echo "GNU Parallel found."
-    parallel --citation <<< "will cite"
-fi
-
 
 # Ensure AWS CLI is installed
 echo "Checking AWS CLI version..."
@@ -326,9 +331,9 @@ fi
 
 # Query available S3 buckets and present only those in the correct region
 echo "Fetching S3 buckets matching 'omics-analysis' in $region..."
-buckets=$(aws s3api list-buckets --query "Buckets[].Name" --output text | tr '\t' '\n' | \
+buckets=$(aws s3api list-buckets --profile $AWS_PROFILE --query "Buckets[].Name" --output text | tr '\t' '\n' | \
 while read -r bucket; do \
-  region=$(aws s3api get-bucket-location --bucket "$bucket" --query "LocationConstraint" --output text); \
+  region=$(aws s3api get-bucket-location  --profile $AWS_PROFILE --bucket "$bucket" --query "LocationConstraint" --output text); \
   echo "$bucket ($region)" | grep "omics-analysis"; \
 done)
 

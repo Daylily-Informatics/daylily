@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Check if the script is running in Zsh and emulate Zsh behavior
+if [ -n "$ZSH_VERSION" ]; then
+    emulate -L zsh  # Ensure Zsh behaves like Zsh (if required)
+
+    # Check if the script is sourced or executed
+    if [ -n "$ZSH_EVAL_CONTEXT" ] && [[ "$ZSH_EVAL_CONTEXT" =~ :file$ ]]; then
+        echo "This script is sourced."
+    else
+        echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
+        exit 3
+    fi
+fi
+
+
+# Ensure the script is sourced
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
+    exit 3
+fi
+
+
+# Ensure Conda exists
+if ! command -v conda &> /dev/null; then
+    echo "Error: Conda is not available in this shell. Please install miniconda (see docs). Exiting."
+    return 3
+fi
+
+# Activate or create the Daylily CLI conda environment
+if conda env list | grep -q "^DAYCLI "; then
+    echo "Conda environment 'DAYCLI' already exists."
+else
+    echo "Creating 'DAYCLI' environment."
+    conda create -y -n DAYCLI -c conda-forge python parallel nodejs==18.15.0 aws-parallelcluster==3.10.1 flask=2.2.5
+fi
+echo "Activating 'DAYCLI' environment."
+conda activate DAYCLI
+# Function to check if a Python package is installed
+check_and_install() {
+    PACKAGE=$1
+    VERSION=$2
+    if ! python -c "import $PACKAGE" &> /dev/null; then
+        echo "$PACKAGE not found. Installing $PACKAGE==$VERSION..."
+        pip install "$PACKAGE==$VERSION"
+    fi
+}
+
+
+
+# Check and install the required packages
+check_and_install "colr" "0.9.1"
+check_and_install "yaml" "6.0.2"   # pyyaml is imported as 'yaml'
+check_and_install "tabulate" "0.9.0"
+
+
+echo "Daylily CLI environment is ready."

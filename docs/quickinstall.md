@@ -604,15 +604,11 @@ pcluster delete-cluster -n <cluster-name> --region us-west-2
 
 # Other Monitoring Tools
 
-## `goday` `.zshrc` Alias ( to expedite ssh login to headnode )
-_this should work for `.bashrc` as well, but untested_
-- The alias will need to be modified if running >1 cluster.
-```zsh
+## Quick SSH Into Headnode
+`bin/ssh_into_daylily`
 
-export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCLI && pcluster list-clusters --region us-west-2 | grep 'clusterName' | perl -pe 's/.*\: \"(.*)\"\,.*/\$1/g;') && cluster_ip=\$(pcluster describe-cluster --region us-west-2 -n \$cluster_name | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.*)\"\,.*/\$1/g;') && ssh -i ~/.ssh/rcrf-omics-analysis-b.pem ubuntu@\$cluster_ip"
+_alias it for your shell:_ `alias goday=". ~/projects/daylily/bin/ssh_into_daylily"`
 
-alias goday="$goday_cmd"
-```
 
 ## AWS Cloudwatch
 - The AWS Cloudwatch console can be used to monitor the cluster, and the resources it is using.  This is a good place to monitor the health of the cluster, and in particular the slurm and pcluster logs for the headnode and compute fleet.
