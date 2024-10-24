@@ -136,8 +136,8 @@ fi
 # Ensure pcluster is installed
 echo "Checking pcluster version..."
 pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
-if [[ "$pcluster_version" != "3.5.0" ]]; then
-    handle_warning "Warning: Expected pcluster version 3.5.0, but found version $pcluster_version."
+if [[ "$pcluster_version" != "3.11.1" ]]; then
+    handle_warning "Warning: Expected pcluster version 3.11.1, but found version $pcluster_version."
 fi
 
 ### AWS Configuration Setup
@@ -539,7 +539,7 @@ EOF
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
 
 echo "Calculating max spot bid prices per partition resource group..."
-bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE
+python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE
 
 # Check the exit status of the previous command
 if [[ $? -ne 0 ]]; then

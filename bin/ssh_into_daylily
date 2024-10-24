@@ -5,6 +5,15 @@ echo ""
 echo "AWS_PROFILE to be used is >>> $AWS_PROFILE"
 echo ""
 
+
+
+unset DAY_CLUSTER_NAME
+unset cluster_ip
+unset cluster_names
+unset selected_cluster
+unset cluster
+unset DAY_CLUSTER_NAME
+
 # Check if the script is running in Zsh and emulate Zsh behavior
 if [ -n "$ZSH_VERSION" ]; then
     emulate -L zsh  # Ensure Zsh behaves like Zsh (if required)
@@ -155,12 +164,6 @@ if [[ -z "$DAY_PEM" ]]; then
     select_pem_file || return 1  # Exit if no valid selection
 fi
 
-unset DAY_CLUSTER_NAME
-unset cluster_ip
-unset cluster_names
-unset selected_cluster
-unset cluster
-unset DAY_CLUSTER_NAME
 # Function to list clusters and prompt user to select one
 select_cluster_name() {
     echo "Retrieving available clusters in region $region..."
@@ -203,6 +206,7 @@ fi
 
 # Retrieve the cluster's public IP address
 echo "Fetching public IP address for cluster '$DAY_CLUSTER_NAME'..."
+echo "Region: $region , Cluster Name: $DAY_CLUSTER_NAME , AWS_PROFILE: $AWS_PROFILE"
 cluster_ip=$(pcluster describe-cluster --region "$region" -n "$DAY_CLUSTER_NAME" \
     | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.*)\"\,.*/\1/g')
 
