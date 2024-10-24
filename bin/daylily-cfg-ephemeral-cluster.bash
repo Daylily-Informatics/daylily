@@ -508,7 +508,7 @@ EOF
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
 
 echo "Calculating max spot bid prices per partition resource group..."
-bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az
+python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az
 
 # Check the exit status of the previous command
 if [[ $? -ne 0 ]]; then
