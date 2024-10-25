@@ -7,38 +7,137 @@ import argparse
 from math import isnan, fsum
 from tabulate import tabulate
 from colr import color
+import re
+# Define ANSI colors for different modes
+COLORS = {
+    'dark': {
+        'zone': (135, 206, 235),  
+        'teal': (0, 255, 222),    
+        'orange': (255, 140, 0),  
+        'gray': (211, 211, 211),  
+        'yellow': (255, 255, 0),  
+        'highlight': (255, 255, 0)  
+    },
+    'light': {
+        'zone': (0, 0, 139),      
+        'teal': (0, 128, 128),    
+        'orange': (255, 69, 0),   
+        'gray': (169, 169, 169),  
+        'yellow': (255, 215, 0),  
+        'highlight': (255, 215, 0)
+    },
+    'tacky': {  
+        'zone': (255, 0, 255),    
+        'teal': (0, 255, 0),      
+        'orange': (0, 255, 255),  
+        'gray': (255, 20, 147),   
+        'yellow': (255, 255, 0),  
+        'highlight': (255, 255, 0)
+    },
+    'neon_rave': {
+        'zone': (255, 0, 255),    
+        'teal': (57, 255, 20),    
+        'orange': (255, 0, 0),    
+        'gray': (200, 200, 200),  
+        'yellow': (0, 255, 255),  
+        'highlight': (0, 255, 255)
+    }
+}
 
-# Define neon teal, neon orange, and bright gray colors using ANSI codes
-NEON_TEAL = (0, 255, 222)
-NEON_ORANGE = (255, 140, 0)
-BRIGHT_GRAY = (211, 211, 211)
+def apply_color(value, best, worst, highlight=False, mode='dark'):
+    """Colorize values based on thresholds using the selected mode."""
+    colors = COLORS[mode]
+    # Choose the appropriate color based on value comparison
+    if highlight:
+        color_value = colors['highlight']
+    elif value == best:
+        color_value = colors['teal']
+    elif value == worst:
+        color_value = colors['orange']
+    else:
+        color_value = colors['gray']
+    
+    # Return the value wrapped in the color using the colr module
+    return color(f"{value:.4f}", fore=color_value)
+
+TRANSFER_RATES = {
+    'internet': 0.09,  # $/GB to internet
+    'within_region': 0.01,  # $/GB within region
+    'cross_region': 0.02  # $/GB across regions
+}
+
+STORAGE_COSTS = {'standard': 0.023, 'glacier': 0.004}  # $/GB/month
 
 def parse_arguments():
-    """Parse command-line arguments for input YAML, output TSV, and zones. """
-    parser = argparse.ArgumentParser(description="Look up spot prices for instances in the i192 partition.")
-    parser.add_argument("-i", "--input", default="config/day_cluster/prod_cluster.yaml", help="Path to the input YAML configuration file. default( config/day_cluster/prod_cluster.yaml)")
-    parser.add_argument("-o", "--output", required=True, help="Path to the output TSV file.")
-    parser.add_argument("--profile", help="AWS CLI profile to use.")
-    parser.add_argument(
-        "--zones",
-        default="us-west-2a,us-west-2b,us-west-2c,us-west-2d,us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-2a,us-east-2b,us-east-2c,us-west-1a,us-west-1a,us-west-1c",
-        help="Comma-separated list of availability zones (default us-west-2a,us-west-2b,us-west-2c,us-west-2d,us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-2a,us-east-2b,us-east-2c,us-west-1a,us-west-1c). HOWEVER, this is the current list of all AZs with the 192vcpu instances we need: ap-south-1a,ap-south-1b,ap-south-1c,ap-northeast-1a,ap-northeast-1c,ap-northeast-1d,ap-northeast-2a,ap-northeast-2b,ap-northeast-2c,ap-northeast-2d,ap-southeast-1a,ap-southeast-1b,ap-southeast-1c,ap-southeast-2a,ap-southeast-2b,ap-southeast-2c,ca-central-1a,ca-\
-central-1b,ca-central-1d,eu-central-1a,eu-central-1b,eu-central-1c,eu-north-1a,eu-north-1b,eu-north-1c,eu-west-1a,eu-west-1b,eu-west-1c,eu-west-2a,eu-west-2b,eu-west-2c,eu-west-3a,eu-west-3b,eu-west-3c,sa-east-1a,sa-east-1b,sa-east-1c,us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1f,us-east-2a,us-east-2b,us-east-2c,us-west-1a,us-west-1c,us-west-2a,us-west-2b,us-west-2c,us-west-2d")
-    parser.add_argument(
-        "--approx-spot-hours-per-30x-genome",
-        type=float,
-        default=3,
-        help="Estimated spot instance hours required for processing a 30x genome. (default: 3)"
-    )
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description="Calculate genomic workflow costs.")
+    parser.add_argument("-i", "--input", default="config/day_cluster/prod_cluster.yaml", help="YAML config path.")
+    parser.add_argument("-o", "--output", required=True, help="Output TSV file path.")
+    parser.add_argument("--profile", help="AWS CLI profile.")
+    parser.add_argument("--partition", default="i192", help="Partition name (default: i192).")
+    parser.add_argument("--zones", default="us-west-2a,us-west-2b,us-west-2c", help="Comma-separated zones.")
+    parser.add_argument("--x-coverage", type=int, default=30.1,required=True, help="Coverage for analysis (e.g., 30x).")
+    parser.add_argument("--vcpu-min-per-x", type=float, default=3.7,required=True, help="vCPU-minutes per X coverage.")
+    
+    # File size flags
+    parser.add_argument("--bam-size-per-x", type=float, default=1.0,help="BAM size per X coverage (GB).")
+    parser.add_argument("--cram-size-per-x", type=float, default=1.0,help="CRAM size per X coverage (GB).")
+    parser.add_argument("--vcf-size-per-x", type=float, default=1.0,help="VCF size per X coverage (GB).")
+    parser.add_argument("--gvcf-size-per-x", type=float, default=1.0,help="gVCF size per X coverage (GB).")
+    parser.add_argument("--bcf-size-per-x", type=float, default=1.0,help="BCF size per X coverage (GB).")
+    parser.add_argument("--gbcf-size-per-x", type=float, default=1.0,help="gBCF size per X coverage (GB).")
+    parser.add_argument("--mode", choices=['dark', 'light', 'neon_rave', 'tacky'], default='dark', help="Color mode (default: dark).")
+    parser.add_argument("--input-data-size-per-x", type=float, default=1.0, help="Input FASTQ size per X coverage (GB).")
     return parser.parse_args()
 
-def get_region_from_zone(zone):
-    """Extract the region from the zone by trimming the trailing letter."""
-    return zone[:-1]
+def calculate_vcpu_mins(args):
+    """Calculate total vCPU-minutes based on coverage."""
+    return args.x_coverage * args.vcpu_min_per_x
+
+
+def calculate_file_sizes(args):
+    bam = args.x_coverage * args.bam_size_per_x
+    cram = args.x_coverage * args.cram_size_per_x
+    vcf = args.x_coverage * args.vcf_size_per_x
+    gvcf = args.x_coverage * args.gvcf_size_per_x
+    bcf = args.x_coverage * args.bcf_size_per_x
+    gbcf = args.x_coverage * args.gbcf_size_per_x
+    fastq = args.x_coverage * args.input_data_size_per_x
+    return bam, cram, vcf, gvcf, bcf, gbcf, fastq
+
+
+def calculate_storage_costs(size_gb, storage_type):
+    """Calculate monthly storage costs for a given size."""
+    return size_gb * STORAGE_COSTS[storage_type]
+
+def calculate_transfer_costs(size_gb, transfer_type):
+    """Calculate transfer costs based on the type."""
+    return size_gb * TRANSFER_RATES[transfer_type]
+
+def harmonic_mean(data):
+    """Calculate the harmonic mean of a list of numbers."""
+    if not data or any(d == 0 for d in data):
+        return float('nan')  # Avoid division by zero
+    return len(data) / fsum(1 / d for d in data)
+
+def stability_metric(prices):
+    """Calculate the volatility as the difference between the max and min prices."""
+    if not prices:
+        return float('nan')
+    return max(prices) - min(prices)
+
+def collect_spot_prices(instance_types, zones, profile):
+    """Fetch spot prices for each instance type in the given zones."""
+    spot_data = {}
+    for instance_type in instance_types:
+        spot_data[instance_type] = {}
+        for zone in zones:
+            price = get_spot_price(instance_type, zone, profile)
+            spot_data[instance_type][zone] = price if not isnan(price) else float('nan')
+    return spot_data
 
 def get_spot_price(instance_type, zone, profile):
-    """Query AWS to get the current spot price of an instance type in a specific AZ."""
-    region = get_region_from_zone(zone)
+    region = zone[:-1]
     try:
         result = subprocess.check_output([
             "aws", "ec2", "describe-spot-price-history",
@@ -48,141 +147,187 @@ def get_spot_price(instance_type, zone, profile):
             "--query", "SpotPriceHistory[0].SpotPrice",
             "--output", "text", "--region", region,
             "--profile", profile,
-        ]).decode("utf-8").strip()
-        try:
-            return float(result)
-        except Exception as e:
-            print(f"Error converting spot price for {instance_type} in {zone}: {e}")
-            return 100
+        ]).decode().strip()
+        return float(result)
     except subprocess.CalledProcessError as e:
-        print(f"Error querying spot price for {instance_type} in {zone}: {e}")
-        return None
-
-def harmonic_mean(data):
-    """Calculate the harmonic mean of a list of numbers."""
-    if not data or any(d == 0 for d in data):
+        print(f"Failed to fetch price for {zone}: {e}")
         return float('nan')
-    return len(data) / fsum(1 / d for d in data)
 
-def stability_metric(prices):
-    """Calculate a simple stability metric (price variability)."""
-    return max(prices) - min(prices) if prices else float('nan')
 
-def apply_color(value, best, worst):
-    """Colorize a value based on whether it's the best, worst, or identical."""
-    if value == best:
-        return color(f"{value:.4f}", fore=NEON_TEAL)
-    elif value == worst:
-        return color(f"{value:.4f}", fore=NEON_ORANGE)
-    elif best == worst:
-        return color(f"{value:.4f}", fore=BRIGHT_GRAY)
-    else:
-        return f"{value:.4f}"
-
-def extract_i192_instances(config):
-    """Extract the instance types from the i192 partition."""
-    instance_types = []
+def extract_instances(config, partition_name):
+    """Extract instance types from the given partition in the YAML configuration."""
+    instances = []
     for queue in config.get('Scheduling', {}).get('SlurmQueues', []):
-        if queue.get('Name') == 'i192':
+        if queue.get('Name') == partition_name:
             for resource in queue.get('ComputeResources', []):
                 for instance in resource.get('Instances', []):
-                    instance_types.append(instance.get('InstanceType'))
-    return instance_types
+                    instances.append(instance.get('InstanceType'))
+    if not instances:
+        raise ValueError(f"No instances found for partition: {partition_name}")
+    return instances
 
-def collect_spot_prices(instance_types, zones, profile):
-    """Collect spot prices and availability for each instance type in specified AZs."""
-    spot_data = {}
-    availability_data = {zone: 0 for zone in zones}
 
-    for instance_type in instance_types:
-        spot_data[instance_type] = {}
-        for zone in zones:
-            spot_price = get_spot_price(instance_type, zone, profile)
-            spot_data[instance_type][zone] = spot_price if spot_price is not None else float('nan')
-            if spot_price is not None:
-                availability_data[zone] += 1
-
-    return spot_data, availability_data
-
-def calculate_statistics(spot_data, zones, hours_per_genome, profile):
-    """Calculate statistics for each zone."""
-    zone_stats = []
-    for zone in zones:
-        prices = [data.get(zone, float('nan')) for data in spot_data.values() if not isnan(data.get(zone))]
-        total_with_pricing = len(prices)
-        harmonic_mean_price = harmonic_mean(prices)
-        stability = stability_metric(prices)
-        avg_lowest_3 = statistics.mean(sorted(prices)[:3]) if len(prices) >= 3 else statistics.mean(prices)
-        est_cost_per_genome = avg_lowest_3 * hours_per_genome if avg_lowest_3 else float('nan')
-
-        if prices:
-            zone_stats.append({
-                'Zone': zone,
-                'Total Instances Considered': len(spot_data),
-                'Instances with Pricing': total_with_pricing,
-                'Median Spot Price': statistics.median(prices),
-                'Mean Spot Price': statistics.mean(prices),
-                'Min Spot Price': min(prices),
-                'Max Spot Price': max(prices),
-                'Avg of Lowest 3 Prices': avg_lowest_3,
-                'Harmonic Mean Price': harmonic_mean_price,
-                'Estimated EC2 Cost / Genome': est_cost_per_genome,
-                'Stability (Max-Min Spread)': stability
-            })
-
-    return sorted(zone_stats, key=lambda x: x['Harmonic Mean Price'])
-
-def get_best_worst(stats, key):
-    """Extract the best and worst values for a specific key."""
-    values = [z[key] for z in stats]
-    return min(values), max(values)
-
-def display_statistics(zone_stats):
-    """Display statistics in a colorized table with a title."""
+def display_statistics(zone_stats, args):
+    """Display the statistics with proper colorizing."""
     headers = [
-        "Zone", "Total Instances Considered", "Instances with Pricing", "Median Spot Price", 
-        "Mean Spot Price", "Min Spot Price", "Max Spot Price", "Avg of Lowest 3 Prices", 
-        "Harmonic Mean Price", "Estimated EC2 Cost / Genome", "Stability (Max-Min Spread)"
+        "Zone", "Instances", "Avg Spot Price", "Min Spot Price", 
+        "Max Spot Price", "Harmonic Mean Price", "Stability (Max-Min)",
+        "BAM Size (GB)", "CRAM Size (GB)", "VCF Size (GB)",
+        "Cost per vCPU", "Est. Cost of Analysis"
     ]
 
-    # Get best and worst values for each numeric column
-    best_worst = {key: get_best_worst(zone_stats, key) for key in headers[1:]}
+    # Calculate best and worst values for colorizing
+    best_worst = {key: get_best_worst(zone_stats, key) for key in headers[2:]}
+    min_cost = min([z['Est. Cost of Analysis'] for z in zone_stats if not isnan(z['Est. Cost of Analysis'])])
 
-    # Prepare colorized table rows
     table = []
-    for z in zone_stats:
+    for index, z in enumerate(zone_stats, 1):
         row = [
-            color(z['Zone'], fore='blue'),
-            z['Total Instances Considered'],
-            z['Instances with Pricing'],
-            apply_color(z['Median Spot Price'], *best_worst['Median Spot Price']),
-            apply_color(z['Mean Spot Price'], *best_worst['Mean Spot Price']),
-            apply_color(z['Min Spot Price'], *best_worst['Min Spot Price']),
-            apply_color(z['Max Spot Price'], *best_worst['Max Spot Price']),
-            apply_color(z['Avg of Lowest 3 Prices'], *best_worst['Avg of Lowest 3 Prices']),
-            apply_color(z['Harmonic Mean Price'], *best_worst['Harmonic Mean Price']),
-            apply_color(z['Estimated EC2 Cost / Genome'], *best_worst['Estimated EC2 Cost / Genome']),
-            apply_color(z['Stability (Max-Min Spread)'], *best_worst['Stability (Max-Min Spread)'])
+            color(f"{index}. {z['Zone']}", fore=COLORS[args.mode]['zone']),
+            z['Instances'],
+            apply_color(z['Avg Spot Price'], *best_worst['Avg Spot Price'], mode=args.mode),
+            apply_color(z['Min Spot Price'], *best_worst['Min Spot Price'], mode=args.mode),
+            apply_color(z['Max Spot Price'], *best_worst['Max Spot Price'], mode=args.mode),
+            apply_color(z['Harmonic Mean Price'], *best_worst['Harmonic Mean Price'], highlight=True, mode=args.mode),
+            apply_color(z['Stability (Max-Min)'], *reversed(best_worst['Stability (Max-Min)']), mode=args.mode),
+            z['BAM Size (GB)'], z['CRAM Size (GB)'], z['VCF Size (GB)'],
+            apply_color(z['Cost per vCPU'], *best_worst['Cost per vCPU'], mode=args.mode),
+            apply_color(z['Est. Cost of Analysis'], min_cost, min_cost, highlight=True, mode=args.mode)
         ]
         table.append(row)
 
-    print(color("Spot Price Statistics", fore='green', style='bright'))
     print(tabulate(table, headers=headers, floatfmt=".4f"))
+
+    with open(args.output, 'w') as f:
+        f.write(tabulate(table, headers=headers, floatfmt=".4f", tablefmt="tsv"))
+
+
+def get_best_worst(stats, key):
+    """Extract the best (min) and worst (max) values for a specific numeric key."""
+    values = [z.get(key, float('nan')) for z in stats if not isnan(z.get(key, float('nan')))]
+    if not values:
+        return float('nan'), float('nan')  # Handle case where all values are NaN
+    return min(values), max(values)
+
+def calculate_statistics(spot_data, zones, vcpu_mins, args):
+    """Calculate statistics including cost per vCPU and estimated cost of analysis."""
+    zone_stats = []
+
+    for zone in zones:
+        prices = [spot_data[instance].get(zone, float('nan')) for instance in spot_data]
+        prices = [p for p in prices if not isnan(p)]
+
+        if prices:
+            harmonic_price = harmonic_mean(prices)
+            stability = stability_metric(prices)
+            avg_price = statistics.mean(prices)
+            min_price = min(prices)
+            max_price = max(prices)
+
+            # Use args to calculate sizes
+            bam_size = args.x_coverage * args.bam_size_per_x if args.bam_size_per_x else 0
+            cram_size = args.x_coverage * args.cram_size_per_x if args.cram_size_per_x else 0
+            vcf_size = args.x_coverage * args.vcf_size_per_x if args.vcf_size_per_x else 0
+
+            # Calculate cost per vCPU and estimated cost of analysis
+            cost_per_vcpu = avg_price
+            est_cost = (vcpu_mins / 60) * avg_price
+
+            # Append statistics for the current zone
+            zone_stats.append({
+                'Zone': zone,
+                'Instances': len(spot_data),
+                'Avg Spot Price': avg_price,
+                'Min Spot Price': min_price,
+                'Max Spot Price': max_price,
+                'Harmonic Mean Price': harmonic_price,
+                'Stability (Max-Min)': stability,
+                'Cost per vCPU': cost_per_vcpu,
+                'Est. Cost of Analysis': est_cost,
+                'BAM Size (GB)': bam_size,
+                'CRAM Size (GB)': cram_size,
+                'VCF Size (GB)': vcf_size,
+            })
+
+    return zone_stats
 
 def main():
     args = parse_arguments()
 
-    profile = args.profile
+    # Load YAML configuration
     with open(args.input, 'r') as f:
         config = yaml.safe_load(f)
 
-    instance_types = extract_i192_instances(config)
+    # Extract instances from the specified partition
+    try:
+        instance_types = extract_instances(config, args.partition)
+    except ValueError as e:
+        print(e)
+        return
+
     zones = args.zones.split(',')
+    spot_data = collect_spot_prices(instance_types, zones, args.profile)
+    vcpu_mins = calculate_vcpu_mins(args)
 
-    spot_data, availability_data = collect_spot_prices(instance_types, zones, profile)
+    zone_stats = calculate_statistics(spot_data, zones, vcpu_mins, args)
+    display_statistics(zone_stats, args)
 
-    zone_stats = calculate_statistics(spot_data, zones, args.approx_spot_hours_per_30x_genome, profile)
-    display_statistics(zone_stats)
+    # Prompt user to select a zone by number
+    try:
+        selected_index = int(input("\nSelect the zone by number: ")) - 1
+        selected_zone = zone_stats[selected_index]['Zone']
+    except (IndexError, ValueError):
+        print("Invalid selection. Exiting.")
+        return
+
+
+    alignment_output = input("Select alignment output [bam/cram]: ").strip().lower()
+    if alignment_output not in ['bam', 'cram']:
+        alignment_output = 'bam'
+
+    variant_output = input("Select SNV output [vcf/gvcf/bcf/gbcf]: ").strip().lower()
+    if variant_output not in ['vcf', 'gvcf', 'bcf', 'gbcf']:
+        variant_output = 'vcf'
+
+
+    # Assign the appropriate size variables based on user selection
+    if alignment_output == 'cram':
+        alignment_size = args.x_coverage * args.cram_size_per_x if args.cram_size_per_x else 0
+    else:
+        alignment_size = args.x_coverage * args.bam_size_per_x if args.bam_size_per_x else 0
+
+    if variant_output == 'vcf':
+        variant_size = args.x_coverage * args.vcf_size_per_x if args.vcf_size_per_x else 0
+    elif variant_output == 'gvcf':
+        variant_size = args.x_coverage * args.gvcf_size_per_x if args.gvcf_size_per_x else 0
+    elif variant_output == 'bcf':
+        variant_size = args.x_coverage * args.bcf_size_per_x if args.bcf_size_per_x else 0
+    else:
+        variant_size = args.x_coverage * args.gbcf_size_per_x if args.gbcf_size_per_x else 0
+
+    # Prompt for transfer scheme and calculate the fully burdened cost
+    input_transfer = input("Input transfer scheme [internet/within_region/cross_region]: ").lower()
+    output_transfer = input("Output transfer scheme [internet/within_region/cross_region]: ").lower()
+
+    total_transfer_cost = (calculate_transfer_costs(alignment_size, input_transfer) + 
+                           calculate_transfer_costs(variant_size, output_transfer))
+    # Validate input data size before using it
+    fastq_size = args.input_data_size_per_x or 0
+
+    # Calculate the fully burdened cost
+    total_cost = total_transfer_cost + calculate_storage_costs(fastq_size, 'standard')
+    print(f"\nFully Burdened Cost for {selected_zone}: ${total_cost:.2f}")
+
+    print(f"\nFully Burdened Cost for {selected_zone}: ${total_cost:.2f}")
+
+    # Prompt for FASTQ retention and display S3 storage costs
+    retain_fastq = input("Retain FASTQ files? (y/n): ").strip().lower()
+    if retain_fastq == 'y':
+        s3_standard = calculate_storage_costs(fastq_size, 'standard')
+        s3_glacier = calculate_storage_costs(fastq_size, 'glacier')
+
+        print(f"\nS3 Storage Cost (Standard): ${s3_standard:.2f}/month")
+        print(f"S3 Storage Cost (Glacier): ${s3_glacier:.2f}/month")
 
 if __name__ == "__main__":
     main()

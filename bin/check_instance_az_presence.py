@@ -12,7 +12,6 @@ def get_all_regions():
     except subprocess.CalledProcessError as e:
         print(f"Error fetching regions: {e.stderr.strip()}", file=sys.stderr)
         sys.exit(1)
-
 def get_spot_price(instance_type, region):
     """Fetch the recent spot price for the given instance type."""
     try:
@@ -26,7 +25,16 @@ def get_spot_price(instance_type, region):
             "--output", "text", "--profile", os.environ['AWS_PROFILE']
         ]
         result = subprocess.run(command, check=True, capture_output=True, text=True)
-        return float(result.stdout.strip()) if result.stdout.strip() else None
+        spot_price_str = result.stdout.strip()
+
+        if not spot_price_str or spot_price_str.lower() == 'none':
+            print(f"No spot price available for {instance_type} in {region}.")
+            return None
+
+        return float(spot_price_str)
+    except ValueError as ve:
+        print(f"Invalid spot price value for {instance_type} in {region}: {ve}")
+        return None
     except subprocess.CalledProcessError as e:
         print(f"Error fetching spot price: {e.stderr.strip()}", file=sys.stderr)
         return None
@@ -94,6 +102,23 @@ def write_to_pcluster_queue(instance_types, filename="pcluster_queue.txt"):
         for instance_type in instance_types:
             file.write(f"  - InstanceType: {instance_type}\n")
 
+def parse_vcpus(instance_type):
+    """Extract the number of vCPUs from the instance type."""
+    try:
+        # Check if the instance type ends with "metal"
+        if "metal" in instance_type:
+            # Assume the full size, for example, 48xlarge corresponds to 192 vCPUs
+            base = instance_type.split('-')[0]  # e.g., "m7i"
+            size = base.split('.')[1]  # e.g., "48xlarge"
+            return int(size.split('x')[0]) * 4  # Adjust as needed based on AWS instance types
+
+        # For non-metal instances
+        size = instance_type.split('.')[1]  # e.g., "48xlarge"
+        return int(size.split('x')[0]) * 4  # Adjust multiplier if needed
+    except (IndexError, ValueError) as e:
+        print(f"Error parsing vCPUs for {instance_type}: {e}", file=sys.stderr)
+        return None  # Return None to indicate parsing failed
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: python script.py <instance_file>", file=sys.stderr)
@@ -108,7 +133,11 @@ def main():
     for instance_type in instance_types:
         print(f"\nChecking spot availability for {instance_type}...")
         dedicated_price = get_dedicated_price(instance_type)
-        vcpus = int(instance_type.split('.')[1].split('x')[0]) * 4  # Example logic to infer vCPUs
+        vcpus = parse_vcpus(instance_type)
+
+        if vcpus is None:
+            print(f"Skipping {instance_type} due to vCPU parsing error.")
+            continue
 
         for region in regions:
             azs = check_spot_availability(instance_type, region)
@@ -135,6 +164,7 @@ def main():
 
     write_to_tsv(data)
     write_to_pcluster_queue(instance_types)
+
 
 if __name__ == "__main__":
     main()
