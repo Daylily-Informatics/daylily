@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.14))
+# Daylily AWS Ephemeral Cluster Setup (0.7.29)
 
 Capturing the steps I took to get the daylily framework up and running in a `classic` AWS environment.
 
@@ -7,6 +7,10 @@ Capturing the steps I took to get the daylily framework up and running in a `cla
 - A cloudstack formation template will run which will create some important resources for the epheral cluster, namely: the public VPC, public subnet, private subnet, and a policy to allow tagging and budget tracking of resources by pcluster.
 - The install steps should work for both `bash` and `zsh` shells, but the `bash` shell is the default for the `pcluster` environment.
 - Daylily `projects` are synonymous with AWS `budgets`. When initializing daylily `. dyinit  --project PROJECT`, the project specified will be checked vs the slurm registry of projects, found `/opt/slurm/etc/projects_list.conf` and be checked to confirm there is a matching AWS budget of the specified name. If not, you will be prompted to create a budget (which may also be completed via the AWS dashboard, use a simplified `monthly spend` type). for now, you willneed to update the `projects_list.conf` file manually with each new budget added, *importantly* both in the current ephemeral cluster conf file as well as the s3 bucket hosted version which is used to build new nodes.
+
+# Strongly Suggested >> PCUI
+
+> [PCUI](https://us-west-2.console.aws.amazon.com/parallelcluster/home?region=us-west-2#clusters) is a useful tool for managing all parallel clusters across AZ's. You can accomplish everything the `pcluster` cli allows, and in addition, much more convenient stackformation/log monitoring. Bonus: job monitoring and dynamic volume management!
 
 
 # Steps

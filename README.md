@@ -1,10 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.14))
-
-## ~$3 30x FASTQ->BAM->BAM.deduplicated->snv.VCF+sv.VCF (add $0.35 for a raft of QC reports)
-**1.3h walltime**
-
-_a **from scratch** &  **dynamically scalaling** & **region and availability zone flexible** ephemeral cluster running in ~30min each time you need it, and requires ~3hr of initial setup to run repeatedly as you require it_
-... process from 1 to 1000's of samples in parallel, and then shut down when you are done. 
+# Daylily AWS Ephemeral Cluster Setup (0.7.29)
 
 Capturing the steps I took to get the daylily framework up and running in a `classic` AWS environment.
 
@@ -13,6 +7,10 @@ Capturing the steps I took to get the daylily framework up and running in a `cla
 - A cloudstack formation template will run which will create some important resources for the epheral cluster, namely: the public VPC, public subnet, private subnet, and a policy to allow tagging and budget tracking of resources by pcluster.
 - The install steps should work for both `bash` and `zsh` shells, but the `bash` shell is the default for the `pcluster` environment.
 - Daylily `projects` are synonymous with AWS `budgets`. When initializing daylily `. dyinit  --project PROJECT`, the project specified will be checked vs the slurm registry of projects, found `/opt/slurm/etc/projects_list.conf` and be checked to confirm there is a matching AWS budget of the specified name. If not, you will be prompted to create a budget (which may also be completed via the AWS dashboard, use a simplified `monthly spend` type). for now, you willneed to update the `projects_list.conf` file manually with each new budget added, *importantly* both in the current ephemeral cluster conf file as well as the s3 bucket hosted version which is used to build new nodes.
+
+# Strongly Suggested >> PCUI
+
+> [PCUI](https://us-west-2.console.aws.amazon.com/parallelcluster/home?region=us-west-2#clusters) is a useful tool for managing all parallel clusters across AZ's. You can accomplish everything the `pcluster` cli allows, and in addition, much more convenient stackformation/log monitoring. Bonus: job monitoring and dynamic volume management!
 
 
 # Steps
@@ -45,6 +43,18 @@ _bash and zsh are known to work_
 > - `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 310 (and preferable >=2958) **!!(AWS default is 5) !!**
 > **fsx lustre**
 > - should minimally allow creation of a FSX Lustre filesystem with >= 4.8 TB storage, which should be the default.
+
+#### 1. Activate Cost Allocation Tags (optional)
+If you have not created an ephemeral cluster yet, the tags will not be known to your AWS account, you may need to tag something with these tags if not yet known. Someone with 'payer' access to the account will need to activate cost allocation tags.  This is important for the cost tracking and budgeting of the daylily ephemeral clusters.
+
+* [AWS Cost Allocation Tags](https://us-east-1.console.aws.amazon.com/billing/home#/tags)
+* The tags to activate are:
+```text
+aws-parallelcluster-jobid
+aws-parallelcluster-project
+aws-parallelcluster-username
+```
+
 
 #### 1. Install / Configure The AWS CLI
 _Create And Save AWS CLI Credentials In `.aws`_
@@ -124,14 +134,20 @@ chmod 400 ~/.ssh/<yourkey>.pem`
 #### 3. Create `YOURPREFIX-omics-analysis-REGION` s3 Bucket
 - Your new bucket name should end in `-omics-analysis-REGION` and be unique to your account. This allows easier auto-detection latter in the `daycli` setup.
 - And it should be created in the region you intend to run in. Default is `us-west-2`.
+- The total size of the bucket will be ~1.5TB, and the cost of storage will be ~$30/mo.
+> _note:_ The full reference data s3 includes the 7giab 30x google brain fastqs, as well as references for both `b37` and `hg38`, once you have your copy, you may consider removing the references you do not intend to use to save on storage costs.
+> - You will have better transfer times copying this bucket to other regions you intend to run in if you replicate your copy and enable acceleration on the source and destination buckets.
+
+```bash
 
 ##### Copy The `daylily` Public References/Resources To Your New Bucket (choose the most recent version)
 From your terminal/shell (and to be safe, in a screen or tmux session as it may run for a while).
 
-You will need to copy the daylily ephemeral cluster s3 data to a bucket named `daylily-omics-analysis-REGION` in your account. There will need to be one of these per region you intende to run in. Default is `us-west-2`. This locality dependence is due to the `Fsx` filesystem requiring the S3 bucket it mounts to be in the same region as it and the subnets.
+You will need to copy the daylily ephemeral cluster s3 data to a bucket named `YOURPREFIX-omics-analysis-REGION` in your account. There will need to be one of these per region you intende to run in. Default is `us-west-2`. This locality dependence is due to the `Fsx` filesystem requiring the S3 bucket it mounts to be in the same region as it and the subnets.
 
 **only needs to be done 1x per region** _and will take an hour or so to run_
 ```bash
+
 ./bin/create_daylily_omics_analysis_s3.sh -h
 
 Usage: ./bin/create_daylily_omics_analysis_s3.sh --prefix <PREFIX> [--daylily-s3-version <version>] [--region <region>] [--dryrun] [-h]
@@ -442,7 +458,7 @@ cd daylily
 
 #  prepare to run the test
 tmux new -s slurm_test
-. dyinit  --project PROJECT
+. dyinit 
 dy-a slurm
 
 # create a test manifest for one giab sample only, which will run on the 0.01x test dataset
@@ -592,20 +608,11 @@ pcluster delete-cluster -n <cluster-name> --region us-west-2
 
 # Other Monitoring Tools
 
-## `goday` `.zshrc` Alias ( to expedite ssh login to headnode )
-_this should work for `.bashrc` as well, but untested_
-- The alias will need to be modified if running >1 cluster.
-```zsh
+## Quick SSH Into Headnode
+`bin/ssh_into_daylily`
 
-export goday_cmd="conda activate DAYCLI && cluster_name=\$(conda activate DAYCL\
-I && pcluster list-clusters --region us-west-2 | grep 'clusterName' | perl -pe \
-'s/.*\: \"(.*)\"\,.*/\$1/g;') && cluster_ip=\$(pcluster describe-cluster --regi\
-on us-west-2 -n \$cluster_name | grep 'publicIpAddress' | perl -pe 's/.*\: \"(.\
-*)\"\,.*/\$1/g;') && ssh -i ~/.ssh/rcrf-omics-analysis-b.pem ubuntu@\$cluster_i\
-p"
+_alias it for your shell:_ `alias goday=". ~/projects/daylily/bin/ssh_into_daylily"`
 
-alias goday="$goday_cmd"
-```
 
 ## AWS Cloudwatch
 - The AWS Cloudwatch console can be used to monitor the cluster, and the resources it is using.  This is a good place to monitor the health of the cluster, and in particular the slurm and pcluster logs for the headnode and compute fleet.
