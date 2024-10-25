@@ -1,0 +1,112 @@
+Region: ap-south-1
+Image:
+  Os: ubuntu2204
+HeadNode:
+  InstanceType: r7i.4xlarge
+  Networking:
+    ElasticIp: true
+    SubnetId: subnet-029238efd259f9320
+  DisableSimultaneousMultithreading: false
+  Ssh:
+    KeyName: daylily-omics-analysis-ap-south-1
+    AllowedIps: 0.0.0.0/0
+  Dcv:
+    Enabled: false
+  LocalStorage:
+    RootVolume:
+      Size: 775
+      VolumeType: gp3
+      DeleteOnTermination: false
+    EphemeralVolume:
+      MountDir: /head_root
+  CustomActions:
+    OnNodeConfigured:
+      Script: >-
+        s3://rcrf-omics-analysis-ap-south-1/cluster_boot_config/post_install_ubuntu_combined.sh
+      Args:
+        - ap-south-1
+        - rcrf-omics-analysis-ap-south-1
+        - na
+        - na
+  Iam:
+    S3Access:
+      - BucketName: rcrf-omics-analysis-ap-south-1
+        EnableWriteAccess: false
+    AdditionalIamPolicies:
+      - Policy: arn:aws:iam::265676937214:policy/pclusterTagsAndBudget
+      - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+Scheduling:
+  Scheduler: slurm
+  SlurmSettings:
+    ScaledownIdletime: 5
+    Dns:
+      DisableManagedDns: false
+    QueueUpdateStrategy: DRAIN
+  SlurmQueues:
+    - Name: i192
+      CapacityType: SPOT
+      AllocationStrategy: lowest-price
+      ComputeResources:
+        - Name: all
+          Instances:
+            - InstanceType: c7i.48xlarge
+            - InstanceType: c7i.metal-48xl
+            - InstanceType: m7i.metal-48xl
+            - InstanceType: m7i.48xlarge
+            - InstanceType: r7i.48xlarge
+            - InstanceType: r7i.metal-48xl
+          MinCount: 0
+          MaxCount: 10
+          SpotPrice: 1.5092
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+      Networking:
+        SubnetIds:
+          - subnet-029238efd259f9320
+      CustomActions:
+        OnNodeConfigured:
+          Script: >-
+            s3://rcrf-omics-analysis-ap-south-1/cluster_boot_config/post_install_ubuntu_combined.sh
+          Args:
+            - ap-south-1
+            - rcrf-omics-analysis-ap-south-1
+            - na
+            - na
+      Iam:
+        S3Access:
+          - BucketName: rcrf-omics-analysis-ap-south-1
+            EnableWriteAccess: false
+        AdditionalIamPolicies:
+          - Policy: arn:aws:iam::265676937214:policy/pclusterTagsAndBudget
+      ComputeSettings:
+        LocalStorage:
+          RootVolume:
+            VolumeType: gp3
+Monitoring:
+  DetailedMonitoring: true
+  Logs:
+    CloudWatch:
+      Enabled: true
+      RetentionInDays: 14
+Tags:
+  - Key: aws-parallelcluster-username
+    Value: NA
+  - Key: aws-parallelcluster-jobid
+    Value: NA
+  - Key: aws-parallelcluster-project
+    Value: NA
+  - Key: aws-parallelcluster-clustername
+    Value: NA
+SharedStorage:
+  - Name: FsxLustre0
+    StorageType: FsxLustre
+    MountDir: /fsx
+    FsxLustreSettings:
+      FileSystemId: fs-09d920a14bf0ad917
+DevSettings:
+  Timeouts:
+    HeadNodeBootstrapTimeout: 3600
+    ComputeNodeBootstrapTimeout: 3600
