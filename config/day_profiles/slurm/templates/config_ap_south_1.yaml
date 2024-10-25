@@ -1,0 +1,50 @@
+---
+# Adopted from
+# # https://github.com/cbrueffer/snakemake-aws-parallelcluster-slurm 
+cluster:
+  mkdir -p logs/slurm/{rule}/ &&
+  sbatch
+    --parsable
+    --cpus-per-task={threads}
+    --time={resources.time}
+    --job-name=D-{rule}-{sample}
+    --output=logs/slurm/{rule}/{rule}.{sample}.{jobid}.out
+    --error=logs/slurm/{rule}/{rule}.{sample}.{jobid}.err
+    --partition={resources.partition}
+    --chdir=$PWD
+    --mem={resources.mem_mb}
+    --comment $DAY_PROJECT
+    --distribution={resources.distribution} {resources.exclusive}
+default-resources:  
+  - disk_mb=1000
+  - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type
+  - threads=1
+  - time=4440
+  - partition=i192,i128
+  - vcpu=1
+  - distribution=block
+  - exclusive=''
+resources: vcpu=2704 # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
+jobs: 10
+cores: 2704  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
+latency-wait: 100
+local-cores: 16
+restart-times: 2
+max-jobs-per-second: 10
+keep-going: True
+keep-remote: True
+rerun-incomplete: True
+printshellcmds: True
+scheduler: greedy
+use-conda: True
+conda-frontend: conda
+conda-prefix: "/fsx/resources/environments/conda/USER_REGSUB/HOSTNAME"
+cluster-status: config/day_profiles/slurm/templates/status-scontrols.sh
+cluster-cancel: scancel
+max-status-checks-per-second: 10
+# slurm: True  ## DO NOT USE on AWS, try for local- untested.  You'll want to comment out cluster-{status,cancel} and tweak the cluster and default-resources
+force-use-threads: True
+stats: "day_pipe_stats.json"
+use-singularity: True
+singularity-prefix: "/fsx/resources/environments/containers/USER_REGSUB/HOSTNAME"
+singularity-args: " -B ./results:$PWD/results -B /tmp:/tmp -B /fsx:/fsx -B resources/fsx:/fsx  -B /home/$USER:/home/$USER -B $PWD/:$PWD " 
