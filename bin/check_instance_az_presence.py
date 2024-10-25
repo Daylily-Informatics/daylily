@@ -1,5 +1,7 @@
 import subprocess
 import sys
+import os
+import csv
 
 def get_all_regions():
     """Retrieve all available AWS regions."""
@@ -11,14 +13,54 @@ def get_all_regions():
         print(f"Error fetching regions: {e.stderr.strip()}", file=sys.stderr)
         sys.exit(1)
 
-def check_spot_availability(instance_type, region):
-    """Check spot price history to determine if spot instances are available for the given instance type."""
+def get_spot_price(instance_type, region):
+    """Fetch the recent spot price for the given instance type."""
     try:
-        if not os.environ['AWS_PROFILE']:
-            print("Please set the AWS_PROFILE environment variable.", file=sys.stderr)
-            sys.exit(1)
-        print("Checking spot availability for {instance_type} in {region}...{os.environ['AWS_PROFILE']}")
-        
+        command = [
+            "aws", "ec2", "describe-spot-price-history",
+            "--instance-types", instance_type,
+            "--product-description", "Linux/UNIX",
+            "--region", region,
+            "--start-time", "2024-10-20T00:00:00Z",
+            "--query", "SpotPriceHistory[0].SpotPrice",
+            "--output", "text", "--profile", os.environ['AWS_PROFILE']
+        ]
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+        return float(result.stdout.strip()) if result.stdout.strip() else None
+    except subprocess.CalledProcessError as e:
+        print(f"Error fetching spot price: {e.stderr.strip()}", file=sys.stderr)
+        return None
+
+def get_dedicated_price(instance_type):
+    """Fetch the on-demand (dedicated) hourly price for the given instance type."""
+    dedicated_prices = {
+        "c7i.48xlarge": 8.5680, "c7i.metal-48xl": 8.5680, 
+        # Add more instance types as needed
+    }
+    return dedicated_prices.get(instance_type)
+
+def calculate_spot_discount(dedicated_price, spot_price):
+    """Calculate the percentage discount between spot and dedicated prices."""
+    if dedicated_price and spot_price:
+        return round(((dedicated_price - spot_price) / dedicated_price) * 100, 2)
+    return None
+
+def calculate_per_vcpu_cost(price, vcpus):
+    """Calculate the per-vCPU cost."""
+    return round(price / vcpus, 4) if price and vcpus else None
+
+def parse_instance_types(file_path):
+    """Parse unique instance types from the input file."""
+    try:
+        with open(file_path, 'r') as file:
+            return list(set(line.strip() for line in file if line.strip()))
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.", file=sys.stderr)
+        sys.exit(1)
+
+def check_spot_availability(instance_type, region):
+    """Check spot availability by querying the AWS API."""
+    try:
         command = [
             "aws", "ec2", "describe-spot-price-history",
             "--instance-types", instance_type,
@@ -27,38 +69,72 @@ def check_spot_availability(instance_type, region):
             "--start-time", "2024-10-20T00:00:00Z",
             "--query", "SpotPriceHistory[*].AvailabilityZone",
             "--output", "text", "--profile", os.environ['AWS_PROFILE']
-            
         ]
         result = subprocess.run(command, check=True, capture_output=True, text=True)
-
         return set(result.stdout.strip().split()) if result.stdout.strip() else None
     except subprocess.CalledProcessError as e:
-        print(f"Error checking spot availability for {instance_type} in {region}: {e.stderr.strip()}", file=sys.stderr)
+        print(f"Error checking spot availability: {e.stderr.strip()}", file=sys.stderr)
         return None
 
+def write_to_tsv(data, filename="spot_availability.tsv"):
+    """Write the results to a TSV file."""
+    with open(filename, mode="w", newline="") as file:
+        writer = csv.writer(file, delimiter="\t")
+        writer.writerow([
+            "InstanceType", "Region", "AvailabilityZone", "Available", 
+            "RecentSpotPrice", "DedicatedPrice", "SpotDiscountPercent", 
+            "SpotPerVCPU", "DedicatedPerVCPU"
+        ])
+        for row in data:
+            writer.writerow(row)
+
+def write_to_pcluster_queue(instance_types, filename="pcluster_queue.txt"):
+    """Write the instance types to a pcluster queue text file."""
+    with open(filename, mode="w") as file:
+        for instance_type in instance_types:
+            file.write(f"  - InstanceType: {instance_type}\n")
+
 def main():
-    # List of instance types to check
-    instance_types = [
-        "c7i.48xlarge",
-        "c7i.metal-48xl",
-        "m7i.metal-48xl",
-        "m7i.48xlarge",
-        "r7i.48xlarge",
-        "r7i.metal-48xl"
-    ]
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <instance_file>", file=sys.stderr)
+        sys.exit(1)
 
-    # Fetch all regions
+    instance_file = sys.argv[1]
+    instance_types = parse_instance_types(instance_file)
+
     regions = get_all_regions()
+    data = []
 
-    # Check spot instance availability for each instance type in all regions
     for instance_type in instance_types:
         print(f"\nChecking spot availability for {instance_type}...")
+        dedicated_price = get_dedicated_price(instance_type)
+        vcpus = int(instance_type.split('.')[1].split('x')[0]) * 4  # Example logic to infer vCPUs
+
         for region in regions:
             azs = check_spot_availability(instance_type, region)
+            spot_price = get_spot_price(instance_type, region)
+            spot_discount = calculate_spot_discount(dedicated_price, spot_price)
+            spot_per_vcpu = calculate_per_vcpu_cost(spot_price, vcpus)
+            dedicated_per_vcpu = calculate_per_vcpu_cost(dedicated_price, vcpus)
+
             if azs:
+                for az in azs:
+                    data.append([
+                        instance_type, region, az, "Yes", spot_price, 
+                        dedicated_price, spot_discount, spot_per_vcpu, 
+                        dedicated_per_vcpu
+                    ])
                 print(f"  Region: {region} - Available in: {', '.join(azs)}")
             else:
+                data.append([
+                    instance_type, region, "N/A", "No", spot_price, 
+                    dedicated_price, spot_discount, spot_per_vcpu, 
+                    dedicated_per_vcpu
+                ])
                 print(f"  Region: {region} - Not available.")
+
+    write_to_tsv(data)
+    write_to_pcluster_queue(instance_types)
 
 if __name__ == "__main__":
     main()

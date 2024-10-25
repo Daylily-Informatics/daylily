@@ -56,7 +56,53 @@ Scheduling:
             - InstanceType: r7i.48xlarge # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.9238 spot
             - InstanceType: r7i.metal-48xl # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.3266 spot
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 3
+          SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+      Networking:
+        SubnetIds:
+          - REGSUB_PRIVATE_SUBNET
+      CustomActions:
+        OnNodeConfigured:
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_combined.sh
+          Args:
+            - REGSUB_REGION
+            - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGSUB_XMR_WALLET
+      Iam:
+        S3Access:
+          - BucketName: REGSUB_S3_BUCKET_NAME
+            EnableWriteAccess: false
+        AdditionalIamPolicies:
+          - Policy: REGSUB_S3_IAM_POLICY
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+    - Name: i128
+      CapacityType: SPOT
+      AllocationStrategy: lowest-price
+      ComputeResources:
+        - Name: all
+          Instances:
+          - InstanceType: c6i.metal
+          - InstanceType: c6i.32xlarge
+          - InstanceType: c6in.metal
+          - InstanceType: c6in.32xlarge
+          - InstanceType: m6i.32xlarge
+          - InstanceType: m6i.metal
+          - InstanceType: m6id.32xlarge
+          - InstanceType: m6id.metal
+          - InstanceType: r6i.metal
+          - InstanceType: r6i.32xlarge
+          - InstanceType: m6in.metal
+          - InstanceType: m6in.32xlarge
+          - InstanceType: r6id.32xlarge
+          MinCount: 0
+          MaxCount: 4
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
           Networking:
             PlacementGroup:
