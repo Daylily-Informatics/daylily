@@ -10,7 +10,7 @@ Capturing the steps I took to get the daylily framework up and running in a `cla
 
 # Strongly Suggested >> PCUI
 
-> [PCUI](https://us-west-2.console.aws.amazon.com/parallelcluster/home?region=us-west-2#clusters) is a useful tool for managing all parallel clusters across AZ's. You can accomplish everything the `pcluster` cli allows, and in addition, much more convenient stackformation/log monitoring. Bonus: job monitoring and dynamic volume management!
+> [PCUI](https://us-west-2.console.aws.amazon.com/parallelcluster/home?region=us-west-2#clusters) is a useful tool for managing all parallel clusters across AZ's. You can accomplish everything the `pcluster` cli allows, and in addition, much more convenient stackformation/log monitoring. Bonus: job monitoring, dynamic volume management & integrated budget/cost monitoring (`daylily` adds to this budget enforcement and finer grained cost tracking).
 
 
 # Steps
