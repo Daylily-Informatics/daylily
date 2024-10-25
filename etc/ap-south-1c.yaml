@@ -81,6 +81,7 @@ Scheduling:
             EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: arn:aws:iam::265676937214:policy/pclusterTagsAndBudget
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
       ComputeSettings:
         LocalStorage:
           RootVolume:

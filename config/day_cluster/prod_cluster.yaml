@@ -82,6 +82,7 @@ Scheduling:
             EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
     - Name: i128
       CapacityType: SPOT
       AllocationStrategy: lowest-price
@@ -135,6 +136,7 @@ Scheduling:
             EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
     - Name: i192
       CapacityType: SPOT
       AllocationStrategy: lowest-price
@@ -172,6 +174,7 @@ Scheduling:
             EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 Monitoring:
   DetailedMonitoring: true
   Logs:

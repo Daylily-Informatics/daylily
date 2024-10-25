@@ -80,6 +80,7 @@ Scheduling:
             EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 Monitoring:
   DetailedMonitoring: true
   Logs:
