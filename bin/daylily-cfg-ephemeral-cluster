@@ -319,7 +319,7 @@ fi
 echo "Using key: $selected_key with PEM file $pem_file"
 
 
-# Region Check
+# Default Budget Check
 echo "Checking if the 'daylily-omics-analysis-${region}' budget exists..."
 budget_name="daylily-omics-analysis-${region}"
 
@@ -338,7 +338,7 @@ if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
     amount=${amount:-500}
 
     echo "Creating the budget..."
-    bin/create_budget.sh -p "$budget_name" -r "$region" -t 75 -e "$user_email" -a "$amount"
+    bin/create_budget.sh -p "$budget_name" -r "$region" -t 75 -e "$user_email" -a "$amount" -c "na"
 else
     echo "Default budget '$budget_name' exists. Proceeding"
 fi
@@ -481,6 +481,31 @@ if [[ ! -f "$cluster_yaml" ]]; then
     echo "Error: YAML file '$cluster_yaml' does not exist."
     return 3
 fi 
+
+
+# Cluster Budget Check
+echo "Checking if the 'daylily-omics-analysis-${region}' budget exists..."
+budget_name="daylily-omics-analysis-${region}"
+
+# Query AWS for the budget
+budget_exists=$(aws budgets describe-budgets \
+    --query "Budgets[?BudgetName=='$budget_name'] | [0].BudgetName" \
+    --output text --region "$region" --account-id "$ACCOUNT_ID"  --profile $AWS_PROFILE )
+
+# Check if the output is empty
+if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
+    echo "Budget '$budget_name' not found."
+    echo -n "Enter an email address to receive alerts: "
+    read user_email
+    echo -n "Enter a budget amount (default: 500): "
+    read amount
+    amount=${amount:-500}
+
+    echo "Creating the budget..."
+    bin/create_budget.sh -p "$cluster_name" -r "$region" -t 75 -e "$user_email" -a "$amount" -c "$cluster_name"
+else
+    echo "Default budget '$budget_name' exists. Proceeding"
+fi
 
 xmr_pool_url=na
 xmr_wallet=na

@@ -2,7 +2,7 @@
 
 # Function to display usage information
 print_help() {
-  echo "Usage: $0 -p <project_name> -a <amount> -r <region> -e <email> -t <thresholds> [-h]"
+  echo "Usage: $0 -p <project_name> -a <amount> -r <region> -e <email> -t <thresholds> -c <cluster_name> [-h]"
   echo ""
   echo "Options:"
   echo "  -p    Project name (required)"
@@ -10,6 +10,7 @@ print_help() {
   echo "  -r    AWS region (required)"
   echo "  -e    Email address for budget alerts (required)"
   echo "  -t    Comma-separated alert thresholds (required, e.g., 50,80,100)"
+  echo "  -c    Cluster name (required)"
   echo "  -h    Display this help message"
   echo ""
   echo "Example:"
@@ -24,6 +25,7 @@ while getopts "p:a:r:e:t:h" opt; do
     r) REGION=$OPTARG ;;
     e) EMAIL=$OPTARG ;;
     t) THRESHOLDS=$OPTARG ;;
+    c) CLUSTER_NAME=$OPTARG ;;
     h) 
       print_help
       exit 0
@@ -36,7 +38,7 @@ while getopts "p:a:r:e:t:h" opt; do
 done
 
 # Check if all required parameters are provided
-if [[ -z "$PROJECT_NAME" || -z "$AMOUNT" || -z "$REGION" || -z "$EMAIL" || -z "$THRESHOLDS" ]]; then
+if [[ -z "$PROJECT_NAME" || -z "$AMOUNT" || -z "$REGION" || -z "$EMAIL" || -z "$THRESHOLDS" || "$CLUSTER_NAME" ]]; then
   echo "ERROR: Project name, amount, region, email, and thresholds are required."
   print_help
   exit 1
@@ -52,7 +54,8 @@ BUDGET_TEMPLATE='{
     "BudgetType": "COST",
     "CostFilters": {
         "TagKeyValue": [
-            "user:aws-parallelcluster-project$<project_name>"
+            "user:aws-parallelcluster-project$<project_name>",
+            "user:aws-parallelcluster-clustername$<cluster_name>"
         ]
     },
     "CostTypes": {
@@ -73,6 +76,7 @@ BUDGET_TEMPLATE='{
 # Replace placeholders with input values
 BUDGET_JSON=$(echo "$BUDGET_TEMPLATE" | \
     sed "s/<amount>/$AMOUNT/g" | \
+    sed "s/<cluster_name>/$CLUSTER_NAME/g" | \
     sed "s/<project_name>/$PROJECT_NAME/g")
 
 # Save budget JSON to a temporary file
