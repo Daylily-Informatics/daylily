@@ -1,5 +1,6 @@
 #!/bin/bash
  
+ # using the WDLs from https://github.com/wustl-oncology
  
  
 cp config/MGI_example/procs.txt .
