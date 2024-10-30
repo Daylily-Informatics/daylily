@@ -2,19 +2,10 @@ version 1.0
 
 
 # pipelines
-#import "germline_exome_hla_typing.wdl" as geht
-#import "rnaseq_star_fusion.wdl" as rsf
 import "somatic_exome.wdl" as se
 # others
-#import "subworkflows/phase_vcf.wdl" as pv
-##import "subworkflows/pvacseq.wdl" as p
-#import "subworkflows/generate_fda_metrics.wdl" as generate_fda_metrics
-#import "tools/extract_hla_alleles.wdl" as eha
-#import "tools/hla_consensus.wdl" as hc
-#import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
-#import "tools/optitype_dna.wdl" as od
-#import "tools/phlat.wdl" as ph
+
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -26,35 +17,8 @@ import "types.wdl"  # !UnusedImport
 # to encode intended output directory for each file.
 #
 
-#struct StarFusion {
-#  Array[File?] results
-#  PreliminaryStarFusionResults candidates_preliminary
-#}
 
-#struct Rnaseq {
-#  Array[File] alignments
-#  Array[File] stringtie_expression
-#  Array[File] kallisto_expression
-#  StarFusion star_fusion
-#  Array[File] fusioninspector_evidence
-#}
 
-#struct FdaMetricBundle {
-#  FdaMetrics unaligned_normal_dna
-#  FdaMetrics unaligned_tumor_dna
-#  FdaMetrics unaligned_tumor_rna
-#  FdaMetrics aligned_normal_dna
-#  FdaMetrics aligned_tumor_dna
-#  FdaMetrics aligned_tumor_rna
-#}
-
-#struct Qc {
-#  Array[File?] tumor_rna
-#  QCMetrics tumor_dna
-#  QCMetrics normal_dna
-#  Array[File?] concordance
-#  FdaMetricBundle fda_metrics
-#}
 
 struct Variants {
   Array[File?] mutect
@@ -81,13 +45,6 @@ struct Somatic {
 struct Germline {
   Array[File?] variants
 }
-
-#struct MHC {
-#  Array[File] mhc_i
-#  Array[File] mhc_ii
-#  Array[File] combined
-#  Array[File]? phase_vcf
-#}
 
 workflow immuno {
   input {
