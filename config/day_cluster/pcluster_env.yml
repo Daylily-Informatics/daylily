@@ -27,9 +27,19 @@ Parameters:
     Type: String
     Default: us-west-2c
 
+  CreatePolicy:
+    Description: Boolean flag to indicate if the IAM policy should be created
+    Type: String
+    AllowedValues: ['true', 'false']
+    Default: 'true'
+
+Conditions:
+  CreateIAMPolicy: !Equals [!Ref CreatePolicy, 'true']
+
 Resources:
   pclusterManageTags:
     Type: 'AWS::IAM::ManagedPolicy'
+    Condition: CreateIAMPolicy  # Ensure the policy is only created if CreateIAMPolicy is true
     Properties:
       ManagedPolicyName: pclusterTagsAndBudget
       Path: /
@@ -163,4 +173,4 @@ Outputs:
     
   PclusterPolicy:
     Description: PclusterPolicy
-    Value: !Sub ${pclusterManageTags}
+    Value: !If [CreateIAMPolicy, !Ref pclusterManageTags, 'Policy already exists, not created']

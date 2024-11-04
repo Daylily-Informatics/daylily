@@ -61,8 +61,24 @@ if [[ "$AVAILABILITY_ZONE" != "$REGION"* ]]; then
   exit 1
 fi
 
-echo RP: $RESOURCES_PREFIX AZ: $AVAILABILITY_ZONE REGION: $REGION STACK_NAME: $STACK_NAME VPC_CIDR: $VPC_CIDR PUBLIC_SUBNET_CIDR: $PUBLIC_SUBNET_CIDR PRIVATE_SUBNET_CIDR: $PRIVATE_SUBNET_CIDR
-echo "ddd"
+POLICY_NAME="pclusterTagsAndBudget"
+# Check if the IAM policy already exists
+POLICY_EXISTS=$(aws iam list-policies --query "Policies[?PolicyName=='${POLICY_NAME}'] | length(@)" --region $REGION --profile $AWS_PROFILE)
+
+CREATE_POLICY="true"
+if [[ $POLICY_EXISTS -eq 0 ]]; then
+  CREATE_POLICY="true"
+  echo "Policy does not exist, will create a new policy."
+else
+  CREATE_POLICY="false"
+  echo "Policy already exists, will not create a new policy."
+fi
+
+echo RP: $RESOURCES_PREFIX AZ: $AVAILABILITY_ZONE REGION: $REGION STACK_NAME: $STACK_NAME VPC_CIDR: $VPC_CIDR PUBLIC_SUBNET_CIDR: $PUBLIC_SUBNET_CIDR PRIVATE_SUBNET_CIDR: $PRIVATE_SUBNET_CIDR POLICY_EXISTS: $POLICY_EXISTS CREATE_POLICY: $CREATE_POLICY 
+echo "onwards"
+echo ""
+#echo "aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://$TEMPLATE_FILE --region $REGION --profile $AWS_PROFILE --parameters ParameterKey=EnvironmentName,ParameterValue=$RESOURCES_PREFIX ParameterKey=VpcCIDR,ParameterValue=$VPC_CIDR ParameterKey=PublicSubnetCIDR,ParameterValue=$PUBLIC_SUBNET_CIDR ParameterKey=PrivateSubnetCIDR,ParameterValue=$PRIVATE_SUBNET_CIDR ParameterKey=AvailabilityZone,ParameterValue=$AVAILABILITY_ZONE ParameterKey=CreatePolicy,ParameterValue=$CREATE_POLICY --capabilities CAPABILITY_NAMED_IAM"  
+
 # Create the CloudFormation Stack
 aws cloudformation create-stack \
   --stack-name $STACK_NAME \
@@ -73,6 +89,7 @@ aws cloudformation create-stack \
                ParameterKey=PublicSubnetCIDR,ParameterValue=$PUBLIC_SUBNET_CIDR \
                ParameterKey=PrivateSubnetCIDR,ParameterValue=$PRIVATE_SUBNET_CIDR \
                ParameterKey=AvailabilityZone,ParameterValue=$AVAILABILITY_ZONE \
+               ParameterKey=CreatePolicy,ParameterValue=$CREATE_POLICY \
   --capabilities CAPABILITY_NAMED_IAM
 
 # Wait for the stack to finish creating (success or failure)

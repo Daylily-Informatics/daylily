@@ -338,7 +338,14 @@ if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
     amount=${amount:-500}
 
     echo "Creating the budget..."
-    bin/create_budget.sh -p "$budget_name" -r "$region" -t 75 -e "$user_email" -a "$amount" -c "na"
+    echo "bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c na"
+    bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c na
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to create the budget. Exiting."
+        return 3
+    else
+        echo "Budget '$budget_name' created successfully."
+    fi
 else
     echo "Default budget '$budget_name' exists. Proceeding"
 fi
@@ -355,6 +362,12 @@ done)
 matching_buckets=()
 while IFS= read  bucket; do
     bucket_region=$(echo "$bucket" | awk '{print $NF}')
+
+    # Handle 'None' as 'us-east-1'
+    if [[ "$bucket_region" == "(None)" ]]; then
+        bucket_region="(us-east-1)"
+    fi
+
     if [[ "$bucket_region" == "($region)" ]]; then
         matching_buckets+=("$bucket")
     fi
@@ -362,7 +375,7 @@ done <<< "$buckets"
 
 if [[ ${#matching_buckets[@]} -eq 0 ]]; then
     echo "No matching buckets found in region $region."
-    return 1
+    return 3
 fi
 
 echo "Select a matching S3 bucket:"
@@ -411,12 +424,12 @@ private_subnets=$(aws ec2 describe-subnets \
 
 arn_count=$(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region"  --profile $AWS_PROFILE | wc -l)
 
-if [[ -z "$public_subnets" && -z "$private_subnets" && $arn_count -eq 0 ]]; then
+if [[ -z "$public_subnets" && -z "$private_subnets" ]]; then
     echo "All required resources are missing. Running the initialization script..."
     res_prefix=$(echo "daylily-cs-$region_az" | sed -e 's/1/one/g' -e 's/2/two/g' -e 's/3/three/g' -e 's/4/four/g')
 
     bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml "$res_prefix" "$region_az" "$region" $AWS_PROFILE
-elif [[ -z "$public_subnets" || -z "$private_subnets" || $arn_count -eq 0 ]]; then
+elif [[ -z "$public_subnets" || -z "$private_subnets"  ]]; then
     echo "Error: Incomplete setup. Ensure public and private subnets and the required ARN are available.  You might try running : bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml $res_prefix $region_az $region $AWS_PROFILE"
     return 1
 else

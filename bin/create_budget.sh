@@ -18,7 +18,7 @@ print_help() {
 }
 
 # Parse command-line options
-while getopts "p:a:r:e:t:h" opt; do
+while getopts "p:a:r:e:t:h:c" opt; do
   case ${opt} in
     p) PROJECT_NAME=$OPTARG ;;
     a) AMOUNT=$OPTARG ;;

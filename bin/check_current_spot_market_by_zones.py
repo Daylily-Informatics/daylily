@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import yaml
 import subprocess
 import statistics
@@ -93,24 +94,123 @@ def stability_metric(prices):
 def parse_arguments():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description="Calculate genomic workflow costs.")
-    parser.add_argument("-i", "--input", default="config/day_cluster/prod_cluster.yaml", help="YAML config path.")
-    parser.add_argument("-o", "--output", required=True, help="Output TSV file path.")
-    parser.add_argument("--profile", help="AWS CLI profile.")
-    parser.add_argument("--partition", default="i192", help="Partition name (default: i192).")
-    parser.add_argument("--zones", default="us-west-2a,us-west-2b,us-west-2c", help="Comma-separated zones.")
-    parser.add_argument("--x-coverage", type=float, default=30.1, required=True, help="Coverage for analysis (e.g., 30x).")
-    parser.add_argument("--vcpu-min-per-x", type=float, default=3.7, required=True, help="vCPU-minutes per X coverage.")
-
+    
+    # Add arguments with default values and %(default)s in help string
+    parser.add_argument(
+        "-i", "--input", 
+        default="config/day_cluster/prod_cluster.yaml", 
+        help="YAML config path (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "-o", "--output", 
+        required=True, 
+        help="Output TSV file path (required)."
+    )
+    
+    parser.add_argument(
+        "--profile", 
+        required=True,
+        default="SETME",
+        help="AWS CLI profile, YOU MUST SET AWS_PROFILE and sepcify that same string here (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--partition", 
+        default="i192", 
+        help="Partition name (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--zones", 
+        default="us-west-2a,us-west-2b,us-west-2c", 
+        help="Comma-separated zones (default: %(default)s).\n ALLZONES: us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1e,us-west-1a,us-west-1b,us-west-2a,us-west-2b,us-west-2c,us-west-2d,af-south-1a,af-south-1b,af-south-1c,ap-east-1a,"
+             "ap-east-1b,ap-east-1c,ap-south-1a,ap-south-1b,ap-south-1c,ap-south-1d,ap-southeast-1a,ap-southeast-1b,ap-southeast-1c,ap-southeast-2a,ap-southeast-2b,ap-southeast-2c,ap-southeast-3a,ap-southeast-3b,ap-southeast-3c,"
+             "ap-southeast-4a,ap-southeast-4b,ap-southeast-4c,ap-northeast-1a,ap-northeast-1b,ap-northeast-1c,ap-northeast-2a,ap-northeast-2b,ap-northeast-2c,ap-northeast-3a,ca-central-1a,ca-central-1b,ca-central-1c,eu-central-1a,"
+             "eu-central-1b,eu-central-1c,eu-west-1a,eu-west-1b,eu-west-1c,eu-west-2a,eu-west-2b,eu-west-2c,eu-west-3a,eu-west-3b,eu-west-3c,eu-south-1a,eu-south-1b,eu-south-1c,eu-south-2a,eu-south-2b,eu-south-2c,eu-north-1a,eu-north-1b,"
+             "eu-north-1c,me-south-1a,me-south-1b,me-south-1c,me-central-1a,me-central-1b,me-central-1c,sa-east-1a,sa-east-1b,sa-east-1c."
+    )
+    
+    parser.add_argument(
+        "--x-coverage", 
+        type=float, 
+        default=30.1, 
+        required=True, 
+        help="Coverage for analysis (e.g., 30x) (required, default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--vcpu-min-per-x", 
+        type=float, 
+        default=3.7, 
+        required=True, 
+        help="vCPU-minutes per X coverage (required, default: %(default)s)."
+    )
+    
     # File size flags
-    parser.add_argument("--bam-size-per-x", type=float, default=1.0, help="BAM size per X coverage (GB).")
-    parser.add_argument("--cram-size-per-x", type=float, default=1.0, help="CRAM size per X coverage (GB).")
-    parser.add_argument("--vcf-size-per-x", type=float, default=1.0, help="VCF size per X coverage (GB).")
-    parser.add_argument("--gvcf-size-per-x", type=float, default=1.0, help="gVCF size per X coverage (GB).")
-    parser.add_argument("--bcf-size-per-x", type=float, default=1.0, help="BCF size per X coverage (GB).")
-    parser.add_argument("--gbcf-size-per-x", type=float, default=1.0, help="gBCF size per X coverage (GB).")
-    parser.add_argument("--qc-size-per-x", type=float, default=0.5, help="QC data size per X coverage (GB).")
-    parser.add_argument("--mode", choices=['dark', 'light', 'neon', 'loud'], default='dark', help="Color mode (default: dark).")
-    parser.add_argument("--input-data-size-per-x", type=float, default=1.0, help="Input FASTQ size per X coverage (GB).")
+    parser.add_argument(
+        "--bam-size-per-x", 
+        type=float, 
+        default=1.0, 
+        help="BAM size per X coverage (GB) (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--cram-size-per-x", 
+        type=float, 
+        default=1.0, 
+        help="CRAM size per X coverage (GB) (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--vcf-size-per-x", 
+        type=float, 
+        default=1.0, 
+        help="VCF size per X coverage (GB) (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--gvcf-size-per-x", 
+        type=float, 
+        default=1.0, 
+        help="gVCF size per X coverage (GB) (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--bcf-size-per-x", 
+        type=float, 
+        default=1.0, 
+        help="BCF size per X coverage (GB) (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--gbcf-size-per-x", 
+        type=float, 
+        default=1.0, 
+        help="gBCF size per X coverage (GB) (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--qc-size-per-x", 
+        type=float, 
+        default=0.5, 
+        help="QC data size per X coverage (GB) (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--mode", 
+        choices=['dark', 'light', 'neon', 'loud'], 
+        default='dark', 
+        help="Color mode (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--input-data-size-per-x", 
+        type=float, 
+        default=1.0, 
+        help="Input FASTQ size per X coverage (GB) (default: %(default)s)."
+    )
+    
     return parser.parse_args()
 
 def calculate_vcpu_mins(args):
@@ -139,7 +239,7 @@ def get_spot_price(instance_type, zone, profile):
         if profile:
             cmd.extend(["--profile", profile])
         result = subprocess.check_output(cmd).decode().strip()
-        return float(result)
+        return float('nan') if result in [None,'None',''] else float(result)
     except subprocess.CalledProcessError as e:
         print(f"Failed to fetch price for {zone}: {e}")
         return float('nan')
@@ -302,6 +402,10 @@ def main():
         print(e)
         return
 
+    if args.profile == "SETME":
+        print(f"\n\nERROR:: Your AWS_PROFILE is set to >{os.getenv('AWS_PROFILE')}<, Please set your AWS_PROFILE environment variable and specify the same string with --profile.\n")
+        raise SystemExit
+    
     zones = args.zones.split(',')
     spot_data = collect_spot_prices(instance_types, zones, args.profile)
     vcpu_mins = calculate_vcpu_mins(args)
