@@ -1,6 +1,6 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.31)
+# Daylily AWS Ephemeral Cluster Setup (0.7.33)
 
-Capturing the steps I took to get the daylily framework up and running in a `classic` AWS environment.
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 
 # Before Beginning
 - `daylily` was tuned to run in the `us-west-2c` AZ, for cost and availabiliyu of some specific compute resources not found in all AZs. The install should all build and proceed using the `us-west-2c` AZ.
@@ -17,6 +17,12 @@ Capturing the steps I took to get the daylily framework up and running in a `cla
 
 ## Cluster Queue Management
 ![](docs/images/cluster_queues.png)
+
+
+
+  <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
+
+  <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 # Steps
 
@@ -729,3 +735,115 @@ The following directories are created and accessible via `/fsx` on the headnode 
 
 ## Cromwell & WDL's
 - Running Cromwell WDL's is in early stages, and preliminary & still lightly documented work can be found [here](config/CROMWELL/immuno/workflow.sh) ( using the https://github.com/wustl-oncology as starting workflows ).
+
+
+
+# General Components Overview
+
+  > Before getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 spot instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserves special thanks.
+  
+![DEC_components_v2](https://user-images.githubusercontent.com/4713659/236144817-d9b26d68-f50b-423b-8e46-410b05911b12.png)
+
+# Managed Genomics Analysis Services
+The system is designed to be robust, secure, auditable, and should only take a matter of days to stand up. [Please contact me for further details](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91).
+
+
+![daylily_managed_service](https://user-images.githubusercontent.com/4713659/236186668-6ea2ec81-9fe4-4549-8ed0-6fcbd4256dd4.png)
+
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
+
+
+
+## Some Bioinformatics Bits, Big Picture
+
+### The DAG For 1 Sample Running Through The `BWA-MEM2ert+Doppelmark+Deepvariant+Manta+TIDDIT+Dysgu+Svaba+QCforDays` Pipeline
+#### NOTE: *each* node in the below DAG is run as a self-contained job. Each job/node/rule is distributed to a suitable EC2 spot(or on demand if you prefer) instance to run. Each node is a packaged/containerized unit of work. This dag represents jobs running across sometimes thousands of instances at a time. Slurm and Snakemake manage all of the scaling, teardown, scheduling, recovery and general orchestration: cherry on top: killer observability & per project resource cost reporting and budget controls!
+   ![](docs/images/assets/ks_rg.png)
+   
+   - The above is actually a compressed view of the jobs managed for a sample moving through this pipeline. This view is of the dag which properly reflects parallelized jobs.
+   
+     ![](docs/images/assets/ks_dag.png)
+
+
+
+
+### Daylily Framework, Cont.
+
+#### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html)
+> The batch is comprised of google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
+[Example report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html).
+![](docs/images/assets/day_qc_1.png)
+
+![](docs/images/assets/day_qc_2.png)
+    
+    
+### [Consistent + Easy To Navigate Results Directory & File Structure](/docs/ops/dir_and_file_scheme.md)
+   - A visualization of just the directories (minus log dirs) created by daylily
+    _b37 shown, hg38 is supported as well_
+![](docs/images/assets/tree_structure/tree.md)
+     - [with files](docs/ops/tree_full.md   
+    
+### [Automated Concordance Analysis Table](http://daylilyinformatics.com:8081/components/daylily_qc_reports/other_reports/giabhcr_concordance_mqc.tsv)
+  > Reported faceted by: SNPts, SNPtv, INS>0-<51, DEL>0-51, Indel>0-<51.
+  > Generated when the correct info is set in the analysis_manifest.
+
+
+#### [Performance Monitoring Reports]()
+  > Picture and  list of tools
+
+#### [Observability w/CloudWatch Dashboard](https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#)
+  > ![](docs/images/assets/cloudwatch.png)
+  > ![](/docs/images/assets.cloudwatch_2.png)
+  > ![](/docs/images/assets.cloudwatch3.png)
+
+#### [Cost Tracking and Budget Enforcement](https://aws.amazon.com/blogs/compute/using-cost-allocation-tags-with-aws-parallelcluster/)
+  > ![](https://d2908q01vomqb2.cloudfront.net/1b6453892473a467d07372d45eb05abc2031647a/2020/07/23/Billing-console-projects-grouping.png)
+  - ![](docs/images/assets/costs1.png)
+  - ![](docs/images/assets/costs2.png)
+  
+  
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
+
+
+
+# Metrics Required To Make Informed Decisions About Choosing An Analysis Pipeline
+To make informed decisions about choosing an analysis pipeline, there are four key metrics to consider: accuracy(as generally measured via Fscore), user run time, cost of analysis and reproducibility. Further consideration should then be given to the longevity of results (how results are stored, costs associated with storage, and the ease of access to results). All of these can not be optimized simultaneously, and trade-offs must be made. Making these tradeoffs with intention is the primary goal of the daylily framework.
+
+## Accuracy / Precision / Recall / Fscore
+- what is the pipelines perofrmance?
+
+## User Run Time
+- how long does it take to run the pipeline?
+
+## Cost Of Analysis
+### Init Cost
+- is
+### Compute Cost
+- is
+### Storage Cost (for computation)
+- is
+### Other Costs (ie: data transfer)
+- is
+
+## Cost of Storage
+- is
+
+## Reproducibility
+- what is the asserted reproducibility of the pipeline? For 1 month? 1 year? 5 years? 20 years?
+- And how is this tested?
+
+## Longevity of Results
+- how are results stored? What are the costs and access mechanisms for these results?
+
+
+
+
+
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
+
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
+
+# [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
+
+_named in honor of Margaret Oakley Dahoff_
