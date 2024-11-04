@@ -118,7 +118,7 @@ bwa_mem2a_aln_sort:
     sort_threads: 128
     write_threads: 128
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
-    igz_threads: 96 # from 64
+    igz_threads: 128 # from 64
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
