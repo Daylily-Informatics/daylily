@@ -1,6 +1,6 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.33)
+# Daylily AWS Ephemeral Cluster Setup (0.7.29)
 
-<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
+Capturing the steps I took to get the daylily framework up and running in a `classic` AWS environment.
 
 # Before Beginning
 - `daylily` was tuned to run in the `us-west-2c` AZ, for cost and availabiliyu of some specific compute resources not found in all AZs. The install should all build and proceed using the `us-west-2c` AZ.
@@ -17,12 +17,6 @@
 
 ## Cluster Queue Management
 ![](docs/images/cluster_queues.png)
-
-
-
-  <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
-
-  <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 # Steps
 
@@ -131,11 +125,8 @@ Your user must have the ability to query spot price histories. Add the following
 ```
 
 
-#### 2. Create A New SSH Key Pair (type: **ed25519**) & Downloaded `.pem` File
-
+#### 2. Create A New SSH Key Pair (type: ed25519) & Downloaded `.pem` File
 _keypairs are region specific, and you will need to create a new keypair for each region you intend to run in_
-
-- _suggested name `PREFIX-omics-analysis-REGION`_
 
 ```bash
 Move, copy and chmod: 
@@ -143,58 +134,17 @@ Move, copy and chmod:
 mv ~/Downloads/<yourkey>.pem  ~/.ssh/<yourkey>.pem 
 chmod 400 ~/.ssh/<yourkey>.pem`
 ```
-
 * Your keypair will need to be available in ~/.ssh/
 
-#### 3. The `YOURPREFIX-omics-analysis-REGION` s3 Bucket
-- Your new bucket name needs to end in `-omics-analysis-REGION` and be unique to your account.
-- One bucket must be created per `REGION` you intend to run in.
-- The reference data version is currently `0.7`, and will be replicated correctly using the script below.
-- The total size of the bucket will be 779.1GB, and the cost of standard S3 storage will be ~$30/mo.
-- Copying the daylily-references-public bucket will take ~7hrs using the script below.
+#### 3. Create `YOURPREFIX-omics-analysis-REGION` s3 Bucket
+- Your new bucket name should end in `-omics-analysis-REGION` and be unique to your account. This allows easier auto-detection latter in the `daycli` setup.
+- And it should be created in the region you intend to run in. Default is `us-west-2`.
+- The total size of the bucket will be ~1.5TB, and the cost of storage will be ~$30/mo.
+> _note:_ The full reference data s3 includes the 7giab 30x google brain fastqs, as well as references for both `b37` and `hg38`, once you have your copy, you may consider removing the references you do not intend to use to save on storage costs.
+> - You will have better transfer times copying this bucket to other regions you intend to run in if you replicate your copy and enable acceleration on the source and destination buckets.
 
-##### `daylily-references-public` Bucket Contents
-- `hg38` and `b37` reference data files (including supporting tool specific files).
-- 7 google-brain ~`30x` Illunina 2x150 `fastq.gz` files for all 7 GIAB samples (`HG001,HG002,HG003,HG004,HG005,HG006,HG007`).
-- snv and sv truth sets (`v4.2.1`) for all 7 GIAB samples in both `b37` and `hg38`.
-- A handful of pre-built conda environments and docker images (for demonstration purposes, you may choose to add to your own instance of this bucket to save on re-building envs on new eclusters).
-- A handful of scripts and config necessary for the ephemeral cluster to run.
-
-_note:_ you can choose to eliminate the data for `b37` or `hg38` to save on storage costs. In addition, you may choose to eliminate the GIAB fastq files if you do not intend to run concordance or benchmarking tests (which is advised against as this framework was developed explicitly to facilitate these types of comparisons in an ongoing way).
-
-###### Top Level Diretories
-See the secion on [shared Fsx filesystem](#shared-fsx-filesystem) for more on hos this bucket interacts with these ephemeral cluster region specific S3 buckets.
-```text
-.
-├── cluster_boot_config  # used to configure the head and compute nodes in the ephemeral cluster, is not mounted to cluster nodes
-└── data # this directory is mounted to the head and compute nodes under /fsx/data as READ-ONLY. Data added to the S3 bucket will become available to the fsx mount, but can not be written to via FSX
-    ├── cached_envs
-    │   ├── conda
-    │   └── containers
-    ├── genomic_data
-    │   ├── organism_annotations
-    │   │   └── H_sapiens
-    │   │       ├── b37
-    │   │       └── hg38
-    │   ├── organism_reads
-    │   │   └── H_sapiens
-    │   │       └── giab
-    │   └── organism_references
-    │       └── H_sapiens
-    │           ├── b37
-    │           └── hg38
-    └── tool_specific_resources
-        └── verifybam2
-            ├── exome
-            └── test
-```
-
-
-##### Create The Bucket
-##### Replicate `daylily-references-public` Public References/Resources To Your New Bucket
-- Use the following script.
 ```bash
-sni
+
 ##### Copy The `daylily` Public References/Resources To Your New Bucket (choose the most recent version)
 From your terminal/shell (and to be safe, in a screen or tmux session as it may run for a while).
 
@@ -207,25 +157,21 @@ You will need to copy the daylily ephemeral cluster s3 data to a bucket named `Y
 
 Usage: ./bin/create_daylily_omics_analysis_s3.sh --prefix <PREFIX> [--daylily-s3-version <version>] [--region <region>] [--dryrun] [-h]
 
-./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.7 --dryrun
+./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.9 --dryrun
 
 # Run it for real, may take a while to run! be in tmux or screen...
-./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.7 
+./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.9 
 ```
 
 
 #### 4. Create A New `pcluster` Stack
 ##### **but first, choose the most affordable avaiability zone**
-The `region` is important for pcluster to run, but the `availability zone` is the largest variable w/r/t compute costs.  Daylily defaults to `us-west-2c` as it is consistently cheaper to run in from `us` regions, but not always. The costs per AZ can vary by 2-3x. Please note, running in AZ's outside us-west-2 has **NOT** been tested, it should be trivial to tweak config to work outsize us-west-2, however, I believe the biggest pain will be that the S3 bucket must be in the same region as the `FSX` filesystem created by pcluster.  In anycase, this script presents a table to give you a feel for costs of running in different AZ's.
+The `region` is important for pcluster to run, but the `availability zone` is important for cost.  Daylily defaults to `us-west-2c` as it is consistently cheaper to run in, but the costs per AZ can vary by 2-3x. Please note, running in AZ's outside us-west-2 has **NOT** been tested, it should be trivial to tweak config to work outsize us-west-2, however, I believe the biggest pain will be that the S3 bucket must be in the same region as the `FSX` filesystem created by pcluster.  In anycase, this script presents a table to give you a feel for costs of running in different AZ's.
 _build the `DAYCLI` environment to run the following script_
 
+`bin/check_current_spot_market_by_zones.py -i config/day_cluster/prod_cluster.yaml -o ./zones.tsv --zones us-west-2a,us-west-2b,us-west-2c,us-west-2d,us-east-1a,us-east-1b,us-east-1c,us-east-1d --approx-spot-hours-per-30x-genome 3`
 
-python bin/check_current_spot_market_by_zones.py -i config/day_cluster/prod_cluster.yaml -o ./blah.tsv --profile daylily --partition i192 --x-coverage 30 --vcpu-min-per-x 2 --zones us-east-1a,us-east-1b,us-east-1c,
-us-east-1d,us-west-1a,us-west-2c
-
-
-###### Spot Price Statistics (example- still in active development)
-```text
+###### Spot Price Statistics (example)
 | Zone       | Total Instances Considered | Instances with Pricing | Median Spot Price | Mean Spot Price | Min Spot Price | Max Spot Price | Avg of Lowest 3 Prices | Harmonic Mean Price | Estimated EC2 Cost / Genome (no FSX or S3 costs included here) | Stability (Max-Min Spread) |
 |------------|----------------------------|------------------------|-------------------|----------------|---------------|---------------|------------------------|--------------------|-----------------------------|----------------------------|
 | us-east-1d | 6                          | 6                      | **2.2443**         | **2.6635**      | **1.2944**    | 6.0426        | **1.5202**              | **2.0483**         | **4.5605**                  | 4.7482                     |
@@ -239,8 +185,7 @@ us-east-1d,us-west-1a,us-west-2c
 
 * I will proceed with `us-west-2c`.
 
-##### **Create The Cloudformation Stack (optional)**
-This is optional, in that it will be run for you if needed during the ephemeral cluster creation below.
+##### **Create The Cloudformation Stack**
 From the `daylily` repository root dir, run the following command (it will take up to 10min to complete! This step does not need to be repeated for each new cluster, but only when you are setting up in a new AZ, which quotas will likely limit you to just one at a time).:
 ```bash
 bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml <short-resource-prefix-to-use> <availability-zone> <region>
@@ -251,8 +196,8 @@ bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml <short-res
 
 ## 
 ## Local DAYCLI Setup & Ephemeral Cluster Initialization (only need to do this once per new cluster)
-From your local/laptop shell (NOTE: there is an unfortunate, and to be rectified mixture of `zsh` and `bash` scripts used here. Dev was done on a MAC with zsh and then cluster work with `bash` using ubuntu22. Please stick with the indicated shells until everything is ported to `bash`).
-Assumes all of the required setup steps above have been completed, and will run several checks to ensure the setup is correct before proceeding. You will be allowed to exit the process at any time and you will be prompted to confirm you wish to create the ephemeral cluster once all checks have passed.
+Your local/laptop shell.
+Assumes all of the setup steps above have been completed.
 
 ### Local `pcluster` DAYCLI Setup & Ephemeral Cluster Initialization
 
@@ -264,7 +209,7 @@ _note:_ the cli init script will run checks for the steps covered to this point,
 
 - From the `daylily` repository root, run the following command
     ```bash
-    source bin/daylily-cfg-ephemeral-cluster --help
+    source bin/daylily-cfg-ephemeral-cluster
     ``` 
     - Your aws credentials will be auto-detected and used to query appropriate resources to select from to proceed. You will be prompted to:
       - select the full path to your $HOME/.ssh/<mykey>.pem (from detected .pem files)
@@ -278,13 +223,6 @@ _note:_ the cli init script will run checks for the steps covered to this point,
   - The configuration script will then create  `_cluster.yaml` and `cluster_init_vals.txt` files in `~/.config/daylily/` and these will be used to create the new ephemeral cluster.
   - First, a dryrun `pcluster create-clsuter` command will be run to ensure the configuration is correct. You will be informed of success/fail for this step, and asked if you wish to proceed in actual creation of the cluster, enter `y`.
   - The ephemeral cluster creation will begin and a monitoring script will watch for its completion.  This may take 10-20min. You may exit the process at this time, and can check on the cluster via the pcluster cli, or the cloudformation console.
-
-### Actual Example Command
-```bash
-    export AWS_PROFILE=default
-    source bin/daylily-cfg-ephemeral-cluster --region-az us-east-1d --profile $AWS_PROFILE --pass-on-warn # You must specify the --profile flag, and if using default, AWS_PROFILE should be set to default, not null.
-```
-
 
 ##### Head Node Configuration (only needed to be done once per new cluster)
 _**todo**: bake the headnode as an AMI and use this AMI in the cluster congifuration, making this step unnecessary_
@@ -687,166 +625,5 @@ _alias it for your shell:_ `alias goday=". ~/projects/daylily/bin/ssh_into_dayli
 - Reports are not automaticaly created for spot instances, but you may extend this base report as you like.  This dashboard is automatically created by `pcluster` for each new cluster you create (and will be deleted when the cluster is deleted).
 
 
-# Fsx Filesystem
-Are region specific, and may only intereact with `S3` buckets in the same region as the filesystem. There are region specific quotas to be aware of.
-- Fsx filesystems are extraordinarily fast, massively scallable (both in IO operations as well as number of connections supported -- you will be hard pressed to stress this thing out until you have 10s of thousands of concurrent connected instances).  It is also a pay-to-play product, and is only cost effective to run while in active use.  
-- Daylily uses a `scratch` type instance, which auto-mounts the region specific `s3://PREFIX-omics-analysis-REGION/data` directory to the fsx filesystem as `/fsx/data`.  `/fsx` is available to the head node and all compute nodes.  
-- When you delete a cluster, the attached `Fsx Lustre` filesystem will be deleted as well.  
-- > **BE SURE YOU REFLECT ANALYSIS REUSLTS BACK TO S3 BEFORE DELETING YOUR EPHEMERAL CLUSTER** ... do this via the Fsx dashboard and create a data export task to the same s3 bucket you used to seed the fsx filesystem ( you will probably wish to define exporting `analysis_results`, which will export back to `s3://PREFIX-omics-analysis-REGION/FSX-export-DATETIME/` everything in `/fsx/analysis_results` to this new FSX-export directory.  **do not export the entire `/fsx` mount, this is not tested and might try to duplicate your reference data as well!** ).  This can take 10+ min to complete, and you can monitor the progress in the fsx dashboard & delete your cluster once the export is complete.
-- Fsx can only mount one s3 bucket at a time, the analysis_results data moved back to S3 via the export should be moved again to a final destination (w/in the same region ideally) for longer term storage.  
-- All of this handling of data is amendable to being automated, and if someone would like to add a cluster delete check which blocks deletion if there is unexported data still on /fsx, that would be awesome.
-- Further, you may write to any path in `/fsx` from any instance it is mounted to, except `/fsx/data` which is read only and will only update if data mounted from the `s3://PREFIX-omics-analysis-REGION/data` is added/deleted/updated (not advised).
-
-## _Known Bug: Fsx Mount Times Out & Causes Pcluster `build-cluster` To Fail_
-If the `S3` bucket mounted to the FSX filesystem is too large (the default bucket is close to too large), this can cause Fsx to fail to create in time for pcluster, and pcluster time out fails.  The wait time for pcluster is configured to be much longer than default, but this can still be a difficult to identify reason for cluster creation failure. Probability for failure increases with S3 bucket size, and also if the imported directories are being changed during pcluster creation. Try again, try with a longer timeount, and try with a smaller bucket (ie: remove one of the human reference build data sets, or move to a different location in the bucket not imported by Fsx)
-
-## Fsx Directory Structure
-The following directories are created and accessible via `/fsx` on the headnode and compute nodes.
-```text
-
-/fsx/
-├── analysis_results
-│   ├── cromwell_executions  ## in development
-│   ├── daylily   ## deprecated
-│   └── ubuntu  ## <<<< run all analyses here <<<<
-├── data  ## mounted to the s3 bucket PREFIX-omics-analysis-REGION/data
-│   ├── cached_envs
-│   ├── genomic_data
-│   └── tool_specific_resources
-├── miners  ## experimental & disabled by default
-├── resources
-│   └── environments  ## location of cached conda envs and docker images. so they are only created/pulled once per cluster lifetime.
-├── scratch  ## scratch space for high IO tools
-└── tmp ## tmp used by slurm by default
-```
-
-
-
 # In Progress // Future Development
-
-## Break Daylily Into 2 Parts: 1) Ephermal Cluster Manager 2) Analysis Pipeline
-- The `daylily` repo grew from an analysis pipeline, and has co-mingled the ephmeral cluster infrastructure (which is not tied to any particular pipeline orchestrator). Breaking it into 2 parts will make things more modular and easier to maintain.
-
-## Update Analysis Pipeline To Run With Snakemake v8.*
-- A branch has been started for this work, which is reasonably straightforward. Tasks include:
-  -  The AWS parallel cluster slurm snakemake executor, [pcluster-slurm](https://github.com/Daylily-Informatics/snakemake-executor-plugin-pcluster-slurm)  is written, but needs some additional features and to be tested at scale.
-  -  Migrate from the current `daylily` `analysis_manifest.csv` to the snakemake `v8.*` `config/samples/units` format (which is much cleaner than the current manifest).
-  -  The actual workflow files should need very little tweaking.
-
-## Cromwell & WDL's
 - Running Cromwell WDL's is in early stages, and preliminary & still lightly documented work can be found [here](config/CROMWELL/immuno/workflow.sh) ( using the https://github.com/wustl-oncology as starting workflows ).
-
-
-
-<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
-
-
-# General Components Overview
-
-  > Before getting into the cool informatics business going on, there is a boatload of complex ops systems running to manage EC2 spot instances, navigate spot markets, as well as mechanisms to monitor and observe all aspects of this framework. [AWS ParallelCluster](https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html) is the glue holding everything together, and deserves special thanks.
-  
-![DEC_components_v2](https://user-images.githubusercontent.com/4713659/236144817-d9b26d68-f50b-423b-8e46-410b05911b12.png)
-
-# Managed Genomics Analysis Services
-The system is designed to be robust, secure, auditable, and should only take a matter of days to stand up. [Please contact me for further details](https://us21.list-manage.com/contact-form?u=434d42174af0051b1571c6dce&form_id=23d28c274008c0829e07aff8d5ea2e91).
-
-
-![daylily_managed_service](https://user-images.githubusercontent.com/4713659/236186668-6ea2ec81-9fe4-4549-8ed0-6fcbd4256dd4.png)
-
-
-<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
-
-
-
-## Some Bioinformatics Bits, Big Picture
-
-### The DAG For 1 Sample Running Through The `BWA-MEM2ert+Doppelmark+Deepvariant+Manta+TIDDIT+Dysgu+Svaba+QCforDays` Pipeline
-#### NOTE: *each* node in the below DAG is run as a self-contained job. Each job/node/rule is distributed to a suitable EC2 spot(or on demand if you prefer) instance to run. Each node is a packaged/containerized unit of work. This dag represents jobs running across sometimes thousands of instances at a time. Slurm and Snakemake manage all of the scaling, teardown, scheduling, recovery and general orchestration: cherry on top: killer observability & per project resource cost reporting and budget controls!
-   ![](docs/images/assets/ks_rg.png)
-   
-   - The above is actually a compressed view of the jobs managed for a sample moving through this pipeline. This view is of the dag which properly reflects parallelized jobs.
-   
-     ![](docs/images/assets/ks_dag.png)
-
-
-
-
-### Daylily Framework, Cont.
-
-#### [Batch QC HTML Summary Report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html)
-> The batch is comprised of google-brain Novaseq 30x HG002 fastqs, and again downsampling to: 25,20,15,10,5x.     
-[Example report](http://daylilyinformatics.com:8082/reports/DAY_final_multiqc.html).
-![](docs/images/assets/day_qc_1.png)
-
-![](docs/images/assets/day_qc_2.png)
-    
-    
-### [Consistent + Easy To Navigate Results Directory & File Structure](/docs/ops/dir_and_file_scheme.md)
-   - A visualization of just the directories (minus log dirs) created by daylily
-    _b37 shown, hg38 is supported as well_
-![](docs/images/assets/tree_structure/tree.md)
-     - [with files](docs/ops/tree_full.md   
-    
-### [Automated Concordance Analysis Table](http://daylilyinformatics.com:8081/components/daylily_qc_reports/other_reports/giabhcr_concordance_mqc.tsv)
-  > Reported faceted by: SNPts, SNPtv, INS>0-<51, DEL>0-51, Indel>0-<51.
-  > Generated when the correct info is set in the analysis_manifest.
-
-
-#### [Performance Monitoring Reports]()
-  > Picture and  list of tools
-
-#### [Observability w/CloudWatch Dashboard](https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#)
-  > ![](docs/images/assets/cloudwatch.png)
-  > ![](/docs/images/assets.cloudwatch_2.png)
-  > ![](/docs/images/assets.cloudwatch3.png)
-
-#### [Cost Tracking and Budget Enforcement](https://aws.amazon.com/blogs/compute/using-cost-allocation-tags-with-aws-parallelcluster/)
-  > ![](https://d2908q01vomqb2.cloudfront.net/1b6453892473a467d07372d45eb05abc2031647a/2020/07/23/Billing-console-projects-grouping.png)
-  - ![](docs/images/assets/costs1.png)
-  - ![](docs/images/assets/costs2.png)
-  
-  
-<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
-
-
-
-# Metrics Required To Make Informed Decisions About Choosing An Analysis Pipeline
-To make informed decisions about choosing an analysis pipeline, there are four key metrics to consider: accuracy(as generally measured via Fscore), user run time, cost of analysis and reproducibility. Further consideration should then be given to the longevity of results (how results are stored, costs associated with storage, and the ease of access to results). All of these can not be optimized simultaneously, and trade-offs must be made. Making these tradeoffs with intention is the primary goal of the daylily framework.
-
-## Accuracy / Precision / Recall / Fscore
-- what is the pipelines perofrmance?
-
-## User Run Time
-- how long does it take to run the pipeline?
-
-## Cost Of Analysis
-### Init Cost
-- is
-### Compute Cost
-- is
-### Storage Cost (for computation)
-- is
-### Other Costs (ie: data transfer)
-- is
-
-## Cost of Storage
-- is
-
-## Reproducibility
-- what is the asserted reproducibility of the pipeline? For 1 month? 1 year? 5 years? 20 years?
-- And how is this tested?
-
-## Longevity of Results
-- how are results stored? What are the costs and access mechanisms for these results?
-
-
-
-
-
-<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
-
-<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
-
-# [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
-
-_named in honor of Margaret Oakley Dahoff_
