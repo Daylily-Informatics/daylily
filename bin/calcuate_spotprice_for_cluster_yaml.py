@@ -162,8 +162,8 @@ def calculate_median_price(resource, az, profile, price_type):
             pap="(median on-demand/3)"
             median_price = round(median_price/3.0, 4)
         else:
-            pap="(median spot price)+0.51"
-            median_price = median_price+0.51  # add a small buffer to the spot price
+            pap="(median spot price)+1.51"
+            median_price = median_price+1.51  # add a small buffer to the spot price
             
         resource['SpotPrice'] = median_price
         # Add a comment indicating the price type
