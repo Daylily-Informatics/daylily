@@ -49,9 +49,6 @@ rule sentieon_mm2:
         """
         export bwt_max_mem={params.max_mem} ;
         epocsec=$(date +'%s');
-
-        export SENTIEON_TMPDIR="/fsx/scratch";
-        export SENTIEON_LICENSE="/fsx/SAVEME_ANA/etc/Daylily_Informatics_eval.lic";
         
         touch {output.samo};
         tdir="/fsx/scratch/";
