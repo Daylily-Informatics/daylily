@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-import yaml
 import subprocess
 import statistics
 import argparse
 from copy import deepcopy
+from ruamel.yaml import YAML
+from ruamel.yaml.comments import CommentedMap
+import json
 
 def parse_arguments():
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description="Insert average spot prices into config.yaml.")
+    parser = argparse.ArgumentParser(description="Insert median prices into config.yaml.")
     parser.add_argument("-i", "--input", required=True, help="Input YAML configuration file path.")
     parser.add_argument("-o", "--output", required=True, help="Output YAML configuration file path.")
-    parser.add_argument("--az", required=True, help="availability zone")
+    parser.add_argument("--az", required=True, help="Availability zone.")
     parser.add_argument("--profile", help="AWS CLI profile to use.")
+    parser.add_argument("--avg-price-of", choices=['spot', 'dedicated'], default='spot', help="Type of price to calculate: spot or dedicated.")
     return parser.parse_args()
 
 def run_aws_command(command):
@@ -22,62 +25,179 @@ def run_aws_command(command):
         print(f"Error executing {' '.join(command)}: {e}")
         return None
 
-def get_availability_zone(subnet_id, profile):
-    """Retrieve the AZ for the given subnet ID."""
-    command = [
-        "aws", "ec2", "describe-subnets", 
-        "--subnet-ids", subnet_id, 
-        "--query", "Subnets[0].AvailabilityZone", 
-        "--output", "text", 
-        "--profile", profile,
-    ]
-    return run_aws_command(command)
-
-def get_spot_price(instance_type, az, profile):
-    """Retrieve the spot price for an instance type in a specific AZ."""
+def get_instance_price(instance_type, az, profile, price_type):
+    """Retrieve the price for an instance type in a specific AZ."""
     region = az[:-1]  # Derive region from AZ
+
+    if price_type == 'spot':
+        command = [
+            "aws", "ec2", "describe-spot-price-history",
+            "--instance-types", instance_type,
+            "--availability-zone", az,
+            "--region", region,
+            "--product-description", "Linux/UNIX",
+            "--query", "SpotPriceHistory[0].SpotPrice",
+            "--output", "text",
+        ]
+        if profile:
+            command.extend(["--profile", profile])
+        result = run_aws_command(command)
+        return float(result) if result else None
+    elif price_type == 'dedicated':
+        pricing_region = 'us-east-1'  # Use a region where the Pricing API is available
+        location = get_region_name(region)  # Get the full region name
+        filters = [
+            {"Type": "TERM_MATCH", "Field": "instanceType", "Value": instance_type},
+            {"Type": "TERM_MATCH", "Field": "location", "Value": location},
+            {"Type": "TERM_MATCH", "Field": "tenancy", "Value": "Dedicated"},
+            {"Type": "TERM_MATCH", "Field": "operatingSystem", "Value": "Linux"},
+            {"Type": "TERM_MATCH", "Field": "preInstalledSw", "Value": "NA"},
+            {"Type": "TERM_MATCH", "Field": "capacitystatus", "Value": "Used"},
+        ]
+        filters_json = json.dumps(filters)
+        command = [
+            "aws", "pricing", "get-products",
+            "--region", pricing_region,
+            "--service-code", "AmazonEC2",
+            "--filters", filters_json,
+            "--query", "PriceList[0]",
+            "--output", "text",
+        ]
+        if profile:
+            command.extend(["--profile", profile])
+        result = run_aws_command(command)
+
+        if result:
+            try:
+                price_item = json.loads(result)
+                # Extract the price from the pricing JSON
+                for terms in price_item.get('terms', {}).get('OnDemand', {}).values():
+                    for price_dimension in terms.get('priceDimensions', {}).values():
+                        price_per_unit = price_dimension.get('pricePerUnit', {}).get('USD')
+                        if price_per_unit:
+                            return float(price_per_unit)
+            except json.JSONDecodeError as e:
+                print(f"JSON decoding error for instance {instance_type}: {e}")
+        else:
+            print(f"No pricing data returned for {instance_type}.")
+        return None
+def get_region_name(region_code):
+    """Dynamically map AWS region codes to region names required by AWS Pricing API."""
+    import json
+
+    # Use the AWS Pricing API to get all available locations
+    pricing_region = 'us-east-1'  # The Pricing API is available in specific regions
     command = [
-        "aws", "ec2", "describe-spot-price-history", 
-        "--instance-types", instance_type, 
-        "--availability-zone", az, 
-        "--region", region,
-        "--product-description", "Linux/UNIX", 
-        "--query", "SpotPriceHistory[0].SpotPrice", 
-        "--output", "text",
-        "--profile", profile
+        "aws", "pricing", "get-attribute-values",
+        "--region", pricing_region,
+        "--service-code", "AmazonEC2",
+        "--attribute-name", "location",
+        "--output", "json"
     ]
+
     result = run_aws_command(command)
-    return float(result) if result else None
+    if result:
+        locations = json.loads(result)
+        location_list = [item['Value'] for item in locations.get('AttributeValues', [])]
 
-def calculate_average_spot_price(resource, az, profile):
-    """Calculate the average spot price for all instances in the compute resource."""
-    spot_prices = [
-        get_spot_price(instance.get('InstanceType'), az, profile)
-        for instance in resource.get('Instances', [])
-        if get_spot_price(instance.get('InstanceType'), az, profile) is not None
-    ]
-    if spot_prices:
-        resource['SpotPrice'] = round(statistics.mean(spot_prices), 4)
+        # Attempt to match the region code to the location name
+        # We'll use a heuristic approach based on known patterns
+        # IS THIS REALLY NOT EASY TO GET VIA AWS???
 
-def process_slurm_queues(config, az, profile):
-    """Process all Slurm queues to calculate and update spot prices."""
+        # Common patterns for region names
+        region_patterns = {
+            'us-east-1': 'US East \\(N.*Virginia\\)',
+            'us-east-2': 'US East \\(Ohio\\)',
+            'us-west-1': 'US West \\(N.*California\\)',
+            'us-west-2': 'US West \\(Oregon\\)',
+            'af-south-1': 'Africa \\(Cape Town\\)',
+            'ap-east-1': 'Asia Pacific \\(Hong Kong\\)',
+            'ap-south-1': 'Asia Pacific \\(Mumbai\\)',
+            'ap-northeast-3': 'Asia Pacific \\(Osaka\\)',
+            'ap-northeast-2': 'Asia Pacific \\(Seoul\\)',
+            'ap-southeast-1': 'Asia Pacific \\(Singapore\\)',
+            'ap-southeast-2': 'Asia Pacific \\(Sydney\\)',
+            'ap-northeast-1': 'Asia Pacific \\(Tokyo\\)',
+            'ca-central-1': 'Canada \\(Central\\)',
+            'eu-central-1': 'EU \\(Frankfurt\\)',
+            'eu-west-1': 'EU \\(Ireland\\)',
+            'eu-west-2': 'EU \\(London\\)',
+            'eu-south-1': 'EU \\(Milan\\)',
+            'eu-west-3': 'EU \\(Paris\\)',
+            'eu-north-1': 'EU \\(Stockholm\\)',
+            'me-south-1': 'Middle East \\(Bahrain\\)',
+            'sa-east-1': 'South America \\(São Paulo\\)',
+            # Add other regions as needed
+        }
+
+        import re
+
+        # Find the matching region name
+        pattern = region_patterns.get(region_code)
+        if pattern:
+            for location in location_list:
+                if re.match(pattern, location):
+                    return location
+
+        print(f"Region code {region_code} not found in patterns. Using default mapping.")
+
+    else:
+        print("Could not retrieve locations from AWS Pricing API.")
+
+    # Fallback to region code if no match is found
+    return region_code
+
+def calculate_median_price(resource, az, profile, price_type):
+    """Calculate the median price for all instances in the compute resource."""
+    prices = []
+    for instance in resource.get('Instances', []):
+        instance_type = instance.get('InstanceType')
+        price = get_instance_price(instance_type, az, profile, price_type)
+        if price is not None:
+            prices.append(price)
+    if prices:
+        median_price = round(statistics.median(prices), 4)
+        pap=price_type 
+        if price_type == 'dedicated':
+            pap="(median on-demand/3)"
+            median_price = round(median_price/3.0, 4)
+        else:
+            pap="(median spot price)+0.51"
+            median_price = median_price+0.51  # add a small buffer to the spot price
+            
+        resource['SpotPrice'] = median_price
+        # Add a comment indicating the price type
+        resource.yaml_add_eol_comment(f'Calculated using {pap}.', key='SpotPrice', column=0)
+    else:
+        print(f"Could not retrieve {price_type} prices for instances in resource {resource.get('Name')}.")
+
+def process_slurm_queues(config, az, profile, price_type):
+    """Process all Slurm queues to calculate and update prices."""
     for queue in config.get('Scheduling', {}).get('SlurmQueues', []):
         for resource in queue.get('ComputeResources', []):
-            calculate_average_spot_price(resource, az, profile)
+            if not isinstance(resource, CommentedMap):
+                resource = CommentedMap(resource)
+            calculate_median_price(resource, az, profile, price_type)
 
 def main():
     args = parse_arguments()
 
     az = args.az
     profile = args.profile
-    with open(args.input, 'r') as f:
-        config = yaml.safe_load(f)
+    price_type = args.avg_price_of
 
-    new_config = deepcopy(config)
-    process_slurm_queues(new_config, az, profile)
+    with open(args.input, 'r') as f:
+        yaml_loader = YAML()
+        yaml_loader.preserve_quotes = True
+        config = yaml_loader.load(f)
+
+    process_slurm_queues(config, az, profile, price_type)
 
     with open(args.output, 'w') as f:
-        yaml.dump(new_config, f, sort_keys=False)
+        yaml_dumper = YAML()
+        yaml_dumper.explicit_start = True
+        yaml_dumper.explicit_end = True
+        yaml_dumper.dump(config, f)
 
     print(f"Updated configuration saved to {args.output}.")
 
