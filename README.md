@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.35)
+# Daylily AWS Ephemeral Cluster Setup (0.7.36)
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
 
