@@ -31,8 +31,8 @@ if "dppl" in DDUP:
             vcpu=config["doppelmark"]["threads"],
             mem_mb=config["doppelmark"]["mem_mb"],
         params:
-            cluster_sample='na',
-	    numa=config['doppelmark']['numa'],
+            cluster_sample=ret_sample,
+	        numa=config['doppelmark']['numa'],
             shard_size=config['doppelmark']['shard_size'],
             clip_padding=config['doppelmark']['clip_padding'],
             min_bases=config['doppelmark']['min_bases'],

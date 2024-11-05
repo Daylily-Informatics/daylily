@@ -27,7 +27,7 @@ rule mosdepth:
         T="0,10,20,30"
         if "depth_bins" not in config["mosdepth"]
         else config["mosdepth"]["depth_bins"],
-        cluster_sample="{wildcards.sample}",
+        cluster_sample=ret_sample,
     shell:
         "rm -rf {log.b}* || echo rmlogFailedMosDepth;"
         "mosdepth --threads {threads} --by {params.win_size} --fast-mode --mapq {params.mapq} -T {params.T} {log.b} {input} > {log.a} 2>&1; "
