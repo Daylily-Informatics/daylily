@@ -7,9 +7,9 @@ cluster:
     --parsable
     --cpus-per-task={threads}
     --time={resources.time}
-    --job-name=D-{rule}-{sample}
-    --output=logs/slurm/{rule}/{rule}.{sample}.{jobid}.out
-    --error=logs/slurm/{rule}/{rule}.{sample}.{jobid}.err
+    --job-name={rule}-{wildcards.sample}
+    --output=logs/slurm/{rule}/{rule}.{wildcards.sample}.{jobid}.out
+    --error=logs/slurm/{rule}/{rule}.{wildcards.sample}.{jobid}.err
     --partition={resources.partition}
     --chdir=$PWD
     --mem={resources.mem_mb}
