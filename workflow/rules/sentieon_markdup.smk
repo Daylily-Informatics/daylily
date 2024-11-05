@@ -1,7 +1,5 @@
 #########  SENTIEON DEDUPING
 # --------------------------
-# Pretty Fast dedupe
-#
 
 if "sent" in DDUP:
 
@@ -10,7 +8,7 @@ if "sent" in DDUP:
 
     rule sentieon_markdups:
         """Runs duplicate marking on the BAM."""
-        """Sentieon Dedupe"""
+
         input:
             MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam",
             MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam.bai",
@@ -38,12 +36,9 @@ if "sent" in DDUP:
             "{MDIR}{sample}/align/{alnr}/logs/dedupe.{sample}.{alnr}.log",
         shell:
             """
-            export SENTIEON_TMPDIR="/fsx/scratch";
-            export SENTIEON_LICENSE="/fsx/SAVEME_ANA/etc/Daylily_Informatics_eval.lic";
-            export SENTIEON_INSTALL_DIR="/fsx/SAVEME_ANA/bin/sentieon-genomics-202112.06/";
-            sentieon driver -i {input[0]} -t {threads} \
+            /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon driver -i {input[0]} -t {threads} \
               --algo LocusCollector {output.score} > {log}; 
-            sentieon driver -i {input[0]} -t {threads} \
+            /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon driver -i {input[0]} -t {threads} \
               --algo Dedup --metrics {output.metrics} \
               --bam_compression 9 \
               --optical_dup_pix_dist 100 \

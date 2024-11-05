@@ -52,20 +52,16 @@ rule sentieon_bwa_sort:
         export bwt_max_mem={params.max_mem} ;
         epocsec=$(date +'%s');
 
-        export SENTIEON_TMPDIR="/fsx/scratch";
-        export SENTIEON_LICENSE="/fsx/SAVEME_ANA/etc/Daylily_Informatics_eval.lic";
-        export SENTIEON_INSTALL_DIR="/fsx/SAVEME_ANA/bin/sentieon-genomics-202112.06/";
-        
         touch {output.samo};
         tdir="/fsx/scratch/";
 
-        {params.numactl}   sentieon bwa mem \
+        /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon bwa mem \
         -t {threads}  {params.K}  \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.K} -t {threads} {params.huref} \
         <(zcat {input.f1} ) <(zcat {input.f2} ) \
         | mbuffer -m 20G \
-        |  sentieon util sort \
+        |  /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {threads} \
         --sortblock_thread_count {params.sort_threads} \
         --bam_compression 9 \

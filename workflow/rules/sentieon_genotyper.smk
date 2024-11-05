@@ -31,8 +31,7 @@ rule sentieon_genotyper:
         .readline()
         .rstrip(),
     shell:
-        "{params.jemalloc};"
-        "sentieon driver -t {threads} -r {params.huref} -i {input.bam} {params.caller_rc}  --ploidy 2 {output.vcf} > {log} 2>&1;"
+        "/fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon driver -t {threads} -r {params.huref} -i {input.bam} {params.caller_rc}  --ploidy 2 {output.vcf} > {log} 2>&1;"
         "bcftools sort -m 100G -O z -o {output.sort_vcf_gz}  {output.vcf};"
         "bcftools index --threads {threads} -t {output.sort_vcf_gz};"
         "{latency_wait};"
