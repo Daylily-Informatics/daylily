@@ -178,8 +178,8 @@ export DAY_BIOME=AWSPC
 export DAY_ROOT=$PWD
 
 export SENTIEON_TMPDIR='/fsx/scratch'
-export SENTIEON_LICENSE='/fsx/SAVEME_ANA/etc/Daylily_Informatics_eval.lic'
-export SENTIEON_INSTALL_DIR='/fsx/SAVEME_ANA/bin/sentieon-genomics-202112.06/'
+export SENTIEON_LICENSE='/fsx/data/cached_envs/Rare_Cancer_Research_Foundation_eval.lic'
+export SENTIEON_INSTALL_DIR='/fsx/data/cached_envs/sentieon-genomics-202308.03'
 export PATH="$PATH:$SENTIEON_INSTALL_DIR/bin/"
 
 # Needed by daycli
