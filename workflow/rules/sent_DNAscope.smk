@@ -99,7 +99,7 @@ rule sentD_sort_index_chunk_vcf:
     resources:
         vcpu=8,
         threads=8,
-        partition="i8,i8,i64,i96,i128"
+        partition="i192,i128"
     params:
         x='y',
         cluster_sample=ret_sample,
@@ -181,7 +181,7 @@ rule sentD_concat_index_chunks:
     resources:
         vcpu=8,
         threads=8,
-        partition="i8,i8,i64,i96,i128"
+        partition="i192,i128"
     priority: 47
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
