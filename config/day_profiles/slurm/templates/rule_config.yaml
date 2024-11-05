@@ -387,8 +387,8 @@ rtg_vcfeval:
     threads: 32
     env_yaml: "../envs/rtgtools_v0.1.yaml"
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i192"
-    partition_other: "i192"
+    partition: "i192,i128"
+    partition_other: "i192,i128"
     rtg_region: " " 
 
 run_concordance:

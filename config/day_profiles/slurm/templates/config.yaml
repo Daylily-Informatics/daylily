@@ -42,7 +42,6 @@ conda-prefix: "/fsx/resources/environments/conda/USER_REGSUB/HOSTNAME"
 cluster-status: config/day_profiles/slurm/templates/status-scontrols.sh
 cluster-cancel: scancel
 max-status-checks-per-second: 10
-# slurm: True  ## DO NOT USE on AWS, try for local- untested.  You'll want to comment out cluster-{status,cancel} and tweak the cluster and default-resources
 force-use-threads: True
 stats: "day_pipe_stats.json"
 use-singularity: True
