@@ -49,7 +49,9 @@ rule sentieon_mm2:
         """
         export bwt_max_mem={params.max_mem} ;
         epocsec=$(date +'%s');
-        
+
+        ulimit -n 16384
+
         touch {output.samo};
         tdir="/fsx/scratch/";
 

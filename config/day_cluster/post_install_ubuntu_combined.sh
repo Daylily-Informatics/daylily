@@ -19,6 +19,8 @@ wallet="$4"  # specified in the cluster yaml, wallet
 
 aws configure set region $region
 
+# for sentieon
+ulimit -n 16384
 
 # Function to log spot price
 log_spot_price() {
