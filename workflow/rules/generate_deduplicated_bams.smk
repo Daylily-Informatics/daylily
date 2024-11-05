@@ -10,7 +10,7 @@ rule produce_deduplicated_bams:  # TARGET : Generate Just BAMs with Dups Marked 
     input:
         expand(
             MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-            sx=SSAMPS,
+            sample=SSAMPS,
             alnr=ALIGNERS,
         ),
     output:
