@@ -434,7 +434,8 @@ sentieon_dnascope:
     partition: "i192"
 
 sentieon:
-    threads: 128
+    threads: 192
+    bwa_threads: 128
     benchmark_runs: 0
     max_mem: "190G"
     K: "  -k 19 -Y  "
