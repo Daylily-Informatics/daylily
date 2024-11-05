@@ -45,6 +45,7 @@ rule sentieon_bwa_sort:
         sort_thread_mem=config['sentieon']['sort_thread_mem'],
         sort_threads=config['sentieon']['sort_threads'],
         write_threads=config['sentieon']['write_threads'],
+        igz_threads=config['sentieon']['igz_threads']
     conda:
         config["sentieon"]["env_yaml"]
     shell:
@@ -61,8 +62,8 @@ rule sentieon_bwa_sort:
         -t {threads}  {params.K}  \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.K} -t {threads} {params.huref} \
-        <(zcat {input.f1} ) <(zcat {input.f2} ) \
-        | mbuffer -m 20G \
+         <(igzip -c -d -T  {params.igz_threads} -q  {input.f1} ) \
+         <(igzip -c -d -T  {params.igz_threads} -q  {input.f2} )  \
         |  /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {threads} \
         --sortblock_thread_count {params.sort_threads} \

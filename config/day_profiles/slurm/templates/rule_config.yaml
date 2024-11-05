@@ -133,7 +133,6 @@ bwa_mem2a_aln_sort:
     numactl: ""
     mbuffer_mem: "200G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
-
 strobe_align_sort:
     env_yaml: "../envs/strobe_aligner.yaml"
     partition: "i192"
@@ -195,7 +194,7 @@ deepvariant:
     numa: " OMP_THREADS=64 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE " 
 
 duphold:
-    threads: 16
+    threads: 32
     env_yaml: "../envs/duphold_v0.1.yaml"
     numactl: "none"
     ld_preload: "  "
@@ -227,7 +226,7 @@ dysgu_sort_index:
     partition: "i192"
 
 fastp:
-    threads: 16
+    threads: 32
     env_yaml: "../envs/fastp_v0.1.yaml"
     filter_avg_q_score: 9
     other_args: "  "
@@ -235,21 +234,21 @@ fastp:
     partition: "i192"
 
 fastqc:
-    threads: 16
+    threads: 32
     env_yaml: "../envs/fastqc_v0.1.yaml"
     extract: "  "
     ld_preload: " "
     partition: "i192"
 
 fastv:
-    threads: 16
+    threads: 32
     env_yaml: "../envs/fastv_v0.1.yaml"
     ld_preload: "  "
     partition: "i192"
 
 go_left:
     env_yaml: "../envs/go_left_v0.1.yaml"
-    threads: 16
+    threads: 32
     partition: "i192"
 
 kat:
@@ -341,7 +340,7 @@ octopus:
 
 
 sentD:
-    threads: 128 
+    threads: 192 
     sentD_chrms: "1-24"
     ld_preload: " " 
     env_yaml: "../envs/vanilla_v0.1.yaml"
@@ -398,7 +397,7 @@ run_concordance:
     partition: "i192"
 
 sentieon_haplocaller:
-    threads: 127
+    threads: 192
     partition: "i192"
 
 rtg_vcfstats:
@@ -419,13 +418,13 @@ sambamba_markdups:
     partition: "i192"
 
 samtools_markdups:
-    threads: 128
+    threads: 192
     ulimit: " ulimit -Sn 810000 "
     env_yaml: "../envs/samtools_v0.1.yaml"
     partition: "i192"
 
 sentieon_dnascope:
-    threads: 64
+    threads: 192
     benchmark_runs: 0
     env_yaml: "../envs/sentieon_v0.1.yaml"
     mask_regions: " "
@@ -437,20 +436,21 @@ sentieon_dnascope:
 sentieon:
     threads: 128
     benchmark_runs: 0
-    max_mem: "120G"
-    K: "  -K 1204800000 -k 19 -Y  "
+    max_mem: "190G"
+    K: "  -k 19 -Y  "
     env_yaml: "../envs/sentieon_v0.1.yaml"
     glances: " "
     mask_regions: " "
     numactl: "  JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  "  
-    metrics_threads: 128
+    metrics_threads: 64
     partition: "i192"
-    sort_thread_mem: "10G"
-    sort_threads: 38
-    write_threads: 82
+    sort_threads: 64
+    write_threads: 64
+    igz_threads: 64 
+    sort_thread_mem: "4000M" 
 
 sentieon_markdups:
-    threads: 128
+    threads: 192
     ulimit: " ulimit -Sn 810000 "
     env_yaml: "../envs/sentieon_v0.1.yaml"
     glances: " "

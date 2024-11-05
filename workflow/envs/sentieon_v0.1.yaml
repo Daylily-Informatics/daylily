@@ -14,3 +14,4 @@ dependencies:
   - seqkit
   - seqfu
   - sambamba
+  - isa-l

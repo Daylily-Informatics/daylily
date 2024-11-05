@@ -460,6 +460,7 @@ sentieon:
     sort_thread_mem: "100M"
     sort_threads: 4
     write_threads: 4
+    igz_threads: 4 
 
 sentieon_markdups:
     threads: 128
