@@ -10,8 +10,8 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
 ## Table of Contents
 - [Before Beginning](#before-beginning)
-- [Strongly Suggested: PCUI](#strongly-suggested--pcui)
-- [Steps](#steps)
+- [Strongly Suggested: AWS Parallel Cluster UI](#strongly-suggested--pcui)
+- [Installation Steps](#installation-steps)
   - [Prepare Your Local Shell](#prepare-your-local-shell)
   - [Clone The `daylily` Repository](#clone-the-daylily-repository)
   - [Install Conda](#install-conda-if-not-already-installed)
@@ -21,7 +21,6 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 - [Monitoring Tools](#monitoring-tools)
 - [Known Issues](#known-issues)
 - [Future Development](#future-development)
-- [License](#license)
 
 ---
 
@@ -48,10 +47,15 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
   <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
-# Steps
+# Installation Steps
 
-## Prepare Your Local Shell
-The shell (probably your laptop) you will be using to ssh into the clusters you'll be creating.
+## On Your Local Machine, A Terminal
+Your local machine will be used to instantiate and manage ephemeral clusters. To date, this developmnent has been carried out on a MAC laptop (zsh shell).
+
+
+### Install Conda (if not already installed)
+_bash and zsh are known to work_
+- [Conda, miniconda specifically, is required to be setup in your shell to proceed.](docs/install/Install.md#run-daylily-init)
 
 ### Clone The `daylily` Repository
 ```bash
@@ -59,14 +63,9 @@ git clone git@github.com:Daylily-Informatics/daylily.git
 cd daylily
 ```
 
-### Install Conda (if not already installed)
-_bash and zsh are known to work_
-- [Conda, miniconda specifically, is required to be setup in your shell to proceed.](docs/install/Install.md#run-daylily-init)
-
-
-## Only Necessary To Follow Once Per AWS Acount
-### AWS 
-#### 0. AWS Quotas (VERY IMPORTANT)
+## via Your AWS Dashboard / Account 
+_note:_ the following steps need to happen only once per-scope of the resource. I have begun to wrap managing these AWS resources in the overall ephemeral cluster build process (which is only well tested for a single cluster per-region). The following notes should help you if you go beyond a single cluster per-region. tldr:  some of these things happen once per account, per-region, per-az.
+### 0. AWS Quotas
 - You must request increases to the default quotas for the resources `pcluster` requires to be available.  
 - This is a critical step, and you should do this before attempting to create a cluster.  
   - And, you should monitor your usage and request additional increases as your needs grow.
@@ -79,7 +78,7 @@ _bash and zsh are known to work_
 > **fsx lustre**
 > - should minimally allow creation of a FSX Lustre filesystem with >= 4.8 TB storage, which should be the default.
 
-#### 1. Activate Cost Allocation Tags (optional)
+### 1. Activate Cost Allocation Tags (optional)
 If you have not created an ephemeral cluster yet, the tags will not be known to your AWS account, you may need to tag something with these tags if not yet known. Someone with 'payer' access to the account will need to activate cost allocation tags.  This is important for the cost tracking and budgeting of the daylily ephemeral clusters.
 
 * [AWS Cost Allocation Tags](https://us-east-1.console.aws.amazon.com/billing/home#/tags)
@@ -91,7 +90,7 @@ aws-parallelcluster-username
 ```
 
 
-#### 1. Install / Configure The AWS CLI
+### 2. Install / Configure The AWS CLI
 _Create And Save AWS CLI Credentials In `.aws`_
 - For your terminal/shell account these files `~/.aws/{credentials,config}` should exist.
 
@@ -111,10 +110,10 @@ aws_secret_access_key = <SECRET_ACCESS_KEY>
 region = <REGION>
 ```
 
-##### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster To Operate
+#### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster To Operate
 Please refer to the pcluster docs to verify your cli user has the appropriate permissions to create and manage the resources necessary for the cluster.  [AWS Parallel Cluster Permissions](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam.html).
 
-###### Two Inline Policies To Add To The CLI User
+#### Add Two Inline Policies To Add To The CLI User
 Add 'inline json' policies to the user who will be running the `pcluster` commands.  These policies are necessary for the `pcluster` headnode to manage spot instances and query spot price histories.
 
 **pcluster-omics-analysis-fleet**
@@ -155,7 +154,7 @@ Your user must have the ability to query spot price histories. Add the following
 ```
 
 
-#### 2. Create A New SSH Key Pair (type: **ed25519**) & Downloaded `.pem` File
+### 3. Create A New SSH Key Pair (type: **ed25519**) & Downloaded `.pem` File
 
 _keypairs are region specific, and you will need to create a new keypair for each region you intend to run in_
 
@@ -170,14 +169,14 @@ chmod 400 ~/.ssh/<yourkey>.pem`
 
 * Your keypair will need to be available in ~/.ssh/
 
-#### 3. The `YOURPREFIX-omics-analysis-REGION` s3 Bucket
+### 4. The `YOURPREFIX-omics-analysis-REGION` s3 Bucket
 - Your new bucket name needs to end in `-omics-analysis-REGION` and be unique to your account.
 - One bucket must be created per `REGION` you intend to run in.
 - The reference data version is currently `0.7`, and will be replicated correctly using the script below.
 - The total size of the bucket will be 779.1GB, and the cost of standard S3 storage will be ~$30/mo.
 - Copying the daylily-references-public bucket will take ~7hrs using the script below.
 
-##### `daylily-references-public` Bucket Contents
+#### `daylily-references-public` Bucket Contents
 - `hg38` and `b37` reference data files (including supporting tool specific files).
 - 7 google-brain ~`30x` Illunina 2x150 `fastq.gz` files for all 7 GIAB samples (`HG001,HG002,HG003,HG004,HG005,HG006,HG007`).
 - snv and sv truth sets (`v4.2.1`) for all 7 GIAB samples in both `b37` and `hg38`.
@@ -186,7 +185,7 @@ chmod 400 ~/.ssh/<yourkey>.pem`
 
 _note:_ you can choose to eliminate the data for `b37` or `hg38` to save on storage costs. In addition, you may choose to eliminate the GIAB fastq files if you do not intend to run concordance or benchmarking tests (which is advised against as this framework was developed explicitly to facilitate these types of comparisons in an ongoing way).
 
-###### Top Level Diretories
+##### Top Level Diretories
 See the secion on [shared Fsx filesystem](#shared-fsx-filesystem) for more on hos this bucket interacts with these ephemeral cluster region specific S3 buckets.
 ```text
 .
@@ -214,8 +213,8 @@ See the secion on [shared Fsx filesystem](#shared-fsx-filesystem) for more on ho
 ```
 
 
-##### Create The Bucket
-##### Replicate `daylily-references-public` Public References/Resources To Your New Bucket
+#### Create The Bucket
+#### Replicate `daylily-references-public` Public References/Resources To Your New Bucket
 - Use the following script.
 ```bash
 sni
@@ -238,8 +237,8 @@ Usage: ./bin/create_daylily_omics_analysis_s3.sh --prefix <PREFIX> [--daylily-s3
 ```
 
 
-#### 4. Create A New `pcluster` Stack
-##### **but first, choose the most affordable avaiability zone**
+### 5. Create A New `pcluster` Stack
+#### **but first, choose the most affordable avaiability zone**
 The `region` is important for pcluster to run, but the `availability zone` is the largest variable w/r/t compute costs.  Daylily defaults to `us-west-2c` as it is consistently cheaper to run in from `us` regions, but not always. The costs per AZ can vary by 2-3x. Please note, running in AZ's outside us-west-2 has **NOT** been tested, it should be trivial to tweak config to work outsize us-west-2, however, I believe the biggest pain will be that the S3 bucket must be in the same region as the `FSX` filesystem created by pcluster.  In anycase, this script presents a table to give you a feel for costs of running in different AZ's.
 _build the `DAYCLI` environment to run the following script_
 
@@ -248,7 +247,7 @@ python bin/check_current_spot_market_by_zones.py -i config/day_cluster/prod_clus
 us-east-1d,us-west-1a,us-west-2c
 
 
-###### Spot Price Statistics (example- still in active development)
+##### Spot Price Statistics (example- still in active development)
 ```text
 | Zone       | Total Instances Considered | Instances with Pricing | Median Spot Price | Mean Spot Price | Min Spot Price | Max Spot Price | Avg of Lowest 3 Prices | Harmonic Mean Price | Estimated EC2 Cost / Genome (no FSX or S3 costs included here) | Stability (Max-Min Spread) |
 |------------|----------------------------|------------------------|-------------------|----------------|---------------|---------------|------------------------|--------------------|-----------------------------|----------------------------|
@@ -260,10 +259,11 @@ us-east-1d,us-west-1a,us-west-2c
 | us-west-2b | 6                          | 6                      | 3.9970             | 4.4728         | 2.3100         | 9.1402        | 2.8915                 | 3.6808              | 8.6745                      | 6.8302                     |
 | us-east-1a | 6                          | 6                      | 3.5854             | 4.0252         | 2.9681         | 6.8254        | 3.2490                 | 3.7470              | 9.7470                      | 3.8573                     |
 | us-west-2a | 6                          | 6                      | 3.9594             | 4.8392         | 3.4149         | 8.8822        | 3.4376                 | 4.2998              | 10.3128                     | 5.4673                     |
+```
 
 * I will proceed with `us-west-2c`.
 
-##### **Create The Cloudformation Stack (optional)**
+#### **Create The Cloudformation Stack (optional)**
 This is optional, in that it will be run for you if needed during the ephemeral cluster creation below.
 From the `daylily` repository root dir, run the following command (it will take up to 10min to complete! This step does not need to be repeated for each new cluster, but only when you are setting up in a new AZ, which quotas will likely limit you to just one at a time).:
 ```bash
@@ -273,16 +273,13 @@ bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml <short-res
 - The script should block the terminal while running, and report back on success.  If failure, go to the cloudformation console and look at the logs for the stack to see what went wrong & delete the stack before attempting again.
 - **the resources created here will be presented to you when you run the daycli init**: `Public Subnet ID`, `Private Subnet ID`, and `Policy ARN` will be reported to STDOUT upon success.
 
-## 
-## Local DAYCLI Setup & Ephemeral Cluster Initialization (only need to do this once per new cluster)
+### 6. Local DAYCLI Setup & Ephemeral Cluster Initialization (only need to do this once per new cluster)
 From your local/laptop shell (NOTE: there is an unfortunate, and to be rectified mixture of `zsh` and `bash` scripts used here. Dev was done on a MAC with zsh and then cluster work with `bash` using ubuntu22. Please stick with the indicated shells until everything is ported to `bash`).
 Assumes all of the required setup steps above have been completed, and will run several checks to ensure the setup is correct before proceeding. You will be allowed to exit the process at any time and you will be prompted to confirm you wish to create the ephemeral cluster once all checks have passed.
 
-### Local `pcluster` DAYCLI Setup & Ephemeral Cluster Initialization
+#### Local `pcluster` DAYCLI Setup & Ephemeral Cluster Initialization
+**Bootstrap Installation Of `daylily` CLI**
 
-#### 1. Install The `DAYCLI` Conda Environment (if not present) & Initialize The Ephemeral Cluster
-_note:_ 
-## Bootstrap Installation Of `daylily` CLI
 _note:_ the cli init script will run checks for the steps covered to this point, and will prompty if there are errors to be resovlved before proceeding (this is not comprehensively tested yet! do not treat no errors as evidence all config to this point is correct).
 
 
@@ -303,14 +300,14 @@ _note:_ the cli init script will run checks for the steps covered to this point,
   - First, a dryrun `pcluster create-clsuter` command will be run to ensure the configuration is correct. You will be informed of success/fail for this step, and asked if you wish to proceed in actual creation of the cluster, enter `y`.
   - The ephemeral cluster creation will begin and a monitoring script will watch for its completion.  This may take 10-20min. You may exit the process at this time, and can check on the cluster via the pcluster cli, or the cloudformation console.
 
-### Actual Example Command
+##### Command To Build And Deploy An Ephemeral Cluster
 ```bash
     export AWS_PROFILE=default
     source bin/daylily-cfg-ephemeral-cluster --region-az us-east-1d --profile $AWS_PROFILE --pass-on-warn # You must specify the --profile flag, and if using default, AWS_PROFILE should be set to default, not null.
 ```
 
 
-##### Head Node Configuration (only needed to be done once per new cluster)
+###### Head Node Configuration (only needs to be done once per new cluster, and should happen automatically with the above build command)
 _**todo**: bake the headnode as an AMI and use this AMI in the cluster congifuration, making this step unnecessary_
 - Headnode configuration will proceed automatically following the above successful cluster creation  (you may manually trigger running `source bin/daylily-cfg-headnode $pem_file $region` if not started automatically).  
 - This process will:
@@ -333,24 +330,25 @@ Setup complete. You can now start working with Daylily on the head node.
 ```
   - You are ready to roll.
 
-### Cluster Initialization Complete ( head node confguration not necessarily complete )
-You can confirm the cluster creation was successful with the following command.
+### Cluster Initialization Complete 
+You can confirm the cluster creation was successful with the following command (alternatively, use the PCUI console).
 ```bash
 pcluster list-clusters --region us-west-2
 ```
-
-#### COST OF IDLE CLUSTER
+## Costs
+#### OF IDLE CLUSTER
 > The cluster, once created, will *MINIMALLY* cost whatever the hourly on-demand cost of the head node you chose (the default instance type should run ~$1/hr). And then, the cost of the fsx filesystem. 
 
 > When the cluster is doing actual work, spot instances are created as needed, and released if idle for longer than (configurable, but default 5min). Spot instance pools are configured to greatly increase finding very cheap spot instances, but this is not guaranteed. You pay per min for each spot instance running. MONITOR YOUR COSTS AND USE.
 
 > The intended use case is not to leave a cluster idle for too long, but spin the thing up and down as needed. Leaving the cluster idle for two+ days or so is probably starting to be too long idle.
 
-> 
 
-### Working With The Ephemeral Clusters (via `pcluster`)
 
-#### Critically Important Words On Quotas -- You Must Request Increases From The Defaults
+## Working With The Ephemeral Clusters (via `pcluster`)
+**PCUI is a new tool, and should replicate the pcluster CLI completely, the future is there, but I had these docs already written, so here we are.**
+
+###  Quotas -- You Must Request Increases From The Defaults
 * AWS assigned default quotas will not allow creating a pcluser cluster.
 * AWS quotas limit many of the resources needed by pcluster to build and run ephemeral clusters. 
 * The default resource quotas on a standard AWS account may not be sufficent to run an ephemeral cluster. 
@@ -358,16 +356,16 @@ pcluster list-clusters --region us-west-2
 
 **Proactively Request Quota Increases Before You Encounter Problems**
   
-##### A Few Important Quotas To Monitor
+#### A Few Important Quotas To Monitor
 **quotas are applied by region. be sure you are looking at the `us-west-2` region quotas && be sure when you make quota increase requests you are doing so in `us-west-2`**
 - The following are important quotas to review, but is not exhaustive as quota assignment can vary unpredictably by account.
 
 
-###### VPC Quotas / Networking
+##### VPC Quotas / Networking
 - [VPC Quotas Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/vpc/quotas)
 If there are problems with VPC or networking quotas, these should cause hard fails very early in setting up daylily clusters. There are restrictive limits to the number of VPCs, subnets, and security groups you can create in a region.
 
-###### EC2 Quotas
+##### EC2 Quotas
 - [EC2 Quotas Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/ec2/quotas)
 Quotas are applied by class of instance and by total number `vCPU` used across the class which a quota applies. 
 
@@ -381,17 +379,19 @@ Quotas are applied by class of instance and by total number `vCPU` used across t
 > `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 310 (and preferable >=2958) **!!(AWS default is 5) !!**
 > - This is the max total number of vcpus allowed for spot instances to hold for your account in this region.
 
-###### FSX Lustre Quotas
+##### FSX Lustre Quotas
 Default FSX quotas should be 
 - [FSX Lustre Quota Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/fsx/quotas)
 - This is the max total number of vcpus allowed for spot instances to hold for your account in this region.
 
-#### Activate The DAYCLI Conda Environment
+## DAYCLI
+
+### Activate The DAYCLI Conda Environment
 ```bash
 conda activate DAYCLI
 ```
 
-#### `pcluster` CLI Usage
+### `pcluster` CLI Usage
 **WARNING:**  you are advised to run `aws configure set region <REGION>` to set the region for use with the pcluster CLI, to avoid the errors you will cause when the `--region` flag is omitted.
 
 ```text
@@ -449,12 +449,12 @@ COMMANDS:
 For command specific flags, please run: "pcluster [command] --help"
 ```
 
-##### List Clusters
+#### List Clusters
 ```bash
 pcluster list-clusters --region us-west-2
 ```
 
-##### Describe Cluster
+#### Describe Cluster
 
 ```bash
 pcluster describe-cluster -n $cluster_name --region us-west-2
@@ -465,17 +465,17 @@ ie: to get the public IP of the head node.
 pcluster describe-cluster -n $cluster_name --region us-west-2 | grep 'publicIpAddress' | cut -d '"' -f 4
 ```
 
-##### SSH Into Cluster Headnode
+#### SSH Into Cluster Headnode
 From your local shell, you can ssh into the head node of the cluster using the following command.
 ```bash
 ssh -i $pem_file ubuntu@$cluster_ip_address 
 ```
 
-###### First Time Logging Into Head Node
+##### First Time Logging Into Head Node
 **Confirm `daylily` CLI Is Working**
 ```bash
 cd ~/projects/daylily
-. dyinit -h # inisitalizes the daylily cli
+. dyinit # inisitalizes the daylily cli
 dy-a local # activates the local config
 dy-r help # should show the help menu
 ```
@@ -503,7 +503,7 @@ dy-r produce_deduplicated_bams -p -j 2 -n # dry run
 dy-r produce_deduplicated_bams -p -j 2 
 ```
 
-###### More On The `-j` Flag
+##### More On The `-j` Flag
 **do not set above 10 until you know you want this set above 10 and undesrstand the implications**
 The `-j` flag specified in `dy-r` limits the number of jobs submitted to slurm. For out of the box settings, the advised range for `-j` is 1 to 10. You may omit this flag, and allow submitting all potnetial jobs to slurm, which slurm, /fsx, and the instances can handle growing to the 10s or even 100 thousands of instances... however, various quotas will begin causing problems before then.  The `local` defauly is set to `-j 1` and `slurm` is set to `-j 10`, `-j` may be set to any int > 0.
 
@@ -590,9 +590,8 @@ note1: the first time you run a pipeline, if the docker images are not cached, t
 
 note2: The first time a cold cluster requests spot instances, can take some time (~10min) to begin winning spot bids and running jobs. Hang tighe, and see below for monitoring tips.
 
-##### (TO RUN ON A FULL 30x WGS DATA SET)
+##### (RUN ON A FULL 30x WGS DATA SET)
 
-###### First, A Comment On
 ###### Specify A Single Sample Manifest
 You may repeat the above, and use the pre-existing analysis_manifest.csv template `.test_data/data/giab_30x_hg38_analysis_manifest.csv`.
 ```bash
@@ -886,8 +885,6 @@ If the `S3` bucket mounted to the FSX filesystem is too large (the default bucke
 ## Advanced Topics
 
 - [Monero Mining](docs/advanced/monero_mining.md)
-- [Cost Analysis](docs/advanced/cost_analysis.md)
-
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
