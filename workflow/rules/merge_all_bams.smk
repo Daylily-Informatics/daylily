@@ -69,7 +69,7 @@ localrules:
 
 rule merge_all_bams:  # TARGET merge_all_bams
     input:
-        b=expand(MDIR+ "{sample}/align/{alnr}/{sample}.{alnr}.mg.sort.bam", sx=SSAMPS.keys(), alnr=ALIGNERS)
+        b=expand(MDIR+ "{sample}/align/{alnr}/{sample}.{alnr}.mg.sort.bam", sample=SSAMPS.keys(), alnr=ALIGNERS)
     output:
         "merge.done",
     shell:
