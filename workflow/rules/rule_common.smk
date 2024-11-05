@@ -485,11 +485,6 @@ def ret_sample(wildcards):
     else:
         return "get sample ERROR"
 
-
-def ret_sx(wildcards):
-    return wildcards.sx
-
-
 def ret_sample_sentD(wildcards):
     return wildcards.sample
 

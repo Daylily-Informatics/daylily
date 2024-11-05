@@ -3,14 +3,14 @@ import sys
 
 
 def get_samp_concordance_truth_dir(wildcards):
-    cntrl_dir = samples[samples['samp'] == wildcards.sx]["concordance_control_path"][0]
+    cntrl_dir = samples[samples['samp'] == wildcards.sample]["concordance_control_path"][0]
     return cntrl_dir
 
 def get_alt_sample_name(wildcards):
-    return samples[samples['samp'] == wildcards.sx]['external_sample_id'][0]
+    return samples[samples['samp'] == wildcards.sample]['external_sample_id'][0]
 
 def get_sampn(wildcards):
-    return wildcards.sx
+    return wildcards.sample
 
 def get_alnr(wildcards):
     return wildcards.alnr
@@ -19,7 +19,7 @@ def get_snv_caller(wildcards):
     return wildcards.snv
 
 def get_cdir(wildcards):
-    ret_d =  MDIR+f"{wildcards.sx}/align/{wildcards.alnr}/snv/{wildcards.snv}/concordance/"
+    ret_d =  MDIR+f"{wildcards.sample}/align/{wildcards.alnr}/snv/{wildcards.snv}/concordance/"
 
     if ret_d.startswith('/marigo'):
         ret_d = f"results"+ret_d
@@ -27,11 +27,11 @@ def get_cdir(wildcards):
 
 
 def get_in_rtg_vcf(wildcards):
-    return f"{MDIR}{wildcards.sx}/align/{wildcards.alnr}/snv/{wildcards.snv}/{wildcards.sx}.{wildcards.alnr}.{wildcards.snv}.snv.sort.vcf.gz"
+    return f"{MDIR}{wildcards.sample}/align/{wildcards.alnr}/snv/{wildcards.snv}/{wildcards.sample}.{wildcards.alnr}.{wildcards.snv}.snv.sort.vcf.gz"
 
 
 def get_in_rtg_tbi(wildcards):
-    return f"{MDIR}{wildcards.sx}/align/{wildcards.alnr}/snv/{wildcards.snv}/{wildcards.sx}.{wildcards.alnr}.{wildcards.snv}.snv.sort.vcf.gz.tbi"
+    return f"{MDIR}{wildcards.sample}/align/{wildcards.alnr}/snv/{wildcards.snv}/{wildcards.sample}.{wildcards.alnr}.{wildcards.snv}.snv.sort.vcf.gz.tbi"
 
 
 if len(CONCORDANCE_SAMPLES.keys()) > 0:
@@ -42,13 +42,13 @@ if len(CONCORDANCE_SAMPLES.keys()) > 0:
             ctbi=get_in_rtg_tbi,
         priority: 48
         output:
-            s=touch(MDIR + "{sx}/align/{alnr}/snv/{snv}/concordance/concordance.done"),
-            fofn=touch(MDIR + "{sx}/align/{alnr}/snv/{snv}/concordance/concordance.fofn"),
-            fin_cmds=touch( MDIR + "{sx}/align/{alnr}/snv/{snv}/concordance/concordance.fin.cmds"),
+            s=touch(MDIR + "{sample}/align/{alnr}/snv/{snv}/concordance/concordance.done"),
+            fofn=touch(MDIR + "{sample}/align/{alnr}/snv/{snv}/concordance/concordance.fofn"),
+            fin_cmds=touch( MDIR + "{sample}/align/{alnr}/snv/{snv}/concordance/concordance.fin.cmds"),
         log:
             MDIR
-            + "{sx}/align/{alnr}/snv/{snv}/concordance/logs/{sx}.{alnr}.{snv}.concordance.log",
-        benchmark:  MDIR+ "{sx}/benchmarks/{sx}.{alnr}.{snv}.concordance.bench.tsv",
+            + "{sample}/align/{alnr}/snv/{snv}/concordance/logs/{sample}.{alnr}.{snv}.concordance.log",
+        benchmark:  MDIR+ "{sample}/benchmarks/{sample}.{alnr}.{snv}.concordance.bench.tsv",
         threads: config['rtg_vcfeval']['threads']
         resources:
             vcpu=config['rtg_vcfeval']['threads'],
@@ -153,9 +153,9 @@ else:
 
     rule no_concordance_data:
         input:
-            MDIR + "{sx}/align/{alnr}/snv/{snv}/{sx}.{alnr}.{snv}.snv.sort.vcf.gz.tbi",
+            MDIR + "{sample}/align/{alnr}/snv/{snv}/{sample}.{alnr}.{snv}.snv.sort.vcf.gz.tbi",
         output:
-            MDIR + "{sx}/align/{alnr}/snv/{snv}/concordance/concordance.done",
+            MDIR + "{sample}/align/{alnr}/snv/{snv}/concordance/concordance.done",
         shell:
             "touch {output};"
 
@@ -164,8 +164,8 @@ localrules: produce_snv_concordances
 rule produce_snv_concordances:  # TARGET:  produce snv concordances
     input:
         expand(
-            MDIR + "{sx}/align/{alnr}/snv/{snv}/concordance/concordance.done",
-            sx=SSAMPS,
+            MDIR + "{sample}/align/{alnr}/snv/{snv}/concordance/concordance.done",
+            sample=SSAMPS,
             alnr=ALIGNERS,
             snv=snv_CALLERS
         )

@@ -9,7 +9,7 @@ localrules:
 rule produce_deduplicated_bams:  # TARGET : Generate Just BAMs with Dups Marked .
     input:
         expand(
-            MDIR + "{sx}/align/{alnr}/{sx}.{alnr}.mrkdup.sort.bam",
+            MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
             sx=SSAMPS,
             alnr=ALIGNERS,
         ),

@@ -14,15 +14,15 @@ if "dppl" in DDUP:
     rule doppelmark_dups:
         """Runs duplicate marking on the merged(mg) BAM."""
         input:
-            bam=MDIR + "{sx}/align/{alnr}/{sx}.{alnr}.sort.bam",
-            bai=MDIR + "{sx}/align/{alnr}/{sx}.{alnr}.sort.bam.bai",
+            bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam",
+            bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam.bai",
         priority: 3
         output:
-            bamo="{MDIR}{sx}/align/{alnr}/{sx}.{alnr}.mrkdup.sort.bam",
-            bami="{MDIR}{sx}/align/{alnr}/{sx}.{alnr}.mrkdup.sort.bam.bai",
+            bamo="{MDIR}{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+            bami="{MDIR}{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
         threads: config["doppelmark"]["threads"]
         benchmark:
-            repeat("{MDIR}{sx}/benchmarks/{sx}.{alnr}.mrkdup.bench.tsv", 0)
+            repeat("{MDIR}{sample}/benchmarks/{sample}.{alnr}.mrkdup.bench.tsv", 0)
         conda:
             "../envs/vanilla_v0.1.yaml"
         resources:
@@ -40,7 +40,7 @@ if "dppl" in DDUP:
 	    read_buffer_size=config['doppelmark']['read_buffer_size'],
 	    huref_fasta=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         log:
-            "{MDIR}{sx}/align/{alnr}/logs/dedupe.{sx}.{alnr}.log",
+            "{MDIR}{sample}/align/{alnr}/logs/dedupe.{sample}.{alnr}.log",
         shell:
             """
             touch {log};
