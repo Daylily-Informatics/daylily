@@ -6,7 +6,7 @@ channels:
   - defaults
 dependencies:
   - parallel=20210822
-  - samtools
+  - samtools=1.21
   - pigz
   - bcftools
   - isa-l

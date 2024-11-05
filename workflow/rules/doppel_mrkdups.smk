@@ -63,7 +63,7 @@ if "dppl" in DDUP:
              -queue-length {params.queue_length} \
              -shard-size {params.shard_size}  >> {log};
 
-            samtools index -b {output.bamo} >> {log};
+            samtools index -@ {threads} -b {output.bamo} >> {log};
             
             touch {output};
 
