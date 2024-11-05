@@ -9,7 +9,7 @@ import json
 
 def parse_arguments():
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description="Insert median prices into config.yaml.")
+    parser = argparse.ArgumentParser(description="Insert spotprice max  into pcluster_config.yaml, with one of two strategies: median(spot)+1.11 or median(dedicated)/2 .")
     parser.add_argument("-i", "--input", required=True, help="Input YAML configuration file path.")
     parser.add_argument("-o", "--output", required=True, help="Output YAML configuration file path.")
     parser.add_argument("--az", required=True, help="Availability zone.")
@@ -159,8 +159,8 @@ def calculate_median_price(resource, az, profile, price_type):
         median_price = round(statistics.median(prices), 4)
         pap=price_type 
         if price_type == 'dedicated':
-            pap="(median on-demand/3)"
-            median_price = round(median_price/3.0, 4)
+            pap="(median on-demand/2)"
+            median_price = round(median_price/2.0, 4)
         else:
             pap="(median spot price)+1.51"
             median_price = median_price+1.51  # add a small buffer to the spot price
