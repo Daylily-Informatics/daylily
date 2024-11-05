@@ -448,6 +448,7 @@ samtools_markdups:
 
 sentieon:
     threads: 16
+    bwa_threads: 16
     benchmark_runs: 0
     max_mem: "50G"
     K: "  -K 169900000150  -k 19 -Y  "

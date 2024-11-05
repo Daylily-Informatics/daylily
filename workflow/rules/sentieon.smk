@@ -35,6 +35,7 @@ rule sentieon_bwa_sort:
         K="-K 100000000" if "K" not in config["sentieon"] else config["sentieon"]["K"],
         cluster_sample=ret_sample,
         numactl=config["sentieon"]["numactl"],
+        bwa_threads=config["sentieon"]["bwa_threads"],
         rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/ :\ : note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
         rgpu="presumedCombinedLanes",  # ideally flowcell_lane(s)
         rgsm=ret_sample,  # samplename
@@ -59,13 +60,13 @@ rule sentieon_bwa_sort:
         tdir="/fsx/scratch/";
 
         /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon bwa mem \
-        -t {threads}  {params.K}  \
+        -t {params.bwa_threads}  {params.K}  \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
-        {params.K} -t {threads} {params.huref} \
+        {params.K}  {params.huref} \
          <(igzip -c -d -T  {params.igz_threads} -q  {input.f1} ) \
          <(igzip -c -d -T  {params.igz_threads} -q  {input.f2} )  \
         |  /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
-        --thread_count {threads} \
+        --thread_count {params.sort_threads} \
         --sortblock_thread_count {params.sort_threads} \
         --bam_compression 9 \
         --intermediate_compress_level 9  \
