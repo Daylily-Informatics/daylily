@@ -1,7 +1,30 @@
 # Daylily AWS Ephemeral Cluster Setup (0.7.37)
-**pre-beta release** _(the following instructions work for happy pahts in my hands. But testing in others hands will be needed to declare `daylily` beta ready)_
+
+**Pre-beta release**
+
+Daylily is a framework for setting up ephemeral AWS clusters optimized for genomics data analysis. It leverages AWS ParallelCluster and provides automated scripts for cluster creation, management, and teardown.
+
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
+
+
+## Table of Contents
+- [Before Beginning](#before-beginning)
+- [Strongly Suggested: PCUI](#strongly-suggested--pcui)
+- [Steps](#steps)
+  - [Prepare Your Local Shell](#prepare-your-local-shell)
+  - [Clone The `daylily` Repository](#clone-the-daylily-repository)
+  - [Install Conda](#install-conda-if-not-already-installed)
+- [AWS Setup](#aws-setup)
+- [Cluster Initialization](#cluster-initialization)
+- [Working with the Ephemeral Cluster](#working-with-the-ephemeral-cluster)
+- [Monitoring Tools](#monitoring-tools)
+- [Known Issues](#known-issues)
+- [Future Development](#future-development)
+- [License](#license)
+
+---
+
 
 # Before Beginning
 - `daylily` was tuned to run in the `us-west-2c` AZ, for cost and availabiliyu of some specific compute resources not found in all AZs. The install should all build and proceed using the `us-west-2c` AZ.
@@ -698,9 +721,6 @@ Are region specific, and may only intereact with `S3` buckets in the same region
 - All of this handling of data is amendable to being automated, and if someone would like to add a cluster delete check which blocks deletion if there is unexported data still on /fsx, that would be awesome.
 - Further, you may write to any path in `/fsx` from any instance it is mounted to, except `/fsx/data` which is read only and will only update if data mounted from the `s3://PREFIX-omics-analysis-REGION/data` is added/deleted/updated (not advised).
 
-## _Known Bug: Fsx Mount Times Out & Causes Pcluster `build-cluster` To Fail_
-If the `S3` bucket mounted to the FSX filesystem is too large (the default bucket is close to too large), this can cause Fsx to fail to create in time for pcluster, and pcluster time out fails.  The wait time for pcluster is configured to be much longer than default, but this can still be a difficult to identify reason for cluster creation failure. Probability for failure increases with S3 bucket size, and also if the imported directories are being changed during pcluster creation. Try again, try with a longer timeount, and try with a smaller bucket (ie: remove one of the human reference build data sets, or move to a different location in the bucket not imported by Fsx)
-
 ## Fsx Directory Structure
 The following directories are created and accessible via `/fsx` on the headnode and compute nodes.
 ```text
@@ -850,7 +870,17 @@ To make informed decisions about choosing an analysis pipeline, there are four k
 - how are results stored? What are the costs and access mechanisms for these results?
 
 
+# Contributing
+- [Contributing Guidelines](CONTRIBUTING.md)
 
+# Versioning
+
+Daylily uses [Semantic Versioning](https://semver.org/). For the versions available, see the [tags on this repository](https://github.com/Daylily-Informatics/daylily/tags).
+
+# Known Issues
+
+## _Fsx Mount Times Out During Headnode Creation & Causes Pcluster `build-cluster` To Fail_
+If the `S3` bucket mounted to the FSX filesystem is too large (the default bucket is close to too large), this can cause Fsx to fail to create in time for pcluster, and pcluster time out fails.  The wait time for pcluster is configured to be much longer than default, but this can still be a difficult to identify reason for cluster creation failure. Probability for failure increases with S3 bucket size, and also if the imported directories are being changed during pcluster creation. Try again, try with a longer timeount, and try with a smaller bucket (ie: remove one of the human reference build data sets, or move to a different location in the bucket not imported by Fsx)
 
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
