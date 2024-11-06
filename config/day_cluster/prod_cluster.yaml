@@ -182,12 +182,12 @@ Monitoring:
       Enabled: true
       RetentionInDays: 14
 SharedStorage:  # This is the local FS which is expensive but fast, could be swapped for EFS, etc.
-  - MountDir: /fsx
+  - MountDir: /fsx  # The cost of this will be roughly $22.93 per day, so it should not be kept hot unless in active use.
     Name: fsx-for-daylily-x3  # WARNING, EDIT NAME WILL DEL EXISTING DATA
     StorageType: FsxLustre
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
-      StorageCapacity: 4800
+      StorageCapacity: 4800 # This is probably overkill and can be reduced to 2400 for half the cost
       DeploymentType: SCRATCH_2
       AutoImportPolicy: NEW_CHANGED_DELETED
 Tags:  # TAGs necessary for per-user/project/job cost tracking

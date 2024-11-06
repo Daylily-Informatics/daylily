@@ -93,7 +93,7 @@ def stability_metric(prices):
 
 def parse_arguments():
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description="Calculate genomic workflow costs.")
+    parser = argparse.ArgumentParser(description="Calculate genomic workflow costs. Default costs all drawn from actual AWS run analysis, see: https://docs.google.com/spreadsheets/d/1x5RlXYAq3lTNChs6mVnP9NLytLkCT3a8OAtJfgUyWRg/edit?gid=480568932#gid=480568932 ")
     
     # Add arguments with default values and %(default)s in help string
     parser.add_argument(
@@ -123,7 +123,7 @@ def parse_arguments():
     
     parser.add_argument(
         "--zones", 
-        default="us-west-2a,us-west-2b,us-west-2c", 
+        default="us-west-2a,us-west-2b,us-west-2c,us-west-2d", 
         help="Comma-separated zones (default: %(default)s).\n ALLZONES: us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1e,us-east-1f,us-west-1a,us-west-1b,us-west-2a,us-west-2b,us-west-2c,us-west-2d,af-south-1a,af-south-1b,af-south-1c,ap-east-1a,"
              "ap-east-1b,ap-east-1c,ap-south-1a,ap-south-1b,ap-south-1c,ap-south-1d,ap-southeast-1a,ap-southeast-1b,ap-southeast-1c,ap-southeast-2a,ap-southeast-2b,ap-southeast-2c,ap-southeast-3a,ap-southeast-3b,ap-southeast-3c,"
              "ap-southeast-4a,ap-southeast-4b,ap-southeast-4c,ap-northeast-1a,ap-northeast-1b,ap-northeast-1c,ap-northeast-2a,ap-northeast-2b,ap-northeast-2c,ap-northeast-3a,ca-central-1a,ca-central-1b,ca-central-1c,eu-central-1a,"
@@ -134,66 +134,87 @@ def parse_arguments():
     parser.add_argument(
         "--x-coverage", 
         type=float, 
-        default=30.1, 
-        required=True, 
-        help="Coverage for analysis (e.g., 30x) (required, default: %(default)s)."
+        default=30.0, 
+        help="Coverage for analysis (e.g., 30x, this all assumes illumina 2x150) ( default: %(default)s)."
+    )    
+    
+    parser.add_argument(
+        "--vcpu-min-per-x-to-align", 
+        type=float, 
+        default=307.2, 
+        help="vCPU-minutes per 1X coverage to align, sort and dedup. bwa mem2: 307.2, sentieon bwa: 384, strobealigner: 172.8  (default: %(default)s)."
+    )
+        
+    parser.add_argument(
+        "--vcpu-min-per-x-to-snvcall", 
+        type=float, 
+        default=684.0, 
+        help="vCPU-minutes per X coverage to SNV call. deepvariant: 684.0, Sentieon DNAscope: 70.4  ( default: %(default)s)."
     )
     
     parser.add_argument(
-        "--vcpu-min-per-x", 
+        "--vcpu-min-per-x-to-svcall", 
         type=float, 
-        default=3.7, 
-        required=True, 
-        help="vCPU-minutes per X coverage (required, default: %(default)s)."
+        default=19.0, 
+        help="vCPU-minutes per X coverage to SV call. tiddit: 19.0, manta: ??, svaba: ??   ( default: %(default)s)."
     )
+    
+    
+    parser.add_argument(
+        "--vcpu-min-per-x-to-other", 
+        type=float, 
+        default=0.021, 
+        help="vCPU-minutes per X coverage, other costs (ie, Fsx active use cost, head node overhead when running to manage compute nodes). These are often fixed costs which do not scale with X coverage, but am modeling it like the others for now. default: 0.021 (rdefault: %(default)s)."
+    )
+    
     
     # File size flags
     parser.add_argument(
         "--bam-size-per-x", 
         type=float, 
-        default=1.0, 
+        default=1.3, 
         help="BAM size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
         "--cram-size-per-x", 
         type=float, 
-        default=1.0, 
+        default=0.44, 
         help="CRAM size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
         "--vcf-size-per-x", 
         type=float, 
-        default=1.0, 
+        default=0.004, 
         help="VCF size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
         "--gvcf-size-per-x", 
         type=float, 
-        default=1.0, 
+        default=0.04, 
         help="gVCF size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
         "--bcf-size-per-x", 
         type=float, 
-        default=1.0, 
+        default=0.004, 
         help="BCF size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
         "--gbcf-size-per-x", 
         type=float, 
-        default=1.0, 
+        default=0.04, 
         help="gBCF size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
         "--qc-size-per-x", 
         type=float, 
-        default=0.5, 
+        default=0.05, 
         help="QC data size per X coverage (GB) (default: %(default)s)."
     )
     
@@ -207,7 +228,7 @@ def parse_arguments():
     parser.add_argument(
         "--input-data-size-per-x", 
         type=float, 
-        default=1.0, 
+        default=1.65, 
         help="Input FASTQ size per X coverage (GB) (default: %(default)s)."
     )
     
@@ -215,7 +236,7 @@ def parse_arguments():
 
 def calculate_vcpu_mins(args):
     """Calculate total vCPU-minutes based on coverage."""
-    return args.x_coverage * args.vcpu_min_per_x
+    return (args.x_coverage * args.vcpu_min_per_x_to_align) + (args.x_coverage * args.vcpu_min_per_x_to_snvcall) + (args.x_coverage * args.vcpu_min_per_x_to_other) + (args.x_coverage * args.vcpu_min_per_x_to_svcall) 
 
 def calculate_storage_costs(size_gb, storage_type):
     """Calculate monthly storage costs for a given size."""
@@ -373,7 +394,7 @@ def display_statistics(zone_stats, args):
         table.append(row)
 
     # Add title above the table
-    title = f"{args.x_coverage}-cov genome @ {args.vcpu_min_per_x} vCPU-min per coverage"
+    title = f"{args.x_coverage}-cov genome @ vCPU-min per x align: {args.vcpu_min_per_x_to_align} vCPU-min per x snvcall: {args.vcpu_min_per_x_to_snvcall} vCPU-min per x other: {args.vcpu_min_per_x_to_other} vCPU-min per x svcall: {args.vcpu_min_per_x_to_svcall}"   
     print(color(title, fore=COLORS[args.mode]['header']))
     print(tabulate(table, headers=headers, floatfmt=".4f"))
 
@@ -585,7 +606,8 @@ def main():
             total_storage_cost += cost
 
     # Display the storage costs table with title
-    title = f"{args.x_coverage}-cov genome @ {args.vcpu_min_per_x} vCPU-min per coverage"
+    title = f"{args.x_coverage}-cov genome @ vCPU-min per x align: {args.vcpu_min_per_x_to_align} vCPU-min per x snvcall: {args.vcpu_min_per_x_to_snvcall} vCPU-min per x other: {args.vcpu_min_per_x_to_other} vCPU-min per x svcall: {args.vcpu_min_per_x_to_svcall}"   
+
     print(color(f"\n{title}", fore=COLORS[args.mode]['header']))
     print("\nSTORAGE COST / MONTH")
     print(tabulate(storage_table, headers=[color(h, fore=COLORS[args.mode]['header']) for h in storage_headers], tablefmt="fancy_grid"))
@@ -613,7 +635,10 @@ def main():
     print("\nParameters Used:")
     relevant_args = {
         'x_coverage': args.x_coverage,
-        'vcpu_min_per_x': args.vcpu_min_per_x,
+        'vcpu_min_per_x_to_align': args.vcpu_min_per_x_to_align,
+        'vcpu_min_per_x_to_snvcall': args.vcpu_min_per_x_to_snvcall,
+        'vcpu_min_per_x_to_svcall': args.vcpu_min_per_x_to_svcall,
+        'vcpu_min_per_x_to_other': args.vcpu_min_per_x_to_other,
         'alignment_output': alignment_output,
         'variant_output': variant_output,
         'input_transfer': input_transfer,
