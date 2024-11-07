@@ -54,12 +54,12 @@ COLORS = {
 }
 
 TRANSFER_RATES = {
-    'internet': 0.09,  # $/GB to internet
-    'within_region': 0.01,  # $/GB within region
-    'cross_region': 0.02  # $/GB across regions
+    'internet': 0.09,  # $/G to internet
+    'within_region': 0.01,  # $/G within region
+    'cross_region': 0.02  # $/G across regions
 }
 
-STORAGE_COSTS = {'standard': 0.023, 'glacier': 0.004}  # $/GB/month
+STORAGE_COSTS = {'standard': 0.023, 'glacier': 0.004}  # $/G/month
 
 def apply_color(value, best=None, worst=None, highlight=False, dim=False, mode='dark'):
     """Colorize values based on thresholds using the selected mode."""
@@ -111,14 +111,13 @@ def parse_arguments():
     parser.add_argument(
         "--profile", 
         required=True,
-        default="SETME",
-        help="AWS CLI profile, YOU MUST SET AWS_PROFILE and sepcify that same string here (default: %(default)s)."
+        help="AWS CLI profile, *you must set* AWS_PROFILE=profile and specify that same profile string here (required)."
     )
     
     parser.add_argument(
         "--partition", 
         default="i192", 
-        help="Partition name (default: %(default)s)."
+        help="Partition name, the naming pattern for daylily partitions is (hardware)(#vcpu), so intel 192vcpu is 'i192', the vcpu is stripped from the partition name to derive the # vcpus (default: %(default)s)."
     )
     
     parser.add_argument(
@@ -184,37 +183,37 @@ def parse_arguments():
     )
     
     parser.add_argument(
-        "--vcf-size-per-x", 
+        "--snv-vcf-size-per-x", 
         type=float, 
         default=0.004, 
-        help="VCF size per X coverage (GB) (default: %(default)s)."
+        help="snv VCF.tgz size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
-        "--gvcf-size-per-x", 
+        "--snv-gvcf-size-per-x", 
         type=float, 
         default=0.04, 
-        help="gVCF size per X coverage (GB) (default: %(default)s)."
+        help="snv gVCF.tgz size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
-        "--bcf-size-per-x", 
+        "--sv-vcf-size-per-x", 
         type=float, 
         default=0.004, 
-        help="BCF size per X coverage (GB) (default: %(default)s)."
+        help="sv VCF.tgz size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
-        "--gbcf-size-per-x", 
+        "--other-size-per-x", 
         type=float, 
-        default=0.04, 
-        help="gBCF size per X coverage (GB) (default: %(default)s)."
+        default=0.0001, 
+        help="other total file size per X coverage (GB) (default: %(default)s)."
     )
     
     parser.add_argument(
         "--qc-size-per-x", 
         type=float, 
-        default=0.05, 
+        default=0.0015, 
         help="QC data size per X coverage (GB) (default: %(default)s)."
     )
     
@@ -230,6 +229,13 @@ def parse_arguments():
         type=float, 
         default=1.65, 
         help="Input FASTQ size per X coverage (GB) (default: %(default)s)."
+    )
+    
+    parser.add_argument(
+        "--ec2-cost-model", 
+        choices=['min', 'max', 'harmonic', 'median'], 
+        default='harmonic', 
+        help="EC2 cost model (use min, max, median or harmonic mean for spot prices) (default: %(default)s)."
     )
     
     return parser.parse_args()
@@ -299,43 +305,60 @@ class ZoneStat:
         self.zone_name = zone_name
         self.instances = 0
         self.prices = []
-        self.avg_price = float('nan')
+        self.median_price = float('nan')
         self.min_price = float('nan')
         self.max_price = float('nan')
         self.harmonic_price = float('nan')
         self.stability = float('nan')
-        self.cost_per_vcpu = float('nan')
+        self.cost_per_vcpu_min = float('nan')
         self.est_cost = float('nan')
         self.bam_size = float('nan')
         self.cram_size = float('nan')
-        self.vcf_size = float('nan')
-        self.gvcf_size = float('nan')
-        self.bcf_size = float('nan')
-        self.gbcf_size = float('nan')
+        self.snv_vcf_size = float('nan')
+        self.snv_gvcf_size = float('nan')
+        self.sv_vcf_size = float('nan')
+        self.other_size = float('nan')
         self.fastq_size = float('nan')
         self.qc_size = float('nan')  # Added for QC data size
 
-    def calculate_statistics(self, spot_data, vcpu_mins, args):
+    def calculate_statistics(self, spot_data, vcpu_mins, args, n_vcpus):
         # Calculate the various statistics for this zone
         self.prices = [spot_data[instance].get(self.zone_name, float('nan')) for instance in spot_data]
         self.prices = [p for p in self.prices if not isnan(p)]
         if self.prices:
             self.instances = len(self.prices)
-            self.avg_price = statistics.mean(self.prices)
+            self.median_price = statistics.median(self.prices)
             self.min_price = min(self.prices)
             self.max_price = max(self.prices)
             self.harmonic_price = harmonic_mean(self.prices)
             self.stability = stability_metric(self.prices)
-            self.cost_per_vcpu = self.avg_price
-            self.est_cost = (vcpu_mins / 60) * self.avg_price
+            self.cost_per_vcpu_median_min = float(float(self.median_price) / float(n_vcpus) / 60.0) # vcpu cost per min
+            self.cost_per_vcpu_min_min = float(float(self.min_price) / float(n_vcpus) / 60.0) # vcpu cost per min
+            self.cost_per_vcpu_max_min = float(float(self.max_price) / float(n_vcpus) / 60.0)
+            self.cost_per_vcpu_harmonic_min = float(float(self.harmonic_price) / float(n_vcpus) / 60.0)
+
+            if args.ec2_cost_model == "min":
+                self.est_cost = float(vcpu_mins) * self.cost_per_vcpu_min_min
+                self.cost_per_vcpu_min = self.cost_per_vcpu_min_min
+            elif args.ec2_cost_model == "max":
+                self.est_cost = float(vcpu_mins) * self.cost_per_vcpu_max_min
+                self.cost_per_vcpu_min = self.cost_per_vcpu_max_min
+            elif args.ec2_cost_model == "harmonic":
+                self.est_cost = float(vcpu_mins) * self.cost_per_vcpu_harmonic_min
+                self.cost_per_vcpu_min = self.cost_per_vcpu_harmonic_min
+            elif args.ec2_cost_model == "median":
+                self.est_cost = float(vcpu_mins) * self.cost_per_vcpu_median_min  
+                self.cost_per_vcpu_min = self.cost_per_vcpu_median_min
+            else: 
+                raise Exception("Invalid ec2_cost_model, must be one of min, max, harmonic, median")
 
             # Use args to calculate sizes
             self.bam_size = args.x_coverage * args.bam_size_per_x if args.bam_size_per_x else 0
             self.cram_size = args.x_coverage * args.cram_size_per_x if args.cram_size_per_x else 0
-            self.vcf_size = args.x_coverage * args.vcf_size_per_x if args.vcf_size_per_x else 0
-            self.gvcf_size = args.x_coverage * args.gvcf_size_per_x if args.gvcf_size_per_x else 0
-            self.bcf_size = args.x_coverage * args.bcf_size_per_x if args.bcf_size_per_x else 0
-            self.gbcf_size = args.x_coverage * args.gbcf_size_per_x if args.gbcf_size_per_x else 0
+            self.snv_vcf_size = args.x_coverage * args.snv_vcf_size_per_x if args.snv_vcf_size_per_x else 0
+            self.snv_gvcf_size = args.x_coverage * args.snv_gvcf_size_per_x if args.snv_gvcf_size_per_x else 0
+            self.sv_vcf_size = args.x_coverage * args.sv_vcf_size_per_x if args.sv_vcf_size_per_x else 0
+            self.other_size = args.x_coverage * args.other_size_per_x if args.other_size_per_x else 0
             self.fastq_size = args.x_coverage * args.input_data_size_per_x if args.input_data_size_per_x else 0
             self.qc_size = args.x_coverage * args.qc_size_per_x if args.qc_size_per_x else 0  # QC data size
         else:
@@ -344,28 +367,30 @@ class ZoneStat:
 
 def display_statistics(zone_stats, args):
     """Display the statistics with proper colorizing."""
+    padding = " "*(len(args.ec2_cost_model)-7)
     headers = [
-        "Availability Zone", "Instances", "Avg Spot Price", "Min Spot Price",
-        "Max Spot Price", "Harmonic Mean Price", "Stability (Max-Min)",
-        "BAM (GB)", "CRAM (GB)", "VCF (GB)", "gVCF (GB)", "BCF (GB)", "gBCF (GB)",
-        "Cost per vCPU", "Est. EC2 Cost"
+        "Region AZ", "#       \nInstance\nTypes   ", "Median\nSpot $", "Min \nSpot\n$   ",
+        "Max \nSpot\n$   ", "Harmonic\nMean    \nSpot $  ", "Spot \nStab-\nility",
+        "FASTQ\n(GB) ", "BAM \n(GB)", "CRAM\n(GB)", "snv \nVCF \n(GB)", "snv \ngVCF\n(GB)", "sv  \nVCF \n(GB)", "Other\n(GB) ",
+        f"$ per\nvCPU min\n{args.ec2_cost_model}", f"~ EC2 ${padding}\n\n{args.ec2_cost_model}"
     ]
 
     # Calculate best and worst values for colorizing
     attr_keys = {
-        'Avg Spot Price': 'avg_price',
-        'Min Spot Price': 'min_price',
-        'Max Spot Price': 'max_price',
-        'Harmonic Mean Price': 'harmonic_price',
-        'Stability (Max-Min)': 'stability',
-        'BAM (GB)': 'bam_size',
-        'CRAM (GB)': 'cram_size',
-        'VCF (GB)': 'vcf_size',
-        'gVCF (GB)': 'gvcf_size',
-        'BCF (GB)': 'bcf_size',
-        'gBCF (GB)': 'gbcf_size',
-        'Cost per vCPU': 'cost_per_vcpu',
-        'Est. EC2 Cost': 'est_cost'
+        'Median\nSpot $': 'median_price',
+        'Min \nSpot\n$   ': 'min_price',
+        'Max \nSpot\n$   ': 'max_price',
+        'Harmonic\nMean    \nSpot $  ': 'harmonic_price',
+        'Spot \nStab-\nility': 'stability',
+        'FASTQ\n(GB) ': 'fastq_size',
+        'BAM \n(GB)': 'bam_size',
+        'CRAM\n(GB)': 'cram_size',
+        'snv \nVCF \n(GB)': 'snv_vcf_size',
+        'snv \ngVCF\n(GB)': 'snv_gvcf_size',
+        'sv  \nVCF \n(GB)': 'sv_vcf_size',
+        'Other\n(GB) ': 'other_size',
+        f'$ per\nvCPU min\n{args.ec2_cost_model}' : 'cost_per_vcpu_min',
+        f'~ EC2 ${padding}\n\n{args.ec2_cost_model}': 'est_cost'
     }
 
     best_worst = {key: get_best_worst(zone_stats, attr_keys[key]) for key in headers[2:]}
@@ -373,7 +398,7 @@ def display_statistics(zone_stats, args):
 
     table = []
     for index, z in enumerate(zone_stats, 1):
-        # Highlight the best zone (with the lowest Est. EC2 Cost)
+        # Highlight the best zone (with the lowest ~EC2 $)
         if z.est_cost == min_cost:
             zone_name_colored = color(f"{index}. {z.zone_name}", fore=COLORS[args.mode]['highlight'])
         else:
@@ -382,13 +407,13 @@ def display_statistics(zone_stats, args):
         row = [
             zone_name_colored,
             z.instances,
-            apply_color(z.avg_price, *best_worst['Avg Spot Price'], mode=args.mode),
-            apply_color(z.min_price, *best_worst['Min Spot Price'], mode=args.mode),
-            apply_color(z.max_price, *best_worst['Max Spot Price'], mode=args.mode),
-            apply_color(z.harmonic_price, *best_worst['Harmonic Mean Price'], highlight=True, mode=args.mode),
-            apply_color(z.stability, *reversed(best_worst['Stability (Max-Min)']), mode=args.mode),
-            z.bam_size, z.cram_size, z.vcf_size, z.gvcf_size, z.bcf_size, z.gbcf_size,
-            apply_color(z.cost_per_vcpu, *best_worst['Cost per vCPU'], mode=args.mode),
+            apply_color(z.median_price, *best_worst['Median\nSpot $'], mode=args.mode),
+            apply_color(z.min_price, *best_worst['Min \nSpot\n$   '], mode=args.mode),
+            apply_color(z.max_price, *best_worst['Max \nSpot\n$   '], mode=args.mode),
+            apply_color(z.harmonic_price, *best_worst['Harmonic\nMean    \nSpot $  '], highlight=True, mode=args.mode),
+            apply_color(z.stability, *reversed(best_worst['Spot \nStab-\nility']), mode=args.mode),
+            z.fastq_size, z.bam_size, z.cram_size, z.snv_vcf_size, z.snv_gvcf_size, z.sv_vcf_size, z.other_size,
+            apply_color(z.cost_per_vcpu_min, *best_worst[f'$ per\nvCPU min\n{args.ec2_cost_model}'], mode=args.mode),
             apply_color(z.est_cost, min_cost, min_cost, highlight=(z.est_cost == min_cost), mode=args.mode)
         ]
         table.append(row)
@@ -396,12 +421,12 @@ def display_statistics(zone_stats, args):
     # Add title above the table
     title = f"{args.x_coverage}-cov genome @ vCPU-min per x align: {args.vcpu_min_per_x_to_align} vCPU-min per x snvcall: {args.vcpu_min_per_x_to_snvcall} vCPU-min per x other: {args.vcpu_min_per_x_to_other} vCPU-min per x svcall: {args.vcpu_min_per_x_to_svcall}"   
     print(color(title, fore=COLORS[args.mode]['header']))
-    print(tabulate(table, headers=headers, floatfmt=".4f"))
+    print(tabulate(table, headers=headers, floatfmt=".5f",tablefmt="fancy_grid"))
 
     with open(args.output, 'w') as f:
         # Remove ANSI color codes for the output file
         table_plain = [[strip_ansi(str(cell)) for cell in row] for row in table]
-        f.write(tabulate(table_plain, headers=headers, floatfmt=".4f", tablefmt="tsv"))
+        f.write(tabulate(table_plain, headers=headers, floatfmt=".5f", tablefmt="tsv"))
 
 def strip_ansi(string):
     """Remove ANSI escape sequences from a string."""
@@ -412,6 +437,8 @@ def strip_ansi(string):
 def main():
     args = parse_arguments()
 
+    n_vcpus = float(args.partition[1:])
+    
     # Load YAML configuration
     with open(args.input, 'r') as f:
         config = yaml.safe_load(f)
@@ -435,7 +462,7 @@ def main():
     zone_stats = []
     for zone in zones:
         zone_stat = ZoneStat(zone)
-        zone_stat.calculate_statistics(spot_data, vcpu_mins, args)
+        zone_stat.calculate_statistics(spot_data, vcpu_mins, args, n_vcpus)
         zone_stats.append(zone_stat)
 
     display_statistics(zone_stats, args)
@@ -460,17 +487,30 @@ def main():
         print("Invalid selection. Defaulting to 'bam'.")
         alignment_output = 'bam'
 
-    # Variant output options
-    variant_options = ['vcf', 'gvcf', 'bcf', 'gbcf']
+    # SNV Variant output options
+    snv_variant_options = ['snv vcf', 'snv gvcf']
     print("\nSelect SNV output:")
-    for idx, opt in enumerate(variant_options, 1):
+    for idx, opt in enumerate(snv_variant_options, 1):
         print(f"{idx}. {opt}")
     try:
-        variant_choice = int(input("Enter choice number: ")) - 1
-        variant_output = variant_options[variant_choice]
+        snv_variant_choice = int(input("Enter choice number: ")) - 1
+        snv_variant_output = snv_variant_options[snv_variant_choice]
     except (IndexError, ValueError):
         print("Invalid selection. Defaulting to 'vcf'.")
-        variant_output = 'vcf'
+        snv_variant_output = 'snv vcf'
+
+
+    # SNV Variant output options
+    sv_variant_options = ['sv vcf']
+    print("\nSelect SV output:")
+    for idx, opt in enumerate(sv_variant_options, 1):
+        print(f"{idx}. {opt}")
+    try:
+        sv_variant_choice = int(input("Enter choice number: ")) - 1
+        sv_variant_output = sv_variant_options[sv_variant_choice]
+    except (IndexError, ValueError):
+        print("Invalid selection. Defaulting to 'vcf'.")
+        sv_variant_output = 'sv vcf'
 
     # Assign the appropriate size variables based on user selection
     if alignment_output == 'cram':
@@ -478,14 +518,14 @@ def main():
     else:
         alignment_size = selected_zone_stat.bam_size
 
-    if variant_output == 'vcf':
-        variant_size = selected_zone_stat.vcf_size
-    elif variant_output == 'gvcf':
-        variant_size = selected_zone_stat.gvcf_size
-    elif variant_output == 'bcf':
-        variant_size = selected_zone_stat.bcf_size
-    else:
-        variant_size = selected_zone_stat.gbcf_size
+    if snv_variant_output == 'snv vcf':
+        snv_variant_size = selected_zone_stat.snv_vcf_size
+    elif snv_variant_output == 'snv gvcf':
+        snv_variant_size = selected_zone_stat.snv_gvcf_size
+    
+    sv_variant_size = selected_zone_stat.sv_vcf_size
+        
+    other_variant_size = selected_zone_stat.other_size
 
     # Transfer scheme options
     transfer_options = ['internet', 'within_region', 'cross_region']
@@ -511,13 +551,18 @@ def main():
 
     # Ensure sizes are numbers
     alignment_size = alignment_size if alignment_size else 0
-    variant_size = variant_size if variant_size else 0
-
-    total_transfer_cost = (calculate_transfer_costs(alignment_size, input_transfer) +
-                           calculate_transfer_costs(variant_size, output_transfer))
-    # Validate input data size before using it
-    fastq_size = selected_zone_stat.fastq_size or 0
+    snv_variant_size = snv_variant_size if snv_variant_size else 0
+    sv_variant_size = sv_variant_size if sv_variant_size else 0
+    other_variant_size = other_variant_size if other_variant_size else 0
     qc_size = selected_zone_stat.qc_size or 0  # QC data size
+    fastq_size = selected_zone_stat.fastq_size or 0
+    
+    total_transfer_cost = (calculate_transfer_costs(fastq_size, input_transfer) +
+                            calculate_transfer_costs(alignment_size, output_transfer) +
+                            calculate_transfer_costs(snv_variant_size, output_transfer) +
+                            calculate_transfer_costs(sv_variant_size, output_transfer) +
+                            calculate_transfer_costs(other_variant_size, output_transfer) +
+                            calculate_transfer_costs(qc_size, output_transfer))
 
     # Prompt for FASTQ retention before calculating final costs
     print("\nRetain FASTQ files?")
@@ -546,15 +591,15 @@ def main():
         storage_approach = 'Not Retaining'
 
     # Prepare file types and sizes for storage cost calculation
-    file_types = ['Input FASTQ', 'BAM', 'CRAM', 'VCF', 'gVCF', 'BCF', 'gBCF', 'QC Data']
+    file_types = ['Input FASTQ', 'BAM', 'CRAM', 'SNV VCF', 'SNV GVCF', 'SV VCF', 'Other', 'QC Data']
     sizes = [
         fastq_size if retain_fastq else 0,
         selected_zone_stat.bam_size,
         selected_zone_stat.cram_size,
-        selected_zone_stat.vcf_size,
-        selected_zone_stat.gvcf_size,
-        selected_zone_stat.bcf_size,
-        selected_zone_stat.gbcf_size,
+        selected_zone_stat.snv_vcf_size,
+        selected_zone_stat.snv_gvcf_size,
+        selected_zone_stat.sv_vcf_size,
+        selected_zone_stat.other_size,
         qc_size
     ]
 
@@ -566,7 +611,9 @@ def main():
     if retain_fastq:
         selected_files.append('Input FASTQ')
     selected_files.append(alignment_output.upper())
-    selected_files.append(variant_output.upper())
+    selected_files.append(snv_variant_output.upper())
+    selected_files.append(sv_variant_output.upper())
+    selected_files.append('Other')
     selected_files.append('QC Data')
 
     # Storage approaches
@@ -590,9 +637,9 @@ def main():
                 storage_class_key = 'standard' if approach == 'S3 Standard' else 'glacier'
                 cost = calculate_storage_costs(size, storage_class_key)
             if ft in selected_files and approach == storage_approach:
-                value = apply_color(f"${cost:.4f}\n({size:.1f} GB)", highlight=True, mode=args.mode)
+                value = apply_color(f"${cost:.5f}\n({size:.4f} GB)", highlight=True, mode=args.mode)
             else:
-                value = apply_color(f"${cost:.4f}\n({size:.1f} GB)", dim=True, mode=args.mode)
+                value = apply_color(f"${cost:.5f}\n({size:.4f} GB)", dim=True, mode=args.mode)
             row.append(value)
         storage_table.append(row)
 
@@ -613,13 +660,29 @@ def main():
     print(tabulate(storage_table, headers=[color(h, fore=COLORS[args.mode]['header']) for h in storage_headers], tablefmt="fancy_grid"))
 
     # Prepare EC2 costs table
+    total_transfer_cost = round(total_transfer_cost,4)
+    est_cost = round(selected_zone_stat.est_cost,4)
     ec2_headers = ['EC2 Costs', 'Value']
+
+    def _ret_fmtd(val, vtype, selected_zone_stat, args):
+        vval = round(val,4)
+        if vtype == args.ec2_cost_model:
+            return apply_color(vval, highlight=True, mode=args.mode)
+        elif vtype == args.ec2_cost_model:
+            return apply_color(vval, highlight=True, mode=args.mode)
+        elif vtype == args.ec2_cost_model:
+            return apply_color(vval, highlight=True, mode=args.mode)
+        elif vtype == args.ec2_cost_model:
+            return apply_color(vval, highlight=True, mode=args.mode)
+        else:
+            return vval
+        
     ec2_data = [
-        ['AZ Selected', selected_zone_stat.zone_name],
-        ['Max / Harmonic Mean / Min Spot Price ($/hr)', f"{selected_zone_stat.max_price:.4f} / {apply_color(selected_zone_stat.harmonic_price, highlight=True, mode=args.mode)} / {selected_zone_stat.min_price:.4f}"],
-        ['Compute Cost / Cost per vCPU', f"{apply_color(selected_zone_stat.est_cost, highlight=True, mode=args.mode)} / {selected_zone_stat.cost_per_vcpu:.4f}"],
-        ['Data Transfer Cost / Data Size (GB)', f"{apply_color(total_transfer_cost, highlight=True, mode=args.mode)} / {(alignment_size + variant_size):.1f}"],
-        ['Other Costs', '$0.00']
+        ['AZ Selected', apply_color(selected_zone_stat.zone_name, highlight=True, mode=args.mode)],
+        ['Max / Min / Median / Harmonic Mean Spot ($/hr)', f"{_ret_fmtd(selected_zone_stat.max_price, 'max', selected_zone_stat, args)} / {_ret_fmtd(selected_zone_stat.min_price, 'min', selected_zone_stat, args)} / {_ret_fmtd(selected_zone_stat.median_price, 'median', selected_zone_stat, args)} / {_ret_fmtd(selected_zone_stat.harmonic_price, 'harmonic', selected_zone_stat, args)}"], 
+        ['Compute Cost / Cost per vCPU per min', f"{apply_color(est_cost, highlight=True, mode=args.mode)} / {selected_zone_stat.cost_per_vcpu_min:.5f}"],
+        ['Data Transfer Cost / Data Size (GB)', f"{apply_color(total_transfer_cost, highlight=True, mode=args.mode)} / {(alignment_size + snv_variant_size + sv_variant_size + other_variant_size + qc_size):.4f}"],
+        ['Other Costs', apply_color("0.0", highlight=True, mode=args.mode)]
     ]
 
     # Display EC2 costs table
@@ -628,8 +691,8 @@ def main():
 
     # Finally compute total cost to analyze and monthly storage cost
     total_analysis_cost = selected_zone_stat.est_cost + total_transfer_cost
-    print(f"\nCost to analyze {args.x_coverage}-cov genome: {apply_color(f'${total_analysis_cost:.4f}', highlight=True, mode=args.mode)}")
-    print(f"Monthly storage cost: {apply_color(f'${total_storage_cost:.4f}', highlight=True, mode=args.mode)}")
+    print(f"\nCost to analyze {args.x_coverage}-cov genome: {apply_color(f'${total_analysis_cost:.3f}', highlight=True, mode=args.mode)}")
+    print(f"Monthly storage cost: {apply_color(f'${total_storage_cost:.3f}', highlight=True, mode=args.mode)}")
 
     # Display relevant command-line arguments in a condensed format
     print("\nParameters Used:")
@@ -640,7 +703,8 @@ def main():
         'vcpu_min_per_x_to_svcall': args.vcpu_min_per_x_to_svcall,
         'vcpu_min_per_x_to_other': args.vcpu_min_per_x_to_other,
         'alignment_output': alignment_output,
-        'variant_output': variant_output,
+        'snv_variant_output': snv_variant_output,
+        'sv_variant_output': sv_variant_output,
         'input_transfer': input_transfer,
         'output_transfer': output_transfer,
         'retain_fastq': retain_fastq,
@@ -653,4 +717,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("\n\n\t\tTHIS IS NOT USING CORRECT NUMBERS YET!!!!\n\n    ")
