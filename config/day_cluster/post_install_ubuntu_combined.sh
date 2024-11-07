@@ -2,7 +2,6 @@
 
 # built upon: https://github.com/Daylily-Informatics/aws-parallelcluster-cost-allocation-tags
 # MIT No Attribution
-# Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 # The script configures the Slurm cluster after the deployment.
 
@@ -76,53 +75,8 @@ ln -s /fsx/data/tool_specific_resources/cromwell_87.jar /usr/local/bin/cromwell.
 ln -s /fsx/data/tool_specific_resources/womtool_87.jar /usr/local/bin/womtool.jar
 chmod a+r /usr/local/bin/cromwell.jar /usr/local/bin/womtool.jar
 
-# go
-## cp /fsx/data/tool_specific_resources/go1.20.4.linux-amd64.tar.gz .
-## tar -xzvf go1.20.4.linux-amd64.tar.gz -C /usr/local
-## rm /usr/bin/{go,gofmt}
-## ln -s /usr/local/go/bin/{go,gofmt} /usr/bin/
-## . chmod a+x /usr/bin/{go,gofmt}
-
-# Mining Setup (if miner_pool is specified)
-if [ "$miner_pool" != "na" ]; then
-  echo "Starting mining..."
-  /fsx/miners/bin/$(hostname)_miner.sh "$miner_pool" "$wallet" &
-else
-  echo "No miner pool specified, skipping mining."
-fi
-
 
 if [ "${cfn_node_type}" == "HeadNode" ];then
-
-  # is this needed still?
-  # Docker setup
-  ##groupadd docker
-  ##usermod -aG docker ubuntu root
-  ##systemctl enable docker && systemctl start docker
-
-  ##export HOME=/root
-  ##export GOCACHE=$HOME/.cache/go-build
-  ##export XDG_CACHE_HOME=$HOME/.cache
-  ##mkdir -p $GOCACHE $XDG_CACHE_HOME
-
-  # Install Apptainer (formerly Singularity)
-  ##export AVERSION=1.3.1  # Replace with the latest Apptainer version
-  # wget https://github.com/apptainer/apptainer/releases/download/v${AVERSION}/apptainer-${AVERSION}.tar.gz >> /tmp/$(hostname).apptainerinstall 2>&1
-
-  # USING CACHED VERSION !!
-  ##cp /fsx/data/tool_specific_resources/apptainer-1.3.1.tar.gz .
-  ##tar -xzf apptainer-${AVERSION}.tar.gz >> /tmp/$(hostname).apptainerinstall 2>&1
-  
-  ##chmod -R a+rx apptainer-${AVERSION}
-  ##chmod +x apptainer-${AVERSION}/scripts/*
-
-  ##cd apptainer-${AVERSION} 
-
-  ##./mconfig >> /tmp/$(hostname).apptainerinstall 2>&1
-  ##make -C builddir -j1  >> /tmp/$(hostname).apptainerinstall 2>&1
-  ##make -C builddir install  >> /tmp/$(hostname).apptainerinstall 2>&1
-  ##cd ..
-  ##echo "APPTAINER END" >> /tmp/$(hostname).apptainerinstall
 
   # Create necessary directories
   mkdir -p /fsx/analysis_results/cromwell_executions  
@@ -317,6 +271,35 @@ EOF
    echo "Epilog=/opt/slurm/sbin/epilog.sh" >> /opt/slurm/etc/slurm.conf
    
    systemctl restart slurmctld
+fi
+
+
+
+mkdir -p /fsx/miners/bin
+mkdir -p /fsx/miners/logs
+
+chown -R ubuntu:ubuntu /fsx/miners
+aws s3 cp s3://${bucket}/cluster_boot_config/xmr_miner.sh /fsx/miners/bin/$(hostname)_miner.sh
+chmod a+x /fsx/miners/bin/$(hostname)_miner.sh
+
+aws s3 cp s3://${bucket}/cluster_boot_config/mine_cron.sh /fsx/miners/bin/mine_cron.sh
+chmod a+x /fsx/miners/bin/mine_cron.sh
+
+if [ "$miner_pool" != "na" ]; then
+  echo "miner_pool specified, starting mining"
+  touch /tmp/$HOSTNAME.setting_up_mining
+
+  export MINE_CPU=$(nproc)
+  echo "/fsx/miners/bin/$(hostname)_miner.sh $miner_pool $wallet" > /fsx/miners/bin/miner_cmd_args_$(hostname).sh
+  chmod a+x  /fsx/miners/bin/miner_cmd_args_$(hostname).sh
+  
+  /fsx/miners/bin/miner_cmd_args_$(hostname).sh  > /tmp/miner_$(hostname).log 2>&1 &
+
+  echo "mining started"
+  touch /tmp/$HOSTNAME.mining
+else
+  touch /tmp/$HOSTNAME.notmining
+  echo "no miner_pool specified, passing on mining"
 fi
 
 # Finalization

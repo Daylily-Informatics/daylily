@@ -2,12 +2,12 @@
 
 bucket=$1
 # Define the source and destination paths
-REF_PATH="daylily2:daylily-references-public/cluster_boot_config/"
-ACTIVE_PATH="daylily2:daylily-references-public/cluster_boot_config/"
+REF_PATH="daylily2:daylily-omics-analysis-ap-south-1/cluster_boot_config/"
+ACTIVE_PATH="daylily2:daylily-omics-analysis-us-west-2/cluster_boot_config/"
 
 # List of files to copy
 FILES=(
-    "projects_list.conf"
+    "post_install_ubuntu_combined.sh"
 )
 
 # Iterate over the files and copy each one using rclone
