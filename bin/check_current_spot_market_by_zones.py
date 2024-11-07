@@ -265,7 +265,9 @@ def get_spot_price(instance_type, zone, profile):
         ]
         if profile:
             cmd.extend(["--profile", profile])
+        print("running:", cmd)
         result = subprocess.check_output(cmd).decode().strip()
+        print("result:", result)    
         return float('nan') if result in [None,'None',''] else float(result)
     except subprocess.CalledProcessError as e:
         print(f"Failed to fetch price for {zone}: {e}")

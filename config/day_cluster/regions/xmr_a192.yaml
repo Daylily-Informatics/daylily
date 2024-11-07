@@ -42,43 +42,6 @@ Scheduling:
       DisableManagedDns: false
     QueueUpdateStrategy: DRAIN
   SlurmQueues:
-    - Name: a96
-      CapacityType: SPOT
-      AllocationStrategy: lowest-price
-      ComputeResources:
-        - Name: all
-          Instances:
-            - InstanceType: c5a.24xlarge
-            - InstanceType: c5a.metal
-            - InstanceType: m5a.24xlarge
-            - InstanceType: m5a.metal 
-            - InstanceType: r5a.24xlarge 
-            - InstanceType: r5a.metal
-          MinCount: 0
-          MaxCount: 10
-          SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-      Networking:
-        SubnetIds:
-          - REGSUB_PRIVATE_SUBNET
-      CustomActions:
-        OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_combined.sh
-          Args:
-            - REGSUB_REGION
-            - REGSUB_S3_BUCKET_NAME
-            - REGSUB_XMR_POOL_URL
-            - REGSUB_XMR_WALLET
-      Iam:
-        S3Access:
-          - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: false
-        AdditionalIamPolicies:
-          - Policy: REGSUB_S3_IAM_POLICY
     - Name: a192
       CapacityType: SPOT
       AllocationStrategy: lowest-price
@@ -165,7 +128,7 @@ SharedStorage:  # This is the local FS which is expensive but fast, could be swa
     StorageType: FsxLustre
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
-      StorageCapacity: 4800
+      StorageCapacity: 1200
       DeploymentType: SCRATCH_2
       AutoImportPolicy: NEW_CHANGED_DELETED
 Tags:  # TAGs necessary for per-user/project/job cost tracking

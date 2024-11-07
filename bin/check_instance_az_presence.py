@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import subprocess
 import sys
 import os
@@ -61,7 +63,7 @@ def parse_instance_types(file_path):
     """Parse unique instance types from the input file."""
     try:
         with open(file_path, 'r') as file:
-            return list(set(line.strip() for line in file if line.strip()))
+            return list(line.strip() for line in file if line.strip())
     except FileNotFoundError:
         print(f"Error: File '{file_path}' not found.", file=sys.stderr)
         sys.exit(1)
@@ -101,7 +103,7 @@ def write_to_pcluster_queue(instance_types, filename="pcluster_queue.txt"):
     with open(filename, mode="w") as file:
         for instance_type in instance_types:
             file.write(f"  - InstanceType: {instance_type}\n")
-
+ 
 def parse_vcpus(instance_type):
     """Extract the number of vCPUs from the instance type."""
     try:
@@ -133,12 +135,12 @@ def main():
     for instance_type in instance_types:
         print(f"\nChecking spot availability for {instance_type}...")
         dedicated_price = get_dedicated_price(instance_type)
-        vcpus = parse_vcpus(instance_type)
+        vcpus = 192
 
         if vcpus is None:
             print(f"Skipping {instance_type} due to vCPU parsing error.")
             continue
-
+        print(regions)
         for region in regions:
             azs = check_spot_availability(instance_type, region)
             spot_price = get_spot_price(instance_type, region)
