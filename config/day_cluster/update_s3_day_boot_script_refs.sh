@@ -2,7 +2,7 @@
 
 bucket=$1
 # Define the source and destination paths
-REF_PATH="daylily2:daylily-omics-analysis-eu-central-1/cluster_boot_config/"
+REF_PATH="daylily2:daylily-omics-analysis-ap-south-1/cluster_boot_config/"
 ACTIVE_PATH="daylily2:daylily-omics-analysis-eu-central-1/cluster_boot_config/"
 
 # List of files to copy

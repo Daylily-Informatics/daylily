@@ -506,7 +506,7 @@ select enable_xmr in "No" "Yes"; do
         read xmr_pool_url
         [[ -z "$xmr_pool_url" ]] && xmr_pool_url="pool.supportxmr.com:3333"
 
-        echo -n "Specify a destination wallet (default wallet will donate coins to health research): "
+        echo -n "Specify a destination wallet (default wallet will donate coins to daylily development): "
         read xmr_wallet
         [[ -z "$xmr_wallet" ]] && xmr_wallet="42s1tbj3qp6T2QBw9BzYxxRn1e9afiZhcRr8yoe2QYLn5ZG6Fk9XzEh1719moDeUgY6tReaJDF464ZhbEyg4cXMYNRXJve2"
 

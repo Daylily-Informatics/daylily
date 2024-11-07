@@ -2,7 +2,7 @@ Region: REGSUB_REGION  #us-west-2
 Image:
   Os: ubuntu2204
 HeadNode:
-  InstanceType: m7a.2xlarge
+  InstanceType: c6a.2xlarge
   Networking:
     ElasticIp: true
     SubnetId: REGSUB_PUB_SUBNET  # subnet-018d25d2f208a83a2
@@ -54,43 +54,6 @@ Scheduling:
             - InstanceType: m6a.metal      # 192 vCPUs, 768 GiB
             - InstanceType: r6a.48xlarge   # 192 vCPUs, 1536 GiB
             - InstanceType: r6a.metal      # 192 vCPUs, 1536 GiB
-          MinCount: 0
-          MaxCount: 10
-          SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-      Networking:
-        SubnetIds:
-          - REGSUB_PRIVATE_SUBNET
-      CustomActions:
-        OnNodeConfigured:
-          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_combined.sh
-          Args:
-            - REGSUB_REGION
-            - REGSUB_S3_BUCKET_NAME
-            - REGSUB_XMR_POOL_URL
-            - REGSUB_XMR_WALLET
-      Iam:
-        S3Access:
-          - BucketName: REGSUB_S3_BUCKET_NAME
-            EnableWriteAccess: false
-        AdditionalIamPolicies:
-          - Policy: REGSUB_S3_IAM_POLICY
-    - Name: b192
-      CapacityType: SPOT
-      AllocationStrategy: lowest-price
-      ComputeResources:
-        - Name: all
-          Instances:
-            - InstanceType: c7a.48xlarge   # 192 vCPUs, 384 GiB
-            - InstanceType: c7a.metal-48xl # 192 vCPUs, 384 GiB
-            - InstanceType: m7a.48xlarge   # 192 vCPUs, 768 GiB
-            - InstanceType: m7a.metal-48xl # 192 vCPUs, 768 GiB
-            - InstanceType: r7a.48xlarge   # 192 vCPUs, 1536 GiB
-            - InstanceType: r7a.metal-48xl # 192 vCPUs, 1536 GiB
           MinCount: 0
           MaxCount: 10
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
