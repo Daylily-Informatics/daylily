@@ -9,7 +9,7 @@ HeadNode:
   DisableSimultaneousMultithreading: false
   Ssh:
     KeyName: REGSUB_KEYNAME  # must be ed25519 for ubuntu
-    AllowedIps: "0.0.0.0/0" # SET THIS TO YOUR DESIRED FILTER
+    AllowedIps: "0.0.0.0/0" # SET THIS TO YOUR DESIRED FILTER 
   Dcv:
     Enabled: false
   LocalStorage:
@@ -33,6 +33,7 @@ HeadNode:
         EnableWriteAccess: false
     AdditionalIamPolicies:
       - Policy: REGSUB_S3_IAM_POLICY  
+      - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 Scheduling:
   Scheduler: slurm
   SlurmSettings:
@@ -79,12 +80,13 @@ Scheduling:
             EnableWriteAccess: false
         AdditionalIamPolicies:
           - Policy: REGSUB_S3_IAM_POLICY
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 Monitoring:
-  DetailedMonitoring: true
+  DetailedMonitoring: false
   Logs:
     CloudWatch:
       Enabled: true
-      RetentionInDays: 14
+      RetentionInDays: 3
 SharedStorage:  # This is the local FS which is expensive but fast, could be swapped for EFS, etc.
   - MountDir: /fsx
     Name: fsx-for-daylily-x3  # WARNING, EDIT NAME WILL DEL EXISTING DATA
@@ -101,3 +103,7 @@ Tags:  # TAGs necessary for per-user/project/job cost tracking
     Value: NA
   - Key: aws-parallelcluster-project
     Value: NA 
+DevSettings:
+  Timeouts:
+    HeadNodeBootstrapTimeout: 3600
+    ComputeNodeBootstrapTimeout: 3600

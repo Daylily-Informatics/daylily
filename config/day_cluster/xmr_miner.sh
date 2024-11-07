@@ -4,7 +4,7 @@
 
 mine_pool_ip=$1
 wallet=$2
-ncpu=$MINE_CPU
+ncpu=$(nproc)
 
 # Auto-detect number of CPUs and total memory
 total_memory_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
