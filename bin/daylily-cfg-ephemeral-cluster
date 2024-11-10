@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+emulate -L bash
+
 # Default configuration
 pass_on_warn=false  # Default for warnings causing failures
 
@@ -521,6 +523,30 @@ select enable_xmr in "No" "Yes"; do
     break
 done
 
+echo "Choose the FSX Lustre File System Size (tested with 4800):"
+fsx_options="2400 3600 4800 6000 7200"
+
+# Define select loop
+select fsx_size in $fsx_options; do
+    sel_fsx_size=$(echo $fsx_size | awk '{print $1}')
+    echo "You selected FSX Lustre File System Size: $sel_fsx_size"
+    break
+done
+echo "FSX Lustre File System Size: $sel_fsx_size"
+
+echo "Enable detailed monitoring (yes == incurs addl cost)? (1) No (2) Yes:"
+select detailed_monitoring in "No Yes"; do
+    sel_detailed_monitoring=$(echo $detailed_monitoring | awk '{print $1}')
+    echo "You selected detailed monitoring: $sel_detailed_monitoring"
+    if [[ "$act_detailed_monitoring" == "Yes" ]]; then
+        act_detailed_monitoring="true"
+    else
+        act_detailed_monitoring="false"
+    fi
+    break
+done
+
+echo "Detailed monitoring enabled: $act_detailed_monitoring"
 
 # Prepare configuration
 mkdir -p $HOME/.config/daylily
@@ -547,6 +573,8 @@ REGSUB_S3_BUCKET_REF=$bucket_url
 REGSUB_XMR_MINE=$enable_xmr
 REGSUB_XMR_POOL_URL=$xmr_pool_url
 REGSUB_XMR_WALLET=$xmr_wallet
+REGSUB_FSX_SIZE=$sel_fsx_size
+REGSUB_DETAILED_MONITORING=$act_detailed_monitoring
 EOF
 
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
