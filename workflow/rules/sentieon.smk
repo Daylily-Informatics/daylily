@@ -59,12 +59,24 @@ rule sentieon_bwa_sort:
         touch {output.samo};
         tdir="/fsx/scratch/";
 
-        /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon bwa mem \
+
+        # Find the jemalloc library in the active conda environment
+        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1);
+
+        # Check if jemalloc was found and set LD_PRELOAD accordingly
+        if [[ -n "$jemalloc_path" ]]; then
+            export LD_PRELOAD="$jemalloc_path";
+            echo "LD_PRELOAD set to: $LD_PRELOAD";
+        else
+            echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
+            exit 3;
+        fi
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon bwa mem \
         -t {params.bwa_threads}  {params.K}  \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
-        {params.K}  {params.huref} \
-         <(igzip -c -d -T  {params.igz_threads} -q  {input.f1} ) \
-         <(igzip -c -d -T  {params.igz_threads} -q  {input.f2} )  \
+        {params.huref} \
+           {input.f1}  \
+           {input.f2}   \
         |  /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {params.sort_threads} \
         --sortblock_thread_count {params.sort_threads} \
