@@ -535,7 +535,8 @@ done
 echo "FSX Lustre File System Size: $sel_fsx_size"
 
 echo "Enable detailed monitoring (yes == incurs addl cost)? (1) No (2) Yes:"
-select detailed_monitoring in "No Yes"; do
+det_mon_options="No Yes"
+select detailed_monitoring in $det_mon_options; do
     sel_detailed_monitoring=$(echo $detailed_monitoring | awk '{print $1}')
     echo "You selected detailed monitoring: $sel_detailed_monitoring"
     if [[ "$act_detailed_monitoring" == "Yes" ]]; then
