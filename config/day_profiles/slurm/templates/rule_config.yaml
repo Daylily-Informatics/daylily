@@ -17,7 +17,7 @@ dynamic_scaling_factor: 1.0  # Takes the presets and scales them up/down based o
 # #### Select one to all of the available SNV callers
 active_snv_callers:
     - deep
-#    - oct
+    - sentd
 #    - sentd
 
 # #### Select one to all of the available SV callers
@@ -31,8 +31,8 @@ active_s_v_callers:
 active_aligners:
     - bwa2a:
           mkdup: dppl
-#    - strobe:
-#          mkdup: dppl
+    - sent:
+          mkdup: dppl
 #    - bwa2b:
 #          mkdup: dppl
 #    - bwa2m:
