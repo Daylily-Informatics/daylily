@@ -49,7 +49,7 @@ rule sent_DNAscope:
         + "{sample}/align/{alnr}/snv/sentd/log/vcfs/{sample}.{alnr}.sentd.{dchrm}.snv.log",
     threads: config['sentD']['threads']
     conda:
-        "../envs/sentD_v0.1.yaml"
+        "../envs/sentD_v0.2.yaml"
     priority: 45
     benchmark:
         repeat(
