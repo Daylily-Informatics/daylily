@@ -165,7 +165,7 @@ SharedStorage:  # This is the local FS which is expensive but fast, could be swa
     StorageType: FsxLustre
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
-      StorageCapacity: REGSUB_FSX_SIZE # This can be set to 1200, 2400, 3600, 4800, ... etc TESTED WITH 4800, set to 2400 to save some $. You must tweak this to you nreeds
+      StorageCapacity: REGSUB_FSX_SIZE 
       DeploymentType: SCRATCH_2
       AutoImportPolicy: NEW_CHANGED_DELETED
 Tags:  # TAGs necessary for per-user/project/job cost tracking 

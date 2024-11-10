@@ -524,7 +524,7 @@ select enable_xmr in "No" "Yes"; do
 done
 
 echo "Choose the FSX Lustre File System Size (tested with 4800):"
-fsx_options="2400 3600 4800 6000 7200"
+fsx_options="2400 4800 7200"
 
 # Define select loop
 select fsx_size in $fsx_options; do
