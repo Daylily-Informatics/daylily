@@ -75,8 +75,8 @@ rule bwa_mem2_sort:
 
 
         end_time=$(date +%s);
-	elapsed_time=$((($end_time - $start_time) / 60));
-	echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
+        elapsed_time=$((($end_time - $start_time) / 60));
+        echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         """
 
