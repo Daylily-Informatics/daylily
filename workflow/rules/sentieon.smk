@@ -57,7 +57,8 @@ rule sentieon_bwa_sort:
         ulimit -n 16384
         
         touch {output.samo};
-        tdir="/fsx/scratch/";
+        tdir="/fsx/scratch/$epocsec";
+        mkdir -p $tdir; 
 
 
         # Find the jemalloc library in the active conda environment
@@ -66,7 +67,7 @@ rule sentieon_bwa_sort:
         # Check if jemalloc was found and set LD_PRELOAD accordingly
         if [[ -n "$jemalloc_path" ]]; then
             export LD_PRELOAD="$jemalloc_path";
-            echo "LD_PRELOAD set to: $LD_PRELOAD";
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log.a};
         else
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
@@ -86,6 +87,6 @@ rule sentieon_bwa_sort:
         --sam2bam \
         -o {output.bamo} - >> {log.a} ;
 
-        samtools index -b -@ {threads} {output.bamo};  > {log} 2>&1;
+        samtools index -b -@ {threads} {output.bamo}  >> {log.a} 2>&1;
 
         """
