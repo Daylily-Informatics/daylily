@@ -298,8 +298,8 @@ rule deep_concat_index_chunks:
         bcftools stats -F {params.huref}  {output.vcfgz} > $stats_f;
 
         # Convert to BCF and index it
-        bcftools view -O b -o {output.bcf} --threads {threads} {output.vcfgz};
-        bcftools index --threads {threads} {output.bcf};
+        #bcftools view -O b -o {output.bcf} --threads {threads} {output.vcfgz};
+        #bcftools index --threads {threads} {output.bcf};
 
         bcftools concat -a -d all --threads {threads} -f {input.gfofn}  -O v -o {output.gvcf};
         bcftools view -O z -o {output.gvcfgz} {output.gvcf};
@@ -309,8 +309,8 @@ rule deep_concat_index_chunks:
 
 
         # Convert to BCF and index it
-        bcftools view -O b -o {output.gbcf} --threads {threads} {output.gvcfgz};
-        bcftools index --threads {threads} {output.gbcf};
+        #bcftools view -O b -o {output.gbcf} --threads {threads} {output.gvcfgz};
+        #bcftools index --threads {threads} {output.gbcf};
 
         rm -rf $(dirname {output.gbcf})/vcfs >> {log} 2>&1;  # clean up all the crap
         {latency_wait};
