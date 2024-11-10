@@ -41,7 +41,14 @@ def get_instance_price(instance_type, az, profile, price_type):
         ]
         if profile:
             command.extend(["--profile", profile])
-        result = run_aws_command(command)
+
+        try:
+            result = run_aws_command(command)
+        except Exception as e:
+            print(f"Error executing {' '.join(command)}: {e}")
+            print(f"\n\tCONFIRM INSTANCE TYPE: {instance_type} is valid in {az} .\n\n")
+            raise e
+
         return float(result) if result else None
     elif price_type == 'dedicated':
         pricing_region = 'us-east-1'  # Use a region where the Pricing API is available
