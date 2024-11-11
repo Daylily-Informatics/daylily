@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.46)
+# Daylily AWS Ephemeral Cluster Setup (0.7.47)
 
 **Pre-beta release**
 
@@ -894,4 +894,4 @@ The command `bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.y
 
 # [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
 
-_named in honor of Margaret Oakley Dahoff_
+_named in honor of Margaret Oakley Dahoff_ 
