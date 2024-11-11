@@ -131,7 +131,7 @@ bwa_mem2a_aln_sort:
     orig_sort_mem: "3000M"
     sort_thread_mem: "3000M"  # 1350M
     numactl: ""
-    mbuffer_mem: "200G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
+    mbuffer_mem: "200G" # deprecated
 
 strobe_align_sort:
     env_yaml: "../envs/strobe_aligner.yaml"
