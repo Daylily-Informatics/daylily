@@ -113,23 +113,23 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 142
+    bwa_threads: 124
     orig_threads: 2
-    sort_threads: 64 # from 64
-    write_threads: 64 # from 64
+    sort_threads: 96 # from 64
+    write_threads: 96 # from 64
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
-    igz_threads: 16 # from 64
+    igz_threads: 64 # from 64
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
     softclip_alts: " "
     ld_preload: "  "
     cmd: "  OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  
-    K: " " # -K 12600000000 "
+    K: "  -k 19 -Y  " # -K 12600000000 "
     glances: " "
-    k: " -k 19 -Y "
-    orig_sort_mem: "4000M"
-    sort_thread_mem: "4000M"  # 1350M
+    k: " "
+    orig_sort_mem: "3000M"
+    sort_thread_mem: "3000M"  # 1350M
     numactl: ""
     mbuffer_mem: "200G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 

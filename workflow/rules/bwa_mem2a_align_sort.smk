@@ -55,6 +55,7 @@ rule bwa_mem2_sort:
         config["bwa_mem2a_aln_sort"]["env_yaml"]
     shell:
         """
+
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
         echo "INSTANCE TYPE: $itype" > {log};
@@ -68,15 +69,15 @@ rule bwa_mem2_sort:
         {params.ldpre} {params.bwa_mem2a_cmd} mem \
          -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
          {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  {params.huref} \
-         {params.subsample_head}  {input.f1}   {params.subsample_tail}  \
-         {params.subsample_head}  {input.f2}   {params.subsample_tail}    \
-        |   samtools sort -l 9  -m {params.sort_thread_mem}   \
+         {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
+         {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}    \
+        |   samtools sort -l 1  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
 
 
         end_time=$(date +%s);
-        elapsed_time=$((($end_time - $start_time) / 60));
-        echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
+    	elapsed_time=$((($end_time - $start_time) / 60));
+	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         """
 
