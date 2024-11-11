@@ -58,7 +58,7 @@ rule bwa_mem2_sort:
         """
 
 
-        required_space_gb=120;  # Adjust based on expected SAM file size
+        required_space_gb=50;  # Adjust based on expected SAM file size
         available_space_gb=$(df -BG --output=avail /dev/shm | tail -1 | sed 's/[^0-9]*//g');
 
         if [ "$available_space_gb" -lt "$required_space_gb" ]; then
