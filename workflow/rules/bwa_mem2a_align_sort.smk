@@ -12,7 +12,6 @@ rule bwa_mem2_sort:
     output:
         bami=temp(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam.bai"),
         bamo=temp(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam"),
-        sam=temp("/dev/shm/{sample}.bwa2a.sam")
     priority: 49
     log:
         MDIR + "{sample}/align/bwa2a/logs/{sample}.bwa2a_sort.log",
@@ -57,15 +56,6 @@ rule bwa_mem2_sort:
     shell:
         """
 
-
-        required_space_gb=250;  # Adjust based on expected SAM file size
-        available_space_gb=$(df -BG --output=avail /dev/shm | tail -1 | sed 's/[^0-9]*//g');
-
-        if [ "$available_space_gb" -lt "$required_space_gb" ]; then
-            echo "Error: Not enough space in /dev/shm for SAM file" >> {log};
-            exit 1;
-        fi
-
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
         echo "INSTANCE TYPE: $itype" > {log};
@@ -81,15 +71,9 @@ rule bwa_mem2_sort:
          {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  {params.huref} \
          {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}    \
-        -o {output.sam} >> {log} 2>&1;
-        
-        echo "BWA MEM2 DONE" >> {log} 2>&1;
+        |   samtools sort -l 1  -m {params.sort_thread_mem}   \
+         -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
 
-        samtools sort -l 9  -m {params.sort_thread_mem}   \
-         -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.bami} \
-         {output.sam} >> {log} 2>&1;
-
-        echo "SAMTOOLS SORT DONE" >> {log} 2>&1;
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));
