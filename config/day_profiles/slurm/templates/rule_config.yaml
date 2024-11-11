@@ -113,12 +113,12 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 124
+    bwa_threads: 192
     orig_threads: 2
-    sort_threads: 96 # from 64
-    write_threads: 96 # from 64
+    sort_threads: 192 # from 64
+    write_threads: 192 # from 64
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
-    igz_threads: 64 # from 64
+    igz_threads: 32 # from 64
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
@@ -128,8 +128,8 @@ bwa_mem2a_aln_sort:
     K: "  -k 19 -Y  " # -K 12600000000 "
     glances: " "
     k: " "
-    orig_sort_mem: "3000M"
-    sort_thread_mem: "3000M"  # 1350M
+    orig_sort_mem: "1600M"
+    sort_thread_mem: "1600M"  # 1350M
     numactl: ""
     mbuffer_mem: "200G" # deprecated
 
