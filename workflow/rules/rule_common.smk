@@ -62,6 +62,7 @@ config["supporting_files"] = {
 SENTD_CHRMS = config["sentD"]["sentD_chrms"].split(",")
 DEEPD_CHRMS = config["deepvariant"]["deep_chrms"].split(",")
 OCTO_CHRMS = config["octopus"]["octo_chrms"].split(",")
+CLAIR3_CHRMS = config["clair3"]["clair3_chrms"].split(",")
 
 
 # ##### Setting the allowed aligners to run and to which deduper to use.

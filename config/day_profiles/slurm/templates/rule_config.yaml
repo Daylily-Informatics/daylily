@@ -179,6 +179,16 @@ bwa_mem2meme_aln_sort:
     piped_align: "yes"
     mbuffer_mem: "100G" # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
 
+
+clair3:
+    threads: 64
+    partition: "i192,i128"
+    partition_other: "i192,i128"
+    mem_mb: 85000
+    numa: " OMP_NUM_THREADS=64 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    clair3_chrms: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
+
+
 clean:
     env_yaml: "envs/vanilla_v0.1.yaml"  # no ./../ b/c it's being referenced from Snakefile
     partition: "i192"
