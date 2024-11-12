@@ -75,15 +75,7 @@ rule sentieon_bwa_sort:
         {params.huref} \
            {input.f1}  \
            {input.f2}   \
-        | /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
-        --thread_count {params.sort_threads} \
-        --sortblock_thread_count {params.sort_threads} \
-        --bam_compression 9 \
-        --intermediate_compress_level 9  \
-        --block_size {params.sort_thread_mem}   \
-        --sam2bam \
-        -o {output.bamo} - >> {log.a} 2>&1;
-
-        samtools index -b -@ {threads} {output.bamo}  >> {log.a} 2>&1;
+        |  samtools sort -l 1  -m {params.sort_thread_mem}   \
+         -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.bami} >> {log.a} 2>&1;
 
         """
