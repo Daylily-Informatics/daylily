@@ -92,11 +92,12 @@ rule clair3:
         --platform='ilmn' \
         --model_path=/opt/models/ilmn \
         --ctg_name=$cchr \
+        --gvcf \
         --output=$(dirname {input.d})  >> {log} 2>&1;
 
         ls -lth $(dirname {input.d})  >> {log} 2>&1;
         echo "CCHRM: $cchr" >> {log} 2>&1;
-        sleep 100;
+        
         mv $(dirname {input.d})/merge_output.vcf.gz {output.vcf};
         mv $(dirname {input.d})/merge_output.vcf.gz.tbi {output.vcf}.tbi;
         end_time=$(date +%s);
