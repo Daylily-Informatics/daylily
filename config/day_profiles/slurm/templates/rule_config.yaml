@@ -131,7 +131,7 @@ bwa_mem2a_aln_sort:
     orig_sort_mem: "3000M"
     sort_thread_mem: "3000M"  # 1350M
     numactl: ""
-    mbuffer_mem: " | mbuffer -m 10G -q -s 512k " 
+    mbuffer_mem: " | mbuffer -m 16G -q -s 512k " 
 
 strobe_align_sort:
     env_yaml: "../envs/strobe_aligner.yaml"
