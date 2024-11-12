@@ -9,8 +9,7 @@ rule strobe_align_sort:
         f2=getR2s,
     output:
         bami=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam.bai"),
-        bamo=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam"),
-        samo=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sam"),
+        bamo=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam")
     log:
         MDIR + "{sample}/align/strobe/logs/{sample}.strobe_sort.log",
     resources:
@@ -79,12 +78,8 @@ rule strobe_align_sort:
         --use-index {params.huref}  \
         {params.subsample_head} <(igzip -c -d -T {params.igz_threads} -q  {input.f1} )  {params.subsample_tail} \
         {params.subsample_head}  <(igzip -c -d -T {params.igz_threads} -q {input.f2} )  {params.subsample_tail} \
-        > {output.samo} 2>> {log};
-
-        echo "completed strobealigner" >> {log};
-
-        samtools sort -l 1  -m {params.sort_thread_mem}   \
-        -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} {output.samo} >> {log} 2>&1;
+        | samtools sort -l 9  -m {params.sort_thread_mem}   \
+        -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} - >> {log} 2>&1;
 
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));

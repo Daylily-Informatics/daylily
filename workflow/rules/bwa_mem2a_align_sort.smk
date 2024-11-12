@@ -74,10 +74,9 @@ rule bwa_mem2_sort:
         |   samtools sort -l 1  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
 
-
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));
-	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
+	echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         """
 

@@ -12,8 +12,7 @@ rule sentieon_bwa_sort:
         f2=getR2s,
     output:
         bamo=MDIR + "{sample}/align/sent/{sample}.sent.sort.bam",
-        baio=MDIR + "{sample}/align/sent/{sample}.sent.sort.bam.bai",
-        samo=temp(MDIR + "{sample}/align/sent/{sample}.sent.sort.sam"),
+        baio=MDIR + "{sample}/align/sent/{sample}.sent.sort.bam.bai"
     log:
         a=MDIR + "{sample}/align/sent/logs/{sample}.sent.sort.log",
     threads: config["sentieon"]["threads"]
@@ -57,7 +56,7 @@ rule sentieon_bwa_sort:
         ulimit -n 16384
         
         touch {output.samo};
-        tdir=$(dirname {output.samo})/tmpp;
+        tdir=$(dirname {output.bamo})/tmpp;
         mkdir -p $tdir; 
 
         # Find the jemalloc library in the active conda environment
@@ -77,17 +76,14 @@ rule sentieon_bwa_sort:
         {params.huref} \
            {input.f1}  \
            {input.f2}   \
-        > {output.samo} 2>> {log.a};
-
-        /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
+        | /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {params.sort_threads} \
         --sortblock_thread_count {params.sort_threads} \
         --bam_compression 9 \
         --intermediate_compress_level 9  \
         --block_size {params.sort_thread_mem}   \
         --sam2bam \
-        -i {output.samo} \
-        -o {output.bamo} >> {log.a} ;
+        -o {output.bamo} - >> {log.a} 2>&1;
 
         samtools index -b -@ {threads} {output.bamo}  >> {log.a} 2>&1;
 
