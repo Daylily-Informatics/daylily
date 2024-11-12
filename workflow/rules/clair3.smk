@@ -60,7 +60,7 @@ rule clair3:
         mdir=MDIR,
         mem_mb=config['clair3']['mem_mb'],
         numa=config['clair3']['numa'],
-        clair_threads=config['clair3']['clair3_threads'],  
+        clair3_threads=config['clair3']['clair3_threads'],  
         cpre="" if "b37" == config['genome_build'] else "chr",
     shell:
         """
@@ -89,7 +89,7 @@ rule clair3:
         {params.numa}   /opt/bin/run_clair3.sh \
         --bam_fn={input.bam} \
         --ref_fn={params.huref} \
-        --threads={threads} \
+        --threads={params.clair3_threads} \
         --platform='ilmn' \
         --model_path=/opt/models/ilmn \
         --ctg_name=$cchr \
