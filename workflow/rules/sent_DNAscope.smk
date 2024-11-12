@@ -71,9 +71,23 @@ rule sent_DNAscope:
         numactl=config["sentieon"]["numactl"],
     shell:
         """
+
+
+        TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
+        itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
+        echo "INSTANCE TYPE: $itype" > {log};
+        echo "INSTANCE TYPE: $itype";
+        start_time=$(date +%s);
+
         ulimit -n 16384
         /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon driver --thread_count {threads} --interval {params.schrm_mod} --reference {params.huref} --input {input.b} --algo DNAscope --pcr_indel_model none --model {params.model}  {output.tvcf};
         /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon driver -t {threads} -r {params.huref} --algo DNAModelApply --model {params.model} -v {output.tvcf} {output.vcf};
+
+
+        end_time=$(date +%s);
+    	elapsed_time=$((($end_time - $start_time) / 60));
+	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
+        echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
 
         touch {output.vcf};
         """

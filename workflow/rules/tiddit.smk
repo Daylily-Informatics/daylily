@@ -34,6 +34,14 @@ rule tiddit:
         "docker://daylilyinformatics/tiddit:2.12.0"
     shell:
         """
+
+
+        TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
+        itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
+        echo "INSTANCE TYPE: $itype" > {log};
+        echo "INSTANCE TYPE: $itype";
+        start_time=$(date +%s);
+
         export APPTAINER_HOME=/fsx/scratch;
         set +euo pipefail;
         rm -rf {output.stub}* || echo rmFailedTiddit;  # verging on overkill cleanup for restarts
@@ -44,6 +52,12 @@ rule tiddit:
         TIDDIT.py  --sv --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
         touch {output};
         ls {output};  >> {log} ;
+
+
+        end_time=$(date +%s);
+    	elapsed_time=$((($end_time - $start_time) / 60));
+	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
+        echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         """
 
 
