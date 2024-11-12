@@ -73,7 +73,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/blah.createme.note
       build_gaps:
         class: file_only
-        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/grch38_ucsc_gaps.bed 
+        name: resources/grch38_ucsc_gaps.bed 
       encode_blacklist:
         class: file_only
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/blah.createme.note
@@ -147,7 +147,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         name: /fsx/data/tool_specific_resources/H_sapiens/b37/octopus/forests/germline.v0.7.4.forest
       skip_regions_f:
         class: file_only
-        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/GRCh38/grch38_ucsc_gaps.bed 
+        name: resources/grch38_ucsc_gaps.bed 
     microbial:
       reprDB:  # https://pubmed.ncbi.nlm.nih.gov/29347966/
         class: file_only
