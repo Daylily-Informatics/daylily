@@ -39,7 +39,7 @@ rule clair3:
         MDIR + "{sample}/align/{alnr}/snv/clair3/log/{sample}.{alnr}.clair3.{clairchrm}.snv.log",
     threads: config['clair3']['threads']
     container:
-        "hkubal/clair3:latest"
+        "docker://hkubal/clair3:latest"
     priority: 45
     resources:
         vcpu=config['clair3']['threads'],
