@@ -113,12 +113,12 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 124
+    bwa_threads: 192  # 124
     orig_threads: 2
-    sort_threads: 96 # from 64
-    write_threads: 96 # from 64
+    sort_threads: 192 # from 96
+    write_threads: 192 # from 96
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
-    igz_threads: 64 # from 64
+    igz_threads: 48 # from 64
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
@@ -128,8 +128,8 @@ bwa_mem2a_aln_sort:
     K: "  -k 19 -Y  " # -K 12600000000 "
     glances: " "
     k: " "
-    orig_sort_mem: "3000M"
-    sort_thread_mem: "3000M"  # 1350M
+    orig_sort_mem: "1600M"
+    sort_thread_mem: "1600M"  # 1350M
     numactl: ""
     mbuffer_mem: "200G" 
 
@@ -435,21 +435,21 @@ sentieon_dnascope:
 
 sentieon:
     threads: 192
-    bwa_threads: 128
+    bwa_threads: 192
     benchmark_runs: 0
-    max_mem: "190G"
+    max_mem: "290G"
     K: "  -k 19 -Y "  # "-K 100000000 "
     env_yaml: "../envs/sentieon_v0.1.yaml"
     glances: " "
     mask_regions: " "
-    numactl: "  JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4'   "  
+    numactl: " "  # JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4'   "  
     numactlO: "  JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  "  
     metrics_threads: 64
     partition: "i192"
-    sort_threads: 64
-    write_threads: 64
+    sort_threads: 192
+    write_threads: 192
     igz_threads: 64 
-    sort_thread_mem: "4000M" 
+    sort_thread_mem: "250000M" 
 
 sentieon_markdups:
     threads: 192

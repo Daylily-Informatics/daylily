@@ -12,7 +12,7 @@ rule bwa_mem2_sort:
     output:
         bami=temp(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam.bai"),
         bamo=temp(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam"),
-        sam=temp("/dev/shm/{sample}.bwa2a.sam")
+        sam=temp(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sam")
     priority: 49
     log:
         MDIR + "{sample}/align/bwa2a/logs/{sample}.bwa2a_sort.log",
@@ -56,15 +56,6 @@ rule bwa_mem2_sort:
         config["bwa_mem2a_aln_sort"]["env_yaml"]
     shell:
         """
-
-
-        required_space_gb=50;  # Adjust based on expected SAM file size
-        available_space_gb=$(df -BG --output=avail /dev/shm | tail -1 | sed 's/[^0-9]*//g');
-
-        if [ "$available_space_gb" -lt "$required_space_gb" ]; then
-            echo "Error: Not enough space in /dev/shm for SAM file" >> {log};
-            exit 1;
-        fi
 
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);

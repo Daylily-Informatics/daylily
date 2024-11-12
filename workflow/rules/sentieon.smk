@@ -56,10 +56,9 @@ rule sentieon_bwa_sort:
 
         ulimit -n 16384
         
-        touch {output.samo};
-        tdir="/fsx/scratch/$epocsec";
+	touch {output.samo};
+        tdir=$(dirname {output.samo}/tmpp;
         mkdir -p $tdir; 
-
 
         # Find the jemalloc library in the active conda environment
         jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1);
@@ -78,13 +77,16 @@ rule sentieon_bwa_sort:
         {params.huref} \
            {input.f1}  \
            {input.f2}   \
-        |  /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
+        > {output.samo} >> {log.a} 2>&1;
+
+        /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {params.sort_threads} \
         --sortblock_thread_count {params.sort_threads} \
         --bam_compression 9 \
         --intermediate_compress_level 9  \
         --block_size {params.sort_thread_mem}   \
         --sam2bam \
+        -i {output.samo} \
         -o {output.bamo} - >> {log.a} ;
 
         samtools index -b -@ {threads} {output.bamo}  >> {log.a} 2>&1;
