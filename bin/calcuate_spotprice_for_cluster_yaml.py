@@ -7,10 +7,12 @@ from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
 import json
 
+
 def parse_arguments():
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description="Insert spotprice max  into pcluster_config.yaml, with one of two strategies: median(spot)+1.11 or median(dedicated)/2 .")
+    parser = argparse.ArgumentParser(description="Insert spotprice max  into pcluster_config.yaml, with one of two strategies: median(spot)+BUMP_PRICE or median(dedicated)/2 .")
     parser.add_argument("-i", "--input", required=True, help="Input YAML configuration file path.")
+    parser.add_argument("-b", "--bump-price", type=float, required=False, default=1.81, help="Price bump to add to the median spot price. default=1.81")
     parser.add_argument("-o", "--output", required=True, help="Output YAML configuration file path.")
     parser.add_argument("--az", required=True, help="Availability zone.")
     parser.add_argument("--profile", help="AWS CLI profile to use.")
@@ -154,7 +156,7 @@ def get_region_name(region_code):
     # Fallback to region code if no match is found
     return region_code
 
-def calculate_median_price(resource, az, profile, price_type):
+def calculate_median_price(resource, az, profile, price_type, bump_price):
     """Calculate the median price for all instances in the compute resource."""
     prices = []
     for instance in resource.get('Instances', []):
@@ -169,8 +171,8 @@ def calculate_median_price(resource, az, profile, price_type):
             pap="(median on-demand/2)"
             median_price = round(median_price/2.0, 4)
         else:
-            pap="(median spot price)+1.51"
-            median_price = median_price+1.51  # add a small buffer to the spot price
+            pap=f"(median spot price)+{bump_price}"
+            median_price = median_price+float(bump_price)
             
         resource['SpotPrice'] = median_price
         # Add a comment indicating the price type
@@ -178,13 +180,13 @@ def calculate_median_price(resource, az, profile, price_type):
     else:
         print(f"Could not retrieve {price_type} prices for instances in resource {resource.get('Name')}.")
 
-def process_slurm_queues(config, az, profile, price_type):
+def process_slurm_queues(config, az, profile, price_type, bump_price):
     """Process all Slurm queues to calculate and update prices."""
     for queue in config.get('Scheduling', {}).get('SlurmQueues', []):
         for resource in queue.get('ComputeResources', []):
             if not isinstance(resource, CommentedMap):
                 resource = CommentedMap(resource)
-            calculate_median_price(resource, az, profile, price_type)
+            calculate_median_price(resource, az, profile, price_type, bump_price)
 
 def main():
     args = parse_arguments()
@@ -198,7 +200,7 @@ def main():
         yaml_loader.preserve_quotes = True
         config = yaml_loader.load(f)
 
-    process_slurm_queues(config, az, profile, price_type)
+    process_slurm_queues(config, az, profile, price_type, args.bump_price)
 
     with open(args.output, 'w') as f:
         yaml_dumper = YAML()
