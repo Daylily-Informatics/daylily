@@ -33,8 +33,9 @@ rule clair3:
         bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
         d=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.ready",
     output:
-        vcf_dir=directory(MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/output"),
-        vcf=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/output/merge_output.vcf.gz",
+        vcf=MDIR
+        + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairhrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf",
+        vcf_dir=directory(MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/"),
     log:
         MDIR + "{sample}/align/{alnr}/snv/clair3/log/{sample}.{alnr}.clair3.{clairchrm}.snv.log",
     threads: config['clair3']['threads']
@@ -92,11 +93,15 @@ rule clair3:
         --ref_fn={params.huref} \
         --threads={threads} \
         --platform='ilmn' \
-        --output {params.out_dir} \  
+        --output={params.out_dir} \  
         --model_path="/opt/models/ilmn" \
         --ctg_name=$cchr \
         >> {log} 2>&1;
 
+        ls -lth {params.out_dir} >> {log} 2>&1;
+        echo "CCHRM: $cchr" >> {log} 2>&1;
+        sleep 100;
+        mv {params.out_dir}/output.vcf {output.vcf};
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
 
