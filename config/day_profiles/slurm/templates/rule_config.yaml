@@ -182,6 +182,7 @@ bwa_mem2meme_aln_sort:
 
 clair3:
     threads: 64
+    clair3_threads: 128
     partition: "i192,i128"
     partition_other: "i192,i128"
     mem_mb: 85000

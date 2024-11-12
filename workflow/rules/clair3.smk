@@ -60,6 +60,7 @@ rule clair3:
         mdir=MDIR,
         mem_mb=config['clair3']['mem_mb'],
         numa=config['clair3']['numa'],
+        clair_threads=config['clair3']['clair3_threads'],  
         cpre="" if "b37" == config['genome_build'] else "chr",
     shell:
         """
