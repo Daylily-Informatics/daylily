@@ -1,29 +1,16 @@
 ---
-pizzazz: "off"  # on or off
-profile_name: "global_AWSHPC"  # this is over-ridden when profile specific config is included
+pizzazz: "off"  # on or off ... never deprecated
+profile_name: "global_AWSHPC"  # this is over-ridden when profile specific config is included. DPRECATED?
 
 valid_biome: 'AWSPC'
 
 supporting_dirs: "config/supporting_files/supporting_dirs.yaml"
 
-# -------> Early on experiments with remote access of ref data.  use local_link only
-# the others are no-op at this point
-# How to stage the necessary supporting data for the pipe to run
+# 
 supporting_data:
-    mode: "local_link"  # or local_link or  webdav_copy_local or copy_local
-    #  webdav_mount creates a mount at resources/lous/data -- this is experimental,
-    #      and works more reliably running locally (mid speed)
-    #  local_link -- use this if you're running on clr, it creates a soft link to
-    #      /fsx/data at resources/fsx/data (fastest)
-    #  webdav_copy_local -- should be stable for the cloud or cluster, grabs the
-    #   file using the snakemake WEBDAV remote file obj (slowest)
-    #  local_copy -- copy via webdav the supporting files to resources/fsx/data
-    #       (slowest #2)- possibly better choice than webdav if you have localFS
-    #   handy, but that prob means this options not super attractive :-)
-
-    # #### Root Location of supporting reference resources
+    mode: "local_link"  # other options are DPRECATED
     link_point: "resources/fsx/data/"
     link_root: "resources/fsx/"
     link_source: "/fsx/"
-    supporting_files_conf: "config/supporting_files/XREF_CODEX_supporting_files.yaml"
-    webdav_point: "resources/fsx/data/"
+    supporting_files_conf: "config/supporting_files/XREF_CODEX_supporting_files.yaml"  # deprecated?
+    webdav_point: "resources/fsx/data/"  # deprecated soon

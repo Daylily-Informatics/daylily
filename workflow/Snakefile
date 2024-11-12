@@ -48,16 +48,16 @@ try:
     ##
     ## If a bug with config appears around here and is inscrutibke, yamllint all of ther imported config files
     ##
+
+    print(f"loading global: {wd}/config/global_{mg_biome}.yaml", file=sys.stderr)
     configfile: f"config/global_{mg_biome}.yaml"
+
+    print(f"loading profile config: {wd}/config/global_{mg_biome}.yaml", file=sys.stderr)
     configfile: f"config/day_profiles/{mg_profile}/config.yaml"
 
-    # TODO deprecate this config 'use_lowcov_config'
-    if 'use_lowcov_config' in config:
-        print(f"loading LC: {wd}/config/day_profiles/{mg_profile}/rule_config_lowcov.yaml", file=sys.stderr)
-        configfile: f"config/day_profiles/{mg_profile}/rule_config_lowcov.yaml"
-    else:
-        print(f"loading NORM: {wd}/config/day_profiles/{mg_profile}/rule_config.yaml", file=sys.stderr)
-        configfile: f"config/day_profiles/{mg_profile}/rule_config.yaml"
+    
+    print(f"loading profile rule_config: {wd}/config/day_profiles/{mg_profile}/rule_config.yaml", file=sys.stderr)
+    configfile: f"config/day_profiles/{mg_profile}/rule_config.yaml"
 
     if config['valid_biome'] in [mg_biome]:
         pass
