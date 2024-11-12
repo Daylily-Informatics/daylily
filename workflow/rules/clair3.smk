@@ -96,7 +96,7 @@ rule clair3:
         --ctg_name=$cchr \
         >> {log} 2>&1;
 
-        ls -lth {params.out_dir} >> {log} 2>&1;
+        ls -lth $(dirname {input.d}  >> {log} 2>&1;
         echo "CCHRM: $cchr" >> {log} 2>&1;
         sleep 100;
         mv {params.out_dir}/output.vcf {output.vcf};
