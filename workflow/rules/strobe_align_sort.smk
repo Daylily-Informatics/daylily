@@ -45,7 +45,7 @@ rule strobe_align_sort:
         subsample_tail=get_subsample_tail,
         strobe_threads=config["strobe_align_sort"]["strobe_threads"],
         samp=get_samp_name,
-        mbuff_mem=config["strobe_align_sort"]["mbuffer_mem"],
+        mbuffer_mem=config["strobe_align_sort"]["mbuffer_mem"],
         rgpg="strobealigner",
         numa=config["strobe_align_sort"]["numa"],
         igz_threads=config['strobe_align_sort']['igz_threads']
