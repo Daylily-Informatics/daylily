@@ -39,7 +39,7 @@ rule clair3:
         MDIR + "{sample}/align/{alnr}/snv/clair3/log/{sample}.{alnr}.clair3.{clairchrm}.snv.log",
     threads: config['clair3']['threads']
     container:
-        "docker://hkubal/clair3:latest"  # Use the appropriate Clair3 Docker container
+        "hkubal/clair3:latest"
     priority: 45
     resources:
         vcpu=config['clair3']['threads'],
@@ -86,15 +86,15 @@ rule clair3:
         fi;
 
         echo 'CCHRM: $cchr';
-        export LD_LIBRARY_PATH=resources/lib/;
         {params.numa} \
-        clair3.py \
-        --bam {input.bam} \
-        --ref {params.huref} \
-        --threads {threads} \
-        --platform ilmn \
-        --output {params.out_dir} \
-        --chromosome $cchr \
+        /opt/bin/run_clair3.sh \
+        --bam_fn={input.bam} \
+        --ref_fn={params.huref} \
+        --threads={threads} \
+        --platform='ilmn' \
+        --output {params.out_dir} \  
+        --model_path="/opt/models/ilmn" \
+        --ctg_name=$cchr \
         >> {log} 2>&1;
 
         end_time=$(date +%s);

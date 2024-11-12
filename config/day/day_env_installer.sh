@@ -56,7 +56,7 @@ else
     export CONDA_DIR="$HOME/miniconda3/"
     echo "|||   No conda environment detected.
  Installing to $CONDA_DIR :
-    >    wget https://repo.anaconda.com/miniconda/Miniconda3-py39_23.1.0-1-Linux-x86_64.sh
+    >    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     >    bash Miniconda3-latest-Linux-x86_64.sh -b -p  $CONDA_DIR
     >    rm Miniconda3-latest-Linux-x86_64.sh
 
@@ -66,7 +66,7 @@ else
     > conda activate
     "
 
-    wget wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     bash Miniconda3-latest-Linux-x86_64.sh -b -p  $CONDA_DIR
     rm Miniconda3-latest-Linux-x86_64.sh
 
