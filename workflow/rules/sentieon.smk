@@ -48,6 +48,8 @@ rule sentieon_bwa_sort:
         igz_threads=config['sentieon']['igz_threads'],
         mbuffer_mem=config['sentieon']['mbuffer_mem'],
         bwa_model=config['sentieon']['bwa_model'],
+        subsample_head=get_subsample_head,
+        subsample_tail=get_subsample_tail,
     conda:
         config["sentieon"]["env_yaml"]
     shell:
