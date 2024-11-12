@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 1;95;0csetup(
     name="daylily",
-    version="0.7.53",
+    version="0.7.54",
     packages=find_packages(),
     install_requires=[
         # Add dependencies here,
