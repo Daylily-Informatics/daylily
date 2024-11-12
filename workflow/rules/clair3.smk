@@ -92,7 +92,7 @@ rule clair3:
         --threads={threads} \
         --platform='ilmn' \
         --output=$(dirname {input.d}) \  
-        --model_path="/opt/models/ilmn" \
+        --model_path=/opt/models/ilmn \
         --ctg_name=$cchr \
         >> {log} 2>&1;
 
