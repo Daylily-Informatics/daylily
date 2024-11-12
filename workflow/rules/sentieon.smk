@@ -82,7 +82,7 @@ rule sentieon_bwa_sort:
         fi
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon bwa mem \
         -t {params.bwa_threads}  {params.K}  \
-        -bwa-model {params.bwa_model} \
+        -x {params.bwa_model} \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.huref} \
          {params.subsample_head} <(igzip {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
