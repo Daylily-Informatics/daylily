@@ -230,7 +230,7 @@ rule octopus:
     resources:
         vcpu=calc_oct_threads,
         attempt_n=lambda wildcards, attempt:  (attempt + 0),
-        partition=calc_oct_partition,
+        partition="i192",
         threads=calc_oct_threads
     params:
         ts=calc_oct_threads,
@@ -313,7 +313,7 @@ rule oct_sort_index_chunk_vcf:
     resources:
         vcpu=8,
         threads=8,
-        partition="i8,i8,i64,i96,i128"
+        partition="i192"
     params:
         cluster_sample=ret_sample,
     threads: 8 #config["config"]["sort_index_oct_chunk_vcf"]['threads']
@@ -395,7 +395,7 @@ rule oct_concat_index_chunks:
     resources:
         vcpu=8,
         threads=8,
-        partition="i8,i8,i64,i96,i128"
+        partition="i192"
     priority: 47
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
