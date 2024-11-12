@@ -2,7 +2,7 @@ Region: REGSUB_REGION  #us-west-2
 Image:
   Os: ubuntu2204
 HeadNode:
-  InstanceType: r7i.4xlarge
+  InstanceType: r7i.2xlarge
   Networking:
     ElasticIp: true
     SubnetId: REGSUB_PUB_SUBNET  # subnet-018d25d2f208a83a2
