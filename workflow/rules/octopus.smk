@@ -206,8 +206,8 @@ def ret_oct_clust_samp(wildcards):
 rule octopus:
     """https://github.com/luntergroup/octopus"""
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam.bai",
+        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
         d=MDIR + "{sample}/align/{alnr}/snv/oct/vcfs/{ochrm}/{sample}.ready",
     output:
         #oct_tmpd=directory(MDIR + "{sample}/align/{alnr}/snv/oct/vcfs/{ochrm}/oct_tmp"),
@@ -468,7 +468,7 @@ localrules:
 
 rule oct_prep_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam",
+        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/oct/vcfs/{ochrm}/{{sample}}.ready",
