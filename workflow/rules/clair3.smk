@@ -85,16 +85,14 @@ rule clair3:
         fi;
 
         echo 'CCHRM: $cchr';
-        {params.numa} \
-        /opt/bin/run_clair3.sh \
+        {params.numa}   /opt/bin/run_clair3.sh \
         --bam_fn={input.bam} \
         --ref_fn={params.huref} \
         --threads={threads} \
         --platform='ilmn' \
-        --output=$(dirname {input.d}) \  
         --model_path=/opt/models/ilmn \
         --ctg_name=$cchr \
-        >> {log} 2>&1;
+        --output=$(dirname {input.d})  >> {log} 2>&1;
 
         ls -lth $(dirname {input.d}  >> {log} 2>&1;
         echo "CCHRM: $cchr" >> {log} 2>&1;
