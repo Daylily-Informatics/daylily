@@ -110,7 +110,7 @@ rule clair3:
 
 rule clair3_sort_index_chunk_vcf:
     input:
-        vcf=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/output/merge_output.vcf.gz",
+        vcf=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf"
     priority: 46
     output:
         vcfsort=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf",
