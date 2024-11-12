@@ -141,7 +141,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
     octopus:
       huref:
         class: file_only
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai/Homo_sapiens_assembly38.fasta
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta
       forest_model_a:
         class: file_only
         name: /fsx/data/tool_specific_resources/H_sapiens/b37/octopus/forests/germline.v0.7.4.forest
