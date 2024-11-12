@@ -55,7 +55,6 @@ rule sentieon_bwa_sort:
 
         ulimit -n 16384
         
-        touch {output.samo};
         tdir=$(dirname {output.bamo})/tmpp;
         mkdir -p $tdir; 
 
