@@ -12,3 +12,5 @@ dependencies:
   - pigz
   - seqkit
   - seqfu
+  - curl
+
