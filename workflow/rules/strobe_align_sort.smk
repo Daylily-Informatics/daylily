@@ -79,8 +79,14 @@ rule strobe_align_sort:
         {params.subsample_head} <(igzip  {params.igz_threads} -q  {input.f1} )  {params.subsample_tail} \
         {params.subsample_head}  <(igzip  {params.igz_threads} -q {input.f2} )  {params.subsample_tail} \
         | mbuffer {params.mbuffer_mem} \
-        | samtools sort -l 1  -m {params.sort_thread_mem}   \
-        -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} - >> {log} 2>&1;
+        | samtools sort \
+        -l 1  \
+        -m {params.sort_thread_mem}   \
+        -@  {params.sort_threads} \
+        -T $tdir \
+        -O BAM \
+        --write-index \
+        -o {output.bamo}##idx##{output.bami} - >> {log} 2>&1;
 
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
