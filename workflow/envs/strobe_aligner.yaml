@@ -5,3 +5,4 @@ dependencies:
   - samtools
   - isa-l
   - seqkit
+  - mbuffer

@@ -45,7 +45,9 @@ rule sentieon_bwa_sort:
         sort_thread_mem=config['sentieon']['sort_thread_mem'],
         sort_threads=config['sentieon']['sort_threads'],
         write_threads=config['sentieon']['write_threads'],
-        igz_threads=config['sentieon']['igz_threads']
+        igz_threads=config['sentieon']['igz_threads'],
+        mbuffer_mem=config['sentieon']['mbuffer_mem'],
+        bwa_model=config['sentieon']['bwa_model'],
     conda:
         config["sentieon"]["env_yaml"]
     shell:
@@ -66,7 +68,7 @@ rule sentieon_bwa_sort:
         mkdir -p $tdir; 
 
         # Find the jemalloc library in the active conda environment
-        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1);
+        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
 
         # Check if jemalloc was found and set LD_PRELOAD accordingly
         if [[ -n "$jemalloc_path" ]]; then
@@ -78,10 +80,12 @@ rule sentieon_bwa_sort:
         fi
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon bwa mem \
         -t {params.bwa_threads}  {params.K}  \
+         -bwa-model {params.bwa_model} \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.huref} \
-           {input.f1}  \
-           {input.f2}   \
+         {params.subsample_head} <(igzip {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
+         {params.subsample_head} <(igzip  {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}    \
+        | mbuffer {params.mbuffer_mem} \
         | /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {params.sort_threads} \
         --sortblock_thread_count {params.sort_threads} \

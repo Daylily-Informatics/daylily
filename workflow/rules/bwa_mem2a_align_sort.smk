@@ -49,7 +49,7 @@ rule bwa_mem2_sort:
         subsample_tail=get_subsample_tail,
         bwa_threads=config["bwa_mem2a_aln_sort"]["bwa_threads"],
         samp=get_samp_name,
-        mbuff_mem=config["bwa_mem2a_aln_sort"]["mbuffer_mem"],
+        mbuffer_mem=config["bwa_mem2a_aln_sort"]["mbuffer_mem"],
         igz_threads=config['bwa_mem2a_aln_sort']['igz_threads']
     conda:
         config["bwa_mem2a_aln_sort"]["env_yaml"]
@@ -69,9 +69,10 @@ rule bwa_mem2_sort:
         {params.ldpre} {params.bwa_mem2a_cmd} mem \
          -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
          {params.softclip_alts}  {params.K} {params.k} -t {params.bwa_threads}  {params.huref} \
-         {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
-         {params.subsample_head} <(igzip -c -d -T  {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}    \
-        |   samtools sort -l 1  -m {params.sort_thread_mem}   \
+         {params.subsample_head} <(igzip {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
+         {params.subsample_head} <(igzip  {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}    \
+        | mbuffer {params.mbuffer_mem} \
+        | samtools sort -l 1  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
 
         end_time=$(date +%s);
