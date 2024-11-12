@@ -34,7 +34,7 @@ rule clair3:
         d=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.ready",
     output:
         vcf=MDIR
-        + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf"
+        + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf.gz"
     log:
         MDIR + "{sample}/align/{alnr}/snv/clair3/log/{sample}.{alnr}.clair3.{clairchrm}.snv.log",
     threads: config['clair3']['threads']
@@ -92,7 +92,6 @@ rule clair3:
         --platform='ilmn' \
         --model_path=/opt/models/ilmn \
         --ctg_name=$cchr \
-        --gvcf \
         --output=$(dirname {input.d})  >> {log} 2>&1;
 
         ls -lth $(dirname {input.d})  >> {log} 2>&1;
@@ -110,7 +109,7 @@ rule clair3:
 
 rule clair3_sort_index_chunk_vcf:
     input:
-        vcf=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf"
+        vcf=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf.gz"
     priority: 46
     output:
         vcfsort=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf",
