@@ -83,7 +83,7 @@ rule sentieon_bwa_sort:
         {params.huref} \
            {input.f1}  \
            {input.f2}   \
-        |  samtools sort -l 9  -m {params.sort_thread_mem}   \
+        |  samtools sort -l 1  -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} -T $tdir -O BAM  --write-index -o {output.bamo}##idx##{output.baio} >> {log.a} 2>&1;
 
 
