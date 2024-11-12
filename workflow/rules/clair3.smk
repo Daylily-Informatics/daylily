@@ -34,8 +34,7 @@ rule clair3:
         d=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.ready",
     output:
         vcf=MDIR
-        + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf",
-        vcf_dir=directory(MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/"),
+        + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf"
     log:
         MDIR + "{sample}/align/{alnr}/snv/clair3/log/{sample}.{alnr}.clair3.{clairchrm}.snv.log",
     threads: config['clair3']['threads']
@@ -62,7 +61,6 @@ rule clair3:
         mem_mb=config['clair3']['mem_mb'],
         numa=config['clair3']['numa'],
         cpre="" if "b37" == config['genome_build'] else "chr",
-        out_dir=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/output",
     shell:
         """
         touch {log};
@@ -93,7 +91,7 @@ rule clair3:
         --ref_fn={params.huref} \
         --threads={threads} \
         --platform='ilmn' \
-        --output={params.out_dir} \  
+        --output=$(dirname {input.d}) \  
         --model_path="/opt/models/ilmn" \
         --ctg_name=$cchr \
         >> {log} 2>&1;
