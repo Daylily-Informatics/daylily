@@ -94,10 +94,10 @@ rule clair3:
         --ctg_name=$cchr \
         --output=$(dirname {input.d})  >> {log} 2>&1;
 
-        ls -lth $(dirname {input.d}  >> {log} 2>&1;
+        ls -lth $(dirname {input.d})  >> {log} 2>&1;
         echo "CCHRM: $cchr" >> {log} 2>&1;
         sleep 100;
-        mv $(dirname {input.d}/output.vcf {output.vcf};
+        mv $(dirname {input.d})/output.vcf {output.vcf};
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
 
