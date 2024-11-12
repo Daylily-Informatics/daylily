@@ -34,7 +34,7 @@ rule clair3:
         d=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.ready",
     output:
         vcf=MDIR
-        + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairhrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf",
+        + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf",
         vcf_dir=directory(MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/"),
     log:
         MDIR + "{sample}/align/{alnr}/snv/clair3/log/{sample}.{alnr}.clair3.{clairchrm}.snv.log",
