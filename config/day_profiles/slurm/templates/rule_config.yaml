@@ -113,7 +113,7 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 124  # 124
+    bwa_threads: 192  # 124
     orig_threads: 2
     sort_threads: 96 # from 96
     write_threads: 96 # from 96
@@ -131,7 +131,7 @@ bwa_mem2a_aln_sort:
     orig_sort_mem: "3000M"
     sort_thread_mem: "3000M"  # 1350M
     numactl: ""
-    mbuffer_mem: " | mbuffer -m 1G -q -s 256k " 
+    mbuffer_mem: " | mbuffer -m 10G -q -s 512k " 
 
 strobe_align_sort:
     env_yaml: "../envs/strobe_aligner.yaml"
