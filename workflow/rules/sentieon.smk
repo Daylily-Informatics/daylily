@@ -87,7 +87,7 @@ rule sentieon_bwa_sort:
         --block_size {params.sort_thread_mem}   \
         --sam2bam \
         -i {output.samo} \
-        -o {output.bamo} - >> {log.a} ;
+        -o {output.bamo} >> {log.a} ;
 
         samtools index -b -@ {threads} {output.bamo}  >> {log.a} 2>&1;
 
