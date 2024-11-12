@@ -56,8 +56,8 @@ rule sentieon_bwa_sort:
 
         ulimit -n 16384
         
-	touch {output.samo};
-        tdir=$(dirname {output.samo}/tmpp;
+        touch {output.samo};
+        tdir=$(dirname {output.samo})/tmpp;
         mkdir -p $tdir; 
 
         # Find the jemalloc library in the active conda environment
@@ -77,7 +77,7 @@ rule sentieon_bwa_sort:
         {params.huref} \
            {input.f1}  \
            {input.f2}   \
-        > {output.samo} >> {log.a} 2>&1;
+        > {output.samo} 2>> {log.a};
 
         /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {params.sort_threads} \

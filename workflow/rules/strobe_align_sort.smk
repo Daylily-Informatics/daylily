@@ -10,6 +10,7 @@ rule strobe_align_sort:
     output:
         bami=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam.bai"),
         bamo=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam"),
+        samo=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sam"),
     log:
         MDIR + "{sample}/align/strobe/logs/{sample}.strobe_sort.log",
     resources:
@@ -48,7 +49,7 @@ rule strobe_align_sort:
         mbuff_mem=config["strobe_align_sort"]["mbuffer_mem"],
         rgpg="strobealigner",
         numa=config["strobe_align_sort"]["numa"],
-	igz_threads=config['strobe_align_sort']['igz_threads']	
+        igz_threads=config['strobe_align_sort']['igz_threads']
     conda:
         config["strobe_align_sort"]["env_yaml"]
     shell:
@@ -56,7 +57,7 @@ rule strobe_align_sort:
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
         echo "INSTANCE TYPE: $itype" > {log};
-	echo "INSTANCE TYPE: $itype"
+        echo "INSTANCE TYPE: $itype"
         start_time=$(date +%s);
 
         export tdir={params.mdir}/{params.samp}/{params.samtmpd};
@@ -66,26 +67,30 @@ rule strobe_align_sort:
         echo 'WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
 
         {params.numa} \
-	{params.strobe_cmd} \
-	-t {params.strobe_threads} \
-	--rg-id="{params.rgid}_$epocsec" \
-	--rg="SM:{params.rgsm}" \
+        {params.strobe_cmd} \
+        -t {params.strobe_threads} \
+        --rg-id="{params.rgid}_$epocsec" \
+        --rg="SM:{params.rgsm}" \
         --rg=LB:"{params.samp}{params.rglb}" \
         --rg=PL:"{params.rgpl}" \
         --rg=PU:"{params.rgpu}" \
         --rg=CN:"{params.rgcn}" \
         --rg=PG:"{params.rgpg}" \
-	--use-index {params.huref}  \
-	{params.subsample_head} <(igzip -c -d -T {params.igz_threads} -q  {input.f1} )  {params.subsample_tail} \
-	{params.subsample_head}  <(igzip -c -d -T {params.igz_threads} -q {input.f2} )  {params.subsample_tail} \
-	|   samtools sort -l 1  -m {params.sort_thread_mem}   \
-         -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} >> {log} 2>&1;
+        --use-index {params.huref}  \
+        {params.subsample_head} <(igzip -c -d -T {params.igz_threads} -q  {input.f1} )  {params.subsample_tail} \
+        {params.subsample_head}  <(igzip -c -d -T {params.igz_threads} -q {input.f2} )  {params.subsample_tail} \
+        > {output.samo} 2>> {log};
+
+        echo "completed strobealigner" >> {log};
+
+        samtools sort -l 1  -m {params.sort_thread_mem}   \
+        -@  {params.sort_threads} -T $tdir -O BAM --write-index -o {output.bamo}##idx##{output.bami} {output.samo} >> {log} 2>&1;
 
         end_time=$(date +%s);
-	elapsed_time=$((($end_time - $start_time) / 60));
-	echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
+        elapsed_time=$((($end_time - $start_time) / 60));
+        echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
-	"""
+        """
 
 
 localrules: produce_strobe_align,
