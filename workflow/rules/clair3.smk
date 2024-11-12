@@ -99,7 +99,7 @@ rule clair3:
         ls -lth $(dirname {input.d}  >> {log} 2>&1;
         echo "CCHRM: $cchr" >> {log} 2>&1;
         sleep 100;
-        mv {params.out_dir}/output.vcf {output.vcf};
+        mv $(dirname {input.d}/output.vcf {output.vcf};
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
 
