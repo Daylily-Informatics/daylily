@@ -436,7 +436,7 @@ sentieon:
     partition: "i192"
     sort_threads: 48
     write_threads: 48
-    igz_threads: " -cd -T 96"
+    igz_threads: " -cd -T 32"
     sort_thread_mem: "4G" 
     mbuffer_mem: " -m 16G -q -s 512k "
     bwa_model: "/fsx/data/tool_specific_resources/sentieon_models_2_2/sentieon_bwa_2_2.model"
