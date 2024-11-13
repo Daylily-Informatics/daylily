@@ -49,8 +49,8 @@ Scheduling:
       ComputeResources:
         - Name: all
           Instances:
-            - InstanceType: r7i.2xlarge # 8 vCPUs, 64 GiB, $0.5292 hourly, $0.2005 spot
-            - InstanceType: r6i.2xlarge # 8 vCPUs, 64 GiB, $0.5040 hourly, $0.2207 spot
+            - InstanceType: r7i.2xlarge # 8 vCPUs, 64 GiB
+            - InstanceType: r6i.2xlarge # 8 vCPUs, 64 GiB
           MinCount: 0
           MaxCount: 8
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
@@ -83,12 +83,12 @@ Scheduling:
       ComputeResources:
         - Name: all
           Instances:
-            - InstanceType: c6i.metal # 128 vCPUs, 256 GiB, $5.4400 hourly, $1.5974 spot
-            - InstanceType: c6i.32xlarge # 128 vCPUs, 256 GiB, $5.4400 hourly, $1.7163 spot
-            - InstanceType: m6i.32xlarge # 128 vCPUs, 512 GiB, $6.1440 hourly, $1.9570 spot
-            - InstanceType: m6i.metal # 128 vCPUs, 512 GiB, $6.1440 hourly, $1.9233 spot
-            - InstanceType: r6i.metal # 128 vCPUs, 1024 GiB, $8.0640 hourly, $2.6258 spot
-            - InstanceType: r6i.32xlarge # 128 vCPUs, 1024 GiB, $8.0640 hourly, $2.6169 spot
+            - InstanceType: c6i.metal # 128 vCPUs, 256 GiB
+            - InstanceType: c6i.32xlarge # 128 vCPUs, 256 GiB
+            - InstanceType: m6i.32xlarge # 128 vCPUs, 512 GiB
+            - InstanceType: m6i.metal # 128 vCPUs, 512 GiB
+            - InstanceType: r6i.metal # 128 vCPUs, 1024 GiB
+            - InstanceType: r6i.32xlarge # 128 vCPUs, 1024 GiB
           MinCount: 0
           MaxCount: 8
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
@@ -121,14 +121,14 @@ Scheduling:
       ComputeResources:
         - Name: all
           Instances:
-            - InstanceType: c7i.48xlarge # 192 vCPUs, 384 GiB, $8.5680 hourly, $2.8069 spot
-            - InstanceType: c7i.metal-48xl # 192 vCPUs, 384 GiB, $8.5680 hourly, $2.5001 spot
-            - InstanceType: m7i.metal-48xl # 192 vCPUs, 768 GiB, $9.6768 hourly, $2.6537 spot
-            - InstanceType: m7i.48xlarge # 192 vCPUs, 768 GiB, $9.6768 hourly, $3.2883 spot
-            - InstanceType: r7i.48xlarge # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.9238 spot
-            - InstanceType: r7i.metal-48xl # 192 vCPUs, 1536 GiB, $12.7008 hourly, $3.3266 spot
+            - InstanceType: c7i.48xlarge # 192 vCPUs, 384 GiB, 
+            - InstanceType: c7i.metal-48xl # 192 vCPUs, 384 GiB,
+            - InstanceType: m7i.metal-48xl # 192 vCPUs, 768 GiB,
+            - InstanceType: m7i.48xlarge # 192 vCPUs, 768 GiB, 
+            - InstanceType: r7i.48xlarge # 192 vCPUs, 1536 GiB, 
+            - InstanceType: r7i.metal-48xl # 192 vCPUs, 1536 GiB, 
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 16
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
           Networking:
             PlacementGroup:
