@@ -125,7 +125,7 @@ bwa_mem2a_aln_sort:
     softclip_alts: " "
     ld_preload: "  "
     cmd: "  OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  
-    K: "  -k 19 -Y -M  " 
+    K: "  -k 19 -Y -M -K 10000000 " 
     glances: " "
     k: " "
     orig_sort_mem: "3000M"
