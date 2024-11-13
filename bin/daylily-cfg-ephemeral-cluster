@@ -92,15 +92,7 @@ handle_warning() {
 validate_region() {
   echo "RGN:" $1
   echo "NOTE:  you are advised to run _aws configure set region $1 _ to set the region for use with the pcluster CLI, to avoid the errors you will cause when the _region_ flag is not used."
-  sleep 2.3
-
- if [[ "$1" == "us-west-2" ]]; then
-    echo "Region '$1' confirmed as valid."
-    return 0
-  else
-    echo "Warning: Region '$1' is not 'us-west-2'."
-    echo "It is recommended to use 'us-west-2' for this operation."
-  fi
+ 
 }
 
 echo "Welcome to the Daylily CLI Setup"
