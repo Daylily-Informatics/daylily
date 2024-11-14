@@ -73,7 +73,7 @@ rule bwa_mem2_sort:
         # Check if jemalloc was found and set LD_PRELOAD accordingly
         if [[ -n "$jemalloc_path" ]]; then
             export LD_PRELOAD="$jemalloc_path";
-            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log.a};
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
         else
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
