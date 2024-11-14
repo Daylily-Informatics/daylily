@@ -78,7 +78,7 @@ rule svaba:
         rm -rf $(dirname {output.stub} ) || echo rmFailed;
         mkdir -p $(dirname {output.stub} );
         touch {output.stub};
-        {params.ld_p} {params.cmd} run  -D {params.dbsnp} \
+        {params.ld_p} svaba run  -D {params.dbsnp} \
         --germline  -t {input.bam} -p {threads} \
         -k {params.svaba_calling_regions} \
         -R {params.simple_repeats_bed} \
