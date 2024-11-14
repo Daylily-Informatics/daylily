@@ -115,8 +115,8 @@ bwa_mem2a_aln_sort:
     threads: 192
     bwa_threads: 192  # 124
     orig_threads: 2
-    sort_threads: 96 # from 96
-    write_threads: 96 # from 96
+    sort_threads: 192 # from 96
+    write_threads: 192 # from 96
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     igz_threads: " -cd -T 96 "
     ldpre: ""
@@ -128,8 +128,8 @@ bwa_mem2a_aln_sort:
     K: "  -k 19 -Y -M -K 120000000 " 
     glances: " "
     k: " "
-    orig_sort_mem: "3000M"
-    sort_thread_mem: "3000M"  # 1350M
+    orig_sort_mem: "1500M"
+    sort_thread_mem: "1500M"  # 1350M
     numactl: ""
     mbuffer_mem: " | mbuffer -m 16G -q -s 512k " 
 
@@ -138,8 +138,8 @@ strobe_align_sort:
     partition: "i192"
     threads: 192
     strobe_threads: 192
-    write_threads: 96
-    sort_threads: 96
+    write_threads: 192
+    sort_threads: 192
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     benchmark_runs: 0
     igz_threads: " -cd -T 96 "
@@ -151,7 +151,7 @@ strobe_align_sort:
     K: "  -k 19 -Y -M "  # is -K supported? i don't think so 
     glances: " "
     k: "  "  # " -k 19 " 
-    sort_thread_mem: "3000M"  
+    sort_thread_mem: "1500M"  
     numactl: "none"
     piped_align: "no"
     mbuffer_mem: " -m 16G -q -s 512k " # mbuffer size should be determined by memory option given to samtools. ex) samtools sort uses 20 threads, 1G per each thread, so mbuffer size should be 20G (= -m 1G x -@ 20)
@@ -432,10 +432,10 @@ sentieon:
     mask_regions: " "
     numactl: " "  # JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4'   "  
     numactlO: "  "  # JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  "  
-    metrics_threads: 96
+    metrics_threads: 192
     partition: "i192"
-    sort_threads: 96
-    write_threads: 96
+    sort_threads: 192
+    write_threads: 192
     igz_threads: " -cd -T 96 "
     sort_thread_mem: "4G" 
     mbuffer_mem: " -m 16G -q -s 512k "
