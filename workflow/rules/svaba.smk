@@ -52,7 +52,7 @@ rule svaba:
     params:
         ld_p=config['malloc_alt']['ld_preload'] if 'ld_preload' not in config['svaba'] else config['svaba']['ld_preload'],
         dbsnp=config['supporting_files']['files']['dbsnp']['broad_snowman_indelvcf']['name'],
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         svaba_cmd="./resources/svaba/svaba ",
         svaba_blacklist_regions=config["supporting_files"]["files"]["ucsc"]["problem_regions_bed"]['name'] ,
         cluster_sample=ret_sample_alnr,
