@@ -425,7 +425,7 @@ sentieon:
     threads: 192
     bwa_threads: 192
     benchmark_runs: 0
-    max_mem: "130G"
+    max_mem: "170G"
     K: "  -k 19 -Y -M -K 10000000 "
     env_yaml: "../envs/sentieon_v0.1.yaml"
     glances: " "

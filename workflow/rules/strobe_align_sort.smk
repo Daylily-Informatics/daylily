@@ -62,7 +62,9 @@ rule strobe_align_sort:
         export tdir={params.mdir}/{params.samp}/{params.samtmpd};
         mkdir -p $tdir ;
         epocsec=$(date +'%s');
-        
+
+        ulimit -n 65536
+
         echo 'WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
 
         {params.numa} \
