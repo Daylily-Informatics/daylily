@@ -125,7 +125,7 @@ bwa_mem2a_aln_sort:
     softclip_alts: " "
     ld_preload: "  "
     cmd: "  OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  
-    K: "  -k 19 -Y -M -K 10000000 " # " -K 120000000 " 
+    K: "  -k 19 -Y -M -K 1000000000 " # " -K 120000000 " 
     glances: " "
     k: " "
     orig_sort_mem: "1500M"
@@ -426,7 +426,7 @@ sentieon:
     bwa_threads: 192
     benchmark_runs: 0
     max_mem: "170G"
-    K: "  -k 19 -Y -M -K 10000000 "
+    K: "  -k 19 -Y -M -K 100000000 "
     env_yaml: "../envs/sentieon_v0.1.yaml"
     glances: " "
     mask_regions: " "
@@ -437,7 +437,7 @@ sentieon:
     sort_threads: 192
     write_threads: 192
     igz_threads: " -cd -T 96 "
-    sort_thread_mem: "4G" 
+    sort_thread_mem: "250G" 
     mbuffer_mem: " -m 16G -q -s 512k "
     bwa_model: "/fsx/data/tool_specific_resources/sentieon_models_2_2/sentieon_bwa_2_2.model"
 
