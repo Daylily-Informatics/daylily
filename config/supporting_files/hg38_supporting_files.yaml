@@ -70,7 +70,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/blah.createme.note
       dbsnp152:
         class: file_only
-        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/ncbi/dbsnp/GCF_000001405.40.vcf.gz
+        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/ncbi/dbsnp/GCF_000001405.40.vcf.gz.tbi/GCF_000001405.40.vcf.gz
       build_gaps:
         class: file_only
         name: resources/grch38_ucsc_gaps.bed 
