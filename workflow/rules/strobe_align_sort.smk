@@ -63,7 +63,7 @@ rule strobe_align_sort:
         mkdir -p $tdir ;
         epocsec=$(date +'%s');
 
-        ulimit -n 65536
+        ulimit -n 65536 || echo "ulimit mod failed";
 
 
         # Find the jemalloc library in the active conda environment

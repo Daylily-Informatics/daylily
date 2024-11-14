@@ -64,7 +64,7 @@ rule sentieon_bwa_sort:
         export bwt_max_mem={params.max_mem} ;
         epocsec=$(date +'%s');
 
-        ulimit -n 65536
+        ulimit -n 65536 || echo "ulimit mod failed";
         
         tdir=$(dirname {output.bamo})/tmpp;
         mkdir -p $tdir; 

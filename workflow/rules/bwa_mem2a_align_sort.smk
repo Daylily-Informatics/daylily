@@ -61,7 +61,7 @@ rule bwa_mem2_sort:
         echo "INSTANCE TYPE: $itype" > {log};
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
-        ulimit -n 65536
+        ulimit -n 65536 || echo "ulimit mod failed";
 
         export tdir={params.mdir}/{params.samp}/{params.samtmpd};
         mkdir -p $tdir ;
