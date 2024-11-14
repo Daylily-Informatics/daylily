@@ -202,7 +202,7 @@ doppelmark:
     numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
 
 dysgu:
-    threads: 16
+    threads: 64
     env_yaml: "../envs/dysgu_sv_v0.2.yaml"
     min_sv_size: 30
     ld_preload: "  "
@@ -251,7 +251,7 @@ manta_sort_and_index:
     partition: "i192"
 
 manta:
-    threads: 16
+    threads: 64
     env_yaml: "../envs/manta_v0.1.yaml"
     numactl: "none"
     ld_preload: "  "
