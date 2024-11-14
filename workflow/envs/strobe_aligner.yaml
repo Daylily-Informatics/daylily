@@ -6,3 +6,4 @@ dependencies:
   - isa-l
   - seqkit
   - mbuffer
+  - jemalloc

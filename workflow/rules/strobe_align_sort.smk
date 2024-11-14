@@ -65,9 +65,20 @@ rule strobe_align_sort:
 
         ulimit -n 65536
 
-        echo 'WARNING! SPACES IN FASTQ READ NAMES ARE REPLACED WITH  \ ' >> {log} 2>&1;
 
-        {params.numa} \
+        # Find the jemalloc library in the active conda environment
+        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
+
+        # Check if jemalloc was found and set LD_PRELOAD accordingly
+        if [[ -n "$jemalloc_path" ]]; then
+            export LD_PRELOAD="$jemalloc_path";
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log.a};
+        else
+            echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
+            exit 3;
+        fi
+
+        LD_PRELOAD=$LD_PRELOAD \
         {params.strobe_cmd} \
         -t {params.strobe_threads} \
         --rg-id="{params.rgid}_$epocsec" \
