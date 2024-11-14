@@ -78,7 +78,7 @@ rule strobe_align_sort:
             exit 3;
         fi
 
-        LD_PRELOAD=$LD_PRELOAD \
+        #LD_PRELOAD=$LD_PRELOAD 
         {params.strobe_cmd} \
         -t {params.strobe_threads} \
         --rg-id="{params.rgid}_$epocsec" \
