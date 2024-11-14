@@ -114,6 +114,14 @@ echo "Running a simple help test on the head node..."
 ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
     "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local && dy-r help'"
 
+
+# start building the minimal cached envs
+echo "Building the minimal cached environments ..."
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
+    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local && dy-r produce_snv_concordances produce_tiddit --conda-create-envs-only '"
+
+
+
 # Provide final instructions for SSH access to the head node
 echo "You can now SSH into the head node with the following command:"
 echo "ssh -i $pem_file ubuntu@$cluster_ip_address"
