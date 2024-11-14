@@ -75,13 +75,20 @@ rule svaba:
     shell:
         """
         export DBSNP={params.dbsnp};
-        (rm -rf $(dirname {output.stub} ) || echo rmFailed;
+        rm -rf $(dirname {output.stub} ) || echo rmFailed;
         mkdir -p $(dirname {output.stub} );
         touch {output.stub};
-        {params.ld_p} {params.cmd} run  -D {params.dbsnp} --germline  -t {input.bam} -p {threads} -k {params.svaba_calling_regions} -D {params.dbsnp} -R {params.simple_repeats_bed} -x 30000 -L 5 -I -a {output.stub} -G {params.huref} ;
-        perl -pi -e 's/(^.CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t)(.*\/)(.+)(\..*\.mrkdup\..*)/$1$3/g;' {output.vcff};
-        perl -pi -e 's/(^.CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t)(.*\/)(.+)(\..*\.mrkdup\..*)/$1$3/g;' {output.vcfindel}; # Should put a fix for the header to define the PL tag as numeric=G..... ugh vcf.
-        {latency_wait}; ) > {log} 2>&1;
+        {params.ld_p} {params.cmd} run  -D {params.dbsnp} \
+        --germline  -t {input.bam} -p {threads} \
+        -k {params.svaba_calling_regions} \
+        -R {params.simple_repeats_bed} \
+        -x 30000 -L 5 -I -a {output.stub} \
+        -G {params.huref} >> {log} 2>&1;
+
+        perl -pi -e 's/(^.CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t)(.*\/)(.+)(\..*\.mrkdup\..*)/$1$3/g;' {output.vcff} >> {log} 2>&1 ;
+        # Should put a fix for the header to define the PL tag as numeric=G..... ugh vcf.
+        perl -pi -e 's/(^.CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t)(.*\/)(.+)(\..*\.mrkdup\..*)/$1$3/g;' {output.vcfindel}; >> {log} 2>&1 ;
+        sleep 1;
         """
 
 rule svaba_sort_index:

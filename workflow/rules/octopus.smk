@@ -285,7 +285,7 @@ rule octopus:
         export APPTAINER_HOME=/fsx/scratch;
         export oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
 
-        ocmd="octopus --very-fast  -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}  $midel  $mhap  --annotations {params.anno}   --sequence-error-model {params.em}  {params.min_for_qual}   {params.tm} --skip-regions-file {params.skr}  $BRTL  {params.tgt_working_mem} $variable_args --max-open-read-files {params.mor} ";
+        ocmd="octopus -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}  $midel  $mhap  --annotations {params.anno}   --sequence-error-model {params.em}  {params.min_for_qual}   {params.tm} --skip-regions-file {params.skr}  $BRTL  {params.tgt_working_mem} $variable_args --max-open-read-files {params.mor} ";
         
         echo $ocmd 1&>2 > ocmd.log;
 
