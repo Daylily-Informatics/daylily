@@ -245,7 +245,7 @@ Scheduling:
             PlacementGroup:
               Enabled: false
           Efa:
-            Enabled: true
+            Enabled: false
       Networking:
         SubnetIds:
           - REGSUB_PRIVATE_SUBNET

@@ -212,7 +212,7 @@ Scheduling:
             PlacementGroup:
               Enabled: false
           Efa:
-            Enabled: true
+            Enabled: false
         - Name: gb512
           Instances:
             - InstanceType: m6i.32xlarge # 128 vCPUs, 512 GiB, $6.1440 hourly, $1.9570 spot
@@ -232,7 +232,7 @@ Scheduling:
             PlacementGroup:
               Enabled: false
           Efa:
-            Enabled: true
+            Enabled: false
         - Name: gb1024
           Instances:
             - InstanceType: r6in.metal # 128 vCPUs, 1024 GiB, $11.1571 hourly, $2.9561 spot, 200 Gigabit
@@ -248,7 +248,7 @@ Scheduling:
             PlacementGroup:
               Enabled: false
           Efa:
-            Enabled: true
+            Enabled: false
       Networking:
         SubnetIds:
           - REGSUB_PRIVATE_SUBNET

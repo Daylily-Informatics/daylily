@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import subprocess
 import statistics
 import argparse
@@ -172,9 +172,10 @@ def calculate_median_price(resource, az, profile, price_type, bump_price):
             median_price = round(median_price/2.0, 4)
         else:
             pap=f"(median spot price)+{bump_price}"
-            median_price = median_price+float(bump_price)
+            median_price = round(median_price+float(bump_price),4)
             
         resource['SpotPrice'] = median_price
+        
         # Add a comment indicating the price type
         resource.yaml_add_eol_comment(f'Calculated using {pap}.', key='SpotPrice', column=0)
     else:
@@ -200,7 +201,7 @@ def main():
         yaml_loader.preserve_quotes = True
         config = yaml_loader.load(f)
 
-    process_slurm_queues(config, az, profile, price_type, args.bump_price)
+    process_slurm_queues(config, az, profile, price_type, float(args.bump_price))
 
     with open(args.output, 'w') as f:
         yaml_dumper = YAML()
