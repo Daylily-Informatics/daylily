@@ -64,7 +64,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
     ucsc:
       simple_repeats_bed:
         class: file_only
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/blah.createme.note
+        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/ucsc/ucsc_hg38_simple_repeats.bed
       problem_regions_bed:
         class: file_only
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/blah.createme.note
@@ -160,7 +160,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
     giab_sv:
       v0.6_NA24385_ties_1_2:
         class: file_only
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/blah.createme.note
+        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG001/wgsHC/HG001.bed
     sentieon:
       dnascope_model:
         class: file_only
