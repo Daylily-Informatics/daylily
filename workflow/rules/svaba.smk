@@ -77,7 +77,7 @@ rule svaba:
         export DBSNP={params.dbsnp};
         rm -rf $(dirname {output.stub} ) || echo rmFailed;
         mkdir -p $(dirname {output.stub} );
-        mkdir -p $(dirnamme {log});
+        mkdir -p $(dirname {log});
         touch {output.stub};
         {params.ld_p} svaba run  -D {params.dbsnp} \
         --germline  -t {input.bam} -p {threads} \
