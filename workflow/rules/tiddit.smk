@@ -21,11 +21,11 @@ rule tiddit:
         min_sv_size=config["tiddit"]["min_sv_size"],
         cluster_sample=ret_sample_alnr,
         ld_p=config['malloc_alt']['ld_preload'] if 'ld_preload' not in config['tiddit'] else config['tiddit']['ld_preload'],
-    threads: 64
+    threads: config["tiddit"]["threads"]
     resources:
-        vcpu=1,
+        vcpu=config["tiddit"]["threads"],
         partition="i192",
-        threads=16
+        threads=config["tiddit"]["threads"]
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.tiddit.sv.vcf.bench.tsv"
     log:
@@ -42,7 +42,7 @@ rule tiddit:
         touch {output.stub};
         TIDDIT.py --help >> {log};
         echo TheFileWasCreated > {output.stub};
-        TIDDIT.py  --sv --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
+        TIDDIT.py  --threads {threads} --sv --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
         touch {output};
         ls {output};
 
@@ -59,9 +59,9 @@ rule tiddit_sort_index:
     threads: config["tiddit"]["threads"]
     priority: 8
     resources:
-        vcpu=8,
+        vcpu=config["tiddit"]["threads"],
         partition="i192",
-        threads=8
+        threads=config["tiddit"]["threads"]
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.tiddit.sv.vcf.sort.bench.tsv"
     log:

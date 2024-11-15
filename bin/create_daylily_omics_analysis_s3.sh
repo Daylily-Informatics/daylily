@@ -120,19 +120,56 @@ fi
 
 # Compose bucket creation commands
 
-cmda="aws s3 cp s3://${source_bucket}/cluster_boot_config s3://${new_bucket}/cluster_boot_config --recursive  --request-payer requester"
-cmdb="aws s3 cp s3://${source_bucket}/data s3://${new_bucket}/data --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+# Core dirs to copy
+cmd_cluster_boot_config="aws s3 cp s3://${source_bucket}/cluster_boot_config s3://${new_bucket}/cluster_boot_config --recursive  --request-payer requester"
+cmd_cached_envs="aws s3 cp s3://${source_bucket}/data/cached_envs s3://${new_bucket}/data/cached_envs --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+cmd_libs="aws s3 cp s3://${source_bucket}/data/lib s3://${new_bucket}/data/lib --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_resources s3://${new_bucket}/data/tool_specific_resources --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
 
-# Execute the commands in parallel
-echo "Creating buckets and copying data..."
-echo "Running the following commands in parallel:"
-echo "$cmda"
-echo "$cmdb"
+# b37 references
+cmd_b37_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+cmd_b37_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+
+# hg38 references
+cmd_hg38_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+cmd_hg38_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+
+# Concordance Reads
+cmd_giab_reads="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_reads s3://${new_bucket}/data/genomic_data/organism_reads --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
 
 if [ "$dryrun" = true ]; then
-    echo "[Dry-run] Skipping S3 copy operations."
+    echo "[Dry-run] Skipping S3 CORE copy operations."
+    echo "$cmd_cluster_boot_config"
+    echo "$cmd_cached_envs"
+    echo "$cmd_libs"
+    echo "$cmd_tool_specific_resources"
+    echo "$cmd_hg38_ref"
+    echo "$cmd_hg38_annotations"
 else
-    eval "$cmda & $cmdb & wait"
+    echo "Running the following commands in parallel:"
+    echo "$cmd_cluster_boot_config"
+    echo "$cmd_cached_envs"
+    echo "$cmd_libs"
+    echo "$cmd_tool_specific_resources"
+    echo "$cmd_hg38_ref"
+    echo "$cmd_hg38_annotations"
+    echo "$cmd_giab_reads"
+    eval "$cmd_cluster_boot_config & $cmd_cached_envs & $cmd_libs & $cmd_tool_specific_resources & wait"
+    eval "$cmd_hg38_ref & $cmd_hg38_annotations & wait"
 fi
+
+echo "if you wish to copy the B37 references and annotations, then run the following commands BY HAND:"
+echo "------------"
+echo "$cmd_b37_ref"
+echo "$cmd_b37_annotations"
+echo "------------"
+echo " "
+
+
+echo "if you wish to copy the GIAB CONCORDANCE READS (reccomended!), then run the following command BY HAND:"
+echo "------------"
+echo "$cmd_giab_reads"
+echo "------------"
+echo " "
 
 echo "Bucket setup for '$new_bucket' completed successfully."
