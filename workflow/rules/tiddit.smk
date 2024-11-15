@@ -30,19 +30,17 @@ rule tiddit:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.tiddit.sv.vcf.bench.tsv"
     log:
         MDIR + "{sample}/align/{alnr}/sv/tiddit/logs/{sample}.{alnr}.tiddit.sv.vcf.log",
-    container:
-        "docker://daylilyinformatics/tiddit:2.12.0"
+    conda:
+        "../envs/tiddit_v0.1.yaml"
     shell:
         """
 
-        export APPTAINER_HOME=/fsx/scratch;
         set +euo pipefail;
         rm -rf {output.stub}* || echo rmFailedTiddit;  # verging on overkill cleanup for restarts
         mkdir -p "$( dirname {output.vcf} )/logs"  ;
         touch {output.stub};
-        TIDDIT.py --help >> {log};
         echo TheFileWasCreated > {output.stub};
-        TIDDIT.py  --sv  --threads {threads} --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
+        tiddit  --sv  --threads {threads} --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
         touch {output};
         ls {output};
 
