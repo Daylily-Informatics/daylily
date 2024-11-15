@@ -17,7 +17,7 @@ rule tiddit:
         vcf = MDIR + "{sample}/align/{alnr}/sv/tiddit/{sample}.{alnr}.tiddit.sv.vcf",
         #vcfgz = touch(MDIR+ "{sample}/align/{alnr}/sv/tiddit/{sample}.{alnr}.tiddit.sv.sort.vcf.gz"),
     params:
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         min_sv_size=config["tiddit"]["min_sv_size"],
         cluster_sample=ret_sample_alnr,
         ld_p=config['malloc_alt']['ld_preload'] if 'ld_preload' not in config['tiddit'] else config['tiddit']['ld_preload'],
