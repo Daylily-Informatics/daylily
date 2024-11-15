@@ -44,7 +44,7 @@ rule tiddit:
         echo TheFileWasCreated > {output.stub};
         TIDDIT.py  --sv --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
         touch {output};
-        ls {output};  >> {log} ;
+        ls {output};
 
         """
 
