@@ -31,7 +31,7 @@ rule tiddit:
     log:
         MDIR + "{sample}/align/{alnr}/sv/tiddit/logs/{sample}.{alnr}.tiddit.sv.vcf.log",
     container:
-        "docker://daylilyinformatics/tiddit:2.12.0"
+        "docker://quay.io/biocontainers/tiddit:3.7.0--py39h24fbfe6_0"
     shell:
         """
 
@@ -40,9 +40,9 @@ rule tiddit:
         rm -rf {output.stub}* || echo rmFailedTiddit;  # verging on overkill cleanup for restarts
         mkdir -p "$( dirname {output.vcf} )/logs"  ;
         touch {output.stub};
-        TIDDIT.py --help >> {log};
+        
         echo TheFileWasCreated > {output.stub};
-        TIDDIT.py --sv --threads {threads} --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
+        tiddit --sv --threads {threads} --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
         touch {output};
         ls {output};
 
