@@ -42,7 +42,7 @@ rule tiddit:
         touch {output.stub};
         TIDDIT.py --help >> {log};
         echo TheFileWasCreated > {output.stub};
-        TIDDIT.py  --threads {threads} --sv --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
+        TIDDIT.py  --sv  --threads {threads} --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
         touch {output};
         ls {output};
 
