@@ -17,10 +17,10 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37
       bwa_mem_sent:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa-mem/human_1kg_v37.fasta.gz
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz
       bwa_mem_index_vanilla:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa-mem/human_1kg_v37.fasta.gz
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz
       bwa_mem_index_fast:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/bwa-mem2b/human_1kg_v37.fasta.gz
