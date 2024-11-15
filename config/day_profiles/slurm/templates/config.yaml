@@ -25,8 +25,8 @@ default-resources:
   - distribution=block
   - exclusive=''
 resources: vcpu=2704 # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
-jobs: 10
-cores: 2704  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
+jobs: 200
+cores: 3128  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 latency-wait: 100
 local-cores: 16
 restart-times: 2
