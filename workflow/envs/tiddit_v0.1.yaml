@@ -2,4 +2,5 @@ channels:
    - bioconda
 dependencies:
   - tiddit
+  - curl
  
