@@ -181,7 +181,7 @@ rule sentD_concat_index_chunks:
         fofn=MDIR
         + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.concat.vcf.gz.fofn",
     output:
-        vcf=temp(
+        vcf=touch(
             MDIR + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.sort.vcf"
         ),
         vcfgz=touch(
@@ -212,6 +212,7 @@ rule sentD_concat_index_chunks:
     shell:
         """
         (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFAIL;
+        touch {output.vcf};
         mkdir -p $(dirname {log});
         ### export LD_LIBRARY_PATH=$PWD/resources/libs/;
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
@@ -219,8 +220,7 @@ rule sentD_concat_index_chunks:
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
         stats_f=$(echo "{output.vcfgz}.bcf.stats");
         bcftools stats -F {params.huref}  {output.vcfgz} > $stats_f;
-        {latency_wait}; > {log};
-        rm -rf  $(dirname {output.vcf})/vcfs; 
+        rm -rf  $(dirname {output.vcf})/vcfs || echo 'rm failed!'; 
 
         """
 
