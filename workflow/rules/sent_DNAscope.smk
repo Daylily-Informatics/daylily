@@ -220,7 +220,7 @@ rule sentD_concat_index_chunks:
         stats_f=$(echo "{output.vcfgz}.bcf.stats");
         bcftools stats -F {params.huref}  {output.vcfgz} > $stats_f;
         {latency_wait}; > {log};
-        rm -rf  $(dirname {input.vcf})/vcfs; 
+        rm -rf  $(dirname {output.vcf})/vcfs; 
 
         """
 
