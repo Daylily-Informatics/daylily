@@ -66,6 +66,7 @@ rule deepvariant:
         mem_mb=config['deepvariant']['mem_mb'],
         numa=config['deepvariant']['numa'],
         cpre="" if "b37" == config['genome_build'] else "chr",
+        deep_threads=config['deepvariant']['deep_threads'],
     shell:
         """
         touch {log};
@@ -100,7 +101,7 @@ rule deepvariant:
         --regions=$dchr \
         --output_vcf={output.vcf} \
         --output_gvcf={output.gvcf} \
-        --num_shards={threads} \
+        --num_shards={params.deep_threads} \
         --logging_dir=$(dirname {log}) \
         --dry_run=false >> {log} 2>&1;
 
