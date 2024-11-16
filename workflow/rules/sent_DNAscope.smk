@@ -99,11 +99,11 @@ rule sentD_sort_index_chunk_vcf:
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.vcf",
     priority: 46
     output:
-        vcfsort=temp(MDIR
+        vcfsort=touch(MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf"),
-        vcfgz=temp(MDIR
+        vcfgz=touch(MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz"),
-        vcftbi=temp(MDIR
+        vcftbi=touch(MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz.tbi"),
     conda:
         "../envs/vanilla_v0.1.yaml"
