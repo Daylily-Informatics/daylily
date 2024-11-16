@@ -40,8 +40,8 @@ rule sent_DNAscope:
         bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.ready",
     output:
-     vcf=MDIR
-        + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.vcf",
+     vcf=temp(MDIR
+        + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.vcf"),
      tvcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.vcf.tmp"),
     log:
@@ -99,12 +99,12 @@ rule sentD_sort_index_chunk_vcf:
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.vcf",
     priority: 46
     output:
-        vcfsort=MDIR
-        + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf",
-        vcfgz=MDIR
-        + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz",
-        vcftbi=MDIR
-        + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz.tbi",
+        vcfsort=temp(MDIR
+        + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf"),
+        vcfgz=temp(MDIR
+        + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz"),
+        vcftbi=temp(MDIR
+        + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz.tbi"),
     conda:
         "../envs/vanilla_v0.1.yaml"
     log:
@@ -181,7 +181,7 @@ rule sentD_concat_index_chunks:
         fofn=MDIR
         + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.concat.vcf.gz.fofn",
     output:
-        vcf=touch(
+        vcf=temp(
             MDIR + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.sort.vcf"
         ),
         vcfgz=touch(
@@ -219,7 +219,10 @@ rule sentD_concat_index_chunks:
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
         stats_f=$(echo "{output.vcfgz}.bcf.stats");
         bcftools stats -F {params.huref}  {output.vcfgz} > $stats_f;
-        {latency_wait}; > {log} """
+        {latency_wait}; > {log};
+        rm -rf  $(dirname {input.vcf})/vcfs; 
+
+        """
 
 
 localrules:
@@ -235,7 +238,9 @@ rule clear_combined_sentD_vcf:  # TARGET:  clear combined sentD vcf so the chunk
         ),
     priority: 42
     shell:
-        "(rm {input}*  1> /dev/null  2> /dev/null ) || echo 'file not found for deletion: {input}';"
+        """
+        rm {input}*  1> /dev/null  2> /dev/null ) || echo 'file not found for deletion: {input}';
+        """
 
 
 localrules:

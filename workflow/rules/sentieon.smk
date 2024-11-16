@@ -11,8 +11,8 @@ rule sentieon_bwa_sort:
         f1=getR1s,
         f2=getR2s,
     output:
-        bamo=MDIR + "{sample}/align/sent/{sample}.sent.sort.bam",
-        baio=MDIR + "{sample}/align/sent/{sample}.sent.sort.bam.bai"
+        bamo=temp(MDIR + "{sample}/align/sent/{sample}.sent.sort.bam"),
+        baio=temp(MDIR + "{sample}/align/sent/{sample}.sent.sort.bam.bai")
     log:
         a=MDIR + "{sample}/align/sent/logs/{sample}.sent.sort.log",
     threads: config["sentieon"]["threads"]
