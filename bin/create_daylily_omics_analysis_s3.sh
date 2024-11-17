@@ -5,7 +5,7 @@ set -e  # Exit on any error
 
 # Check if the script is being sourced
 if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
-    echo "Error: This script is being sourced, not executed."
+    echo "Error: This script is being sourced, not executed.  exe this script plz."
     return 3  # Return with error if sourced
 fi
 
@@ -92,6 +92,8 @@ create_bucket() {
     if [ "$dryrun" = true ]; then
         echo "[Dry-run] Skipping bucket creation."
     else
+        aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled
+
         echo "Creating bucket '$new_bucket' in region '$region'..."s
         if [ "$region" = "us-east-1" ]; then
             aws s3api create-bucket --bucket "$new_bucket" --region "$region"
@@ -110,7 +112,6 @@ check_bucket_exists "$new_bucket"
 # Create the bucket if it does not exist
 create_bucket
 
-aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled
 # Set dry-run flag for S3 commands
 dryrun_flag=""
 if [ "$dryrun" = true ]; then
