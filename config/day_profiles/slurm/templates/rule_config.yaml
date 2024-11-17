@@ -158,7 +158,7 @@ strobe_align_sort:
     
 clair3:
     threads: 64
-    clair3_threads: 92
+    clair3_threads: 64
     partition: "i192"
     partition_other: "i192"
     mem_mb: 85000
