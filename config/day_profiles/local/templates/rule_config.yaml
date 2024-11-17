@@ -22,10 +22,10 @@ dynamic_scaling_factor: 1.0  # Takes the presets and scales them up/down based o
 
 # #### Select one to all of the available SNV callers
 active_snv_callers:
-    - clair3
     - deep
-    - sentd
-    - oct
+#    - clair3
+#    - oct
+#    - sentd
 
 # #### Select one to all of the available SV callers
 active_s_v_callers:
@@ -38,10 +38,10 @@ active_s_v_callers:
 active_aligners:
     - bwa2a:
         mkdup: dppl
-    - sent:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
-        mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
-    - strobe:
-        mkdup: dppl
+#    - sent:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
+#        mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
+#    - strobe:
+#        mkdup: dppl
 #    - bwa2a:
 #           mkdup: dppl
 #    - bwa2b:
