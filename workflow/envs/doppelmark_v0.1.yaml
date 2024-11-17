@@ -1,0 +1,14 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - parallel=20210822
+  - samtools=1.21
+  - pigz
+  - bcftools
+  - isa-l
+  - htslib
+  - bedtools
+  - perl
+  - tabix
+  - mbuffer
