@@ -16,6 +16,8 @@ if 'use_container' in config:
 else:
     pass
 
+containerized:ocker://daylilyinformatics/daylily:0.7.69c
+
 # no longer necessary keeping for the time being, but set to 0
 latency_wait = "sleep 0"
 
