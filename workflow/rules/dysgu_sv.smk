@@ -25,8 +25,8 @@ rule dysgu:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.dysgu.sv.vcf.bench.tsv"
     log:
         MDIR + "{sample}/align/{alnr}/sv/dysgu/logs/{sample}.{alnr}.dysgu.sv.vcf.log",
-    conda:
-        config["dysgu"]["env_yaml"]
+    container:
+        "quay.io/biocontainers/dysgu:1.6.6--py38hbf64fdb_0"
     shell:
         """
         work_dir=$(dirname {output.vcf} );
