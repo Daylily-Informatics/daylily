@@ -10,16 +10,8 @@ resource_scopes:
     disk_mb='local',
     time='local'
 
-# specify env container with: --config use_container=docker://daylilyinformatics/daylily:v0.1.0
-if 'use_container' in config:
-    containerized: config['use_container']
-else:
-    pass
-
-containerized:ocker://daylilyinformatics/daylily:0.7.69c
-
 # no longer necessary keeping for the time being, but set to 0
-latency_wait = "sleep 0"
+latency_wait = "sleep 0.01"
 
 
 # configfile: can be multiply declared.
