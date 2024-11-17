@@ -47,6 +47,17 @@ rule sentieon_mm2:
         config["sentieon"]["env_yaml"]
     shell:
         """
+
+        if [ -z "$SENTIEON_LICENSE" ]; then
+            echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well.";
+            exit 3;
+        fi
+
+        if [ ! -f "$SENTIEON_LICENSE" ]; then
+            echo "The file referenced by SENTIEON_LICENSE ('$SENTIEON_LICENSE') does not exist. Please provide a valid file path.";
+            exit 4;
+        fi
+        
         export bwt_max_mem={params.max_mem} ;
         epocsec=$(date +'%s');
 

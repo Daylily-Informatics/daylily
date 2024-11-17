@@ -184,7 +184,7 @@ clean:
 
 deepvariant:
     threads: 8
-    deep_threads: 16
+    deep_threads: 8
     env_yaml: "../envs/deepvariant_v0.1.yaml"
     deep_cmd: " singularity run   -B /usr/bin:/usr/bin   -B ./resources:/fsx/resources -B /fsx:/fsx -B /tmp:/tmp   -B $PWD:$PWD  /fsx/resources/environments/containers/deepvariant-1.3.0.sif  OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
     ld_preload: " "  # env LD_PRELOAD=./resources/libs/libllalloc.so "  #3 "  "  # env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "  # env MIMALLOC_RESET_DELAY=1750ms MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MI_OVERRIDE=ON MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/libs/libmimalloc-debug.so.1.7 "
