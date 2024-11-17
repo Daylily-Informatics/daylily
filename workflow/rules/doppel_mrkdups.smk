@@ -64,17 +64,12 @@ if "dppl" in DDUP:
     	     -disk-mate-shards 0 \
 	         -max-depth 300000 \
 	         -scratch-dir $tdir \
+            -output {output.bamo} \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
-             -shard-size {params.shard_size}  {params.mbuffer_mem} \
- 	         | OMP_NUM_THREADS={params.compress_threads} samtools view \
-	         -m {params.compress_mem}   \
-	         -@ {params.compress_mem} \
-	         -b \
-	         -h \
-	         -C 9 \
-	         --write-index  -o {output.bamo} >> {log};
+             -shard-size {params.shard_size}  {params.mbuffer_mem}  >> {log} 2>&1;
 
+            samtools index -b -@ {threads} {output.bamo}  >> {log} 2>&1;
 
             end_time=$(date +%s);
     	    elapsed_time=$((($end_time - $start_time) / 60));
