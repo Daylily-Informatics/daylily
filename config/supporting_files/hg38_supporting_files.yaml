@@ -8,7 +8,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai/Homo_sapiens_assembly38.fasta
       genome_file:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/bwa_mem2/blah.fa
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta
       fasta_orig:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai/Homo_sapiens_assembly38.fasta
@@ -29,13 +29,13 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta
       bwa_mem_index_fast:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/bwa_mem2_ert/Homo_sapiens_assembly38.fasta
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta
       bwa_mem_sent:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta
       bwa_mem_index_meme:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/bwa_mem2_meme/human_1kg_v37.fasta
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta
       rtg_tools_genome_full:
         class: dir_plus
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/rtg/Homo_sapiens_assembly38.fasta.sdf
