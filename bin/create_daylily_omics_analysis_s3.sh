@@ -198,8 +198,8 @@ fi
 
 echo "if you wish to copy the B37 references and annotations, then run the following commands BY HAND:"
 echo "------------"
-echo "$cmd_b37_ref"
-echo "$cmd_b37_annotations"
+echo "     $cmd_b37_ref"
+echo "     $cmd_b37_annotations"
 echo "------------"
 echo " "
 
