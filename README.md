@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.72)
+# Daylily AWS Ephemeral Cluster Setup (0.7.73)
 
 **Pre-beta release**
 
