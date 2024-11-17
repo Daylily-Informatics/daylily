@@ -119,13 +119,13 @@ rule sentD_sort_index_chunk_vcf:
         MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/log/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz.log",
     resources:
-        vcpu=8,
-        threads=8,
+        vcpu=4,
+        threads=4,
         partition="i192"
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 8 #config["config"]["sort_index_sentDna_chunk_vcf"]['threads']
+    threads: 4 #config["config"]["sort_index_sentDna_chunk_vcf"]['threads']
     shell:
         """
         (rm {output} 1>  /dev/null  2> /dev/null )  || echo rmfailed > {log};
@@ -199,10 +199,10 @@ rule sentD_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.sort.vcf.gz.tbi"
         ),
-    threads: 8
+    threads: 4
     resources:
-        vcpu=8,
-        threads=8,
+        vcpu=4,
+        threads=4,
         partition="i192"
     priority: 47
     params:
