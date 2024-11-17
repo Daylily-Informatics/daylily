@@ -68,7 +68,7 @@ malloc_alt:
     ld_preload: "  "  # env LD_PRELOAD=./resources/libs/libllalloc.so  "
 
 alignstats:
-    threads: 16
+    threads: 8
     partition: "i64"
     num_reads_in_mem: " "  # 100000
     env_yaml: "../envs/alignstats_v0.2.yaml"
@@ -121,8 +121,8 @@ bcl2fq_by_lane:
 bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i128"
-    threads: 16
-    bwa_threads: 16
+    threads: 8
+    bwa_threads: 8
     orig_threads: 2
     sort_threads: 4
     write_threads: 2
@@ -146,8 +146,8 @@ bwa_mem2a_aln_sort:
 strobe_align_sort:
     env_yaml: "../envs/strobe_aligner.yaml"
     partition: "i192"
-    threads: 16
-    strobe_threads: 16
+    threads: 8
+    strobe_threads: 8
     orig_threads: 8
     sort_threads: 8
     write_threads: 0
@@ -170,7 +170,7 @@ strobe_align_sort:
     igz_threads: " -cd -T 2 "
 
 clair3:
-    threads: 16
+    threads: 8
     clair3_threads: 32
     partition: "i192,i128"
     partition_other: "i192,i128"
@@ -202,7 +202,7 @@ duphold:
     partition: "i64"
 
 doppelmark:
-    threads: 16
+    threads: 8
     partition: "i8"
     clip_padding: 600000
     mem_mb: 50000
@@ -210,6 +210,8 @@ doppelmark:
     min_bases: 1000
     read_buffer_size: 50000
     queue_length: 640
+    compress_threads: 8
+    compress_memory: "100M"
     env_yaml: "../envs/vanilla_v0.1.yaml"
     numa: " OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
 
@@ -369,7 +371,7 @@ concat_index_sentD_chunks:
     partition: "i64"
 
 peddy:
-    threads: 16
+    threads: 8
     env_yaml: "../envs/peddy_v0.1.yaml"
     glances: " "  # glances --time 30 --stdout-csv now,cpu,diskio,mem,memswap,system,alert "
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
@@ -434,8 +436,8 @@ samtools_markdups:
     partition: "i64"
 
 sentieon:
-    threads: 16
-    bwa_threads: 16
+    threads: 8
+    bwa_threads: 8
     benchmark_runs: 0
     max_mem: "50G"
     K: " -k 19 -Y -M -K 10000000  "
@@ -497,7 +499,7 @@ sentieon_qc_metrics:
 
 svaba:
     orig_threads: 96
-    threads: 16
+    threads: 8
     ld_preload: " "  # env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "   # " env MIMALLOC_RESET_DELAY=1750ms MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MI_OVERRIDE=ON MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/libs/libmimalloc-debug.so.1.7 "
     cmd: " ./resources/svaba/svaba "
     partition: "i64"
@@ -508,7 +510,7 @@ svaba_sort_index:
     partition: "i64"
 
 calc_coverage_evenness:
-    threads: 16
+    threads: 8
     ld_preload: " "  #  env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "   # " env MIMALLOC_RESET_DELAY=1750ms MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MI_OVERRIDE=ON MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/libs/libmimalloc-debug.so.1.7 "
     partition: "i64"
 
@@ -518,13 +520,13 @@ produce_fastqs_from_bams:
     partition: "i64"
 
 svim_asm:
-    threads: 16
+    threads: 8
     env_yaml: "../envs/svim_asm_v0.1.yaml"
     ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
     partition: "i64"
 
 hisat2:
-    threads: 16
+    threads: 8
     env_yaml: "../envs/hisat2_v0.1.yaml"
     ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so "
     partition: "i28"
@@ -540,6 +542,6 @@ seqfu:
     partition: "i64"
 
 vep:
-    threads: 12
+    threads: 8
     partition: "i64,i96"
      
