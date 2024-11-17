@@ -32,8 +32,8 @@ rule dysgu:
         work_dir=$(dirname {output.vcf} );
         (rm -rf $work_dir ) || echo noFail;
         mkdir -p $(dirname {log} ) ;
-        (env LD_PRELOAD=./resources/lib/libgomp.so {params.ld_p} \
-        dysgu run  \
+        
+        ( dysgu run  \
          -x -a \
         --metrics  \
         --keep-small \
