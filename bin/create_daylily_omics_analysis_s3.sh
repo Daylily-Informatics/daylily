@@ -124,9 +124,9 @@ fi
 
 # Core dirs to copy
 cmd_cluster_boot_config="aws s3 cp s3://${source_bucket}/cluster_boot_config s3://${new_bucket}/cluster_boot_config --recursive  --request-payer requester"
-cmd_cached_envs="aws s3 cp s3://${source_bucket}/data/cached_envs s3://${new_bucket}/data/cached_envs --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
-cmd_libs="aws s3 cp s3://${source_bucket}/data/lib s3://${new_bucket}/data/lib --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
-cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_resources s3://${new_bucket}/data/tool_specific_resources --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+cmd_cached_envs="aws s3 cp s3://${source_bucket}/data/cached_envs s3://${new_bucket}/data/cached_envs --recursive --request-payer requester "
+cmd_libs="aws s3 cp s3://${source_bucket}/data/lib s3://${new_bucket}/data/lib --recursive --request-payer requester  "
+cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_resources s3://${new_bucket}/data/tool_specific_resources --recursive --request-payer requester "
 
 # b37 references
 cmd_b37_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
@@ -143,8 +143,8 @@ check_for_errors() {
     local status=$1
     local cmd=$2
     if [ $status -ne 0 ]; then
-        echo "Error: Command failed - \"$cmd\""
-        exit $status
+        echo "Error: Command failed - \"$cmd\" with status $status. Exiting."
+        exit 3
     fi
 }
 
