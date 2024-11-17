@@ -1,23 +1,3 @@
-Building DAG of jobs...
-Hashing conda environment workflow/envs/alignstats_v0.2.yaml.
-Hashing conda environment workflow/envs/bwasamtools_v0.1.yaml.
-Hashing conda environment workflow/envs/dysgu_sv_v0.2.yaml.
-Hashing conda environment workflow/envs/fastp_v0.1.yaml.
-Hashing conda environment workflow/envs/fastqc_v0.1.yaml.
-Hashing conda environment workflow/envs/go_left_v0.1.yaml.
-Hashing conda environment workflow/envs/manta_v0.1.yaml.
-Hashing conda environment workflow/envs/mosdepth_v0.1.yaml.
-Hashing conda environment workflow/envs/multiqc_v0.1.yaml.
-Hashing conda environment workflow/envs/peddy_v0.1.yaml.
-Hashing conda environment workflow/envs/picard_v0.1.yaml.
-Hashing conda environment workflow/envs/qualimap_v0.1.yaml.
-Hashing conda environment workflow/envs/rtgtools_v0.1.yaml.
-Hashing conda environment workflow/envs/samtools_v0.1.yaml.
-Hashing conda environment workflow/envs/sentD_v0.2.yaml.
-Hashing conda environment workflow/envs/sentieon_v0.1.yaml.
-Hashing conda environment workflow/envs/strobe_aligner.yaml.
-Hashing conda environment workflow/envs/vanilla_v0.1.yaml.
-Hashing conda environment workflow/envs/verifybamid2_v0.1.yaml.
 FROM condaforge/mambaforge:latest
 LABEL io.github.snakemake.containerized="true"
 LABEL io.github.snakemake.conda_env_hash="f993697d7f5d7f97934ca0b4528caf059329e5c8d00bd6ddb359ce3501ab7d8e"
