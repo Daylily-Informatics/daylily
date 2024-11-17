@@ -348,7 +348,7 @@ octopus:
 sentD:
     regions_to_call: '  '  # testing:' --regions 11:1-115169878 MT:1-16569  '
     testing_model: '  '  #  ' --very-fast '  # set to ' --very-fast ' for testing
-    threads: 16 # Dynamically reset- this represents the cap
+    threads: 8 # Dynamically reset- this represents the cap
     sentD_chrms: "16-19"
     ld_preload: " "  # " env MIMALLOC_RESET_DELAY=750ms MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1 MIMALLOC_LARGE_OS_PAGES=1 MIMALLOC_USE_NUMA_NODES=2 MIMALLOC_RESERVE_HUGE_OS_PAGES=0   env LD_PRELOAD=$PWD/resources/libs/libmimalloc.so "
     env_yaml: "../envs/vanilla_v0.1.yaml"
@@ -359,12 +359,12 @@ sentD:
     dna_scope_snv_model: "/fsx/data/tool_specific_resources/sentieon_models_2_2/sentieon_dnascope_snv_2_2.model"
 
 sort_index_sentD_chunk_vcf:
-    threads: 32
+    threads: 8
     env_yaml: "../envs/vanilla_v0.1.yaml"
     partition: "i64"
 
 concat_index_sentD_chunks:
-    threads: 32
+    threads: 8
     env_yaml: "../envs/vanilla_v0.1.yaml"
     partition: "i64"
 
