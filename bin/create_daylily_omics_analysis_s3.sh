@@ -92,7 +92,6 @@ create_bucket() {
     if [ "$dryrun" = true ]; then
         echo "[Dry-run] Skipping bucket creation."
     else
-        aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled
 
         echo "Creating bucket '$new_bucket' in region '$region'..."s
         if [ "$region" = "us-east-1" ]; then
@@ -101,6 +100,8 @@ create_bucket() {
             aws s3api create-bucket --bucket "$new_bucket" --region "$region" --create-bucket-configuration LocationConstraint="$region"
         fi
         echo "Bucket '$new_bucket' created successfully."
+        aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled
+
     fi
 }
 
@@ -173,4 +174,4 @@ echo "$cmd_giab_reads"
 echo "------------"
 echo " "
 
-echo "Bucket setup for '$new_bucket' completed successfully."
+echo "Given DRYRUN($dryrun) ... Bucket setup for '$new_bucket' completed successfully."
