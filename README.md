@@ -1,6 +1,6 @@
 # Daylily AWS Ephemeral Cluster Setup (0.7.74)
 
-**Pre-beta release**
+**beta release**
 
 Daylily is a framework for setting up ephemeral AWS clusters optimized for genomics data analysis. It leverages AWS ParallelCluster and provides automated scripts for cluster creation, management, and teardown.
 
@@ -26,12 +26,12 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
 
 # Before Beginning
-- `daylily` was tuned to run in the `us-west-2c` AZ, for cost and availabiliyu of some specific compute resources not found in all AZs. The install should all build and proceed using the `us-west-2c` AZ.
+- `daylily` can run in multiple AZs, but this capability is not end-to-end automated yet. It is straightforward to run 1-many ephemeral clusters in one AZ of a region, and to do so in multiple regions.  Running in multipe AZs w/in a region is allowed, but the automation to set these up is not complete (read: you'll need to build subnets and a few other AZ specific resources by hand ATM).
 - A cloudstack formation template will run which will create some important resources for the epheral cluster, namely: the public VPC, public subnet, private subnet, and a policy to allow tagging and budget tracking of resources by pcluster.
 - The install steps should work for both `bash` and `zsh` shells, but the `bash` shell is the default for the `pcluster` environment.
 - Daylily `projects` are synonymous with AWS `budgets`. When initializing daylily `. dyinit  --project PROJECT`, the project specified will be checked vs the slurm registry of projects, found `/opt/slurm/etc/projects_list.conf` and be checked to confirm there is a matching AWS budget of the specified name. If not, you will be prompted to create a budget (which may also be completed via the AWS dashboard, use a simplified `monthly spend` type). for now, you willneed to update the `projects_list.conf` file manually with each new budget added, *importantly* both in the current ephemeral cluster conf file as well as the s3 bucket hosted version which is used to build new nodes.
 
-# Strongly Suggested >> PCUI
+# Strongly Suggested --> Parallel CLuster UI ( _PCUI_ )
 
 > [PCUI](https://us-west-2.console.aws.amazon.com/parallelcluster/home?region=us-west-2#clusters) is a useful tool for managing all parallel clusters across AZ's. You can accomplish everything the `pcluster` cli allows, and in addition, much more convenient stackformation/log monitoring. Bonus: job monitoring, dynamic volume management & integrated budget/cost monitoring (`daylily` adds to this budget enforcement and finer grained cost tracking).
 
