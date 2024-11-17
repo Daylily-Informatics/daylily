@@ -66,7 +66,7 @@ rule sent_DNAscope:
     params:
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
-        model=config["sentieon"]["dna_scope_snv_model"],
+        model=config["sentD"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
         numactl=config["sentieon"]["numactl"],
     shell:
