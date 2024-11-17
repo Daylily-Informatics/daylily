@@ -202,5 +202,5 @@ echo "$cmd_b37_ref"
 echo "$cmd_b37_annotations"
 echo "------------"
 echo " "
-s
+
 echo "Given DRYRUN($dryrun) ... Bucket setup for '$new_bucket' completed successfully."
