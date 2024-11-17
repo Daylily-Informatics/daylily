@@ -14,7 +14,7 @@ rule dysgu:
     output:
         vcf = MDIR + "{sample}/align/{alnr}/sv/dysgu/{sample}.{alnr}.dysgu.sv.vcf",
     params:
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         min_sv_size="30" if "dysgu" not in config else config["dysgu"]["min_sv_size"],
         cluster_sample=ret_sample_alnr,
         ld_p=config['malloc_alt']['ld_preload'] if 'ld_preload' not in config['dysgu'] else config['dysgu']['ld_preload'],

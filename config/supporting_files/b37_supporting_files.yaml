@@ -5,7 +5,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
     huref:
       ref:
         class: file_no_suffix_star          # This is for use with local copy and webdav copy. These dirs contain other share resources that don't need to be dragged around unecessarily
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta
       genome_file:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.genome
