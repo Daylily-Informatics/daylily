@@ -868,6 +868,27 @@ To make informed decisions about choosing an analysis pipeline, there are four k
 ## Longevity of Results
 - how are results stored? What are the costs and access mechanisms for these results?
 
+# Sentieon Tools & License
+To activate sentieon bwa and sentieon DNA scope, edit the `config/day_profiles/{local,slurm}/templates/rule_config.yaml` file to uncomment the following:
+```yaml
+active_snv_callers:
+    - deep
+#    - sentd
+
+active_aligners:
+    - bwa2a:
+        mkdup: dppl
+#    - sent:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
+#        mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
+#    - strobe:
+
+```
+- This will enable running these two tools.  You will also need a liscence file from sentieon in order to run these tools.  
+- Please [contact them](https://www.sentieon.com/company/) to obtain a valid liscense . 
+- Once you have a lisence file, edit the `dyinit` file to include the */fsx/* relative path to this file where `export SENTIEON_LICENSE=` is found.  
+- Save the liscence file in the each region specific S3 reference bucket, ie: `s3://PREFIX-omics-analysis-REGION/data/cached_envs/`. When this bucket is mounted to the fsx filesystem, the liscence file will be available to all instances at `/fsx/data/cached_envs/`.
+
+
 
 # Contributing
 - [Contributing Guidelines](CONTRIBUTING.md)
