@@ -2,15 +2,6 @@
 pizzazz: "off"  # on or off
 profile_name: "global"  # this is over-ridden when profile specific config is included
 
-# ####### Core Directories and logs
-# Pattern:  directories should be specified relative to the point of execution of the Snakefile
-# Snakefile. This can absolutely be weird and confusing at first bc you need to be aware where a
-# variable holding a path will be used, which is a pain.  But this is done in the interest of portability
-# and it offers a concrete mehthod of identifying files/dirs, more so even than hard coded paths b/c
-# this rigid relative system can be deployed anyplace. Hard coded paths, or relative paths that move
-# outside the repo dir are allowed, but should be rare.
-# Snakemake encourages/requires omitting the './' when referring to relative dirs, and all directory definitions
-# should end in a '/'.
 
 logs:
     operational:
@@ -25,14 +16,11 @@ logs:
 # example test data
 remote_analysis_manifest: ".test_data/data/0.01xwgs_HG002.samplesheet.csv"
 
-# should prob be in rules..
+# STILL WORKING?
 sentieon_liscence_server: "localhost:8990"
 
 
-# ###### RULE SKIP / RUN
-# some modules may be removed from consideration in the dag entirely
-# by setting this to 'skip' or 'run'
-
+# DEORECATED
 # you would activate by adding ''' --config rule_action='{"ultraplex_iddnas":"run","kat":"run"}' ''' to the mod-run call
 rule_action:
     ultraplex_iddnas: "run"

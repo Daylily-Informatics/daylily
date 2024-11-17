@@ -6,7 +6,6 @@ valid_biome: 'AWSPC'
 
 supporting_dirs: "config/supporting_files/supporting_dirs.yaml"
 
-# 
 supporting_data:
     mode: "local_link"  # other options are DPRECATED
     link_point: "resources/fsx/data/"
