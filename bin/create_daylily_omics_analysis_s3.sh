@@ -139,6 +139,16 @@ cmd_hg38_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism
 # Concordance Reads
 cmd_giab_reads="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_reads s3://${new_bucket}/data/genomic_data/organism_reads --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
 
+check_for_errors() {
+    local status=$1
+    local cmd=$2
+    if [ $status -ne 0 ]; then
+        echo "Error: Command failed - \"$cmd\""
+        exit $status
+    fi
+}
+
+
 if [ "$dryrun" = true ]; then
     echo "[Dry-run] Skipping S3 CORE copy operations."
     echo "$cmd_cluster_boot_config"
@@ -148,17 +158,42 @@ if [ "$dryrun" = true ]; then
     echo "$cmd_hg38_ref"
     echo "$cmd_hg38_annotations"
 else
-    echo "Running the following commands in parallel:"
+    echo "Running the following commands serially"
+    echo " "
+    echo "NOW RUNNING"
     echo "$cmd_cluster_boot_config"
+    eval "$cmd_cluster_boot_config" 
+    check_for_errors $? "$cmd_cluster_boot_config"
+
+    echo "NOW RUNNING"
     echo "$cmd_cached_envs"
+    eval "$cmd_cached_envs"
+    check_for_errors $? "$cmd_cached_envs"
+
+    echo "NOW RUNNING"
     echo "$cmd_libs"
+    eval "$cmd_libs"
+    check_for_errors $? "$cmd_libs"
+
+    echo "NOW RUNNING"
     echo "$cmd_tool_specific_resources"
+    eval "$cmd_tool_specific_resources"
+    check_for_errors $? "$cmd_tool_specific_resources"
+
+    echo "NOW RUNNING"
     echo "$cmd_hg38_ref"
+    eval "$cmd_hg38_ref"
+    check_for_errors $? "$cmd_hg38_ref"
+
+    echo "NOW RUNNING"
     echo "$cmd_hg38_annotations"
+    eval "$cmd_hg38_annotations"
+    check_for_errors $? "$cmd_hg38_annotations"
+
+    echo "NOW RUNNING"
     echo "$cmd_giab_reads"
-    eval "$cmd_cluster_boot_config & $cmd_cached_envs & wait "
-    eval "$cmd_libs & $cmd_tool_specific_resources & wait"
-    eval "$cmd_hg38_ref & $cmd_hg38_annotations & wait"
+    eval "$cmd_giab_reads"
+    check_for_errors $? "$cmd_giab_reads"
 fi
 
 echo "if you wish to copy the B37 references and annotations, then run the following commands BY HAND:"
@@ -167,12 +202,5 @@ echo "$cmd_b37_ref"
 echo "$cmd_b37_annotations"
 echo "------------"
 echo " "
-
-
-echo "if you wish to copy the GIAB CONCORDANCE READS (reccomended!), then run the following command BY HAND:"
-echo "------------"
-echo "$cmd_giab_reads"
-echo "------------"
-echo " "
-
+s
 echo "Given DRYRUN($dryrun) ... Bucket setup for '$new_bucket' completed successfully."
