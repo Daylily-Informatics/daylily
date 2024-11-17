@@ -329,7 +329,7 @@ octopus:
 
 sentD:
     threads: 192 
-    sentD_chrms: "1-24"
+    sentD_chrms: "1,2,3,4,5-10,11-24"
     ld_preload: " " 
     env_yaml: "../envs/vanilla_v0.1.yaml"
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
