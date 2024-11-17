@@ -1,6 +1,6 @@
 FROM condaforge/mambaforge:latest
 LABEL io.github.snakemake.containerized="true"
-LABEL io.github.snakemake.conda_env_hash="f993697d7f5d7f97934ca0b4528caf059329e5c8d00bd6ddb359ce3501ab7d8e"
+LABEL io.github.snakemake.conda_env_hash="b7bb3cc1ec9b03c806c2afc44963d48e3eca776fbb4eace4d38cef5e376cc774"
 
 # Step 1: Retrieve conda environments
 
@@ -43,16 +43,6 @@ COPY workflow/envs/alignstats_v0.2.yaml /conda-envs/6f2307ffa1e0ec751250f3c8957b
 #     - jemalloc
 RUN mkdir -p /conda-envs/21acb778ff57c6be3841202554a9b391
 COPY workflow/envs/bwasamtools_v0.1.yaml /conda-envs/21acb778ff57c6be3841202554a9b391/environment.yaml
-
-# Conda environment:
-#   source: workflow/envs/dysgu_sv_v0.2.yaml
-#   prefix: /conda-envs/afd9c819dc24c06d9ef0c4c1efd784b8
-#   channels:
-#     - conda-forge
-#   dependencies:
-#     - dysgu==1.6.6
-RUN mkdir -p /conda-envs/afd9c819dc24c06d9ef0c4c1efd784b8
-COPY workflow/envs/dysgu_sv_v0.2.yaml /conda-envs/afd9c819dc24c06d9ef0c4c1efd784b8/environment.yaml
 
 # Conda environment:
 #   source: workflow/envs/fastp_v0.1.yaml
@@ -328,7 +318,6 @@ COPY workflow/envs/verifybamid2_v0.1.yaml /conda-envs/85335de59464b4d0307620d1b2
 
 RUN mamba env create --prefix /conda-envs/6f2307ffa1e0ec751250f3c8957bb9d0 --file /conda-envs/6f2307ffa1e0ec751250f3c8957bb9d0/environment.yaml && \
     mamba env create --prefix /conda-envs/21acb778ff57c6be3841202554a9b391 --file /conda-envs/21acb778ff57c6be3841202554a9b391/environment.yaml && \
-    mamba env create --prefix /conda-envs/afd9c819dc24c06d9ef0c4c1efd784b8 --file /conda-envs/afd9c819dc24c06d9ef0c4c1efd784b8/environment.yaml && \
     mamba env create --prefix /conda-envs/8cdae75f957fca692b0938ff86cecd3f --file /conda-envs/8cdae75f957fca692b0938ff86cecd3f/environment.yaml && \
     mamba env create --prefix /conda-envs/2fc8add091e996fd87194baae8c06315 --file /conda-envs/2fc8add091e996fd87194baae8c06315/environment.yaml && \
     mamba env create --prefix /conda-envs/46dadb26e48dcc73dc177383a287149a --file /conda-envs/46dadb26e48dcc73dc177383a287149a/environment.yaml && \
