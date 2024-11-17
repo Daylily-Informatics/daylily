@@ -24,7 +24,7 @@ if "dppl" in DDUP:
         benchmark:
             repeat("{MDIR}{sample}/benchmarks/{sample}.{alnr}.mrkdup.bench.tsv", 0)
         conda:
-            "../envs/vanilla_v0.1.yaml"
+            "../envs/doppelmark_v0.1.yaml"
         resources:
             threads=config["doppelmark"]["threads"],
             partition=config["doppelmark"]["partition"],
