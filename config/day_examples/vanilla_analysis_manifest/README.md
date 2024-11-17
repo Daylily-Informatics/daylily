@@ -1,5 +1,7 @@
 # Analysis Manifest Details
 
+**THIS IS ALL ACTIVELY BEING DEPRECATED IN FAVOR OF MOVING TO SNAKEMAKE v8 PATTERNS**
+
 > This info applies only to the standard analysis manifest, not the special bcl2fastq, whcih is described elsewhere.
 
 ## Analysis Manifest Details

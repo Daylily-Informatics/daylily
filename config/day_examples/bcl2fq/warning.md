@@ -5,4 +5,3 @@ You are responsible for generating the appropriate sample sheet for your run.  T
 ## Valid Ways To Obtain A Sample Sheet
 1) If a miseq run has been created, from the formatted run page, at the mid-top center of the page is a button which will download one (that will need to have the fields continaing SQs stripped to just SQs.
 2) From a BCL2FQ job run in an AT, you can use the SampleSheet.tsv directly from there.
-3) .... follow the alaska T code back to wherever it is the sample sheet is formulated.  It is a mixture of info pulled from the Run.xml file in the rundir and the libraries SQs w/in the XL loaded to start the run.
