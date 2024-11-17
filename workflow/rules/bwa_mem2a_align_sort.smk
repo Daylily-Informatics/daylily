@@ -79,15 +79,15 @@ rule bwa_mem2_sort:
             exit 3;
         fi
 
-        # LD_PRELOAD=$LD_PRELOAD 
-        {params.bwa_mem2a_cmd} mem \
+
+         numactl --cpunodebind=0 --membind=0 {params.bwa_mem2a_cmd} mem \
          -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
          {params.softclip_alts}  {params.K} {params.k} \
          -t {params.bwa_threads}  \
          {params.huref} \
-         {params.subsample_head} <(igzip {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
-         {params.subsample_head} <(igzip  {params.igz_threads} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer_mem} \
-        | samtools sort \
+         {params.subsample_head} <(numactl --cpunodebind=1 --membind=1 igzip {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
+         {params.subsample_head} <(numactl --cpunodebind=1 --membind=1 igzip  {params.igz_threads} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer_mem} \
+        | numactl --cpunodebind=1 --membind=1 samtools sort \
         -l 1  \
         -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} \
