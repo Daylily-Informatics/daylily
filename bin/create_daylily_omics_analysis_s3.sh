@@ -156,7 +156,8 @@ else
     echo "$cmd_hg38_ref"
     echo "$cmd_hg38_annotations"
     echo "$cmd_giab_reads"
-    eval "$cmd_cluster_boot_config & $cmd_cached_envs & $cmd_libs & $cmd_tool_specific_resources & wait"
+    eval "$cmd_cluster_boot_config & $cmd_cached_envs & wait "
+    eval "$cmd_libs & $cmd_tool_specific_resources & wait"
     eval "$cmd_hg38_ref & $cmd_hg38_annotations & wait"
 fi
 
