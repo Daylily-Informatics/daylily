@@ -105,6 +105,7 @@ rule strobe_align_sort:
         elapsed_time=$((($end_time - $start_time) / 60));
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
+        rm -rf $tdir;
         """
 
 

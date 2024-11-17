@@ -50,6 +50,9 @@ if "dppl" in DDUP:
 	    echo "INSTANCE TYPE: $itype";
             start_time=$(date +%s);
 
+            tdir=$(dirname {output.bamo})/dpm_tmp;
+            mkdir -p $tdir;
+
             {params.numa} resources/DOPPLEMARK/doppelmark \
              -parallelism {threads} \
              -bam {input.bam} \
@@ -58,7 +61,7 @@ if "dppl" in DDUP:
              -logtostderr \
     	     -disk-mate-shards 0 \
 	         -max-depth 300000 \
-	         -scratch-dir $TMPDIR \
+	         -scratch-dir $tdir \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
              -shard-size {params.shard_size}  >> {log};
@@ -68,12 +71,12 @@ if "dppl" in DDUP:
             touch {output};
 
             end_time=$(date +%s);
-	    elapsed_time=$((($end_time - $start_time) / 60));
-	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
+    	    elapsed_time=$((($end_time - $start_time) / 60));
+	        echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
             echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
 
-	    cram_cmd="samtools view -@ {threads} -m 2G  -C -T {params.huref_fasta}   --write-index  -o  {output.bamo}.cram  {output.bamo}";
-	    echo "$cram_cmd";
-	    echo "$cram_cmd" >> {log};
-
+	        cram_cmd="samtools view -@ {threads} -m 2G  -C -T {params.huref_fasta}   --write-index  -o  {output.bamo}.cram  {output.bamo}";
+	        echo "$cram_cmd";
+	        echo "$cram_cmd" >> {log};
+            rm -rf $tdir;
             """ 
