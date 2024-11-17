@@ -139,7 +139,7 @@ bwa_mem2a_aln_sort:
     orig_sort_mem: "500M"
     sort_thread_mem: "500M"  # 1350M
     numactl: ""
-    mbuffer_mem: "  -m 1G -q -s 128k " 
+    mbuffer_mem: " | mbuffer -m 1G -q -s 128k " 
     igz_threads: " -cd -T 2 "
 
 
@@ -166,7 +166,7 @@ strobe_align_sort:
     sort_thread_mem: "10G"  # 1350M
     numactl: ""
     mem_mb: 200000 # This can be set to dynamically set based on fasta input size
-    mbuffer_mem: "  -m 1G -q -s 128k " 
+    mbuffer_mem: " | mbuffer  -m 1G -q -s 128k " 
     igz_threads: " -cd -T 2 "
 
 clair3:
@@ -213,7 +213,8 @@ doppelmark:
     compress_threads: 8
     compress_mem: "100M"
     env_yaml: "../envs/vanilla_v0.1.yaml"
-    numa: " OMP_NUM_THREADS=16 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    numa: " OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    mbuffer_mem: " | mbuffer -m 1G -q -s 128k "
 
 dysgu:
     threads: 32
