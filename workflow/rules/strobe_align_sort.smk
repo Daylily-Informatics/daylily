@@ -78,7 +78,6 @@ rule strobe_align_sort:
             exit 3;
         fi
 
-        #LD_PRELOAD=$LD_PRELOAD 
         {params.strobe_cmd} \
         -t {params.strobe_threads} \
         --rg-id="{params.rgid}_$epocsec" \
@@ -89,10 +88,9 @@ rule strobe_align_sort:
         --rg=CN:"{params.rgcn}" \
         --rg=PG:"{params.rgpg}" \
         --use-index {params.huref}  \
-        {params.subsample_head} <(igzip  {params.igz_threads} -q  {input.f1} )  {params.subsample_tail} \
-        {params.subsample_head}  <(igzip  {params.igz_threads} -q {input.f2} )  {params.subsample_tail} \
-        | mbuffer {params.mbuffer_mem} \
-        | samtools sort \
+        {params.subsample_head} <( {params.igz_threads} -q  {input.f1} )  {params.subsample_tail} \
+        {params.subsample_head}  <( {params.igz_threads} -q {input.f2} )  {params.subsample_tail} {params.mbuffer_mem} \
+        | OMP_NUM_THREADS=96 numactl --cpunodebind=1 --membind=1 samtools sort \
         -l 1  \
         -m {params.sort_thread_mem}   \
         -@  {params.sort_threads} \
@@ -107,7 +105,6 @@ rule strobe_align_sort:
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         rm -rf $tdir;
         """
-
 
 localrules: produce_strobe_align,
 

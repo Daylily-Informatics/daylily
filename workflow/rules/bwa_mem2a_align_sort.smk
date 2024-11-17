@@ -109,6 +109,3 @@ localrules: produce_bwa_mem2,
 rule produce_bwa_mem2:  # TARGET: only produce bwamem2a
      input:
          expand(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam", sample=SAMPS)
-
-	  
- 
