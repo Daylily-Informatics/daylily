@@ -73,7 +73,7 @@ if "dppl" in DDUP:
 	     -b \
 	     -h \
 	     -C 9 \
-	     --write-index  -o {output.bamo} -  >> {log};
+	     --write-index  -o {output.bamo} >> {log};
 
 
             end_time=$(date +%s);
