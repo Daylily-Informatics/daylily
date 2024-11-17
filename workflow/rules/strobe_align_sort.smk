@@ -78,7 +78,6 @@ rule strobe_align_sort:
             exit 3;
         fi
 
-        #LD_PRELOAD=$LD_PRELOAD 
         {params.strobe_cmd} \
         -t {params.strobe_threads} \
         --rg-id="{params.rgid}_$epocsec" \
@@ -106,7 +105,6 @@ rule strobe_align_sort:
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         rm -rf $tdir;
         """
-
 
 localrules: produce_strobe_align,
 
