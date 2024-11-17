@@ -118,13 +118,13 @@ bwa_mem2a_aln_sort:
     sort_threads: 96 # from 96
     write_threads: 96 # from 96
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
-    igz_threads: " -cd -T 48 "
+    igz_threads: " OMP_NUM_THREADS=48 numactl --cpunodebind=1 --membind=1 igzip -cd -T 48 "
     ldpre: ""
     orig_sort_threads: 2
     benchmark_runs: 0
     softclip_alts: " "
     ld_preload: "  "
-    cmd: "  OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  
+    cmd: "  OMP_NUM_THREADS=96 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=FALSE OMP_MAX_ACTIVE_LEVELS=1 OMP_WAIT_POLICY=ACTIVE numactl --cpunodebind=0 --membind=0 resources/bwa-mem2/bwa-mem2 "  
     K: "  -k 19 -Y -M -K 1000000000 "
     glances: " "
     k: " "
