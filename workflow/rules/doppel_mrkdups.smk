@@ -50,7 +50,7 @@ if "dppl" in DDUP:
             TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
             itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
             echo "INSTANCE TYPE: $itype" > {log};
-	    echo "INSTANCE TYPE: $itype";
+	        echo "INSTANCE TYPE: $itype";
             start_time=$(date +%s);
 
             tdir=$(dirname {output.bamo})/dpm_tmp;
@@ -62,27 +62,27 @@ if "dppl" in DDUP:
              -clip-padding {params.clip_padding} \
              -logtostderr \
     	     -disk-mate-shards 0 \
-	     -max-depth 300000 \
-	     -scratch-dir $tdir \
+	         -max-depth 300000 \
+	         -scratch-dir $tdir \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
              -shard-size {params.shard_size}  {params.mbuffer_mem} \
- 	     | OMP_NUM_THREADS={params.compress_threads} samtools view \
-	     -m {params.compress_mem}   \
-	     -@ {params.compress_mem} \
-	     -b \
-	     -h \
-	     -C 9 \
-	     --write-index  -o {output.bamo} >> {log};
+ 	         | OMP_NUM_THREADS={params.compress_threads} samtools view \
+	         -m {params.compress_mem}   \
+	         -@ {params.compress_mem} \
+	         -b \
+	         -h \
+	         -C 9 \
+	         --write-index  -o {output.bamo} >> {log};
 
 
             end_time=$(date +%s);
     	    elapsed_time=$((($end_time - $start_time) / 60));
-	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
+	        echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
             echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
 
-	    cram_cmd="samtools view -@ {threads} -m 2G  -C -T {params.huref_fasta}   --write-index  -o  {output.bamo}.cram  {output.bamo}";
-	    echo "$cram_cmd";
-	    echo "$cram_cmd" >> {log};
+	        cram_cmd="samtools view -@ {threads} -m 2G  -C -T {params.huref_fasta}   --write-index  -o  {output.bamo}.cram  {output.bamo}";
+	        echo "$cram_cmd";
+	        echo "$cram_cmd" >> {log};
             rm -rf $tdir;
             """ 
