@@ -59,7 +59,7 @@ apt update -y
 apt install -y tmux emacs rclone parallel atop htop glances fd-find docker.io \
                     build-essential libssl-dev uuid-dev libgpgme-dev squashfs-tools \
                     libseccomp-dev pkg-config openjdk-11-jdk wget unzip nasm yasm isal \
-                    fuse2fs gocryptfs cpulimit golang-go
+                    fuse2fs gocryptfs cpulimit golang-go numactl
 
 # Add Apptainer PPA
 add-apt-repository -y ppa:apptainer/ppa
