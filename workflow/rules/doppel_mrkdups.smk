@@ -67,7 +67,7 @@ if "dppl" in DDUP:
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
              -shard-size {params.shard_size}  {params.mbuffer_mem} \
- 	     | OMP_NUM_THREADS={params.sort_threads} samtools view \
+ 	     | OMP_NUM_THREADS={params.compress_threads} samtools view \
 	     -m {params.compress_mem}   \
 	     -@ {params.compress_mem} \
 	     -b \
