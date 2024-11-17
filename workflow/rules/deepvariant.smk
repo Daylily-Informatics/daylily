@@ -93,7 +93,7 @@ rule deepvariant:
 
         export APPTAINER_HOME=/fsx/scratch;
         echo 'DCHRM: $dchr';
-        export LD_LIBRARY_PATH=resources/lib/;
+        
         {params.numa} \
         /opt/deepvariant/bin/run_deepvariant \
         --model_type=WGS --ref={params.huref} \
