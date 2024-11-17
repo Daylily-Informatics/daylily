@@ -110,7 +110,7 @@ for i in summary_fh:
 
 def _proc_vcf(vcf_n):
     new_vcf_n = f"{vcf_n.replace('.','_')}_stripped.vcf.gz"
-    ccmd = f"LD_PRELOAD=./resources/lib/libgsl.so.25 bcftools  annotate  -x INFO/datasets,INFO/platforms,INFO/callsetnames,INFO/platformnames,INFO/callable,INFO/datasetnames  --threads 4 -O z -o {new_vcf_n} {vcf_n}; tabix -f {new_vcf_n}; "
+    ccmd = f" bcftools  annotate  -x INFO/datasets,INFO/platforms,INFO/callsetnames,INFO/platformnames,INFO/callable,INFO/datasetnames  --threads 4 -O z -o {new_vcf_n} {vcf_n}; tabix -f {new_vcf_n}; "
     print(f"{ccmd}", file=sys.stderr)
     os.system(ccmd)
     return(new_vcf_n)
