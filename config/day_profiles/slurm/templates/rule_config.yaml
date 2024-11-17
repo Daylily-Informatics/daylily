@@ -30,11 +30,11 @@ active_s_v_callers:
 # #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
 active_aligners:
     - bwa2a:
-          mkdup: dppl
+        mkdup: dppl
 #    - sent:
-#          mkdup: dppl
+#        mkdup: dppl
 #    - strobe:
-#          mkdup: dppl
+#        mkdup: dppl
 #    - bwa2m:
 #          mkdup: sent
 #    - sent:
