@@ -51,7 +51,7 @@ done
 
 if [ "$disable_warn" != true ]; then
     echo ""
-    echo "Usage: $0 [--bucket-prefix <prefix> --daylily-s3-version <version> (default v0.7)] [--region <region> (default us-west-2)] [--dryrun] [--help] --disable-warn"
+    echo "Usage: $0 [--bucket-prefix <prefix> --daylily-s3-version <version> (default v0.7)] [--region <region> (default us-west-2)] [--disable-dryrun] [--help] --disable-warn"
     echo ""
     echo "Warning: This script will create a new S3 bucket and copy data from the Daylily reference data bucket."
     echo "The new bucket will be created with the prefix specified by the --bucket-prefix argument."
