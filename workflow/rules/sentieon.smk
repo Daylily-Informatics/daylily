@@ -8,6 +8,7 @@ import os
 
 rule sentieon_bwa_sort:
     input:
+        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         f1=getR1s,
         f2=getR2s,
     output:
