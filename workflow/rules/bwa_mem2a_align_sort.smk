@@ -94,7 +94,7 @@ rule bwa_mem2_sort:
          {params.huref} \
          {params.subsample_head} <( {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <( {params.igz_threads} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer_mem} \
-        |  OMP_NUM_THREADS={params.sort_threads} samtools sort \
+        |  samtools sort \
         -l 1  \
         -m {params.sort_thread_mem}   \
          -@  {params.sort_threads} \
