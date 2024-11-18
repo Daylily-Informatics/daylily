@@ -63,8 +63,15 @@ rule bwa_mem2_sort:
         start_time=$(date +%s);
         ulimit -n 65536 || echo "ulimit mod failed";
 
-        export tdir={params.mdir}/{params.samp}/{params.samtmpd};
-        mkdir -p $tdir ;
+
+        timestamp=$(date +%Y%m%d%H%M%S);
+        export TMPDIR=/fsx/scratch/bwa2a_tmp_$timestamp;
+        mkdir -p $TMPDIR;
+        export APPTAINER_HOME=$TMPDIR;
+        trap "rm -rf $TMPDIR" EXIT;
+
+        export tdir=$TMPDIR;
+
         epocsec=$(date +'%s');
         
         # Find the jemalloc library in the active conda environment

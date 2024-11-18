@@ -59,8 +59,15 @@ rule strobe_align_sort:
         echo "INSTANCE TYPE: $itype"
         start_time=$(date +%s);
 
-        export tdir={params.mdir}/{params.samp}/{params.samtmpd};
-        mkdir -p $tdir ;
+
+
+        timestamp=$(date +%Y%m%d%H%M%S);
+        export TMPDIR=/fsx/scratch/strobe_tmp_$timestamp;
+        mkdir -p $TMPDIR;
+        export APPTAINER_HOME=$TMPDIR;
+        trap "rm -rf $TMPDIR" EXIT;
+        export tdir=$TMPDIR;
+
         epocsec=$(date +'%s');
 
         ulimit -n 65536 || echo "ulimit mod failed";

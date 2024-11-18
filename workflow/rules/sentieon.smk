@@ -75,8 +75,12 @@ rule sentieon_bwa_sort:
 
         ulimit -n 65536 || echo "ulimit mod failed";
         
-        tdir=$(dirname {output.bamo})/tmpp;
-        mkdir -p $tdir; 
+        timestamp=$(date +%Y%m%d%H%M%S);
+        export TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
+        mkdir -p $TMPDIR;
+        export APPTAINER_HOME=$TMPDIR;
+        trap "rm -rf $TMPDIR" EXIT;
+        tdir=$TMPDIR;
 
         # Find the jemalloc library in the active conda environment
         jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 

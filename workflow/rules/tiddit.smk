@@ -35,7 +35,13 @@ rule tiddit:
     shell:
         """
 
-        export APPTAINER_HOME=/fsx/scratch;
+        
+        timestamp=$(date +%Y%m%d%H%M%S);
+        export TMPDIR=/fsx/scratch/tiddit_tmp_$timestamp;
+        mkdir -p $TMPDIR;
+        export APPTAINER_HOME=$TMPDIR;
+        trap "rm -rf $TMPDIR" EXIT;
+
         set +euo pipefail;
         rm -rf {output.stub}* || echo rmFailedTiddit;  # verging on overkill cleanup for restarts
         mkdir -p "$( dirname {output.vcf} )/logs"  ;

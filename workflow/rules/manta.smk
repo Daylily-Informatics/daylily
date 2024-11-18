@@ -42,6 +42,14 @@ rule manta:
         "../envs/manta_v0.1.yaml"  #config["manta"]["env_yaml"]
     shell:
         """
+
+        
+        timestamp=$(date +%Y%m%d%H%M%S);
+        export TMPDIR=/fsx/scratch/manta_tmp_$timestamp;
+        mkdir -p $TMPDIR;
+        export APPTAINER_HOME=$TMPDIR;
+        trap "rm -rf $TMPDIR" EXIT;
+
         set +euo pipefail;
         (rm -rf {params.work_dir} || echo rmFail;
         mkdir -p {params.work_dir}|| echo mkdirERROR ;

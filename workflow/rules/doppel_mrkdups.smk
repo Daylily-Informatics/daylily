@@ -53,8 +53,14 @@ if "dppl" in DDUP:
 	        echo "INSTANCE TYPE: $itype";
             start_time=$(date +%s);
 
-            tdir=$(dirname {output.bamo})/dpm_tmp;
-            mkdir -p $tdir;
+
+            
+            timestamp=$(date +%Y%m%d%H%M%S);
+            export TMPDIR=/fsx/scratch/doppel_tmp_$timestamp;
+            mkdir -p $TMPDIR;
+            export APPTAINER_HOME=$TMPDIR;
+            trap "rm -rf $TMPDIR" EXIT;
+            tdir=$TMPDIR;
 
             {params.numa} resources/DOPPLEMARK/doppelmark \
              -parallelism {threads} \
