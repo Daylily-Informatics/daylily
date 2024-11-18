@@ -63,6 +63,7 @@ rule sent_DNAscope:
         partition=config['sentD']['partition'],
         threads=config['sentD']['threads'],
         vcpu=config['sentD']['threads'],
+	mem_mb=config['sentD']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
