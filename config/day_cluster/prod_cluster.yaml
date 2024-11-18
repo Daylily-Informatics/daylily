@@ -88,7 +88,7 @@ Scheduling:
             - InstanceType: m7i.metal-48xl 
             - InstanceType: m7i.48xlarge 
             - InstanceType: r7i.48xlarge
-            - InstanceType: r7i.metal-48xl
+            - InstanceacType: r7i.metal-48xl
           MinCount: 0
           MaxCount: 16
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
