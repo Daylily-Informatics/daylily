@@ -96,7 +96,7 @@ rule deepvariant:
         export TMPDIR=/fsx/scratch/deepvariant_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
-        trap "rm -rf $TMPDIR" EXIT;
+        trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         echo 'DCHRM: $dchr';
         
         {params.numa} \

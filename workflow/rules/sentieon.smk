@@ -13,8 +13,7 @@ rule sentieon_bwa_sort:
     output:
         bamo=temp(MDIR + "{sample}/align/sent/{sample}.sent.sort.bam"),
         baio=temp(MDIR + "{sample}/align/sent/{sample}.sent.sort.bam.bai")
-    log:
-        a=MDIR + "{sample}/align/sent/logs/{sample}.sent.sort.log",
+    log: MDIR + "{sample}/align/sent/logs/{sample}.sent.sort.log",
     threads: config["sentieon"]["threads"]
     benchmark:
         repeat(MDIR + "{sample}/benchmarks/{sample}.sent.alNsort.bench.tsv", 0)
@@ -56,12 +55,12 @@ rule sentieon_bwa_sort:
         """
 
         if [ -z "$SENTIEON_LICENSE" ]; then
-            echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well." >> {log.a} 2>&1;
+            echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well." >> {log} 2>&1;
             exit 3;
         fi
 
         if [ ! -f "$SENTIEON_LICENSE" ]; then
-            echo "The file referenced by SENTIEON_LICENSE ('$SENTIEON_LICENSE') does not exist. Please provide a valid file path." >> {log.a} 2>&1;
+            echo "The file referenced by SENTIEON_LICENSE ('$SENTIEON_LICENSE') does not exist. Please provide a valid file path." >> {log} 2>&1;
             exit 4;
         fi
 
@@ -79,7 +78,7 @@ rule sentieon_bwa_sort:
         export TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
-        trap "rm -rf $TMPDIR" EXIT;
+        trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         tdir=$TMPDIR;
 
         # Find the jemalloc library in the active conda environment
@@ -88,7 +87,7 @@ rule sentieon_bwa_sort:
         # Check if jemalloc was found and set LD_PRELOAD accordingly
         if [[ -n "$jemalloc_path" ]]; then
             export LD_PRELOAD="$jemalloc_path";
-            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log.a};
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
         else
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
@@ -108,9 +107,9 @@ rule sentieon_bwa_sort:
         --intermediate_compress_level 1  \
         --block_size {params.sort_thread_mem}   \
         --sam2bam \
-        -o {output.bamo} - >> {log.a} 2>&1;
+        -o {output.bamo} - >> {log} 2>&1;
 
-        samtools index -b -@ {threads} {output.bamo}  >> {log.a} 2>&1;
+        samtools index -b -@ {threads} {output.bamo}  >> {log} 2>&1;
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));

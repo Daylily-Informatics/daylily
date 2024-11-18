@@ -78,7 +78,7 @@ rule sent_DNAscope:
         export TMPDIR=/fsx/scratch/sentd_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
-        trap "rm -rf $TMPDIR" EXIT;
+        trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         tdir=$TMPDIR;
 
         if [ -z "$SENTIEON_LICENSE" ]; then

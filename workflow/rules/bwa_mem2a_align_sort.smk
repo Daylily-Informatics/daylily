@@ -68,7 +68,7 @@ rule bwa_mem2_sort:
         export TMPDIR=/fsx/scratch/bwa2a_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
-        trap "rm -rf $TMPDIR" EXIT;
+        trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
 
         export tdir=$TMPDIR;
 

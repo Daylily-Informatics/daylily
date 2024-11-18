@@ -48,7 +48,7 @@ rule manta:
         export TMPDIR=/fsx/scratch/manta_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
-        trap "rm -rf $TMPDIR" EXIT;
+        trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
 
         set +euo pipefail;
         (rm -rf {params.work_dir} || echo rmFail;

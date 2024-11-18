@@ -59,7 +59,7 @@ if "dppl" in DDUP:
             export TMPDIR=/fsx/scratch/doppel_tmp_$timestamp;
             mkdir -p $TMPDIR;
             export APPTAINER_HOME=$TMPDIR;
-            trap "rm -rf $TMPDIR" EXIT;
+            trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
             tdir=$TMPDIR;
 
             {params.numa} resources/DOPPLEMARK/doppelmark \
