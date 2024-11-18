@@ -8,7 +8,6 @@ ACTIVE_PATH="daylily2:dyly3-omics-analysis-us-west-2/cluster_boot_config/"
 # List of files to copy
 FILES=(
     "post_install_ubuntu_combined.sh"
-    "projects_list.conf"
 )
 
 # Iterate over the files and copy each one using rclone

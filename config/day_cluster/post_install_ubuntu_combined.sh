@@ -26,13 +26,20 @@ log_spot_price() {
 
   TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')
   instance_type=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type)
+  availability_zone=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
+  # Get the current spot price for the running instance type in the specific AZ
   spot_price=$(aws ec2 describe-spot-price-history \
     --instance-types "$instance_type" \
     --region "$region" \
+    --availability-zone "$availability_zone" \
     --product-description "Linux/UNIX" \
     --query 'SpotPriceHistory[0].SpotPrice' \
     --output text)
-  echo "Spot price for instance type $instance_type: $spot_price USD/hour" >> /fsx/scratch/$(hostname)_spot_price.log
+
+  # Log the spot price and AZ to a file in the FSx scratch directory
+  log_file="/fsx/scratch/$(hostname)_spot_price.log"
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - Region: $region, AZ: $availability_zone, Instance type: $instance_type, Spot price: $spot_price USD/hour" >> "$log_file"
 }
 
 
