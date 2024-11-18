@@ -52,11 +52,12 @@ fi
 SKIP_PROJECT_CHECK=false
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
-    --project) PROJECT="$2"; shift 2;;
-    --skip-project-check) SKIP_PROJECT_CHECK=true; shift 1;;
-    *) echo "Unknown parameter passed: $1"; usage;;
+    --project) PROJECT="$2"; shift 2;;  # Move past the flag and its argument
+    --skip-project-check) SKIP_PROJECT_CHECK=true; shift 1;;  # Move past the flag
+    *) echo "Unknown parameter passed: $1"; usage; return 3;;  # Handle unknown flags
   esac
 done
+
 
 # Set default project name if not provided
 if [[ -z "$PROJECT" ]]; then
