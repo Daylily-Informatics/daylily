@@ -57,6 +57,7 @@ rule manta:
         python {params.work_dir}/runWorkflow.py  -j {threads} || echo noFail;) > {log} 2>&1;
         python workflow/scripts/manta_uniter.py {params.work_dir}/results/variants/diploidSV.vcf.gz {params.work_dir}/results/variants/candidateSV.vcf.gz > {output.vcf} ;
         {latency_wait}; ls {output};
+	rm -rf {params.work_dir}/workspace;
         """
 
 
