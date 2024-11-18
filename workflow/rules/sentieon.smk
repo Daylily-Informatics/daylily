@@ -22,6 +22,7 @@ rule sentieon_bwa_sort:
         partition=config['sentieon']['partition'],
         vcpu=config['sentieon']['threads'],
         threads=config['sentieon']['threads'],
+        mem_mb=config['sentieon']['mem_mb'],
     params:
         huref=config["supporting_files"]["files"]["huref"]["bwa_mem_sent"]["name"],
         cluster_end="echo done"

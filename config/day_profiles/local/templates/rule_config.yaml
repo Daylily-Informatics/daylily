@@ -450,6 +450,7 @@ sentieon:
     partition: "i96,i128"
     sort_thread_mem: "100M"
     sort_threads: 4
+    mem_mb: 200000 
     write_threads: 4
     igz_threads:   " -cd -T 2 "
     mbuffer_mem: " -m 1G -q -s 128k "

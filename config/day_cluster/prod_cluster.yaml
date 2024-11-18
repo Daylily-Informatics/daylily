@@ -29,7 +29,7 @@ HeadNode:
         - REGSUB_XMR_WALLET
   Iam:
     S3Access:
-      - BucketName: REGSUB_S3_BUCKET_NAME  # daylily-ref
+      - BucketName: REGSUB_S3_BUCKET_NAME  
         EnableWriteAccess: false
     AdditionalIamPolicies:
       - Policy: REGSUB_S3_IAM_POLICY 
@@ -37,7 +37,7 @@ HeadNode:
 Scheduling:
   Scheduler: slurm
   SlurmSettings:
-    EnableMemoryBasedScheduling: false # Unclear this is going to be more a pain than a help... see how deepvar fares
+    EnableMemoryBasedScheduling: false 
     ScaledownIdletime: 5
     Dns:
       DisableManagedDns: false
@@ -49,8 +49,8 @@ Scheduling:
       ComputeResources:
         - Name: all
           Instances:
-            - InstanceType: r7i.2xlarge # 8 vCPUs, 64 GiB
-            - InstanceType: r6i.2xlarge # 8 vCPUs, 64 GiB
+            - InstanceType: r7i.2xlarge 
+            - InstanceType: r6i.2xlarge 
           MinCount: 0
           MaxCount: 8
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
@@ -83,12 +83,12 @@ Scheduling:
       ComputeResources:
         - Name: all
           Instances:
-            - InstanceType: c7i.48xlarge # 192 vCPUs, 384 GiB, 
-            - InstanceType: c7i.metal-48xl # 192 vCPUs, 384 GiB,
-            - InstanceType: m7i.metal-48xl # 192 vCPUs, 768 GiB,
-            - InstanceType: m7i.48xlarge # 192 vCPUs, 768 GiB, 
-            - InstanceType: r7i.48xlarge # 192 vCPUs, 1536 GiB, 
-            - InstanceType: r7i.metal-48xl # 192 vCPUs, 1536 GiB, 
+            - InstanceType: c7i.48xlarge 
+            - InstanceType: c7i.metal-48xl 
+            - InstanceType: m7i.metal-48xl 
+            - InstanceType: m7i.48xlarge 
+            - InstanceType: r7i.48xlarge
+            - InstanceType: r7i.metal-48xl
           MinCount: 0
           MaxCount: 16
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2

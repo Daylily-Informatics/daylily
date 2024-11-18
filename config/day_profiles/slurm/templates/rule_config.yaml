@@ -423,6 +423,7 @@ sentieon_dnascope:
     numactl: " resources/numa/numactl --interleave all "
     metrics_threads: 64
     ld_preload: "   "
+    mem_mb: 200000 
     partition: "i192"
 
 sentieon:
