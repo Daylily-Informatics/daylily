@@ -178,10 +178,6 @@ rule dv_sort_index_chunk_vcf:
         """
 
 
-localrules:
-    deep_concat_fofn,
-
-
 rule deep_concat_fofn:
     input:
         chunk_tbi=sorted(
@@ -203,8 +199,9 @@ rule deep_concat_fofn:
         gtmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp",
     threads: 2
     resources:
-        threads=2,
         vcpu=2,
+        threads=2,
+        partition="i192",
     params:
         fn_stub="{sample}.{alnr}.deep.",
         cluster_sample=ret_sample,
@@ -324,10 +321,6 @@ rule deep_concat_index_chunks:
         """
 
 
-localrules:
-    clear_combined_deep_vcf,
-
-
 rule clear_combined_deep_vcf:  # TARGET:  clear combined deep vcf so the chunks can be re-evaluated if needed.
     input:
         vcf=expand(
@@ -341,6 +334,12 @@ rule clear_combined_deep_vcf:  # TARGET:  clear combined deep vcf so the chunks 
             alnr=ALIGNERS,
         ),	
     priority: 42
+    conda:
+        "../envs/vanilla_v0.1.yaml"
+    resources:
+        vcpu=2,
+        threads=2,
+        partition="i192",
     shell:
         "(rm {input.vcf}* {input.gvcf}*  1> /dev/null  2> /dev/null ) || echo 'file not found for deletion: {input}';"
 
