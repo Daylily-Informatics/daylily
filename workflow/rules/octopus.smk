@@ -218,7 +218,7 @@ rule octopus:
         + "{sample}/align/{alnr}/snv/oct/log/vcfs/{sample}.{alnr}.oct.{ochrm}.snv.log",
     threads: calc_oct_threads  # config['octopus']['threads']
     container:
-        "docker://daylilyinformatics/octopus-skylake:0.7.4" #conda: config['octopus']['env_yaml']
+        "docker://dancooke/octopus:invitae--eae1ab48_0" 
     priority: 45
     benchmark:
         repeat(
@@ -290,7 +290,7 @@ rule octopus:
         
         export oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
 
-        ocmd="octopus -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}  $midel  $mhap  --annotations {params.anno}   --sequence-error-model {params.em}  {params.min_for_qual}   {params.tm} --skip-regions-file {params.skr}  $BRTL  {params.tgt_working_mem} $variable_args --max-open-read-files {params.mor} ";
+        ocmd="octopus -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}   --annotations {params.anno}   --skip-regions-file {params.skr}    {params.tgt_working_mem} --max-open-read-files {params.mor} ";
         
         echo $ocmd 1&>2 > ocmd.log;
 
