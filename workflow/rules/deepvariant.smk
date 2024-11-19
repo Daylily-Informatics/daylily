@@ -209,7 +209,7 @@ rule deep_concat_index_chunks:
         #+ "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn",
         #gtmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp",
     output:
-        vcf=touch(
+        vcf=temp(
             MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.vcf"
         ),
         vcfgz=touch(
