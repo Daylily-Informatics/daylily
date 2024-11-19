@@ -102,6 +102,53 @@ ls results/day/{hg38,b37}/reports/*.html
 
 ```
 
+## Step 2.5: (optional) Run a test analysis with GIAB data
+- Each GIAB sample has 30x  2x150 ILMN google brain data available for use be default.  There are pre-configured analysis manifests for these data sets, which also include the info to automatically create concordance reports with the GIAB truth sets (both for `b37` and `hg38`).  To run `bwa mem2 + doppelmark + deepvariant` on the GIAB samples vs `hg38`, you can do the following.
+- From a tmux session on the headnode, in the github repo directory prepared above.
+
+### hg38
+Copy the pre-configured giab analysis manifest for hg38, and run the analysis. This manifest points to the fastq.gz files for each, as well as the truth data set needed to produce the concordance reports.
+```bash
+
+. dyinit 
+dy-a slurm
+
+vi config/day_profiles/slurm/rule_config.yaml # the default build is hg38, so no changes are needed here 
+
+cp .test_data/data/giab_30x_hg38_analysis_manifest.csv config/analysis_manifest.csv
+
+dy-r produce_snv_concordances -p  -k -j 9 -n
+
+dy-r produce_snv_concordances  -p -k -j 9
+
+# The concordance reports will be found in results/day/hg38/other_reports/
+ls results/day/hg38/other_reports/*giab*
+
+```
+
+### b37
+You will need to modify the rule_config.yaml to use b37, and copy the pre-configured giab analysis manifest for b37.
+```bash
+
+. dyinit 
+dy-a slurm
+
+# you will need to chang ethe reference build to b37 from hg38
+vi config/day_profiles/slurm/rule_config.yaml 
+
+cp .test_data/data/giab_30x_b37_analysis_manifest.csv config/analysis_manifest.csv
+
+dy-r produce_snv_concordances -p  -k -j 9 -n
+
+dy-r produce_snv_concordances  -p -k -j 9
+
+# The concordance reports will be found in results/day/b37/other_reports/
+ls results/day/b37/other_reports/*giab*
+
+```
+
+
+
 ## Step 3: Prepare Your Own Data // Create an Analysis Manifest
 _the analysis_manifest.csv_ is being fully re-worked ASAP, so please bear with the current process for the moment.
 
@@ -111,6 +158,7 @@ You must have your fastq.gz files stored in the S3 bucket which you used to atta
 - FASTQ files must be located in this dir, or a sub-dir `s3://<YOURPREFIX>-omics-analysis-<REGION>/data/tmp_input_sample_data/`, and the files should be visible from the headnode/compute nodes with `ls /fsx/data/tmp_input_sample_data/*`.
   - You will be referencing the input data via the `/fsx/data/tmp_input_sample_data/` path.
     - Fastqs should be deleted from this location once analysis is complete.  I advise keeping the BAM/CRAM as your fastq source and ditching the fastqs entirely. If you wish to also keep the fastq, move them someplace else once you are done with the analysis-- this is not meant to be fastq storage.
+
 ### SECOND: create a fastq manifest
 Create a `fastq_manifest.tsv` with the following columns (all are required):
 ```text
@@ -123,6 +171,7 @@ HG001-30x   /fsx/data/tmp_input_sample_data/HG001-30x_R1.fastq.gz /fsx/data/tmp_
 - expected_copies_x and expected_copies_y are used to assess if expected X and Y ploidy is observerd in qc reports (if requested).
 
 ### THIRD: create an analysis manifest from your fastq manifest
+_among the first changes coming to this part of the process, moving from a `csv` to `tsv`_
 ```bash
 bash bin/create_analysis_manifest -f fastq_manifest.tsv -o config/analysis_manifest.csv
 ```
