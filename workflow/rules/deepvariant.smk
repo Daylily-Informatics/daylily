@@ -122,7 +122,6 @@ rule dv_sort_index_chunk_vcf:
     input:
         vcf=MDIR
         + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.vcf",
-        #gvcf=MDIR+ "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.vcf",
     priority: 46
     output:
         vcfsort=MDIR
@@ -131,9 +130,6 @@ rule dv_sort_index_chunk_vcf:
         + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf.gz",
         vcftbi=MDIR
         + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf.gz.tbi",
-	    #gvcfsort=MDIR+ "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf",
-        #gvcfgz=MDIR+ "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf.gz",
-        #gvcftbi=MDIR + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.g.sort.vcf.gz.tbi",
     conda:
         "../envs/vanilla_v0.1.yaml"
     log:
@@ -157,15 +153,6 @@ rule dv_sort_index_chunk_vcf:
         touch {output.vcftbi};
         ) >> {log} 2>&1;
 
-
-        #(bedtools sort -header -i {input.gvcf} > {output.gvcfsort} 2>> {log}) || exit 1233;
-        #(
-        #bgzip {output.gvcfsort};
-        #touch {output.gvcfsort};
-        #tabix -f -p vcf {output.gvcfgz};
-        #touch {output.gvcftbi};
-        #) >> {log} 2>&1;
-        
         ls {output} >> {log} 2>&1 ;
         
         {latency_wait};
@@ -178,11 +165,7 @@ rule deep_concat_fofn:
             expand(
                 MDIR
                 + "{{sample}}/align/{{alnr}}/snv/deep/vcfs/{dvchm}/{{sample}}.{{alnr}}.deep.{dvchm}.snv.sort.vcf.gz.tbi",
-                dvchm=DEEPD_CHRMS,            ),            key=lambda x: float(                str(x.replace("~", ".").replace(":", "."))               .split("vcfs/")[1]                .split("/")[0]                .split("-")[0]            ),        ),
-	    #chunk_gtbi=sorted(
-        #    expand(
-        #        MDIR                + "{{sample}}/align/{{alnr}}/snv/deep/vcfs/{dvchm}/{{sample}}.{{alnr}}.deep.{dvchm}.snv.g.sort.vcf.gz.tbi",                dvchm=DEEPD_CHRMS,            ),            key=lambda x: float(                str(x.replace("~", ".").replace(":", "."))               .split("vcfs/")[1]                .split("/")[0]                .split("-")[0]            ),        ),	
-    # This expand pattern is neat.  the escaped {} remain acting as a snakemake wildcard and expect to be derived from the dag, while th dvchrm wildcard is effectively being constrained by the values in the DEEPD_CHRMS array;  So you produce 1 input array of files for every sample+dvchrm parir, with one list string/file name per array.  The rule will only begin when all array members are produced. It's then sorted by first deepdvchrm so they can be concatenated w/out another soort as all the chunks had been sorted already.
+                dvchm=DEEPD_CHRMS,            ),            key=lambda x: float(                str(x.replace("~", ".").replace(":", "."))               .split("vcfs/")[1]                .split("/")[0]                .split("-")[0]            ),        ),    # This expand pattern is neat.  the escaped {} remain acting as a snakemake wildcard and expect to be derived from the dag, while th dvchrm wildcard is effectively being constrained by the values in the DEEPD_CHRMS array;  So you produce 1 input array of files for every sample+dvchrm parir, with one list string/file name per array.  The rule will only begin when all array members are produced. It's then sorted by first deepdvchrm so they can be concatenated w/out another soort as all the chunks had been sorted already.
     priority: 44
     output:
         fin_fofn=MDIR
@@ -278,21 +261,6 @@ rule deep_concat_index_chunks:
         stats_f=$(echo "{output.vcfgz}.bcf.stats");
         bcftools stats -F {params.huref}  {output.vcfgz} > $stats_f;
 
-        # Convert to BCF and index it
-        #bcftools view -O b -o {output.bcf} --threads {threads} {output.vcfgz};
-        #bcftools index --threads {threads} {output.bcf};
-
-        #bcftools concat -a -d all --threads {threads} -f {input.gfofn}  -O v -o {output.gvcf};
-        #bcftools view -O z -o {output.gvcfgz} {output.gvcf};
-        #bcftools index -f -t --threads {threads} -o {output.gvcfgztbi} {output.gvcfgz};
-        #stats_f=$(echo "{output.gvcfgz}.bcf.stats");
-        #bcftools stats -F {params.huref}  {output.gvcfgz} > $stats_f;
-
-
-        # Convert to BCF and index it
-        #bcftools view -O b -o {output.gbcf} --threads {threads} {output.gvcfgz};
-        #bcftools index --threads {threads} {output.gbcf};
-
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;  # clean up all the crap
         {latency_wait};
         touch {log};
@@ -306,11 +274,6 @@ rule clear_combined_deep_vcf:  # TARGET:  clear combined deep vcf so the chunks 
             sample=SSAMPS,
             alnr=ALIGNERS,
         ),
-	    #gvcf=expand(
-        #    MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf.gz",
-        #    sample=SSAMPS,
-        #    alnr=ALIGNERS,
-        #),	
     priority: 42
     conda:
         "../envs/vanilla_v0.1.yaml"
@@ -364,11 +327,6 @@ rule produce_deepDna_vcf:  # TARGET: just gen deep calls
             bcftools view -O b -o $bcf --threads {threads} $vcf && bcftools index --threads 4 $bcf;
         done;
 
-        # Convert GVCF to BCF and index it
-        #for gvcf in {input.gvcf}; do
-        #    gbcf="${{gvcf%.vcf.gzi}}.bcf";
-        #    bcftools view -O b -o $gbcf --threads {threads} $gvcf && bcftools index --threads 4 $gbcf;
-        #done;
 
         # Mark the output as completed
         touch {output};
@@ -377,8 +335,6 @@ rule produce_deepDna_vcf:  # TARGET: just gen deep calls
         {latency_wait};
         ls {output} >> {log} 2>&1;
 
-        #( touch {output} ;
-        #echo "bcftools view -O b -o output.bcf --threads 4 input.vcf.gz && bcftools index --threads 4 output.bcf""
         {latency_wait}; 
         ls {output}  >> {log} 2>&1;
         """
