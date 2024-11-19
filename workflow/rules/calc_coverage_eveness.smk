@@ -42,6 +42,7 @@ rule calc_coverage_evenness:
         done;
         {latency_wait};
         ls {output};
+        rm -rf $(dirname {output.mos_pre})/*per-base* || echo 'rm perbase failed';
         """
 
 localrules: produce_cov_uniformity

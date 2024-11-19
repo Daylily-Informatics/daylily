@@ -32,4 +32,5 @@ rule mosdepth:
         "rm -rf {log.b}* || echo rmlogFailedMosDepth;"
         "mosdepth --threads {threads} --by {params.win_size} --fast-mode --mapq {params.mapq} -T {params.T} {log.b} {input} > {log.a} 2>&1; "
         "touch {output};"
+        "rm -rf $(dirname {log.b})/*per-base* || echo 'rm perbase failed' >> {log.a} 2>&1;"
         "{latency_wait}; ls {output};"
