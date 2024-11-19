@@ -20,7 +20,7 @@ rule multiqc_for_raw_fastqs:
 	#        expand(MDIR + "{sample}/seqqc/fastv/{sample}.fastv.html", sample=SAMPS),
         expand(MDIR + "{sample}/seqqc/fastqc/{sample}.fastqc.done", sample=SAMPS),
         #expand(MDIR + "{sample}/seqqc/kat/{sample}.kat.done", sample=SAMPS),
-        expand(MDIR + "{sample}/seqqc/fastp/{sample}.fastp.done", sample=SAMPS),
+        #expand(MDIR + "{sample}/seqqc/fastp/{sample}.fastp.done", sample=SAMPS),
     output:
         MDIRreportsd + "SEQQC_multiqc.html",
     benchmark:
