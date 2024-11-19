@@ -18,9 +18,6 @@ extra_fn_clean_exts:
     pattern: "DBC0"
 
 
-sample_names_ignore:
-  - "63"
-
 exclude_modules:
   - slamdunk
   - adapterRemoval
@@ -115,7 +112,7 @@ exclude_modules:
   - odgi
   - phantompeakqualtools
 
-num_datasets_plot_limit: 20
+num_datasets_plot_limit: 42
 
 decimalPoint_format: "."
 thousandsSep_format: ","
@@ -159,13 +156,6 @@ module_order:
   - custom_data
 
 
-#sentieon/alignment_metrics:
-#  fn: ".sent.mrkdup.alnstats.tsv"
-#sentieon/insertsize:
-#  fn: ".sent.mrkdup.insertmets.tsv"
-#sentieon/gcbias:
-#  fn: ".sent.mrkdup.gcsummary.tsv"
-
 
 # Specify the exact file patterns for the modules that go grepping through files...
 
@@ -208,8 +198,8 @@ picard/variant_calling_metrics:
 #picard/wgs_metrics:
 #  contents: CollectWgsMetrics
 # # shared: true
-p#icard/collectilluminabasecallingmetrics:
-  skip: true
+#picard/collectilluminabasecallingmetrics:
+#  skip: true
 picard/collectilluminalanemetrics:
   skip: true
 picard/extractilluminabarcodes:
@@ -237,7 +227,6 @@ sentieon/gcbias:
   fn: ".sent.mrkdup.gcsummary.tsv"
 
 custom_data:
-
   alignstats_b:
     id: 'alignstats_b'
     section_name: 'alignstats_b'
@@ -268,12 +257,6 @@ custom_data:
       plot_type: 'table'
       pconfig:
         id: 'giabhcr_concordance'
-
-#colour: '<auto>'
-#bars_zero_centrepoint: True,
-#format: '{:,.5f}'
-#decimal_places: 5
-
 
 sp:
   alignstats_b:
