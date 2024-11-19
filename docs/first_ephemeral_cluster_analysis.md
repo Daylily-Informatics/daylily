@@ -140,11 +140,11 @@ dy-a slurm
 # If you wish to enable an aligner other than bwa mem2 or a variant caller other than deep variant, you will need to edit the config/day_profiles/slurm/rule_config.yaml before proceeding.  
 
 # See what the execution plan looks like
-dy-r produce_snv_concordances produce_tiddit produce_manta -p -k -j 9 -n  # NOTE::: your spot quotas will probably not allow running more than 2-3 192vcpu instances at a time. You can send more jobs than your quotas allow, but watch your quotas and the cloudwatch dashboard if you are not seeing as many instances spin up as you expect.
+dy-r produce_snv_concordances produce_manta produce_tiddit-p -k -j 9 -n  # NOTE::: your spot quotas will probably not allow running more than 2-3 192vcpu instances at a time. You can send more jobs than your quotas allow, but watch your quotas and the cloudwatch dashboard if you are not seeing as many instances spin up as you expect.
 
 
 # Run the analysis for real
-dy-r produce_snv_concordances produce_tiddit produce_manta -p -k -j 9
+dy-r produce_snv_concordances produce_manta produce_tiddit-p -k -j 9
 
 # Monitor the jobs with squeue, watch, or the PCUI dashboard
 
@@ -162,9 +162,9 @@ find results/ | grep -E 't.vcf.gz|bam.bai'
 . dyinit
 dy-a slurm
 
-dy-r produce_multiqc_final -p -k -j 9 -n
+dy-r produce_multiqc_final_wgs -p -k -j 9 -n
 
-dy-r produce_multiqc_final -p -k -j 9
+dy-r produce_multiqc_final_wgs -p -k -j 9
 
 # When complete, generate the benchmark metrics file
 
