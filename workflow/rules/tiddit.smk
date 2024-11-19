@@ -14,8 +14,7 @@ rule tiddit:
         bai=MDIR +  "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
     output:
         stub = MDIR + "{sample}/align/{alnr}/sv/tiddit/{sample}.{alnr}.tiddit.sv",
-        vcf = MDIR + "{sample}/align/{alnr}/sv/tiddit/{sample}.{alnr}.tiddit.sv.vcf",
-        #vcfgz = touch(MDIR+ "{sample}/align/{alnr}/sv/tiddit/{sample}.{alnr}.tiddit.sv.sort.vcf.gz"),
+        vcf = temp(MDIR + "{sample}/align/{alnr}/sv/tiddit/{sample}.{alnr}.tiddit.sv.vcf"),
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         min_sv_size=config["tiddit"]["min_sv_size"],
@@ -51,7 +50,7 @@ rule tiddit:
         tiddit --sv --threads {threads} --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
         touch {output};
         ls {output};
-        rm -rf $(dirname {output.stub})_tiddit/clips* || echo 'clips rmFailed' >> {log} 2>&1;
+        rm -rf $(dirname {output.vcf})/*sv_tiddit/ || echo 'clips rmFailed' >> {log} 2>&1;
 
         """
 
