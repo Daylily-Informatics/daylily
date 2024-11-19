@@ -49,6 +49,7 @@ rule dysgu:
         {input.bam} ) > {log} 2>&1;
         {latency_wait};
         ls {output};
+        rm -rf $(dirname {output.vcf})/*bin || echo 'dysgu bins rmFailed' >> {log} 2>&1;
         """
 
 

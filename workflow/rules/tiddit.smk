@@ -51,6 +51,7 @@ rule tiddit:
         tiddit --sv --threads {threads} --bam {input.bamo} -z {params.min_sv_size} -o {output.stub} --ref {params.huref} >> {log} ;
         touch {output};
         ls {output};
+        rm -rf $(dirname {output.stub})_tiddit/clips || echo 'clips rmFailed' >> {log} 2>&1;
 
         """
 
