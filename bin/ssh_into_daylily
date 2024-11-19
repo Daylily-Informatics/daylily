@@ -32,8 +32,9 @@ if conda env list | grep  "DAYCLI"; then
     echo "Conda environment 'DAYCLI' already exists."
     conda activate DAYCLI
 else
-    echo "'DAYCLI' environment not found. Please run 'init_daycli' to create the environment."
-    reuturn 3
+    echo "'DAYCLI' environment not found. Attempting to create..."
+    source bin/init_daylily.sh
+
 fi
 
 if [ -z "$AWS_PROFILE" ]; then
@@ -48,41 +49,12 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 #!/bin/bash
 
-# Use a well-known region to query available regions (like us-east-1)
-DEFAULT_REGION="us-east-1"
-
-#!/bin/bash
-
-# Ensure AWS_PROFILE is set
-if [[ -z "$AWS_PROFILE" ]]; then
-    echo "Error: AWS_PROFILE is not set. Please export AWS_PROFILE and try again."
-    return 3
-fi
 
 # Use a known valid region to retrieve the list of available regions
-DEFAULT_REGION="us-east-1"
+DEFAULT_REGION="us-west-2"
 
-#!/bin/bash
 
-# Ensure AWS_PROFILE is set
-if [[ -z "$AWS_PROFILE" ]]; then
-    echo "Error: AWS_PROFILE is not set. Please export AWS_PROFILE and try again."
-    returnt 1
-fi
 
-# Use a known valid region to query available regions
-DEFAULT_REGION="us-east-1"
-
-#!/bin/bash
-
-# Ensure AWS_PROFILE is set
-if [[ -z "$AWS_PROFILE" ]]; then
-    echo "Error: AWS_PROFILE is not set. Please export AWS_PROFILE and try again."
-    return 1
-fi
-
-# Use a valid region to query available regions
-DEFAULT_REGION="us-east-1"
 
 # Function to list AWS regions and prompt user to select one
 select_aws_region() {
@@ -98,7 +70,7 @@ select_aws_region() {
     # Check if regions were retrieved successfully
     if [[ -z "$regions" ]]; then
         echo "Error: Unable to retrieve AWS regions. Please check your AWS CLI configuration."
-        return 1
+        return 3
     fi
 
     # Convert regions into an array
@@ -122,7 +94,11 @@ select_aws_region() {
 
 # Call the function to list and select AWS region
 select_aws_region
-
+if [[ -z "$AWS_SELECTED_REGION" ]]; then
+    echo "AWS_SELECTED_REGION is not set. please be sure your AWS_PROFILE is set correctly (is is _ $AWS_PROFILE _. Valid options are:"
+    echo "...." $(grep '\[' ~/.aws/credentials | perl -pe 's/(\[|\])//g;')
+    return 4;
+fi
 
 
 
