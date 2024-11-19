@@ -76,7 +76,7 @@ alignstats:
     ld_preload: "  "  # env LD_PRELOAD=./resources/libs/libllalloc.so  "
 
 bcftools_vcfstat:
-    threads: 32
+    threads: 8
 
 
 bcl2fq:
@@ -102,7 +102,7 @@ bcl2fq:
         b2fq_addl_flags: ''
         2fq_use_bases_mask: ''
     env_yaml: "../envs/bcl2fq_v0.2.yaml"
-    threads: 96
+    threads: 8
     ex_uid: EX00000  # EX### you are working in
     have_you_double_checked_your_inputs_and_settings: true    # or yes - wil not proced w/this not set to true
     lanes: L001,L002,L003,L004  #ie L001 or L001,L002,L003  csv, no spaces please
@@ -115,7 +115,7 @@ bcl2fq:
     partition: "i64"
 
 bcl2fq_by_lane:
-    threads: 32
+    threads: 8
     partition: "i64"
 
 bwa_mem2a_aln_sort:
@@ -171,7 +171,7 @@ strobe_align_sort:
 
 clair3:
     threads: 8
-    clair3_threads: 32
+    clair3_threads: 8
     partition: "i192,i128"
     partition_other: "i192,i128"
     mem_mb: 60000
@@ -217,14 +217,14 @@ doppelmark:
     mbuffer_mem: " | mbuffer -m 1G -q -s 128k "
 
 dysgu:
-    threads: 32
+    threads: 8
     env_yaml: "../envs/dysgu_sv_v0.2.yaml"
     min_sv_size: 30
     ld_preload: "  "  # ./resources/lib/libtcmalloc_and_profiler.so.4 "
     partition: "i64"
 
 dysgu_sort_index:
-    threads: 32
+    threads: 8
     partition: "i64"
 
 fastp:
@@ -255,7 +255,7 @@ go_left:
     partition: "i64"
 
 kat:
-    threads: 32
+    threads: 8
     heap_size: "1G"
     benchmark_rounds: 0
     env_yaml: "../envs/kat_v0.1.yaml"
@@ -264,18 +264,18 @@ kat:
     partition: "i64"
 
 manta_sort_and_index:
-    threads: 32
+    threads: 8
     partition: "i64"
 
 manta:
-    threads: 32
+    threads: 8
     env_yaml: "../envs/manta_v0.1.yaml"
     numactl: ""
     ld_preload: "  "  # env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "   #  env MIMALLOC_RESET_DELAY=1750ms MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MI_OVERRIDE=ON MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/libs/libmimalloc-debug.so.1.7 "
     partition: "i64"
 
 merge_bam:
-    threads: 10
+    threads: 8
     smem: '3G'
     mmem: '3G'
     sthreads: 6
@@ -325,7 +325,7 @@ octopus:
     testing_model: '  '  #  ' --very-fast '  # set to ' --very-fast ' for testing
     #  threads: min_mem_mb
     testing_model: ' '  # set to ' --very-fast ' for testing
-    threads: 32 # Dynamically reset- this represents the cap
+    threads: 8 # Dynamically reset- this represents the cap
     octo_chrms:  "10,11" 
     anno: " AD ADP AF AFB ARF BQ CRF DP FRF GC GQ MC MF MQ MQ0 QD GQD QUAL SB STRL STRP SMQ SB DC NC PP MP "
     cmd: " resources/octopus/octopus-skylakeavx512 "
@@ -446,7 +446,7 @@ sentieon:
     env_yaml: "../envs/sentieon_v0.1.yaml"
     mask_regions: " "
     numactl: ""
-    metrics_threads: 12
+    metrics_threads: 8
     ld_preload: "   "  #env LD_PRELOAD=./resources/libs/libllalloc.so "
     partition: "i96,i128"
     sort_thread_mem: "100M"
@@ -459,7 +459,7 @@ sentieon:
 
 
 sentieon_markdups:
-    threads: 128
+    threads: 8
     ulimit: " ulimit -Sn 810000 "
     env_yaml: "../envs/sentieon_v0.1.yaml"
     numactl: ""
@@ -467,7 +467,7 @@ sentieon_markdups:
     partition: "i95,i128"
 
 stargazer:
-    threads: 32
+    threads: 8
     benchmark_runs: 0
     env_yaml: "../envs/stargazer_v0.1.yaml"
     partition: "i64"
@@ -501,7 +501,7 @@ sentieon_qc_metrics:
     partition: "i64"
 
 svaba:
-    orig_threads: 96
+    orig_threads: 8
     threads: 8
     ld_preload: " "  # env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "   # " env MIMALLOC_RESET_DELAY=1750ms MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MI_OVERRIDE=ON MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/libs/libmimalloc-debug.so.1.7 "
     cmd: " ./resources/svaba/svaba "
@@ -519,7 +519,7 @@ calc_coverage_evenness:
 
 produce_fastqs_from_bams:
     threads: 4
-    samtools_view_threads: 88
+    samtools_view_threads: 8
     partition: "i64"
 
 svim_asm:
