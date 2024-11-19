@@ -386,7 +386,7 @@ rule oct_concat_index_chunks:
         fofn=MDIR
         + "{sample}/align/{alnr}/snv/oct/{sample}.{alnr}.oct.snv.concat.vcf.gz.fofn",
     output:
-        vcf=touch(
+        vcf=temp(
             MDIR + "{sample}/align/{alnr}/snv/oct/{sample}.{alnr}.oct.snv.sort.vcf"
         ),
         vcfgz=touch(

@@ -199,7 +199,7 @@ rule sentD_concat_index_chunks:
         fofn=MDIR
         + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.concat.vcf.gz.fofn",
     output:
-        vcf=touch(
+        vcf=temp(
             MDIR + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.sort.vcf"
         ),
         vcfgz=touch(

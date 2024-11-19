@@ -205,7 +205,7 @@ rule clair3_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.concat.vcf.gz.fofn",
         tmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.concat.vcf.gz.fofn.tmp",
     output:
-        vcf=touch(
+        vcf=temp(
             MDIR + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.sort.vcf"
         ),
         vcfgz=touch(
