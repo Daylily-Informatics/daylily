@@ -30,8 +30,6 @@ rule kat:
         print_every="50",
     log:
         MDIR + "{sample}/seqqc/kat_logs/{sample}.kat.log",
-    conda:
-        config["kat"]["env_yaml"]
     container:
         "quay.io/biocontainers/kat:2.4.2--py39h7c5ebd6_3"
     resources:
