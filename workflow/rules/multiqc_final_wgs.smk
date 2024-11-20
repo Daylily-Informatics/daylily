@@ -73,7 +73,7 @@ rule aggregate_report_components:
 
 rule multiqc_final_wgs:  # TARGET: the big report
     input:
-        f"{MDIR}other_reports/rules_benchmark_data_mqc.tsv",
+        f"{MDIR}logs/report_components_aggregated.done",
     output:
         f"{MDIR}reports/DAY_final_multiqc.html",
     benchmark:
@@ -110,7 +110,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         --config config/external_tools/multiqc_header.yaml  \
         --config  config/external_tools/multiqc_config.yaml  \
         --filename {output} \
-        -i 'Final Multiq Report' \
+        -i 'Final Multiqc Report' \
         -b 'Git Info branch:{params.gbranch} tag:{params.gtag} hash:{params.ghash}' \
         $(dirname {input} )/../ > {log} 2>&1;
         ls -lt {output};
