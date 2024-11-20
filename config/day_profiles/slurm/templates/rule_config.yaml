@@ -254,7 +254,7 @@ kat:
     partition: "i192"
 
 
-lofreq:
+lofreq2:
     threads: 64
     lofreq_threads: 64
     partition: "i192"
