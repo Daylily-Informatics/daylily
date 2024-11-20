@@ -74,6 +74,7 @@ rule aggregate_report_components:
 rule multiqc_final_wgs:  # TARGET: the big report
     input:
         f"{MDIR}logs/report_components_aggregated.done",
+	f"{MDIR}other_reports/rules_benchmark_data_mqc.tsv",
     output:
         f"{MDIR}reports/DAY_final_multiqc.html",
     benchmark:
