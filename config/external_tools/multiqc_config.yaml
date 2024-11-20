@@ -109,7 +109,7 @@ custom_data:
     section_name: 'Controls Concordance Report'
     description: 'Concordance Stats For The GIAB HC Regions For This Sample'
     file_format: 'tsv'
-    plot_type: 'heatmap'
+    plot_type: 'table'
   norm_cov_evenness_combo:
     id: 'norm_cov_evenness_combo'
     section_name: 'Coverage Eveness Metrics'
