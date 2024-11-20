@@ -39,7 +39,7 @@ rule kat:
         kdir=$(dirname {output.done})/ktmp;
         rm -rf $kdir || echo 'No kat dir to remove';
         mkdir -p $kdir ;
-   
+        touch {input};
         #if [[ {resources.attempt_n} > 1 ]]; then echo 'Kat has failed 1x, no further tries will be attempted, but since this is non-critical, we are letting the node appear to succeed.' >> {log}.multiattempt.log 2>&1; exit 0; fi;
         kat comp -v -t {threads} -h -n -p png -m 19 {input.fq1} {input.fq2};
 
