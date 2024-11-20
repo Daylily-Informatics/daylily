@@ -34,7 +34,7 @@ rule kat:
         cluster_sample=ret_sample,
         kmer_len="19" if 'kmer' not in config['kat'] else config['kat']['kmer'],
         p5trim="8" if 'p5trim' not in config['kat'] else config['kat']['p5trim'],
-        subsample="0.2",
+        subsample="0.1",
         print_every="50",
     log:
         MDIR + "{sample}/seqqc/kat_logs/{sample}.kat.log",
@@ -49,7 +49,11 @@ rule kat:
         rm -rf $kdir || echo 'No kat dir to remove';
         mkdir -p $kdir ;
 
-        kat comp -v -t {threads} {resources.attempt_n} -n -p png -m 19 {input.fq1} {input.fq2};
+        kat comp -v -t {threads} {resources.attempt_n} -n -p png -m 19  \
+        <( seqkit sample --rand-seed 73 -j {threads} -p  {params.subsample} {input.fq1} ) \
+        <( seqkit sample --rand-seed 73 -j {threads} -p {params.subsample} {input.fq2} ) >> {log} 2>&1;    
+
+
 
         touch {output};
 
