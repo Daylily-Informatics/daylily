@@ -63,7 +63,7 @@ SENTD_CHRMS = config["sentD"]["sentD_chrms"].split(",")
 DEEPD_CHRMS = config["deepvariant"]["deep_chrms"].split(",")
 OCTO_CHRMS = config["octopus"]["octo_chrms"].split(",")
 CLAIR3_CHRMS = config["clair3"]["clair3_chrms"].split(",")
-LOFREQ_CHRMS = config["lofreq"]["lofreq_chrms"].split(",")
+LOFREQ_CHRMS = config["lofreq2"]["lofreq_chrms"].split(",")
 
 # ##### Setting the allowed aligners to run and to which deduper to use.
 # presently, 1+ aligners may run, but all must use the same deduper
