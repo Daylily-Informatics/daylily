@@ -117,7 +117,7 @@ custom_data:
     section_name: 'Coverage Eveness Metrics'
     description: 'Coverage Eveness Metrics'
     file_format: 'tsv'
-    plot_type: 'heatmap'
+    plot_type: 'table'
     pconfig:
       id: 'norm_cov_evenness_combo'
   rules_benchmark_data:
