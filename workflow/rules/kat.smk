@@ -7,7 +7,13 @@
 
 
 def get_cat_attempt(wildcards, attempt):
-    return int(attempt)
+    if attempt in [None, 1,"1"]:
+        return '-k'
+    elif attempt in [2,"2"]:
+        return ''
+    else:
+        return '--help'
+
 
 
 
@@ -40,8 +46,7 @@ rule kat:
         rm -rf $kdir || echo 'No kat dir to remove';
         mkdir -p $kdir ;
 
-        #if [[ {resources.attempt_n} > 1 ]]; then echo 'Kat has failed 1x, no further tries will be attempted, but since this is non-critical, we are letting the node appear to succeed.' >> {log}.multiattempt.log 2>&1; exit 0; fi;
-        kat comp -v -t {threads}  -n -p png -m 19 {input.fq1} {input.fq2};
+        kat comp -v -t {threads} {resources.attempt_n} -n -p png -m 19 {input.fq1} {input.fq2};
 
         touch {output};
 
