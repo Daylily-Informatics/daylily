@@ -48,7 +48,7 @@ module_order:
 table_columns_visible:
   verifybamid-FREEMIX: True
   peddy-family_id: False
-  peddy-ancestry_prediction: False
+  peddy-ancestry_prediction: True
   peddy-ancestry_prob_het_check: True
   fastqc-percent_duplicates: True
   fastqc-percent_gc: False
