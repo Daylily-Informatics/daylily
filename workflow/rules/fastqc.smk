@@ -46,5 +46,6 @@ rule just_fastqc:
         expand(MDIR + "{sample}/seqqc/fastqc/{sample}.fastqc.done", sample=SAMPS),
     output:
         "fqc.done",
+    threads: 1
     shell:
         "touch {output}"

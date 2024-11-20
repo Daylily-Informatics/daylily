@@ -28,7 +28,7 @@ resources: vcpu=3072 # SET TO AWS QUOTA LIMIT minus HEADNODE and other running e
 jobs: 200
 cores: 3072  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 latency-wait: 100
-local-cores: 16
+local-cores: 8
 restart-times: 2
 max-jobs-per-second: 10
 keep-going: True

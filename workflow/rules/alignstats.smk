@@ -53,6 +53,7 @@ rule finish_align_stats:
     output:
         tsv=MDIR
         + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.tsv",
+    threads: 2
     params:
         P=50,
         n=config["alignstats"]["num_reads_in_mem"],

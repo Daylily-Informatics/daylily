@@ -62,6 +62,7 @@ localrules:
 rule seqqc:  # TARGET : Run Just Sequence QC Rules - No Alignment or Variant Calling Performed. A Multiqc Report Is Produced in results/mod*/reports
     conda:
         config["vanilla"]["env_yaml"]
+    threads: 2
     input:
         f"{MDIRreportsd}SEQQC_multiqc.html",
     output:

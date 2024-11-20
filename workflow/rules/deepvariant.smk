@@ -346,6 +346,7 @@ rule prep_deep_chunkdirs:
             MDIR + "{{sample}}/align/{{alnr}}/snv/deep/vcfs/{dvchrm}/{{sample}}.ready",
             dvchrm=DEEPD_CHRMS,
         ),
+    threads: 1
     log:
         MDIR + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.chunkdirs.log",
     shell:

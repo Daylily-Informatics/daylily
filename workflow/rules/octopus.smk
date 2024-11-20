@@ -439,6 +439,7 @@ rule clear_combined_octovcf:  # TARGET:  clear combined octo vcf so the chunks c
             alnr=ALIGNERS,
         ),
     priority: 42
+    threads: 2
     shell:
         "(rm {input}*  1> /dev/null  2> /dev/null ) || echo 'file not found for deletion: {input}';"
 
@@ -458,6 +459,7 @@ rule produce_oct_vcf:  # TARGET: just gen octo calls
     output:
         "gatheredall.oct",
     priority: 48
+    threads: 2
     log:
         "gatheredall.oct.log",
     shell:
@@ -479,6 +481,7 @@ rule oct_prep_chunkdirs:
             MDIR + "{{sample}}/align/{{alnr}}/snv/oct/vcfs/{ochrm}/{{sample}}.ready",
             ochrm=OCTO_CHRMS,
         ),
+    threads: 2
     log:
         MDIR + "{sample}/align/{alnr}/snv/oct/logs/{sample}.{alnr}.chunkdirs.log",
     shell:

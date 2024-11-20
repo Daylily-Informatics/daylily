@@ -94,5 +94,6 @@ localrules: produce_tiddit,
 
 rule produce_tiddit:  # TARGET: Produce All Tiddit
     priority: 45
+    threads: 1
     input:
         expand(MDIR +"{sample}/align/{alnr}/sv/tiddit/{sample}.{alnr}.tiddit.sv.sort.vcf.gz.tbi", sample=SSAMPS, alnr=ALIGNERS)

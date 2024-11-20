@@ -44,7 +44,7 @@ rule alignstats_compile:
         f"{MDIR}other_reports/alignstats_gs_mqc.tsv",        
     benchmark:
         MDIR + "benchmarks/all.alignstats_smmary_compile.bench.tsv"
-    threads: 1
+    threads: 2
     params:
         l="{",
         r="}",

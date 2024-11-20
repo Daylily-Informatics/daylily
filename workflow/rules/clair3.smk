@@ -325,6 +325,7 @@ rule prep_clair3_chunkdirs:
             MDIR + "{{sample}}/align/{{alnr}}/snv/clair3/vcfs/{clairchrm}/{{sample}}.ready",
             clairchrm=CLAIR3_CHRMS,
         ),
+    threads: 2
     log:
         MDIR + "{sample}/align/{alnr}/snv/clair3/log/{sample}.{alnr}.chunkdirs.log",
     shell:

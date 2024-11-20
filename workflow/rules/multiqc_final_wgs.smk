@@ -64,6 +64,7 @@ rule aggregate_report_components:
             alnr=ALIGNERS,
             snv_caller=snv_CALLERS,
         ),
+    threads: 2
     output:
         f"{MDIR}logs/report_components_aggregated.done",
     shell:

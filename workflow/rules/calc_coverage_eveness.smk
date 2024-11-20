@@ -51,6 +51,7 @@ rule produce_cov_uniformity:  # TARGET: Produce cov eveness calcs, swapping out 
     input:
         expand(MDIR       + "{sample}/align/{alnr}/alignqc/norm_cov_eveness/{sample}.{alnr}.md", sample=SSAMPS, alnr=ALIGNERS)
     container: None
+    threads: 8
     output:
         mqc=MDIR+"other_reports/norm_cov_evenness_combo_mqc.tsv",
     shell:

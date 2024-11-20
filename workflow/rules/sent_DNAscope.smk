@@ -254,6 +254,7 @@ rule clear_combined_sentD_vcf:  # TARGET:  clear combined sentD vcf so the chunk
             sample=SSAMPS,
             alnr=ALIGNERS,
         ),
+    threads: 2
     priority: 42
     shell:
         """
@@ -276,6 +277,7 @@ rule produce_sentD_vcf:  # TARGET: just gen sentD calls
     output:
         "gatheredall.sentd",
     priority: 48
+    threads: 2
     log:
         "gatheredall.sentd.log",
     shell:
@@ -297,6 +299,7 @@ rule prep_sentD_chunkdirs:
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentd/vcfs/{dchrm}/{{sample}}.ready",
             dchrm=SENTD_CHRMS,
         ),
+    threads: 2
     log:
         MDIR + "{sample}/align/{alnr}/snv/sentd/logs/{sample}.{alnr}.chunkdirs.log",
     shell:
