@@ -125,7 +125,7 @@ custom_data:
     section_name: 'Task Benchmark Performances'
     description: 'Workflow Task Benchmark Results'
     file_format: 'tsv'
-    plot_type: 'heatmap'
+    plot_type: 'table'
     pconfig:
       id: 'rules_benchmark_data'
   alignstats_combo:
