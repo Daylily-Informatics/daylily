@@ -38,8 +38,8 @@ localrules:
 
 rule aggregate_report_components:
     input:
-        #f"{MDIR}other_reports/giabhcr_concordance.mqc.tsv",
-        f"{MDIR}other_reports/norm_cov_evenness.mqc.tsv",
+        #f"{MDIR}other_reports/giabhcr_concordance_mqc.tsv",
+        f"{MDIR}other_reports/norm_cov_evenness_mqc.tsv",
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/cov_calcs_complete.done",
             sample=SSAMPS,
@@ -72,7 +72,7 @@ rule aggregate_report_components:
 
 rule multiqc_final_wgs:  # TARGET: the big report
     input:
-        f"{MDIR}other_reports/rules_benchmarkdata.mqc.tsv",
+        f"{MDIR}other_reports/rules_benchmarkdata_mqc.tsv",
     output:
         f"{MDIR}reports/DAY_final_multiqc.html",
     benchmark:
