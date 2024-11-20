@@ -67,8 +67,10 @@ rule lfq2_indelqual:
 
 rule lofreq2:
     input:
-        bam=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam",
-        bai=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam.bai",
+        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        ibam=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam",
+        ibai=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam.bai",
         d=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{dvchrm}/{sample}.ready",
     output:
         vcf=temp(MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{dvchrm}/{sample}.{alnr}.lfq2.{dvchrm}.snv.vcf"),
