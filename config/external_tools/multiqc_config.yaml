@@ -37,7 +37,7 @@ module_order:
   - vcftools
   - bcftools
   - kat
-  - custom_content  # Generic custom content section
+  - custom_content 
   - giab_concordance
   - norm_cov_evenness_combo
   - rules_benchmark_data
