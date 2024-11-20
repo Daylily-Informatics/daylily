@@ -8,7 +8,7 @@
 
 def get_cat_attempt(wildcards, attempt):
     if attempt in [None, 1,"1"]:
-        return '-k'
+        return '-h'
     elif attempt in [2,"2"]:
         return ''
     else:
