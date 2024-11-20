@@ -38,8 +38,11 @@ module_order:
   - bcftools
   - kat
   - custom_content  # Generic custom content section
-
-    
+  - giab_concordance
+  - norm_cov_evenness_combo
+  - rules_benchmark_data
+  - alignstats_combo
+  
 table_columns_visible:
   verifybamid-FREEMIX: True
   peddy-family_id: False
@@ -96,11 +99,9 @@ table_columns_visible:
   mosdepth-coverage_bases: False
   mosdepth-length: False
 
-
 picard_config:
   insertsize_xmax: 1000
   insertsize_smooth_points: 5
-
 
 custom_data:
   giab_concordance:
@@ -121,6 +122,12 @@ custom_data:
     description: 'Workflow Task Benchmark Results'
     file_format: 'tsv'
     plot_type: 'heatmap'
+  alignstats_combo:
+    id: 'alignstats_combo'
+    section_name: 'Alignstats Data'
+    description: 'Alignstats Data'
+    file_format: 'tsv'
+    plot_type: 'table'
   alignstats_gs:
     id: 'alignstats_gs'
     section_name: 'alignstats_gs'
@@ -142,24 +149,18 @@ custom_data:
           hidden: False
       - ChimericReadPairPct:
           hidden: False
-  alignstats_combo:
-    id: 'alignstats_combo'
-    section_name: 'Alignstats Data'
-    description: 'Alignstats Data'
-    file_format: 'tsv'
-    plot_type: 'table'
 
 sp:
-  norm_cov_evenness_combo:
-    fn: "other_reports/norm_cov_evenness_combo_mqc.tsv"
   giab_concordance:
     fn: "other_reports/giab_concordance_mqc.tsv"
+  norm_cov_evenness_combo:
+    fn: "other_reports/norm_cov_evenness_combo_mqc.tsv"
   rules_benchmark_data:
     fn: "other_reports/rules_benchmark_data_mqc.tsv"
-  alignstats_gs:
-    fn: "other_reports/alignstats_gs_mqc.tsv"
   alignstats_combo:
     fn: "other_reports/alignstats_combo_mqc.tsv"
+  alignstats_gs:
+    fn: "other_reports/alignstats_gs_mqc.tsv"
 
 peddy/background_pca:
   fn: "*.peddy.background_pca.json"
