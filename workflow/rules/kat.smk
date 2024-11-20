@@ -34,7 +34,7 @@ rule kat:
         cluster_sample=ret_sample,
         kmer_len="19" if 'kmer' not in config['kat'] else config['kat']['kmer'],
         p5trim="8" if 'p5trim' not in config['kat'] else config['kat']['p5trim'],
-        subsample="0.1",
+        subsample="0.013",
         print_every="50",
     log:
         MDIR + "{sample}/seqqc/kat_logs/{sample}.kat.log",
