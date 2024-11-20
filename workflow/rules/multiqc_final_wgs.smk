@@ -100,24 +100,17 @@ rule multiqc_final_wgs:  # TARGET: the big report
         ref=config["ref_code"],
         mgroot=os.environ['DAY_ROOT'],
     log:
-        a=f"{MDIR}reports/logs/all__mqc_fin_a.log",
-        b=f"{MDIR}reports/logs/all_mqc_fin_b.log",
+        f"{MDIR}reports/logs/all__mqc_fin_a.log",
     conda:
         config["multiqc"]["final"]["env_yaml"]
     shell:
         """
-        url_root=$(python -c "import os,sys; ap=os.path.abspath('.').replace('/fsx/data/','').replace('/','\/'); print(ap)");
-        url_root2=$(python -c "import os,sys; ap2=os.path.abspath('.').replace('/fsx/data/','').replace('/','\/');print(ap2)");
-
-
-        ( env bash workflow/scripts/create_final_mqc_report.sh '{params.odir2}' '{params.fnamef}' \
-        '{params.mgroot}/{params.macro_cfg}' '{params.mgroot}/{params.micro_cfg}' \
-        '{params.mgroot}/{params.name_cfg}' '{params.gtag}' '{params.ghash}' \
-        '{params.gbranch}' '{params.jid}' '{params.ruu}' \
-        '{params.exx}' '{params.cluster_sample}' \
-        ' ' "$url_root" \
-        '{params.mdir}'  \
-        "{params.dkr}" "{params.ref}" '{log.b}' "$url_root2"  >> {log.a}  2>&1) || echo "MQC PROBLEM";
+        multiqc -f  \
+        --config config/external_tools/multiqc_header.yaml  \
+        --config  config/external_tools/multiqc_config.yaml  \
+        -i 'Final Multiq Report' \
+        -b 'Git Info: {params.gbranch} {params.gtag} {params.ghash}' \
+        --outdir {params.odir2}  $(dirname {input} )/../ > {log} 2>&1;
         ls -lt {output};
         """
 

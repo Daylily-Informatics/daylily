@@ -44,8 +44,13 @@ rule multiqc_for_raw_fastqs:
         config["multiqc"]["seqqc"]["env_yaml"]  #  ...
     shell:
         """
-        (multiqc -p -k tsv -e picard -e goleft_indexcov -e mosdepth -e qualimap -x '*/snv/*' -x '*/sv/*' -x '*.js' -x '*bench' -x '*.bam' -x '*.fastq.gz'  --profile-runtime  --interactive -x '.*impute.*' -x '*alignstats*' -x '*impute*' -x '*impute*glm*' -x '*multiqc*' -x '*pyc' -x '*.fastq.gz' -f -i 'SEQQC Multiq Report' -b '{samples.RU[0]}_{samples.EX[0]} ___ {params.gbranch} {params.gtag} {params.ghash}' -n {params.fn} --sample-filters config/external_tools/multiqc_samplebtn_lcwgs.tsv -o {params.odir} -c {params.name_cfg}  -c {params.macro_cfg} -c config/external_tools/multiqc_final_hcwgs.yaml  {MDIR}  >> {log} 2>&1) || echo MQCRaiseErr$? >> {log} 2>&1;
-        ls {output}; {latency_wait}; ls {output};
+        multiqc -f  --config config/external_tools/multiqc_header.yaml  --config    config/external_tools/multiqc_config.yaml -p -k tsv \
+        -e picard -e goleft_indexcov -e mosdepth -e qualimap -x '*/snv/*' -x '*/sv/*' -x '*.js' -x '*bench' \
+        -x '*.bam' -x '*.fastq.gz'  --profile-runtime  --interactive -x '.*impute.*' -x '*alignstats*' \
+        -x '*impute*' -x '*impute*glm*' -x '*multiqc*' -x '*pyc' -x '*.fastq.gz' -i 'SEQQC Multiq Report' \
+        -b '{samples.RU[0]}_{samples.EX[0]} ___ {params.gbranch} {params.gtag} {params.ghash}' -n {params.fn}  \
+        -o {params.odir}   $(dirname {log} )/../../   >> {log} 2>&1;
+        ls {output};
         """
 
 
