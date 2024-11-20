@@ -5,13 +5,16 @@
 # contamination, lib prep biases, etc.
 # home: https://github.com/TGAC/KAT
 
+import sys
 
 def get_cat_attempt(wildcards, attempt):
     if attempt in [None, 1,"1"]:
         return '-h'
     elif attempt in [2,"2"]:
-        return ''
+        print("Second kat attempt", file=sys.stderr)
+        return '--help'
     else:
+        print("Third kat attempt & failing", file=sys.stderr)
         return '--help'
 
 
