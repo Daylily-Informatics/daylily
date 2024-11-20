@@ -38,9 +38,6 @@ module_order:
   - bcftools
   - kat
   - custom_content  # Generic custom content section
-  - alignstats_combo
-  - giab_concordance  # Specific custom sections
-  - norm_cov_evenness
 
     
 table_columns_visible:

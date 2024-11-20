@@ -38,7 +38,7 @@ localrules:
 
 rule aggregate_report_components:
     input:
-        #f"{MDIR}other_reports/giabhcr_concordance_mqc.tsv",
+        f"{MDIR}other_reports/giab_concordance_mqc.tsv",
         f"{MDIR}other_reports/norm_cov_evenness_combo_mqc.tsv",
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/cov_calcs_complete.done",
