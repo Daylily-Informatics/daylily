@@ -9,10 +9,10 @@ import sys
 
 def get_cat_attempt(wildcards, attempt):
     if attempt in [None, 1,"1"]:
-        return '-h'
+        return ''
     elif attempt in [2,"2"]:
         print("Second kat attempt", file=sys.stderr)
-        return ''
+        return '--help'
     else:
         print("Third kat attempt & failing", file=sys.stderr)
         return '--help'
