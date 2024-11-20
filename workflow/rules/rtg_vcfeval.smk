@@ -176,21 +176,19 @@ rule produce_snv_concordances:  # TARGET:  produce snv concordances
         cluster_sample="aggregate",
         mdir=MDIR,
         genome_build=config['genome_build'],
+    log:
+	MDIR+"logs/giab_concordance.mqc.log"
     output:
         touch(MDIR+"other_reports/giab_concordance_mqc.tsv")
     shell:
         """
-        echo 'START' 1>&2;
         set +euo pipefail;
-        echo 'START 22' 1>&2;
         export wcv=$(find  results/ | grep concord | grep fofn | wc -l);
-        # if [[ "$wcv" == "0" ]]; then
-        touch {output};
-        # else
-        echo 'CC START' 1>&2;
-        (find results/day/{params.genome_build}/*/align/*/snv/*/concordance/ | grep  concordance.mqc  | head -n 1 | parallel 'head -n 1 {{}} > {output}';) || echo 'GetHeaderFAILS' 1>&2;
-        (find {params.mdir}*/align/*/snv/*/concordance/ | grep  .mqc | parallel ' tail -n +2 {{}} >> {output}';) || echo "GETCONCORDANCECALLSfails" 1>&2;
-        #fi;
-        (perl -pi -e 's/^(.+?)(\t)(.+?)(\t)(.+)$/$3\t$1\t$5/g;' {output} ) || echo "perl regsub failed" 1>&2;
+
+        (find results/day/{params.genome_build}/*/align/*/snv/*/concordance/ | grep  concordance.mqc  | head -n 1 | parallel 'head -n 1 {{}} > {output}';) || echo 'GetHeaderFAILS' >> {log} 1>&2;
+        (find {params.mdir}*/align/*/snv/*/concordance/ | grep  .mqc | parallel ' tail -n +2 {{}} >> {output}';) || echo "GETCONCORDANCECALLSfails" >> {log} 1>&2;
+
+        (perl -pi -e 's/^(.+?)(\t)(.+?)(\t)(.+)$/$3\t$1\t$5/g;' {output} ) || echo "perl regsub failed" >> {log} 1>&2;
+	perl -pi -e 's/^([^\t]+?)-None\t([^\t]+)/$1-$2\t$2/' {output} >> {log} 1>&2;
 
         """
