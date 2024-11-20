@@ -31,7 +31,7 @@ rule kat:
     log:
         MDIR + "{sample}/seqqc/kat_logs/{sample}.kat.log",
     container:
-        "quay.io/biocontainers/kat:2.4.2--py39h7c5ebd6_3"
+        "docker://quay.io/biocontainers/kat:2.4.2--py39h7c5ebd6_3"
     resources:
         attempt_n=get_cat_attempt,  # Hacking getting the attempt number from the res block for use in shell.
     shell:
