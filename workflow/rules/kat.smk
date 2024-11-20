@@ -38,7 +38,7 @@ rule kat:
         attempt_n=get_cat_attempt,  # Hacking getting the attempt number from the res block for use in shell.
     shell:
         """
-        (
+        
         touch {output};
 
         kdir=$(dirname {output.r1r2_stub} );
