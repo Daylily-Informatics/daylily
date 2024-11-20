@@ -94,7 +94,7 @@ validate_region() {
 # Call the region validation function
 validate_region "$region" || return 3
 
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
 # Skip project check if the flag is provided
 if [[ "$SKIP_PROJECT_CHECK" == false ]]; then
@@ -144,23 +144,23 @@ if [[ -z "$MATCHING_BUDGET" && "$SKIP_PROJECT_CHECK" != "true" ]]; then
 fi
 
 # Extract budget details for the matching budget
-TOTAL=$(echo "$MATCHING_BUDGET" | jq -r ".BudgetLimit.Amount")
-USED=$(echo "$MATCHING_BUDGET" | jq -r ".CalculatedSpend.ActualSpend.Amount")
+export TOTAL_BUDGET=$(echo "$MATCHING_BUDGET" | jq -r ".BudgetLimit.Amount")
+export USED_BUDGET=$(echo "$MATCHING_BUDGET" | jq -r ".CalculatedSpend.ActualSpend.Amount")
 
-if [[ (-z "$TOTAL" || -z "$USED") && "$SKIP_PROJECT_CHECK" != "true" ]]; then
+if [[ (-z "$TOTAL_BUDGET" || -z "$USED_BUDGET") && "$SKIP_PROJECT_CHECK" != "true" ]]; then
   echo "Error: Unable to calculate budget details for project '$PROJECT'.  $SKIP_PROJECT_CHECK"
   return 3
 fi
 
 # Calculate usage percentage
-PERCENT_USED=$(awk "BEGIN {print ($USED / $TOTAL) * 100}")
+export PERCENT_USED=$(awk "BEGIN {print ($USED_BUDGET / $TOTAL_BUDGET) * 100}")
 
 # Display budget information
 echo ""
 echo "________________________________________________________"
 echo "AWS Budget for project '$PROJECT' in region '$region':"
-echo "  Total: $TOTAL USD"
-echo "  Used: $USED USD"
+echo "  Total: $TOTAL_BUDGET USD"
+echo "  Used: $USED_BUDGET USD"
 echo "  Percent Used: $PERCENT_USED%"
 echo "________________________________________________________"
 sleep 1.3
