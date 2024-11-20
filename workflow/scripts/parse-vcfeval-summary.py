@@ -265,6 +265,7 @@ for i in df.iterrows():
     except:
         df["Fscore"][i[0]] = None
 
+df["mqc_id"] = f"{sample}-{alnr}-{snv_caller}-{subset}"
 df["Sample"] = sample
 df["AltId"] = alt_id
 df["CmpFootprint"] = cmp_footprint
@@ -275,7 +276,7 @@ df['Aligner'] = alnr
 df['SNVCaller'] = snv_caller
 #print_cols = ['Sample'] + list(set(list(df.columns)) - set(['Sample']))
 
-print_cols = ['Sample','TgtRegionSize','TN','FN','TP','FP','Fscore','Sensitivity-Recall','Specificity', 'FDR', 'PPV', 'Precision','AltId', 'CmpFootprint', 'AllVarMeanDP', 'CovBin', 'Aligner','SNVCaller']
+print_cols = ['mqc_id','Sample','TgtRegionSize','TN','FN','TP','FP','Fscore','Sensitivity-Recall','Specificity', 'FDR', 'PPV', 'Precision','AltId', 'CmpFootprint', 'AllVarMeanDP', 'CovBin', 'Aligner','SNVCaller']
 df.to_csv(even_newer_summary, sep="\t", columns=print_cols)
 
 os.system(f"perl -pi -e 's/^\t/SNPClass\t/g;' {even_newer_summary}")
