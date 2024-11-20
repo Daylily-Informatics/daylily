@@ -1,0 +1,247 @@
+custom_logo: "resources/mqcimg/daylilylogo.png"
+
+max_table_rows: 2200
+decimalPoint_format: "."
+thousandsSep_format: ","
+
+extra_fn_clean_trim:
+  - ".R1.fastq.gz"
+  - ".R2.fastq.gz"
+  - ".R1.fastq"
+  - ".R2.fastq"
+  - ".kat.hist.json"
+  - ".kat.gcp.json"
+  - "_md"
+  - ".vcf.gz"
+  - ".bam"
+  - ".bam.bai"
+  - ".cram"
+  - ".crai"
+  - ".vcf.gz.tbi"
+
+
+module_order:
+  - verifyBAMID  
+  - peddy
+  - fastqc
+  - fastq_screen
+  - bamtools
+  - bcftools
+  - samtools
+  - picard
+  - qualimap
+  - mosdepth
+  - goleft_indexcov
+  - sentieon
+  - fastqc
+  - fastq_screen
+  - kat
+  - somalier
+  - vcftools
+  - bcftools
+  - custom_content  # Generic custom content section
+  - alignstats_combo
+  - giab_concordance  # Specific custom sections
+  - norm_cov_evenness
+
+    
+table_columns_visible:
+  verifybamid-FREEMIX: True
+  peddy-family_id: False
+  peddy-ancestry_prediction: False
+  peddy-ancestry_prob_het_check: True
+  fastqc-percent_duplicates: True
+  fastqc-percent_gc: False
+  fastqc-avg_sequence_length: True
+  fastqc-median_sequence_length: True
+  fastqc-percent_fails: False
+  fastqc-total_sequences: False
+  bcftools_stats-number_of_records: False
+  bcftools_stats-number_of_SNPs: True
+  bcftools_stats-number_of_indels: True
+  bcftools_stats-tstv: True
+  bcftools_stats-number_of_MNPs: False
+  bcftools_stats-number_of_multiallelic_sites: False
+  bcftools_stats-number_of_multiallelic_SNP_sites: False
+  samtools_stats-error_rate: False
+  samtools_stats-non_primary_alignments: False
+  samtools_stats-reads_mapped: False
+  samtools_stats-reads_mapped_percent: False
+  samtools_stats-reads_properly_paired_percent: False
+  samtools_stats-reads_MQ0_percent: False
+  samtools_stats-raw_total_sequences: False
+  samtools_flagstat-flagstat_total: False
+  samtools_flagstat-mapped_passed: False
+  samtools_flagstat-mapped_passed_pct: False
+  picard_insertsizemetrics-summed_median: False
+  picard_insertsizemetrics-summed_mean: False
+  picard_qualityyieldmetrics-TOTAL_READS: False
+  qualimap_bamqc-avg_gc: True
+  qualimap_bamqc-median_insert_size: True
+  qualimap_bamqc-1_x_pc: True
+  qualimap_bamqc-5_x_pc: True
+  qualimap_bamqc-10_x_pc: True
+  qualimap_bamqc-30_x_pc: True
+  qualimap_bamqc-50_x_pc: True
+  qualimap_bamqc-median_coverage: True
+  qualimap_bamqc-mean_coverage: True
+  qualimap_bamqc-general_error_rate: False
+  qualimap_bamqc-percentage_aligned: True
+  qualimap_bamqc-mapped_reads: True
+  qualimap_bamqc-total_reads: True
+  mosdepth-1_x_pc: False
+  mosdepth-5_x_pc: False
+  mosdepth-10_x_pc: False
+  mosdepth-30_x_pc: False
+  mosdepth-50_x_pc: False
+  mosdepth-median_coverage: False
+  mosdepth-mean_coverage: False
+  mosdepth-min_coverage: False
+  mosdepth-max_coverage: False
+  mosdepth-coverage_bases: False
+  mosdepth-length: False
+
+
+picard_config:
+  insertsize_xmax: 1000
+  insertsize_smooth_points: 5
+
+
+custom_data:
+  giab_concordance:
+    id: 'giab_concordance'
+    section_name: 'giab_concordance'
+    description: 'Concordance Stats For The GIAB HC Regions For This Sample'
+    file_format: 'tsv'
+    plot_type: 'table'
+    pconfig:
+      id: 'giabhcr_concordance'
+  norm_cov_evenness_combo:
+    id: 'norm_cov_evenness_combo'
+    section_name: 'norm_cov_evenness_combo'
+    description: 'Coverage Eveness Metrics'
+    file_format: 'tsv'
+    plot_type: 'table'
+    pconfig:
+      id: 'norm_cov_enveness_combo'
+  rules_benchmark_data:
+    id: 'rules_benchmark_data'
+    section_name: 'rules_benchmark_data'
+    description: 'Workflow Task Benchmark Results'
+    file_format: 'tsv'
+    plot_type: 'table'
+    pconfig:
+      id: 'rules_benchmark_data'
+  alignstats_combo:
+    id: 'alignstats_combo'
+    section_name: 'alignstats_combo'
+    description: 'Workflow Task Benchmark Results'
+    file_format: 'tsv'
+    plot_type: 'table'
+    pconfig:
+      id: 'alignstats_combo'
+
+sp:
+  norm_cov_evenness_combo:
+    fn: "other_reports/norm_cov_evenness_combo_mqc.tsv"
+  giab_concordance:
+    fn: "other_reports/giab_concordance_mqc.tsv"
+  rules_benchmark_data:
+    fn: "other_reports/rules_benchmark_data_mqc.tsv"
+  alignstats_combo:
+    fn: "other_reports/alignstats_combo_mqc.tsv"
+
+
+exclude_modules:
+  - slamdunk
+  - adapterRemoval
+  - rseqc
+  - sambamba
+  - preseq
+  - htseq
+  - bbmap
+  - fastp
+  - varscan2
+  - flexbar
+  - hicexplorer
+  - snpeff
+  - biscuit
+  - deeptools
+  - afterqc
+  - bbmap
+  - biobambam2
+  - biobloomtools
+  - biscuit
+  - bowtie1
+  - bowtie2
+  - busco
+  - ccs
+  - clipandmerge
+  - clusterflow
+  - conpair
+  - cutadapt
+  - deeptools
+  - disambiguate
+  - dragen
+  - fgbio
+  - flash
+  - gatk
+  - gffcompare
+  - happy
+  - hisat2
+  - homer
+  - ivar
+  - jcvi
+  - kaiju
+  - kallisto
+  - kraken
+  - leehom
+  - lima
+  - longranger
+  - malt
+  - minionqc
+  - nanostat
+  - ngsderive
+  - optitype
+  - pangolin
+  - prokka
+  - pychopper
+  - pycoqc
+  - qorts
+  - rna_seqc
+  - rockhopper
+  - rseqc
+  - salmon
+  - samblaster
+  - sickle
+  - skewer
+  - slamdunk
+  - snippy
+  - snpsplit
+  - sortmerna
+  - stacks
+  - supernova
+  - trimmomatic
+  - varscan2
+  - vep
+  - bismark
+  - tophat
+  - sexdetermine
+  - q3c3
+  - bclconvert/runino
+  - bustools
+  - damageprofiler
+  - dedup
+  - eigenstratdatabasetools
+  - featureCounts
+  - hicpro
+  - hicup
+  - hops
+  - macs2
+  - methylQA
+  - mirtop
+  - mirtrace
+  - mtnucratio
+  - multivcfanalyzer
+  - odgi
+  - phantompeakqualtools

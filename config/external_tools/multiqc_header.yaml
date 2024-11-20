@@ -1,0 +1,6 @@
+report_header_info:
+  - Contact E-mail: "john@daylilyinformatics.com"
+  - Application Type: "GIAB Concordance Report"
+  - Project Type: "ILMN 30x"
+  - Sequencing Platform: "Google Brain FASTQs"
+  - Sequencing Setup: "2x250"
