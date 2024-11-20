@@ -53,8 +53,9 @@ rule lfq2_indelqual:
     shell:
         """
         touch {log};
-        lofreq indelqual --dindel -f {params.huref} -o {output.bam} {input.bam} >> {log} 2>&1;
-        samtools index {output.bam} >> {log} 2>&1;
+        #lofreq indelqual --dindel -f {params.huref} -o {output.bam} {input.bam} >> {log} 2>&1;
+        #samtools index {output.bam} >> {log} 2>&1;
+        touch {output};
         """
 
 
@@ -107,8 +108,10 @@ rule lofreq2:
         fi;
 
         echo 'DCHRM: $dchr' >> {log};
+        
+        lofreq call-parallel --pp-threads 8  -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
 
-        lofreq call --call-indels -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
+        #lofreq call --call-indels -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
 
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
