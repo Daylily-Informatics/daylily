@@ -19,8 +19,6 @@ rule kat:
     output:
         done=MDIR + "{sample}/seqqc/kat/{sample}.kat.done",  # I'm not explicitly naming files b/c I allow failing of this rule in some cases
         r1r2_stub=MDIR + "{sample}/seqqc/kat/r1r2cmp",
-        ds1=temp(MDIR + "{sample}/seqqc/kat/{sample}.kat.r1.fq.gz"),
-        ds2=temp(MDIR + "{sample}/seqqc/kat/{sample}.kat.r2.fq.gz"),
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.kat.bench.tsv"
     threads: config["kat"]["threads"]
@@ -49,7 +47,7 @@ rule kat:
    
         #if [[ {resources.attempt_n} > 1 ]]; then echo 'Kat has failed 1x, no further tries will be attempted, but since this is non-critical, we are letting the node appear to succeed.' >> {log}.multiattempt.log 2>&1; exit 0; fi;
 
-        kat comp -v -t {threads} -h -n -p png -g -o $kdir/{params.cluster_sample}.r1r2cmp {output.ds1} {output.ds2};
+        kat comp -v -t {threads} -h -n -p png -g -o $kdir/{params.cluster_sample}.r1r2cmp {input.fq1} {input.fq2};
 
         touch {output};
 
