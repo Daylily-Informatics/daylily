@@ -166,6 +166,16 @@ sp:
   alignstats_combo:
     fn: "other_reports/alignstats_combo_mqc.tsv"
 
+peddy/background_pca:
+  fn: "*.peddy.background_pca.json"
+peddy/het_check:
+  fn: "*.peddy.het_check.csv"
+peddy/ped_check:
+  fn: "*.peddy.ped_check.*csv"
+peddy/sex_check:
+  fn: "*.peddy.sex_check.csv"
+peddy/summary_table:
+  fn: "*.peddy.peddy.ped"
 
 exclude_modules:
   - slamdunk
