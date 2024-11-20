@@ -176,7 +176,7 @@ clair3:
     partition_other: "i192,i128"
     mem_mb: 60000
     numa: " "  #OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
-    clair3_chrms: "20,21"  # "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y"
+    clair3_chrms: "21,22,23"  # "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y"
 
 clean:
     env_yaml: "envs/vanilla_v0.1.yaml"  # no ./../ b/c it's being referenced from Snakefile
@@ -191,7 +191,7 @@ deepvariant:
     partition: "i64"
     partition_other: "i96,i192,i192"
     mem_mb: 60000
-    deep_chrms: "20,21"
+    deep_chrms: "21,22,23"
     numa: " OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
 
 duphold:
@@ -305,7 +305,7 @@ lofreq:
     partition: "i192"
     partition_other: "i192"
     mem_mb: 85000 ## Potentially this can be dynmoic by input BAM size
-    lofreq_chrms: "20,21"  # "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
+    lofreq_chrms: "21,22,23"  # "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     numa: " OMP_THREADS=64 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE " 
 
 
@@ -338,7 +338,7 @@ octopus:
     #  threads: min_mem_mb
     testing_model: ' '  # set to ' --very-fast ' for testing
     threads: 8 # Dynamically reset- this represents the cap
-    octo_chrms:  "20,21" 
+    octo_chrms:  "21,22,23" 
     anno: " AD ADP AF AFB ARF BQ CRF DP FRF GC GQ MC MF MQ MQ0 QD GQD QUAL SB STRL STRP SMQ SB DC NC PP MP "
     cmd: " resources/octopus/octopus-skylakeavx512 "
     ld_pre: " "  # " env MIMALLOC_RESET_DELAY=750ms MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1 MIMALLOC_LARGE_OS_PAGES=1 MIMALLOC_USE_NUMA_NODES=2 MIMALLOC_RESERVE_HUGE_OS_PAGES=0   env LD_PRELOAD=$PWD/resources/libs/libmimalloc.so "
@@ -364,7 +364,7 @@ sentD:
     regions_to_call: '  '  # testing:' --regions 11:1-115169878 MT:1-16569  '
     testing_model: '  '  #  ' --very-fast '  # set to ' --very-fast ' for testing
     threads: 8 # Dynamically reset- this represents the cap
-    sentD_chrms: "20,21-22"
+    sentD_chrms: "21,22-23"
     ld_preload: " "  # " env MIMALLOC_RESET_DELAY=750ms MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1 MIMALLOC_LARGE_OS_PAGES=1 MIMALLOC_USE_NUMA_NODES=2 MIMALLOC_RESERVE_HUGE_OS_PAGES=0   env LD_PRELOAD=$PWD/resources/libs/libmimalloc.so "
     env_yaml: "../envs/vanilla_v0.1.yaml"
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
