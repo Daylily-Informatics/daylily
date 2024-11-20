@@ -46,11 +46,8 @@ rule kat:
         mkdir -p $kdir ;
         touch {output.r1r2_stub};
         touch {output};
-        seqkit sample --rand-seed 73 -j {threads} -p  {params.subsample} {input.fq1} > {output.ds1} &
-        seqkit sample --rand-seed 73 -j {threads} -p {params.subsample} {input.fq2} > {output.ds2} &
-        wait;
-        
-        if [[ {resources.attempt_n} > 1 ]]; then echo 'Kat has failed 1x, no further tries will be attempted, but since this is non-critical, we are letting the node appear to succeed.' >> {log}.multiattempt.log 2>&1; exit 0; fi;
+   
+        #if [[ {resources.attempt_n} > 1 ]]; then echo 'Kat has failed 1x, no further tries will be attempted, but since this is non-critical, we are letting the node appear to succeed.' >> {log}.multiattempt.log 2>&1; exit 0; fi;
 
         kat comp -v -t {threads} -h -n -p png -g -o $kdir/{params.cluster_sample}.r1r2cmp {output.ds1} {output.ds2};
 

@@ -4,6 +4,5 @@ channels:
 dependencies:
   - kat
   - boost
-  - pigz
-  - seqfu
-  - seqkit
+  - boost-cpp
+
