@@ -18,7 +18,6 @@ rule kat:
         fq2=getR2s,  # method
     output:
         done=MDIR + "{sample}/seqqc/kat/{sample}.kat.done",  # I'm not explicitly naming files b/c I allow failing of this rule in some cases
-        r1r2_stub=MDIR + "{sample}/seqqc/kat/r1r2cmp",
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.kat.bench.tsv"
     threads: config["kat"]["threads"]
@@ -36,17 +35,13 @@ rule kat:
         attempt_n=get_cat_attempt,  # Hacking getting the attempt number from the res block for use in shell.
     shell:
         """
-        
-        touch {output};
-
+    
         kdir=$(dirname {output.r1r2_stub} );
         rm -rf $kdir || echo 'No kat dir to remove';
         mkdir -p $kdir ;
-        touch {output.r1r2_stub};
-        touch {output};
    
         #if [[ {resources.attempt_n} > 1 ]]; then echo 'Kat has failed 1x, no further tries will be attempted, but since this is non-critical, we are letting the node appear to succeed.' >> {log}.multiattempt.log 2>&1; exit 0; fi;
-
+        touch {input};
         kat comp -v -t {threads} -h -n -p png -m 19 {input.fq1} {input.fq2};
 
         touch {output};
