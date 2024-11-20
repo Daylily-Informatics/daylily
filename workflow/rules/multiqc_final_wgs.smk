@@ -108,6 +108,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         multiqc -f  \
         --config config/external_tools/multiqc_header.yaml  \
         --config  config/external_tools/multiqc_config.yaml  \
+        --filename {output} \
         -i 'Final Multiq Report' \
         -b 'Git Info: {params.gbranch} {params.gtag} {params.ghash}' \
         --outdir {params.odir2}  $(dirname {input} )/../ > {log} 2>&1;
