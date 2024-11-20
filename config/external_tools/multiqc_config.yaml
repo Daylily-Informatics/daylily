@@ -9,8 +9,6 @@ extra_fn_clean_trim:
   - ".R2.fastq.gz"
   - ".R1.fastq"
   - ".R2.fastq"
-  - ".kat.hist.json"
-  - ".kat.gcp.json"
   - "_md"
   - ".vcf.gz"
   - ".bam"
@@ -35,10 +33,10 @@ module_order:
   - sentieon
   - fastqc
   - fastq_screen
-  - kat
   - somalier
   - vcftools
   - bcftools
+  - kat
   - custom_content  # Generic custom content section
   - alignstats_combo
   - giab_concordance  # Specific custom sections
