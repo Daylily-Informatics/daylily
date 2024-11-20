@@ -4,7 +4,7 @@
 
 rule multiqc_cov_aln:  # TARGET : Run Alignment and Generate Alignment and Coverage Multiqc Report. No Variant Calling Happens, Progress Stops Here.
     input:
-        f"{MDIR}other_reports/norm_cov_evenness_mqc.tsv",
+        f"{MDIR}other_reports/norm_cov_evenness_combo_mqc.tsv",
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/cov_calcs_complete.done",
             sample=SSAMPS,
