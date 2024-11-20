@@ -246,8 +246,8 @@ go_left:
     partition: "i192"
 
 kat:
-    threads: 32
-    heap_size: "1G"
+    threads: 64
+    heap_size: "3G"
     benchmark_rounds: 0
     env_yaml: "../envs/kat_v0.1.yaml"
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
