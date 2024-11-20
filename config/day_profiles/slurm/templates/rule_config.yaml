@@ -246,7 +246,7 @@ go_left:
     partition: "i192"
 
 kat:
-    threads: 64
+    threads: 96
     heap_size: "3G"
     benchmark_rounds: 0
     env_yaml: "../envs/kat_v0.1.yaml"
