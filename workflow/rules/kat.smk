@@ -9,10 +9,10 @@ import sys
 
 def get_cat_attempt(wildcards, attempt):
     if attempt in [None, 1,"1"]:
-        return ''
+        return '-h'
     elif attempt in [2,"2"]:
         print("Second kat attempt", file=sys.stderr)
-        return '--help'
+        return ''
     else:
         print("Third kat attempt & failing", file=sys.stderr)
         return '--help'
@@ -45,15 +45,14 @@ rule kat:
     shell:
         """
     
-        kdir=$(dirname {output.done})/ktmp;
+        kdir=$(dirname {output.done})/kat_dat/;
         rm -rf $kdir || echo 'No kat dir to remove';
         mkdir -p $kdir ;
 
         kat comp -v -t {threads} {resources.attempt_n} -n -p png -m 19  \
+        -o $kdir/{params.cluster_sample}.r1r2cmp \
         <( seqkit sample --rand-seed 73 -j {threads} -p  {params.subsample} {input.fq1} ) \
         <( seqkit sample --rand-seed 73 -j {threads} -p {params.subsample} {input.fq2} ) >> {log} 2>&1;    
-
-
 
         touch {output};
 
