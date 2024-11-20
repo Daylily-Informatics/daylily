@@ -49,7 +49,6 @@ else:
             """
             (
             touch {output};
-            exit 0;
 
             kdir=$(dirname {output.r1r2_stub} );
             rm -rf $kdir ;
