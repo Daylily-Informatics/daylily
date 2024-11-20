@@ -111,7 +111,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         --filename {output} \
         -i 'Final Multiq Report' \
         -b 'Git Info branch:{params.gbranch} tag:{params.gtag} hash:{params.ghash}' \
-        --outdir {params.odir2}  $(dirname {input} )/../ > {log} 2>&1;
+        $(dirname {input} )/../ > {log} 2>&1;
         ls -lt {output};
         """
 
