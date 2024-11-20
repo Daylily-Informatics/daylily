@@ -18,7 +18,7 @@ rule collect_rules_benchmark_data:
     input:
         f"{MDIR}logs/report_components_aggregated.done",
     output:
-        f"{MDIR}other_reports/rules_benchmarkdata_mqc.tsv",
+        f"{MDIR}other_reports/rules_benchmark_data_mqc.tsv",
     params:
         cluster_sample="rules_benchmark_collect",
         working_file=f"{MDIR}reports/benchmarks_summary.tsv",
@@ -73,7 +73,7 @@ rule aggregate_report_components:
 
 rule multiqc_final_wgs:  # TARGET: the big report
     input:
-        f"{MDIR}other_reports/rules_benchmarkdata_mqc.tsv",
+        f"{MDIR}other_reports/rules_benchmark_data_mqc.tsv",
     output:
         f"{MDIR}reports/DAY_final_multiqc.html",
     benchmark:

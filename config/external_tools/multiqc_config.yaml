@@ -109,7 +109,7 @@ custom_data:
     section_name: 'Controls Concordance Report'
     description: 'Concordance Stats For The GIAB HC Regions For This Sample'
     file_format: 'tsv'
-    plot_type: 'table'
+    plot_type: 'heatmap'
     pconfig:
       id: 'giab_concordance'
   norm_cov_evenness_combo:
@@ -117,7 +117,7 @@ custom_data:
     section_name: 'Coverage Eveness Metrics'
     description: 'Coverage Eveness Metrics'
     file_format: 'tsv'
-    plot_type: 'table'
+    plot_type: 'heatmap'
     pconfig:
       id: 'norm_cov_evenness_combo'
   rules_benchmark_data:
@@ -125,7 +125,7 @@ custom_data:
     section_name: 'Task Benchmark Performances'
     description: 'Workflow Task Benchmark Results'
     file_format: 'tsv'
-    plot_type: 'table'
+    plot_type: 'heatmap'
     pconfig:
       id: 'rules_benchmark_data'
   alignstats_combo:
