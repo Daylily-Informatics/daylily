@@ -113,15 +113,15 @@ custom_data:
     section_name: 'giab_concordance'
     description: 'Concordance Stats For The GIAB HC Regions For This Sample'
     file_format: 'tsv'
-    plot_type: 'table'
+    plot_type: 'heatmap'
     pconfig:
-      id: 'giabhcr_concordance'
+      id: 'giab_concordance'
   norm_cov_evenness_combo:
     id: 'norm_cov_evenness_combo'
     section_name: 'norm_cov_evenness_combo'
     description: 'Coverage Eveness Metrics'
     file_format: 'tsv'
-    plot_type: 'table'
+    plot_type: 'heatmap'
     pconfig:
       id: 'norm_cov_enveness_combo'
   rules_benchmark_data:
@@ -129,17 +129,36 @@ custom_data:
     section_name: 'rules_benchmark_data'
     description: 'Workflow Task Benchmark Results'
     file_format: 'tsv'
-    plot_type: 'table'
+    plot_type: 'heatmap'
     pconfig:
       id: 'rules_benchmark_data'
+  alignstats_gs:
+    id: 'alignstats_gs'
+    section_name: 'alignstats_gs'
+    description: 'Alignstats for Summary Table'
+    file_format: 'tsv'
+    plot_type: 'generalstats'
+    pconfig:
+      - sample:
+          hidden: False
+      - InsertSizeMean:
+          hidden: False
+      - InsertSizeMedian:
+          hidden: False
+      - InsertSizeMode:
+          hidden: False
+      - InsertSizeStandardDeviation:
+          hidden: False
+      - DuplicateReadsPct:
+          hidden: False
+      - ChimericReadPairPct:
+          hidden: False
   alignstats_combo:
     id: 'alignstats_combo'
     section_name: 'alignstats_combo'
-    description: 'Workflow Task Benchmark Results'
+    description: 'Alignstats Data'
     file_format: 'tsv'
     plot_type: 'table'
-    pconfig:
-      id: 'alignstats_combo'
 
 sp:
   norm_cov_evenness_combo:
@@ -148,6 +167,8 @@ sp:
     fn: "other_reports/giab_concordance_mqc.tsv"
   rules_benchmark_data:
     fn: "other_reports/rules_benchmark_data_mqc.tsv"
+  alignstats_gs:
+    fn: "other_reports/alignstats_gs_mqc.tsv"
   alignstats_combo:
     fn: "other_reports/alignstats_combo_mqc.tsv"
 
