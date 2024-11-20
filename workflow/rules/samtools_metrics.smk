@@ -13,7 +13,7 @@ rule gen_samstats:
         flagstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.flagstat.tsv",
         idxstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.idxstat.tsv",
         sent=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
-    threads: 10
+    threads: 8
     conda:
         config["samtools_markdups"]["env_yaml"]
     benchmark:
