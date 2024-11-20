@@ -110,7 +110,7 @@ picard_config:
 custom_data:
   giab_concordance:
     id: 'giab_concordance'
-    section_name: 'giab_concordance'
+    section_name: 'Controls Concordance Report'
     description: 'Concordance Stats For The GIAB HC Regions For This Sample'
     file_format: 'tsv'
     plot_type: 'heatmap'
