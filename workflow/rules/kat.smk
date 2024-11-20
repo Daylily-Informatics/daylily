@@ -47,7 +47,7 @@ rule kat:
    
         #if [[ {resources.attempt_n} > 1 ]]; then echo 'Kat has failed 1x, no further tries will be attempted, but since this is non-critical, we are letting the node appear to succeed.' >> {log}.multiattempt.log 2>&1; exit 0; fi;
 
-        kat comp -v -t {threads} -h -n -p png -g  {input.fq1} {input.fq2};
+        kat comp -v -t {threads} -h -n -p png  {input.fq1} {input.fq2};
 
         touch {output};
 
