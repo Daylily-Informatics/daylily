@@ -11,10 +11,8 @@ df = pd.read_csv(infile, sep="\t")
 # Split the 'rule' column into two columns
 df[["rule_prefix", "rule_suffix"]] = df["rule"].str.split(".", n=1, expand=True)
 
-# Reorder columns to switch the first and second columns
-columns = df.columns.tolist()
-columns[0], columns[1] = columns[1], columns[0]  # Swap the first and second columns
-df = df[columns]
+# Create a new first column by joining the original first two columns with a '-'
+df.insert(0, "combined_rule", df["rule_prefix"] + "-" + df["rule_suffix"])
 
 # Save the modified table to a new file
 df.to_csv(outfile, sep="\t", index=False)
