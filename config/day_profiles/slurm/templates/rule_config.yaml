@@ -18,14 +18,16 @@ dynamic_scaling_factor: 1.0  # Takes the presets and scales them up/down based o
 active_snv_callers:
     - deep
 #    - sentd
-#    - sentd
+#    - clair3
+#    - lfq2
+#    - oct
 
 # #### Select one to all of the available SV callers
 active_s_v_callers:
     - tiddit
     - manta
     - dysgu
-#    - svaba #
+#    - svaba 
 
 # #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
 active_aligners:

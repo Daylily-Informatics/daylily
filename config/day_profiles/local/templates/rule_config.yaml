@@ -26,6 +26,7 @@ active_snv_callers:
 #    - clair3
 #    - oct
 #    - sentd
+#    - lfq2
 
 # #### Select one to all of the available SV callers
 active_s_v_callers:
