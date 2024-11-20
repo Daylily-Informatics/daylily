@@ -177,7 +177,7 @@ rule produce_snv_concordances:  # TARGET:  produce snv concordances
         mdir=MDIR,
         genome_build=config['genome_build'],
     output:
-        MDIR+"other_reports/giabhcr_concordance_mqc.tsv"
+        MDIR+"other_reports/giabhcr_concordance.mqc.tsv"
     shell:
         """
         echo 'START' 1>&2;

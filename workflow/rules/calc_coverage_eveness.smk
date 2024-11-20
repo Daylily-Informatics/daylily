@@ -52,7 +52,7 @@ rule produce_cov_uniformity:  # TARGET: Produce cov eveness calcs, swapping out 
         expand(MDIR       + "{sample}/align/{alnr}/alignqc/norm_cov_eveness/{sample}.{alnr}.md", sample=SSAMPS, alnr=ALIGNERS)
     container: None
     output:
-        mqc=MDIR+"other_reports/norm_cov_evenness_mqc.tsv",
+        mqc=MDIR+"other_reports/norm_cov_evenness.mqc.tsv",
     shell:
         """
         mkdir -p $(dirname {output});

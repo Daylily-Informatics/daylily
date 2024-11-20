@@ -38,9 +38,9 @@ rule alignstats_compile:
     input:
         f"{MDIR}other_reports/alignstats_summary_gather.done",
     output:
-        f"{MDIR}other_reports/alignstats_bsummary.tsv",
-        f"{MDIR}other_reports/alignstats_csummary.tsv",
-        f"{MDIR}other_reports/alignstats_mqc.tsv",
+        temp(f"{MDIR}other_reports/alignstats_bsummary.tsv"),
+        temp(f"{MDIR}other_reports/alignstats_csummary.tsv"),
+        f"{MDIR}other_reports/alignstats.mqc.tsv",
     benchmark:
         MDIR + "benchmarks/all.alignstats_smmary_compile.bench.tsv"
     threads: 1

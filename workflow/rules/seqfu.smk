@@ -55,8 +55,8 @@ rule compile_seqfu:
     container:
         None
     output:
-        mqc1=MDIR + "other_reports/seqfu1_mqc.tsv",
-        mqc2=MDIR + "other_reports/seqfu2_mqc.tsv",
+        mqc1=MDIR + "other_reports/seqfu1.mqc.tsv",
+        mqc2=MDIR + "other_reports/seqfu2.mqc.tsv",
         d=MDIR + "logs/seqfu.done",
     shell:
         """mkdir -p {MDIR}other_reports;

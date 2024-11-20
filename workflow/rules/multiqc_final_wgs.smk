@@ -29,6 +29,7 @@ rule collect_rules_benchmark_data:
     shell:
         "bin/util/benchmarks/collect_day_benchmark_data.sh {params.ref_code} > {log};"
         "python bin/util/benchmarks/split_bench_rule_col.py {params.working_file} {output} > {log};"
+        "sed -i -E 's/\t$/\tNA/' {output};"
 
 
 localrules:
@@ -37,8 +38,8 @@ localrules:
 
 rule aggregate_report_components:
     input:
-        #f"{MDIR}other_reports/giabhcr_concordance_mqc.tsv",
-        f"{MDIR}other_reports/norm_cov_evenness_mqc.tsv",
+        #f"{MDIR}other_reports/giabhcr_concordance.mqc.tsv",
+        f"{MDIR}other_reports/norm_cov_evenness.mqc.tsv",
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/cov_calcs_complete.done",
             sample=SSAMPS,
@@ -53,7 +54,7 @@ rule aggregate_report_components:
             snv_caller=snv_CALLERS,
         ),
         "logs/peddy_gathered.done",
-        f"{MDIR}other_reports/alignstats_bsummary.tsv",
+        f"{MDIR}other_reports/alignstats.mqc.tsv",
         #f"{MDIR}logs/all_svVCF_dupheld.done",
         f"{MDIRreportsd}SEQQC_multiqc.html",
         expand(
@@ -71,7 +72,7 @@ rule aggregate_report_components:
 
 rule multiqc_final_wgs:  # TARGET: the big report
     input:
-        f"{MDIR}other_reports/rules_benchmarkdata_mqc.tsv",
+        f"{MDIR}other_reports/rules_benchmarkdata.mqc.tsv",
     output:
         f"{MDIR}reports/DAY_final_multiqc.html",
     benchmark:
