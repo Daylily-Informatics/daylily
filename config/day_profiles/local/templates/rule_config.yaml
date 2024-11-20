@@ -238,6 +238,7 @@ fastp:
 
 fastqc:
     threads: 8
+    fastqc_threads: 8
     env_yaml: "../envs/fastqc_v0.1.yaml"
     extract: "  "
     ld_preload: " "  # env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "

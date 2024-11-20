@@ -58,7 +58,7 @@ malloc_alt:
     ld_preload: "  "  # env LD_PRELOAD=./resources/libs/libllalloc.so  "
 
 alignstats:
-    threads: 64
+    threads: 32
     partition: "i192"
     num_reads_in_mem: " "  # 100000
     env_yaml: "../envs/alignstats_v0.2.yaml"
@@ -217,7 +217,7 @@ dysgu_sort_index:
     partition: "i192"
 
 fastp:
-    threads: 32
+    threads: 8
     env_yaml: "../envs/fastp_v0.1.yaml"
     filter_avg_q_score: 9
     other_args: "  "
@@ -225,14 +225,15 @@ fastp:
     partition: "i192"
 
 fastqc:
-    threads: 32
+    threads: 8
+    fastqc_threads: 32
     env_yaml: "../envs/fastqc_v0.1.yaml"
     extract: "  "
     ld_preload: " "
     partition: "i192"
 
 fastv:
-    threads: 32
+    threads: 8
     env_yaml: "../envs/fastv_v0.1.yaml"
     ld_preload: "  "
     partition: "i192"
@@ -411,7 +412,7 @@ sambamba_markdups:
     partition: "i192"
 
 samtools_markdups:
-    threads: 192
+    threads: 32
     ulimit: " ulimit -Sn 810000 "
     env_yaml: "../envs/samtools_v0.1.yaml"
     partition: "i192"
@@ -449,7 +450,7 @@ sentieon:
     bwa_model: "/fsx/data/tool_specific_resources/sentieon_models_2_2/sentieon_bwa_2_2.model"
 
 sentieon_markdups:
-    threads: 192
+    threads: 32
     ulimit: " ulimit -Sn 810000 "
     env_yaml: "../envs/sentieon_v0.1.yaml"
     glances: " "
@@ -520,7 +521,7 @@ svim_asm:
     partition: "i192"
 
 hisat2:
-    threads: 128
+    threads: 96
     env_yaml: "../envs/hisat2_v0.1.yaml"
     ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so "
     partition: "i192"
@@ -536,5 +537,5 @@ seqfu:
     partition: "i192"
 
 vep:
-    threads: 32
+    threads: 16
     partition: "i192"
