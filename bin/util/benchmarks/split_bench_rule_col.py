@@ -12,7 +12,7 @@ df = pd.read_csv(infile, sep="\t")
 df[["rule_prefix", "rule_suffix"]] = df["rule"].str.split(".", n=1, expand=True)
 
 # Create a new first column by joining the original first two columns with a '-'
-df.insert(0, "combined_rule", df["rule_prefix"] + "-" + df["rule_suffix"])
+df.insert(0, "combined_rule", df["rule"] + "-" + df["sample"])
 
 # Save the modified table to a new file
 df.to_csv(outfile, sep="\t", index=False)
