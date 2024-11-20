@@ -129,13 +129,13 @@ rule sentD_sort_index_chunk_vcf:
         MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/log/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz.log",
     resources:
-        vcpu=4,
-        threads=4,
+        vcpu=1,
+        threads=1,
         partition="i192"
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 4 #config["config"]["sort_index_sentDna_chunk_vcf"]['threads']
+    threads: 1 #config["config"]["sort_index_sentDna_chunk_vcf"]['threads']
     shell:
         """
         (rm {output} 1>  /dev/null  2> /dev/null )  || echo rmfailed > {log};
@@ -170,9 +170,9 @@ rule sentD_concat_fofn:
         fin_fofn=MDIR
         + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.concat.vcf.gz.fofn",
         tmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/sentd/{sample}.{alnr}.sentd.snv.concat.vcf.gz.fofn.tmp",
-    threads: 2
+    threads: 1
     resources:
-        threads=2
+        threads=1
     params:
         fn_stub="{sample}.{alnr}.sentd."
     benchmark:
@@ -277,7 +277,7 @@ rule produce_sentD_vcf:  # TARGET: just gen sentD calls
     output:
         "gatheredall.sentd",
     priority: 48
-    threads: 2
+    threads: 1
     log:
         "gatheredall.sentd.log",
     shell:
@@ -299,7 +299,7 @@ rule prep_sentD_chunkdirs:
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentd/vcfs/{dchrm}/{{sample}}.ready",
             dchrm=SENTD_CHRMS,
         ),
-    threads: 2
+    threads: 1
     log:
         MDIR + "{sample}/align/{alnr}/snv/sentd/logs/{sample}.{alnr}.chunkdirs.log",
     shell:
