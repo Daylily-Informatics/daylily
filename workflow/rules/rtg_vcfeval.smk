@@ -177,7 +177,7 @@ rule produce_snv_concordances:  # TARGET:  produce snv concordances
         mdir=MDIR,
         genome_build=config['genome_build'],
     log:
-	MDIR+"logs/giab_concordance.mqc.log"
+	f"{MDIR}logs/giab_concordance.mqc.log"
     output:
         touch(MDIR+"other_reports/giab_concordance_mqc.tsv")
     shell:
