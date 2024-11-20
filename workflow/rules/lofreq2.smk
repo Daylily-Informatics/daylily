@@ -47,9 +47,15 @@ rule lfq2_indelqual:
         MDIR + "{sample}/align/{alnr}/snv/lfq2/log/{sample}.{alnr}.indelqual.log",
     conda:
         "../envs/lofreq2_v0.1.yaml"
+    threads: config['lofreq2']['threads']
+    resources:
+        vcpu=config['lofreq2']['threads'],
+        threads=config['lofreq2']['threads'],
+        partition=config['lofreq2']['partition'],
+        mem_mb=config['lofreq2']['mem_mb'],
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
-	cluster_sample=ret_sample, 
+    	cluster_sample=ret_sample, 
     shell:
         """
         touch {log};
