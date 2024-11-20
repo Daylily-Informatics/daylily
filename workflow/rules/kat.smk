@@ -38,8 +38,8 @@ rule kat:
         print_every="50",
     log:
         MDIR + "{sample}/seqqc/kat_logs/{sample}.kat.log",
-    container:
-        "docker://quay.io/biocontainers/kat:2.4.2--py39h7c5ebd6_3"
+    conda:
+        "../envs/kat_v0.1.yaml"
     resources:
         attempt_n=get_cat_attempt,  # Hacking getting the attempt number from the res block for use in shell.
     shell:
