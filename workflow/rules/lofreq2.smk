@@ -49,6 +49,7 @@ rule lfq2_indelqual:
         "../envs/lofreq2_v0.1.yaml"
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
+	cluster_sample=ret_sample, 
     shell:
         """
         touch {log};
