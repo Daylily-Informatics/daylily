@@ -40,7 +40,7 @@ rule alignstats_compile:
     output:
         temp(f"{MDIR}other_reports/alignstats_bsummary.tsv"),
         temp(f"{MDIR}other_reports/alignstats_csummary.tsv"),
-        f"{MDIR}other_reports/alignstats.mqc.tsv",
+        f"{MDIR}other_reports/alignstats_combo_mqc.tsv",
     benchmark:
         MDIR + "benchmarks/all.alignstats_smmary_compile.bench.tsv"
     threads: 1
@@ -61,6 +61,7 @@ rule alignstats_compile:
         "cp {output[0]} {output[2]};"
         "perl -pi -e 's/_DBC0_0//g;' {output};"
         ") || touch logs/ALIGNSTATSCOMPIEFAILEDw_$? ; "
+        "perl -pi -e 's/ /\t/g;' {output[2]};"
 
 
 localrules:

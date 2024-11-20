@@ -54,7 +54,7 @@ rule aggregate_report_components:
             snv_caller=snv_CALLERS,
         ),
         "logs/peddy_gathered.done",
-        f"{MDIR}other_reports/alignstats.mqc.tsv",
+        f"{MDIR}other_reports/alignstats_combo_mqc.tsv",
         #f"{MDIR}logs/all_svVCF_dupheld.done",
         f"{MDIRreportsd}SEQQC_multiqc.html",
         expand(
