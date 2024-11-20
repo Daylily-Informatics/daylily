@@ -172,8 +172,6 @@ peddy/het_check:
   fn: "*.peddy.het_check.csv"
 peddy/ped_check:
   fn: "*.peddy.ped_check.*csv"
-peddy/sex_check:
-  fn: "*.peddy.sex_check.csv"
 peddy/summary_table:
   fn: "*.peddy.peddy.ped"
 

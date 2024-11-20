@@ -299,7 +299,6 @@ tiddit_sort_index:
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so "
     partition: "i64"
 
-
 lofreq2:
     threads: 8
     lofreq_threads: 8
