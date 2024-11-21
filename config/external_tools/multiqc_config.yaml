@@ -2,54 +2,6 @@ intro_text: ""
 
 custom_logo: "resources/mqcimg/daylilylogo.png"
 
-custom_css: |
-  .custom_logo {
-    width: 50px;        /* Set the width of the logo */
-    height: 50px;        /* Maintain aspect ratio */
-    margin: 10px auto;   /* Center the logo and add spacing */
-  }
-
-  #page_title img {
-    max-width: 75px;
-  }
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
-
-  body {
-    font-family: "IBM Plex Mono", monospace;
-  }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-
-  table tr:nth-child(odd) {
-    background-color: #f9f9f9; /* Light gray for alternate rows */
-  }
-
-  table th {
-    background-color: #4CAF50; /* Header color */
-    color: white;
-  }
-
-  table td, table th {
-    padding: 8px;
-    text-align: left;
-    border: 1px solid #ddd;
-    font-size: 12px; /* Smaller font for dense data */
-  }
-  .highcharts-title {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 18px; /* Larger chart titles */
-  }
-
-  .highcharts-axis-title {
-    font-size: 14px; /* Axis title font size */
-  }
-
-  .highcharts-axis-labels {
-    font-size: 12px; /* Smaller axis labels for readability */
-  }
-
 
 max_table_rows: 2200
 decimalPoint_format: "."
