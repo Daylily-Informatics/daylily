@@ -1,3 +1,7 @@
+args = commandArgs(trailingOnly=TRUE)
+
+in_tsv <- args[1]
+
 # Install packages if not already installed
 packages <- c("ggplot2", "dplyr", "tidyr", "pheatmap")
 installed_packages <- rownames(installed.packages())
@@ -14,7 +18,7 @@ library(tidyr)
 library(pheatmap)
 
 # Read the data
-data <- read.csv("concordance_data.tsv", sep="\t", stringsAsFactors = FALSE)
+data <- read.csv(in_tsv, sep="\t", stringsAsFactors = FALSE)
 
 # Convert columns to numeric
 numeric_cols <- c("TgtRegionSize", "TN", "FN", "TP", "FP", "Fscore",
