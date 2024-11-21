@@ -5,6 +5,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 
 
+export DAY_CONTACT_EMAIL=john@daylilyinformatics.com
+
 . "/etc/parallelcluster/cfnconfig"
 region=$cfn_region
 
