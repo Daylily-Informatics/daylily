@@ -124,8 +124,8 @@ rule multiqc_final_wgs:  # TARGET: the big report
         source bin/proc_aligner_costs.sh {input[1]} $VCPU_COST_PER_MIN;
         perl -pi -e "s/REGSUB_TOTALCOST/$ALNR_SUMMARY_COST/g;" $(dirname {output})/multiqc_header.yaml;
         
-        source bin/proc_mrkdup_costs.sh {input[1]} $VCPU_COST_PER_MIN;
-        perl -pi -e "s/REGSUB_MRKDUPCOST/avg min($MRKDUP_AVG_MINUTES) cost($MARKDUP_AVG_COST)/g;" $(dirname {output})/multiqc_header.yaml;
+        source bin/proc_mrkdup_costs.sh {input[1]} $VCPU_COST_PER_MIN;  
+        perl -pi -e "s/REGSUB_MRKDUPCOST/avg min($MRKDUP_AVG_MINUTES) cost($MRKDUP_AVG_COST)/g;" $(dirname {output})/multiqc_header.yaml;
 
         multiqc -f  \
         --config   $(dirname {output})/multiqc_header.yaml \
