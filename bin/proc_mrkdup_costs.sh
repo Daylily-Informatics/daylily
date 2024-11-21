@@ -31,13 +31,14 @@ awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
     }
 ' "$input_file"
 
-# Export environment variables for average values
-export MRKDUP_AVG_MINUTES=$(awk -F '\t' 'NR > 1 && $NF == "mrkdup" {total_s += $4; count++} END {if (count > 0) print (total_s / count) / 60; else print 0}' "$input_file")
-export MRKDUP_AVG_VCPU_MIN=$(awk "BEGIN {print $MRKDUP_AVG_MINUTES * 192}")
-export MRKDUP_AVG_COST=$(awk "BEGIN {print $MRKDUP_AVG_VCPU_MIN * $vcpu_cost_per_min}")
+# Export environment variables for average values with 2 significant digits
+export MRKDUP_AVG_MINUTES=$(awk -F '\t' 'NR > 1 && $NF == "mrkdup" {total_s += $4; count++} END {if (count > 0) printf "%.2f", (total_s / count) / 60; else print 0}' "$input_file")
+export MRKDUP_AVG_VCPU_MIN=$(awk "BEGIN {printf \"%.2f\", $MRKDUP_AVG_MINUTES * 192}")
+export MRKDUP_AVG_COST=$(awk "BEGIN {printf \"%.2f\", $MRKDUP_AVG_VCPU_MIN * $vcpu_cost_per_min}")
 
 # Output environment variables
 echo
 echo "MRKDUP_AVG_MINUTES: $MRKDUP_AVG_MINUTES"
 echo "MRKDUP_AVG_VCPU_MIN: $MRKDUP_AVG_VCPU_MIN"
 echo "MRKDUP_AVG_COST: \$${MRKDUP_AVG_COST}"
+
