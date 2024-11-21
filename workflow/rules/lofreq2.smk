@@ -12,14 +12,21 @@ import sys
 import os
 
 
-def get_lofreq_chrm(wildcards):
-    pchr = ""
+def get_lochrm_mod(wildcards):
+    pchr=""
+    if config['genome_build'] not in ['b37']:
+        pchr="chr"
     ret_str = ""
-    sl = wildcards.dvchrm.replace('chr','').split("-")
-    sl2 = wildcards.dvchrm.replace('chr','').split("~")
-    
+    sl = wildcards.ochrm.split("-")
+    sl2 = wildcards.ochrm.split("~")
+
+
+    #from IPython import embed
+    #embed()
+    #raise
+
     if len(sl2) == 2:
-        ret_str = pchr + wildcards.dvchrm
+        ret_str = pchr + wildcards.ochrm
     elif len(sl) == 1:
         ret_str = pchr + sl[0]
     elif len(sl) == 2:
@@ -30,10 +37,11 @@ def get_lofreq_chrm(wildcards):
             start = start + 1
     else:
         raise Exception(
-            "LoFreq chunks can only be one contiguous range per chunk: e.g., 1-4 with the non-numerical chromosomes assigned 23=X, 24=Y, 25=MT"
+            "oct chunks can only be one contiguous range per chunk : ie: 1-4 with the non numerical chrms assigned 23=X, 24=Y, 25=MT"
         )
+    ret_str = ret_mod_chrm(ret_str)
 
-    return ret_mod_chrm(ret_str)
+    return ret_str
 
 
 rule lfq2_indelqual:
@@ -93,8 +101,7 @@ rule lofreq2:
             else config["lofreq2"]["bench_repeat"],
         )
     params:
-        dchrm=get_lofreq_chrm,
-        ochrm_mod=get_ochrm_mod,
+        dchrm=get_lochrm_mod,
         cluster_sample=ret_sample,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
@@ -118,8 +125,8 @@ rule lofreq2:
 
         echo 'DCHRM: $dchr' >> {log} 2>&1;
 
-        export lochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
-        echo 'OCHRM: $lochrm_mod' >> {log} 2>&1;
+        export lochrm_mod=$(echo '{params.dchrm}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
+        echo 'LOCHRM: $lochrm_mod' >> {log} 2>&1;
 
         lofreq call --max-depth 10000 \
         --force-overwrite \
