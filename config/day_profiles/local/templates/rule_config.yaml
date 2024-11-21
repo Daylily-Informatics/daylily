@@ -302,8 +302,8 @@ tiddit_sort_index:
     partition: "i64"
 
 lofreq2:
-    threads: 8
-    lofreq_threads: 8
+    threads: 2
+    lofreq_threads: 2
     partition: "i192"
     partition_other: "i192"
     mem_mb: 85000 ## Potentially this can be dynmoic by input BAM size
