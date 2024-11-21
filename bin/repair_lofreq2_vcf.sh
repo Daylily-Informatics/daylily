@@ -41,19 +41,26 @@ echo -e  "$new_title" >> $temp_header
 
 cp $temp_header temp_corrected_header.vcf
 
-# Step 3: Add missing FORMAT and sample columns to the body
-echo "Adding FORMAT and sample columns if missing..."
-awk 'BEGIN {OFS="\t"}
-    {
-        if (NF < 9) {  # If FORMAT and Sample columns are missing
-            $9 = "GT:GQ";
-            $10 = "0/1:99";
-        } else if ($9 !~ /GQ/) {  # Add GQ to FORMAT if missing
-            $9 = $9 ":GQ";
-            $10 = $10 ":99";
-        }
-        print
-    }' $temp_body > temp_corrected_body.vcf
+# Step 3: Handle body (if present)
+if [[ -s $temp_body ]]; then
+    echo "Adding FORMAT and sample columns to body..."
+    awk 'BEGIN {OFS="\t"}
+        {
+            if (NF < 9) {  # If FORMAT and Sample columns are missing
+                $9 = "GT:GQ";
+                $10 = "0/1:99";
+            } else if ($9 !~ /GQ/) {  # Add GQ to FORMAT if missing
+                $9 = $9 ":GQ";
+                $10 = $10 ":99";
+            }
+            print
+        }' $temp_body > temp_corrected_body.vcf
+    # Combine header and corrected body
+    cat temp_corrected_header.vcf temp_corrected_body.vcf > $temp_vcf
+else
+    echo "No variant calls found. Creating VCF with updated headers only..."
+    cp temp_corrected_header.vcf $temp_vcf
+fi
 
 # Step 4: Combine header and body into final VCF
 cat temp_corrected_header.vcf temp_corrected_body.vcf > $temp_vcf
