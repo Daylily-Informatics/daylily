@@ -134,7 +134,6 @@ rule lofreq2:
         -r $lochrm_mod \
         -o {output.vcf} {input.bam} >> {log} 2>&1;
 
-        sleep 100000;
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
 
