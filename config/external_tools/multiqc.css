@@ -10,29 +10,12 @@
 
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
 
+
   body {
     font-family: "IBM Plex Mono", monospace;
-  }
-  table {
-    border-collapse: collapse;
-    width: 100%;
+    font-size: 18px; /* Larger chart titles */
   }
 
-  table tr:nth-child(odd) {
-    background-color: #f9f9f9; /* Light gray for alternate rows */
-  }
-
-  table th {
-    background-color: #4CAF50; /* Header color */
-    color: white;
-  }
-
-  table td, table th {
-    padding: 8px;
-    text-align: left;
-    border: 1px solid #ddd;
-    font-size: 12px; /* Smaller font for dense data */
-  }
   .highcharts-title {
     font-family: "IBM Plex Mono", monospace;
     font-size: 18px; /* Larger chart titles */
