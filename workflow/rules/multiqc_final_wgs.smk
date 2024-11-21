@@ -112,7 +112,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;" $(dirname {output})/multiqc_header.yaml;
         perl -pi -e "s/REGSUB_BUDGET/\\\$dbill$USED_BUDGET of \\\$dbill$TOTAL_BUDGET spent ( $PERCENT_USED\%)/g;" $(dirname {output})/multiqc_header.yaml;
 
-        size=$(du -hs results);
+        size=$(du -hs results | cut -f1);
         perl -pi -e "s/REGSUB_TOTALSIZE/$size/g;" $(dirname {output})/multiqc_header.yaml;
 
         sed -i "s/REGSUB_EMAIL/${{DAY_CONTACT_EMAIL//@/\\\\@}}/g" $(dirname {output})/multiqc_header.yaml
