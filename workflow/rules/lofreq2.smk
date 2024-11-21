@@ -133,6 +133,7 @@ rule lofreq2_sort_index_chunk_vcf:
         vcf=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{dvchrm}/{sample}.{alnr}.lfq2.{dvchrm}.snv.vcf",
     priority: 46
     output:
+        tmpvcf=temp(MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{dvchrm}/{sample}.{alnr}.lfq2.{dvchrm}.snv.tmp.vcf"),
         vcfsort=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{dvchrm}/{sample}.{alnr}.lfq2.{dvchrm}.snv.sort.vcf",
         vcfgz=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{dvchrm}/{sample}.{alnr}.lfq2.{dvchrm}.snv.sort.vcf.gz",
         vcftbi=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{dvchrm}/{sample}.{alnr}.lfq2.{dvchrm}.snv.sort.vcf.gz.tbi",
@@ -149,8 +150,10 @@ rule lofreq2_sort_index_chunk_vcf:
     threads: 4
     shell:
         """
+
+        bash bin/repair_lofreq2_vcf.sh {input.vcf}  {output.tmpvcf}  $(dirname {input.vcf})/_fixvcf {params.cluster_sample} >> {log} 2>&1;
         (rm {output} 1> /dev/null 2> /dev/null) || echo rmfailed > {log};
-        (bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log}) || exit 1233;
+        (bedtools sort -header -i {output.tmpvcf} > {output.vcfsort} 2>> {log}) || exit 1233;
         (
         bgzip {output.vcfsort};        
         touch {output.vcfsort};
