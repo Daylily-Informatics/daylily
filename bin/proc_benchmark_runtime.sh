@@ -2,7 +2,7 @@ echo "SOURCE ME"
 echo ""
 
 # Path to the input file
-input_file="results/day/hg38/other_reports/rules_benchmark_data_mqc.tsv"
+input_file=$1
 
 # Extract the 's' column, sum its values, and divide by 60 to get the total runtime in minutes
 total_runtime=$(awk -F '\t' 'NR>1 {sum += $4} END {print sum / 60}' "$input_file")
