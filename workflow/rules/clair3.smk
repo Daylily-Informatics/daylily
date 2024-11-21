@@ -82,19 +82,9 @@ rule clair3:
         start_time=$(date +%s);
         echo "Start-Time-sec:$itype\t0" >> {log} 2>&1;
 
-        cchr={params.cpre}{params.cchrm};
+        cchr=$(echo {params.cpre}{params.cchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/MT\:/');
 
-        if [[ "{params.cchrm}" == "23" ]]; then
-            cchr='{params.cpre}X';
-        elif [[ "{params.cchrm}" == "24" ]]; then
-            cchr='{params.cpre}Y';
-        elif [[ "{params.cchrm}" == "25" ]]; then
-            cchr='{params.cpre}MT';
-        else
-            cchr={params.cpre}{params.cchrm};
-        fi;
-
-        echo 'CCHRM: $cchr';
+        echo "CCHRM: $cchr" >> {log} 2>&1;
         {params.numa}   /opt/bin/run_clair3.sh \
         --bam_fn={input.bam} \
         --ref_fn={params.huref} \

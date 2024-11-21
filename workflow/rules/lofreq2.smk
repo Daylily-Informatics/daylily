@@ -107,13 +107,21 @@ rule lofreq2:
 
         echo "DCHRM: $dchr" >> {log} 2>&1;
         
-        #lofreq call-parallel --pp-threads {threads}  -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
-
-        lofreq call --max-depth 10000 \
-        --force-overwrite \
-        -f {params.huref} \
-        -r $dchr \
-        -o {output.vcf} {input.bam} >> {log} 2>&1;
+        if [[ "{params.dchrm}" == "1-24" ]]; then
+            echo "lofreq parallel" >> {log} 2>&1;
+            lofreq call-parallel --pp-threads {threads}  --max-depth 10000 \
+            --force-overwrite \
+            -f {params.huref} \
+            -r $dchr \
+            -o {output.vcf} {input.bam} >> {log} 2>&1;
+        else
+            echo "lofreq single thread" >> {log} 2>&1;
+            lofreq call --max-depth 10000 \
+            --force-overwrite \
+            -f {params.huref} \
+            -r $dchr \
+            -o {output.vcf} {input.bam} >> {log} 2>&1;
+        fi;
 
         sleep 100000;
         end_time=$(date +%s);

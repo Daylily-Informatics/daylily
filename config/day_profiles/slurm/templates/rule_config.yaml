@@ -323,7 +323,7 @@ octopus:
     regions_to_call: '  '
     testing_model: '  ' 
     threads: 32 # Dynamically reset- this represents the cap
-    octo_chrms: "1~0-30028082,1~30028083-121535434,1~124535434-205922707,1~205922707-249250621,2,3,4,5,6~0-58830166,6~58830166-171105067,7,8,9,10~0-42254935,10~42254935-70550000,10~70550000-103433061,10~103433061-128616069,10~128766069-135524747,11,12,13,14,15,16,17,18,19~0-24681782,19~27681782-59118983,20,21,22,23,24"  # 25 removed for the moment 
+    octo_chrms: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     anno: " AD ADP AF AFB ARF BQ CRF DP FRF GC GQ MC MF MQ MQ0 QD GQD QUAL SB STRL STRP SMQ SB DC NC PP MP "    
     ld_pre: "   "
     brt: " --bad-region-tolerance NORMAL "

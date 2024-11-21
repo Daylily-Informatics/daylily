@@ -79,17 +79,7 @@ rule deepvariant:
         echo "Start-Time-sec:$itype\t0" >> {log} 2>&1;
 
         dchr={params.cpre}{params.dchrm};
-
-        if [[ "{params.dchrm}" == "23" ]]; then
-            dchr='{params.cpre}X';
-        elif [[ "{params.dchrm}" == "24" ]]; then
-            dchr='{params.cpre}Y';
-        elif [[ "{params.dchrm}" == "25" ]]; then
-            dchr='{params.cpre}MT';
-        else
-            dchr={params.cpre}{params.dchrm};
-        fi;
-
+        dchr=$(echo {params.cpre}{params.dchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/MT\:/');
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/deepvariant_tmp_$timestamp;
