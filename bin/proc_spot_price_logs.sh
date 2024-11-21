@@ -20,7 +20,7 @@ spot_prices=$(echo "$data" | grep -oP 'Spot price: \K[0-9.]+')
 
 # Calculate average spot price
 average_spot_price=$(echo "$spot_prices" | awk '{sum += $1; count++} END {print sum / count}')
-export AVERAGE_SPOT_PRICE="$"$average_spot_price
+export AVERAGE_SPOT_PRICE=$average_spot_price
 
 # Calculate median spot price
 sorted_prices=$(echo "$spot_prices" | sort -n)
@@ -29,7 +29,7 @@ median_spot_price=$(echo "$sorted_prices" | awk -v n=$price_count '
   BEGIN { if (n % 2 == 0) { mid1 = n / 2; mid2 = mid1 + 1 } else { mid1 = (n + 1) / 2; mid2 = mid1 } }
   { if (NR == mid1) val1 = $1; if (NR == mid2) val2 = $1 }
   END { print (val1 + val2) / 2 }')
-export MEDIAN_SPOT_PRICE="$"$median_spot_price
+export MEDIAN_SPOT_PRICE=$median_spot_price
 
 # Calculate vCPU cost per minute
 vcpu_cost_per_min=$(echo "$average_spot_price" | awk '{print ($1 / 192) / 60}')
