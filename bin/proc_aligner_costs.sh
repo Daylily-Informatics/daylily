@@ -28,7 +28,7 @@ summary=$(awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
             avg_minutes = aligner[a] / count[a] / 60;  # Average runtime in minutes
             vcpu_minutes = avg_minutes * 192;  # Calculate vCPU minutes
             cost = vcpu_minutes * cost_per_vcpu_min;  # Calculate the cost
-            printf "%s\t%.2f\t%.2f\t%.4f\n", a, avg_minutes, vcpu_minutes, cost;
+            printf "%s\t%.2f\t%.2f\t%.2f\n", a, avg_minutes, vcpu_minutes, cost;
 
             # Append to summary string
             summary_str = summary_str (summary_str ? " - " : "") a "($" cost ")";
