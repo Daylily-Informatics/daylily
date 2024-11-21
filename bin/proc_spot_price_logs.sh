@@ -37,6 +37,7 @@ export VCPU_COST_PER_MIN=$vcpu_cost_per_min
 
 # Output results
 echo "Unique Instance Types:"
+echo "$INSTANCE_TYPES_LINE"
 echo "$INSTANCE_TYPES"
 echo
 echo "Average Spot Price (USD/hour): $AVERAGE_SPOT_PRICE"
