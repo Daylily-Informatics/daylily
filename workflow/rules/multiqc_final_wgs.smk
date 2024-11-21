@@ -110,12 +110,12 @@ rule multiqc_final_wgs:  # TARGET: the big report
         dbill='$';
         cp config/external_tools/multiqc_header.yaml $(dirname {output})/multiqc_header.yaml;
         perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;" $(dirname {output})/multiqc_header.yaml;
-        perl -pi -e "s/REGSUB_BUDGET/tot:\\$$TOTAL_BUDGET used:$USED_BUDGET $PERCENT_USED\%/g;" $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_BUDGET/tot:\\\$dbill$TOTAL_BUDGET used:\\\$dbill$USED_BUDGET $PERCENT_USED\%/g;" $(dirname {output})/multiqc_header.yaml;
 
         size=$(du -hs results);
         perl -pi -e "s/REGSUB_TOTALSIZE/$size/g;" $(dirname {output})/multiqc_header.yaml;
 
-        perl -pi -e "s/REGSUB_EMAIL/$DAY_CONTACT_EMAIL/g;" $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_EMAIL/$(echo "$DAY_CONTACT_EMAIL" | sed 's/@/\\@/g')/g;" $(dirname {output})/multiqc_header.yaml
 
         source bin/proc_spot_price_logs.sh >> {log} 2>&1;
         perl -pi -e "s/REGSUB_SPOTCOST/ per hr(median: \\\$dbill$MEDIAN_SPOT_PRICE  mean: \\\$dbill$AVERAGE_SPOT_PRICE) avg cost per vcpu,per min: $VCPU_COST_PER_MIN ) /g;" $(dirname {output})/multiqc_header.yaml;
@@ -125,7 +125,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         perl -pi -e "s/REGSUB_TOTALCOST/$ALNR_SUMMARY_COST/g;" $(dirname {output})/multiqc_header.yaml;
         
         source bin/proc_mrkdup_costs.sh {input[1]} $VCPU_COST_PER_MIN;  
-        perl -pi -e "s/REGSUB_MRKDUPCOST/avg min($MRKDUP_AVG_MINUTES) cost($MRKDUP_AVG_COST)/g;" $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_MRKDUPCOST/avg min($MRKDUP_AVG_MINUTES) cost(\\\$dbill$MRKDUP_AVG_COST)/g;" $(dirname {output})/multiqc_header.yaml;
 
         multiqc -f  \
         --config   $(dirname {output})/multiqc_header.yaml \
