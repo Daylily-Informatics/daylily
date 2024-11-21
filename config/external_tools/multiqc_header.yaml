@@ -3,7 +3,8 @@ report_header_info:
   - Budget @ Runtime: "REGSUB_BUDGET"
   - Spot Instances: "REGSUB_SPOTINSTANCES"
   - Spot Costs: "REGSUB_SPOTCOST"
-  - Aligner Costs: "REGSUB_TOTALCOST"
+  - FQ->BAM.sort Costs: "REGSUB_TOTALCOST"
+  - BAM.sort->BAM.mrkdup Costs: "REGSUB_MRKDUPCOST"
   - Results Dir(GB): "REGSUB_TOTALSIZE"
   - Contact: "REGSUB_EMAIL"
 
