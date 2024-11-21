@@ -542,7 +542,7 @@ def get_subsample_head_tail(sample_id):
     raisable = False
     try:
         ss_pct = samples.loc[(sample_id), "subsample_pct"][0]
-        if ss_pct in ["", "na", 0, "0", None, "None"]:
+        if ss_pct in ["", "na", 0,"0.0",100,100.0,"100","100.0", "0", None, "None"]:
             pass  # no subsampling requested
         else:
             ss_pct_float = 1000.1
