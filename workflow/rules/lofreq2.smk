@@ -94,6 +94,7 @@ rule lofreq2:
         )
     params:
         dchrm=get_lofreq_chrm,
+        ochrm_mod=get_ochrm_mod,
         cluster_sample=ret_sample,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
@@ -115,12 +116,15 @@ rule lofreq2:
             dchr={params.cpre}{params.dchrm};
         fi;
 
-        echo 'DCHRM: $dchr' >> {log};
-        
+        echo 'DCHRM: $dchr' >> {log} 2>&1;
+
+        export lochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
+        echo 'OCHRM: $lochrm_mod' >> {log} 2>&1;
+
         lofreq call --max-depth 10000 \
         --force-overwrite \
         -f {params.huref} \
-        -r $dchr \
+        -r $lochrm_mod \
         -o {output.vcf} {input.bam} >> {log} 2>&1;
 
         sleep 100000;
