@@ -13,7 +13,7 @@ export INSTANCE_TYPES="$instance_types"
 
 # Extract instance types in alpha order on one line
 instance_types_line=$(echo "$instance_types" | tr '\n' ' ' | sed 's/ $//')
-export INSTANCE_TYPES_LINE="$instance_types_line"
+export INSTANCE_TYPES_LINE=$(echo "$instance_types_line" | sed 's/Instance type://g')
 
 # Extract all spot prices
 spot_prices=$(echo "$data" | grep -oP 'Spot price: \K[0-9.]+')
