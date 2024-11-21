@@ -119,7 +119,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
 
         source bin/proc_spot_price_logs.sh >> {log} 2>&1;
         perl -pi -e "s/REGSUB_SPOTCOST/ per hr(median:$MEDIAN_SPOT_PRICE  mean:$AVERAGE_SPOT_PRICE) per vcpu per min( $VCPU_COST_PER_MIN ) /g;" $(dirname {output})/multiqc_header.yaml;
-        perl -pi -e "s/REGSUB_INSTANCES/ $INSTANCE_TYPES_LIST /g;" $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_INSTANCES/ $INSTANCE_TYPES_LINE /g;" $(dirname {output})/multiqc_header.yaml;
 
         source bin/proc_benchmark_runtime.sh {input[1]} $VCPU_COST_PER_MIN >> {log} 2>&1;
         perl -pi -e "s/REGSUB_TOTALCOST/$TOTAL_COST/g;" $(dirname {output})/multiqc_header.yaml;
