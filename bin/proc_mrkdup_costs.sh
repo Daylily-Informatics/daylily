@@ -10,14 +10,24 @@ fi
 input_file=$1
 vcpu_cost_per_min=$2
 
+# Debug: Show the first few lines of the input file
+echo "Input File Preview:"
+head -n 5 "$input_file"
+echo
+
 # Output header
 echo -e "Category\tAvg_Minutes\tAvg_vCPU_Min\tAvg_Cost_USD"
 
 # Process the file to filter rows matching 'mrkdup' and calculate averages
-awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
+awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_vcpu_min" '
+    BEGIN {
+        total_s = 0;
+        count = 0;
+    }
     NR > 1 && $3 ~ /mrkdup/ {  # Skip header and match "mrkdup" in the rule column
         total_s += $4;  # Accumulate the "s" column (4th column)
         count++;  # Count rows
+        print "Debug: Adding row with s="$4", total_s="total_s", count="count > "/dev/stderr"
     }
     END {
         if (count > 0) {
@@ -31,8 +41,8 @@ awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
     }
 ' "$input_file"
 
-# Export environment variables for average values
-export MRKDUP_AVG_MINUTES=$(awk -F '\t' 'NR > 1 && $3 ~ /mrkdup/ {total_s += $4; count++} END {if (count > 0) print (total_s / count) / 60; else print 0}')
+# Check the variables after the first awk
+export MRKDUP_AVG_MINUTES=$(awk -F '\t' 'NR > 1 && $3 ~ /mrkdup/ {total_s += $4; count++} END {if (count > 0) print (total_s / count) / 60; else print 0}' "$input_file")
 export MRKDUP_AVG_VCPU_MIN=$(awk "BEGIN {print $MRKDUP_AVG_MINUTES * 192}")
 export MRKDUP_AVG_COST=$(awk "BEGIN {print $MRKDUP_AVG_VCPU_MIN * $vcpu_cost_per_min}")
 
