@@ -9,6 +9,9 @@ custom_css: |
     margin: 10px auto;   /* Center the logo and add spacing */
   }
 
+  #page_title img {
+    max-width: 75px;
+  }
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
 
   body {
