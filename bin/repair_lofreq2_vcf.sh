@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 # Check input arguments
 if [[ $# -lt 2 ]]; then
@@ -8,13 +8,15 @@ fi
 
 # Input arguments
 calls_vcf=$1
-output_vcf=$2
-sample=$3
+output_vcf_gz=$2
+prefix=$3
+sample=$4
 
 # Temporary files
 temp_full="temp_full.vcf"
 temp_header="temp_header.vcf"
 temp_body="temp_body.vcf"
+temp_vcf="$prefix.vcf"
 
 # Step 1: Decompress VCF if needed and split into header and body
 if [[ $calls_vcf == *.gz ]]; then
@@ -37,8 +39,7 @@ echo "$to_add_b" >> $temp_header
 echo "$new_title" >> $temp_header
 
 
-# Combine metadata and `#CHROM` headers correctly
-cat metadata_header.tmp chrom_header.tmp > temp_corrected_header.vcf
+cp $temp_header temp_corrected_header.vcf
 
 # Step 3: Add missing FORMAT and sample columns to the body
 echo "Adding FORMAT and sample columns if missing..."
@@ -55,7 +56,13 @@ awk 'BEGIN {OFS="\t"}
     }' $temp_body > temp_corrected_body.vcf
 
 # Step 4: Combine header and body into final VCF
-cat temp_corrected_header.vcf temp_corrected_body.vcf | bgzip > $output_vcf
+cat temp_corrected_header.vcf temp_corrected_body.vcf > $temp_vcf
+
+perl -pi -e 's/^\n//g;' $temp_vcf
+
+mv $temp_vcf $output_vcf
+
+bgzip $output_vcf
 tabix $output_vcf
 
 # Cleanup
