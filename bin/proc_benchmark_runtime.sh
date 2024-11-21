@@ -1,31 +1,16 @@
 #!/bin/bash
 
-echo "SOURCE ME"
-echo ""
+# Path to the input file
+input_file="results/day/hg38/other_reports/rules_benchmark_data_mqc.tsv"
 
-# Check if input arguments are provided
-if [[ $# -lt 2 ]]; then
-  echo "Usage: source script.sh <input_file> <spot_price_per_vcpu_min>"
-  return 1
-fi
+# Extract the 'cpu_time' column and sum its values to get total CPU time in minutes
+total_cpu_time=$(awk -F '\t' 'NR>1 {sum += $13} END {print sum / 60}' "$input_file")
+export TOTAL_CPU_TIME_MIN=$total_cpu_time
 
-# Path to the input file and spot price per vCPU minute
-input_file=$1
-spot_price_per_vcpu_min=$2
-
-# Extract the 's' column, sum its values, and divide by 60 to get the total runtime in minutes
-total_runtime=$(awk -F '\t' 'NR>1 {sum += $4} END {print sum / 60}' "$input_file")
-export TOTAL_RUNTIME_MIN=$total_runtime
-
-# Calculate total vCPU minutes (runtime in minutes * 192)
-total_vcpu_min=$(awk -v runtime="$total_runtime" 'BEGIN {print runtime * 192}')
-export TOTAL_VCPU_MIN=$total_vcpu_min
-
-# Calculate the total cost based on the spot price
-total_cost=$(awk -v vcpu_min="$total_vcpu_min" -v price="$spot_price_per_vcpu_min" 'BEGIN {print vcpu_min * price}')
-export TOTAL_COST=$total_cost
+# Calculate the total cost using the spot price per vCPU minute
+spot_price_per_vcpu_min=$2  # Pass this as the second argument
+export TOTAL_COST=$(awk -v cpu_time="$total_cpu_time" -v price="$spot_price_per_vcpu_min" 'BEGIN {print cpu_time * price}')
 
 # Output the results
-echo "Total Runtime (min): $TOTAL_RUNTIME_MIN"
-echo "Total vCPU Minutes: $TOTAL_VCPU_MIN"
+echo "Total CPU Time (min): $TOTAL_CPU_TIME_MIN"
 echo "Total Cost (USD): $TOTAL_COST"

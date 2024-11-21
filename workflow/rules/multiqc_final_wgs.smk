@@ -123,7 +123,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
 
         source bin/proc_benchmark_runtime.sh {input[1]} $VCPU_COST_PER_MIN >> {log} 2>&1;
         perl -pi -e "s/REGSUB_TOTALCOST/$TOTAL_COST/g;" $(dirname {output})/multiqc_header.yaml;
-        perl -pi -e "s/REGSUB_VCPUMIN/$TOTAL_VCPU_MIN/g;" $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_VCPUMIN/$TOTAL_CPU_TIME_MIN/g;" $(dirname {output})/multiqc_header.yaml;
 
         multiqc -f  \
         --config   $(dirname {output})/multiqc_header.yaml \
