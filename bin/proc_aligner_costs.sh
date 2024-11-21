@@ -13,15 +13,15 @@ vcpu_cost_per_min=$2
 # Output header
 echo -e "Aligner\tAvg_Minutes\tvCPU_Min\tCost_USD"
 
-# Process the file to calculate average running minutes, vCPU minutes, and cost
+# Process the file to filter by 'alN' rule, calculate avg runtime, vCPU minutes, and cost
 awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
-    NR > 1 {  # Skip the header row
+    NR > 1 && $3 ~ /alN/ {  # Skip header and match "alN" in the rule column
         aligner[$3] += $4;  # Accumulate the "s" column (4th column) for each aligner
-        count[$3]++;  # Count the number of occurrences for each aligner
+        count[$3]++;  # Count occurrences for each aligner
     }
     END {
         for (a in aligner) {
-            avg_minutes = aligner[a] / count[a] / 60;  # Average running time in minutes
+            avg_minutes = aligner[a] / count[a] / 60;  # Average runtime in minutes
             vcpu_minutes = avg_minutes * 192;  # Multiply by 192 vCPUs
             cost = vcpu_minutes * cost_per_vcpu_min;  # Calculate the cost
             printf "%s\t%.2f\t%.2f\t%.4f\n", a, avg_minutes, vcpu_minutes, cost;
