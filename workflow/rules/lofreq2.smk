@@ -112,7 +112,6 @@ rule lofreq2:
             lofreq call-parallel --pp-threads {threads}  --max-depth 10000 \
             --force-overwrite \
             -f {params.huref} \
-            -r $dchr \
             -o {output.vcf} {input.bam} >> {log} 2>&1;
         else
             echo "lofreq single thread" >> {log} 2>&1;
