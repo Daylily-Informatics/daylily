@@ -31,7 +31,7 @@ summary=$(awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
             printf "%s\t%.2f\t%.2f\t%.4f\n", a, avg_minutes, vcpu_minutes, cost;
 
             # Append to summary string
-            summary_str = summary_str (summary_str ? " - " : "") a "(" cost ")";
+            summary_str = summary_str (summary_str ? " - " : "") a "($" cost ")";
         }
         print summary_str;
     }
