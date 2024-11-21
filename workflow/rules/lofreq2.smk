@@ -17,8 +17,8 @@ def get_lochrm_mod(wildcards):
     if config['genome_build'] not in ['b37']:
         pchr="chr"
     ret_str = ""
-    sl = wildcards.ochrm.split("-")
-    sl2 = wildcards.ochrm.split("~")
+    sl = wildcards.dvchrm.split("-")
+    sl2 = wildcards.dvchrm.split("~")
 
 
     #from IPython import embed
@@ -26,7 +26,7 @@ def get_lochrm_mod(wildcards):
     #raise
 
     if len(sl2) == 2:
-        ret_str = pchr + wildcards.ochrm
+        ret_str = pchr + wildcards.dvchrm
     elif len(sl) == 1:
         ret_str = pchr + sl[0]
     elif len(sl) == 2:
