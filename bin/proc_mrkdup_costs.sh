@@ -14,7 +14,7 @@ vcpu_cost_per_min=$2
 echo -e "Category\tAvg_Minutes\tAvg_vCPU_Min\tAvg_Cost_USD"
 
 # Process the file to filter rows where the final column is "mrkdup" and calculate averages
-awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_vcpu_min" '
+awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
     NR > 1 && $NF == "mrkdup" {  # Skip header and match rows where the final column is "mrkdup"
         total_s += $4;  # Accumulate the "s" column (4th column)
         count++;  # Count rows
