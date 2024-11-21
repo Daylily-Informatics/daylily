@@ -107,7 +107,7 @@ rule lofreq2:
 
         echo "DCHRM: $dchr" >> {log} 2>&1;
         
-        if [[ "{params.dchrm}" == "1-24" ]]; then
+        if [[ "{params.dchrm}" == "1-24" || "{params.dchrm}" == "1-25" ]]; then
             echo "lofreq parallel" >> {log} 2>&1;
             lofreq call-parallel --pp-threads {threads}  --max-depth 10000 \
             --force-overwrite \
@@ -122,7 +122,6 @@ rule lofreq2:
             -o {output.vcf} {input.bam} >> {log} 2>&1;
         fi;
 
-        sleep 100000;
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
 
