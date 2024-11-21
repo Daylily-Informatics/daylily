@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Check if the input file and vCPU cost are provided
+if [[ $# -lt 2 ]]; then
+    echo "Usage: $0 <input_file> <vcpu_cost_per_min>"
+    exit 1
+fi
+
+# Input file and vCPU cost per minute
+input_file=$1
+vcpu_cost_per_min=$2
+
+# Output header
+echo -e "Aligner\tAvg_Minutes\tvCPU_Min\tCost_USD"
+
+# Process the file to calculate average running minutes, vCPU minutes, and cost
+awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
+    NR > 1 {  # Skip the header row
+        aligner[$3] += $4;  # Accumulate the "s" column (4th column) for each aligner
+        count[$3]++;  # Count the number of occurrences for each aligner
+    }
+    END {
+        for (a in aligner) {
+            avg_minutes = aligner[a] / count[a] / 60;  # Average running time in minutes
+            vcpu_minutes = avg_minutes * 192;  # Multiply by 192 vCPUs
+            cost = vcpu_minutes * cost_per_vcpu_min;  # Calculate the cost
+            printf "%s\t%.2f\t%.2f\t%.4f\n", a, avg_minutes, vcpu_minutes, cost;
+        }
+    }
+' "$input_file"

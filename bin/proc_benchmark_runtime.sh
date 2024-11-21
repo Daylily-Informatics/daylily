@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to the input file
-input_file="results/day/hg38/other_reports/rules_benchmark_data_mqc.tsv"
+input_file=$1
 
 # Extract the 'cpu_time' column and sum its values to get total CPU time in minutes
 total_cpu_time=$(awk -F '\t' 'NR>1 {sum += $13} END {print sum / 60}' "$input_file")
