@@ -1,10 +1,10 @@
 report_header_info:
   - Project/Budget: "REGSUB_PROJECT"
-  - Budget (total - used - pct) at runtime: "REGSUB_BUDGET"
-  - Spot Instances Involved: "REGSUB_SPOTINSTANCES"
-  - Spot Cost: "REGSUB_SPOTCOST"
-  - Total vCPU min OF Entire Analyis (192vcpu instances assumed): "REGSUB_VCPUMIN"
-  - Approx Total EC2 Spot Cost Of Entire Analysis: "REGSUB_TOTALCOST"
-  - Total Size Results Directory: "REGSUB_TOTALSIZE"
-  - Contact E-mail: "REGSUB_EMAIL"
+  - Budget @ Runtime: "REGSUB_BUDGET"
+  - Spot Instances: "REGSUB_SPOTINSTANCES"
+  - Spot Costs: "REGSUB_SPOTCOST"
+  - Total vCPU min: "REGSUB_VCPUMIN"
+  - est. Total Spot Cost: "REGSUB_TOTALCOST"
+  - Results Dir(BGB): "REGSUB_TOTALSIZE"
+  - Contact: "REGSUB_EMAIL"
 

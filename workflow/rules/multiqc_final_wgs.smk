@@ -109,21 +109,21 @@ rule multiqc_final_wgs:  # TARGET: the big report
         """
 
         cp config/external_tools/multiqc_header.yaml $(dirname {output})/multiqc_header.yaml;
-        perl -pi -e 's/REGSUB_PROJECT/$DAY_PROJECT/g;' $(dirname {output})/multiqc_header.yaml;
-        perl -pi -e 's/REGSUB_BUDGET/$TOTAL_BUDGET : $USED_BUDGET : $PERCENT_USED/g;' $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;" $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_BUDGET/tot:$TOTAL_BUDGET used:$USED_BUDGET \%:$PERCENT_USED/g;" $(dirname {output})/multiqc_header.yaml;
 
         size=$(du -hs results);
-        perl -pi -e 's/REGSUB_TOTALSIZE/$size/g;' $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_TOTALSIZE/$size/g;" $(dirname {output})/multiqc_header.yaml;
 
-        perl -pi -e 's/REGSUB_EMAIL/$DAY_CONTACT_EMAIL/g;' $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_EMAIL/$DAY_CONTACT_EMAIL/g;" $(dirname {output})/multiqc_header.yaml;
 
         source bin/proc_spot_price_logs.sh >> {log} 2>&1;
-        perl -pi -e 's/REGSUB_SPOTCOST/ per hr(median:$MEDIAN_SPOT_PRICE  mean:$AVERAGE_SPOT_PRICE) per vcpu per min( $VCPU_COST_PER_MIN ) /g;' $(dirname {output})/multiqc_header.yaml;
-        perl -pi -e 's/REGSUB_INSTANCES/ $INSTANCE_TYPES_LIST /g;' $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_SPOTCOST/ per hr(median:$MEDIAN_SPOT_PRICE  mean:$AVERAGE_SPOT_PRICE) per vcpu per min( $VCPU_COST_PER_MIN ) /g;" $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_INSTANCES/ $INSTANCE_TYPES_LIST /g;" $(dirname {output})/multiqc_header.yaml;
 
         source bin/proc_benchmark_runtime.sh {input[1]} $VCPU_COST_PER_MIN;
-        perl -pi -e 's/REGSUB_TOTALCOST/$TOTAL_COST/g;' $(dirname {output})/multiqc_header.yaml;
-        perl -pi -e 's/REGSUB_VCPUMIN/$TOTAL_VCPU_MIN/g;' $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_TOTALCOST/$TOTAL_COST/g;" $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e "s/REGSUB_VCPUMIN/$TOTAL_VCPU_MIN/g;" $(dirname {output})/multiqc_header.yaml;
 
         multiqc -f  \
         --config   $(dirname {output})/multiqc_header.yaml \
