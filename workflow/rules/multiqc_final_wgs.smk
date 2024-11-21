@@ -107,12 +107,23 @@ rule multiqc_final_wgs:  # TARGET: the big report
         config["multiqc"]["final"]["env_yaml"]
     shell:
         """
+
+        cp config/external_tools/multiqc_header.yaml $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e 's/REGSUB_PROJECT/$DAY_PROJECT/g' $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e 's/REGSUB_BUDGET/$TOTAL_BUDGET : $USED_BUDGET : $PERCENT_USED/g' $(dirname {output})/multiqc_header.yaml;
+
+        size=$(du -hs results);
+        perl -pi -e 's/REGSUB_TOTALSIZE/$size/g' $(dirname {output})/multiqc_header.yaml;
+
+        perl -pi -e 's/REGSUB_EMAIL/$DAY_CONTACT_EMAIL/g' $(dirname {output})/multiqc_header.yaml;
+
         multiqc -f  \
-        --config config/external_tools/multiqc_header.yaml  \
+        --config   $(dirname {output})/multiqc_header.yaml \
         --config  config/external_tools/multiqc_config.yaml  \
+        --template default \
         --filename {output} \
         -i 'Final Multiqc Report' \
-        -b 'Git Info branch:{params.gbranch} tag:{params.gtag} hash:{params.ghash}' \
+        -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH):{params.ghash}) ' \
         $(dirname {input} )/../ > {log} 2>&1;
         ls -lt {output};
         """
