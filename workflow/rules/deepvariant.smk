@@ -96,7 +96,7 @@ rule deepvariant:
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
-        echo 'DCHRM: $dchr';
+        echo "DCHRM: $dchr" >> {log} 2>&1;";
         
         {params.numa} \
         /opt/deepvariant/bin/run_deepvariant \

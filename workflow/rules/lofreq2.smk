@@ -123,10 +123,10 @@ rule lofreq2:
             dchr={params.cpre}{params.dchrm};
         fi;
 
-        echo 'DCHRM: $dchr' >> {log} 2>&1;
+        echo "DCHRM: $dchr"" >> {log} 2>&1;
 
         export lochrm_mod=$(echo '{params.dchrm}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
-        echo 'LOCHRM: $lochrm_mod' >> {log} 2>&1;
+        echo "LOCHRM: $lochrm_mod" >> {log} 2>&1;
 
         lofreq call --max-depth 10000 \
         --force-overwrite \
