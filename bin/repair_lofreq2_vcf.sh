@@ -31,12 +31,12 @@ grep -v "^#" $temp_full > $temp_body
 
 to_add_a='##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype quality">'
 to_add_b='##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">'
-new_title="#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  $sample"
+new_title="#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t$sample"
 
 perl -pi -e 's/\#CHROM\t.*$//g' $temp_header
-echo "$to_add_a" >> $temp_header
-echo "$to_add_b" >> $temp_header
-echo "$new_title" >> $temp_header
+echo -e "$to_add_a" >> $temp_header
+echo -e "$to_add_b" >> $temp_header
+echo -e  "$new_title" >> $temp_header
 
 
 cp $temp_header temp_corrected_header.vcf
