@@ -11,33 +11,33 @@ input_file=$1
 vcpu_cost_per_min=$2
 
 # Output header
-echo -e "Category\tTotal_Minutes\tvCPU_Min\tTotal_Cost_USD"
+echo -e "Category\tAvg_Minutes\tAvg_vCPU_Min\tAvg_Cost_USD"
 
-# Initialize the total variables
-total_minutes=0
-total_vcpu_min=0
-total_cost=0
-
-# Process the file to filter rows matching 'mrkdup' and calculate totals
-awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_vcpu_min" '
+# Process the file to filter rows matching 'mrkdup' and calculate averages
+awk -F '\t' -v cost_per_vcpu_min="$vcpu_cost_per_min" '
     NR > 1 && $3 ~ /mrkdup/ {  # Skip header and match "mrkdup" in the rule column
         total_s += $4;  # Accumulate the "s" column (4th column)
+        count++;  # Count rows
     }
     END {
-        total_minutes = total_s / 60;  # Convert total seconds to minutes
-        vcpu_minutes = total_minutes * 192;  # Calculate vCPU minutes
-        total_cost = vcpu_minutes * cost_per_vcpu_min;  # Calculate total cost
-        printf "mrkdup\t%.2f\t%.2f\t%.2f\n", total_minutes, vcpu_minutes, total_cost;
+        if (count > 0) {
+            avg_minutes = (total_s / count) / 60;  # Average runtime in minutes
+            avg_vcpu_minutes = avg_minutes * 192;  # Calculate average vCPU minutes
+            avg_cost = avg_vcpu_minutes * cost_per_vcpu_min;  # Calculate average cost
+            printf "mrkdup\t%.2f\t%.2f\t%.2f\n", avg_minutes, avg_vcpu_minutes, avg_cost;
+        } else {
+            printf "mrkdup\t0.00\t0.00\t0.00\n";
+        }
     }
 ' "$input_file"
 
-# Example: Store in environment variables if needed
-export MRKDUP_TOTAL_MINUTES=$(awk -F '\t' 'NR > 1 && $3 ~ /mrkdup/ {total_s += $4} END {print total_s / 60}' "$input_file")
-export MRKDUP_VCPU_MIN=$(awk "BEGIN {print $MRKDUP_TOTAL_MINUTES * 192}")
-export MRKDUP_TOTAL_COST=$(awk "BEGIN {print $MRKDUP_VCPU_MIN * $vcpu_cost_per_min}")
+# Export environment variables for average values
+export MRKDUP_AVG_MINUTES=$(awk -F '\t' 'NR > 1 && $3 ~ /mrkdup/ {total_s += $4; count++} END {if (count > 0) print (total_s / count) / 60; else print 0}')
+export MRKDUP_AVG_VCPU_MIN=$(awk "BEGIN {print $MRKDUP_AVG_MINUTES * 192}")
+export MRKDUP_AVG_COST=$(awk "BEGIN {print $MRKDUP_AVG_VCPU_MIN * $vcpu_cost_per_min}")
 
 # Output environment variables
 echo
-echo "MRKDUP_TOTAL_MINUTES: $MRKDUP_TOTAL_MINUTES"
-echo "MRKDUP_VCPU_MIN: $MRKDUP_VCPU_MIN"
-echo "MRKDUP_TOTAL_COST: $MRKDUP_TOTAL_COST"
+echo "MRKDUP_AVG_MINUTES: $MRKDUP_AVG_MINUTES"
+echo "MRKDUP_AVG_VCPU_MIN: $MRKDUP_AVG_VCPU_MIN"
+echo "MRKDUP_AVG_COST: \$${MRKDUP_AVG_COST}"
