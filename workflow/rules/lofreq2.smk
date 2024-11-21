@@ -117,9 +117,9 @@ rule lofreq2:
 
         echo 'DCHRM: $dchr' >> {log};
         
-        #lofreq call-parallel --pp-threads 8  -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
+        lofreq call-parallel --pp-threads {threads}  -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
 
-        lofreq call -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
+        #lofreq call -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
 
         sleep 100000;
         end_time=$(date +%s);
