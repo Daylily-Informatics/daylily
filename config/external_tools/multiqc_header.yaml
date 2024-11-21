@@ -3,8 +3,8 @@ report_header_info:
   - Budget @ Runtime: "REGSUB_BUDGET"
   - Spot Instances: "REGSUB_SPOTINSTANCES"
   - Spot Costs: "REGSUB_SPOTCOST"
-  - Total vCPU min: "REGSUB_VCPUMIN"
-  - est. Total Spot Cost: "REGSUB_TOTALCOST"
-  - Results Dir(BGB): "REGSUB_TOTALSIZE"
+  - ~ Total vCPU min: "REGSUB_VCPUMIN"
+  - ~ Total Spot Cost: "REGSUB_TOTALCOST"
+  - Results Dir(GB): "REGSUB_TOTALSIZE"
   - Contact: "REGSUB_EMAIL"
 

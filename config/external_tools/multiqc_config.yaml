@@ -3,10 +3,12 @@ intro_text: ""
 custom_logo: "resources/mqcimg/daylilylogo.png"
 
 custom_css: |
-  .custom_logo img {
-    width: 150px; /* Adjust width */
-    height: auto; /* Keep aspect ratio */
+  .custom_logo {
+    width: 50px;        /* Set the width of the logo */
+    height: 50px;        /* Maintain aspect ratio */
+    margin: 10px auto;   /* Center the logo and add spacing */
   }
+
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
 
   body {
