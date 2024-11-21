@@ -1,5 +1,4 @@
 
-""" moved from SUPERSONIC-- rather than re-write, swap out for the hap.py tools """
 """ Take rtg vcfeval summary.txt file, pull out the 'None' filtered data and regurigtate it with some add'l values calc'd"""
 import os
 import sys
