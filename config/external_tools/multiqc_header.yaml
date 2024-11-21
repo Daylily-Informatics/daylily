@@ -5,6 +5,6 @@ report_header_info:
   - Spot Costs per hr: "REGSUB_SPOTCOST"
   - FQ->BAM.sort avg Costs: "REGSUB_TOTALCOST"
   - BAM mrkdup avg Cost: "REGSUB_MRKDUPCOST"
-  - Results Dir(GB): "REGSUB_TOTALSIZE"
+  - Results Dir (GB): "REGSUB_TOTALSIZE"
   - Contact: "REGSUB_EMAIL"
 
