@@ -12,19 +12,12 @@ import sys
 import os
 
 
-def get_lochrm_mod(wildcards):
-    pchr=""
-    if config['genome_build'] not in ['b37']:
-        pchr="chr"
+def get_lofreq_chrm(wildcards):
+    pchr = ""
     ret_str = ""
-    sl = wildcards.dvchrm.split("-")
-    sl2 = wildcards.dvchrm.split("~")
-
-
-    #from IPython import embed
-    #embed()
-    #raise
-
+    sl = wildcards.dvchrm.replace('chr','').split("-")
+    sl2 = wildcards.dvchrm.replace('chr','').split("~")
+    
     if len(sl2) == 2:
         ret_str = pchr + wildcards.dvchrm
     elif len(sl) == 1:
@@ -37,11 +30,10 @@ def get_lochrm_mod(wildcards):
             start = start + 1
     else:
         raise Exception(
-            "oct chunks can only be one contiguous range per chunk : ie: 1-4 with the non numerical chrms assigned 23=X, 24=Y, 25=MT"
+            "LoFreq chunks can only be one contiguous range per chunk: e.g., 1-4 with the non-numerical chromosomes assigned 23=X, 24=Y, 25=MT"
         )
-    ret_str = ret_mod_chrm(ret_str)
 
-    return ret_str
+    return ret_mod_chrm(ret_str)
 
 
 rule lfq2_indelqual:
@@ -101,7 +93,7 @@ rule lofreq2:
             else config["lofreq2"]["bench_repeat"],
         )
     params:
-        dchrm=get_lochrm_mod,
+        dchrm=get_lofreq_chrm,
         cluster_sample=ret_sample,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
@@ -123,17 +115,17 @@ rule lofreq2:
             dchr={params.cpre}{params.dchrm};
         fi;
 
-        echo "DCHRM: $dchr"" >> {log} 2>&1;
-
-        export lochrm_mod=$(echo '{params.dchrm}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
-        echo "LOCHRM: $lochrm_mod" >> {log} 2>&1;
+        echo "DCHRM: $dchr" >> {log} 2>&1;
+        
+        #lofreq call-parallel --pp-threads {threads}  -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
 
         lofreq call --max-depth 10000 \
         --force-overwrite \
         -f {params.huref} \
-        -r $lochrm_mod \
+        -r $dchr \
         -o {output.vcf} {input.bam} >> {log} 2>&1;
 
+        sleep 100000;
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
 
