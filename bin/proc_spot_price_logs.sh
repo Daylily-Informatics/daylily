@@ -10,6 +10,11 @@ data=$(cat /fsx/scratch/*price.log)
 instance_types=$(echo "$data" | awk -F ', ' '{print $3}' | sort | uniq)
 export INSTANCE_TYPES="$instance_types"
 
+
+# Extract instance types in alpha order on one line
+instance_types_line=$(echo "$instance_types" | tr '\n' ' ' | sed 's/ $//')
+export INSTANCE_TYPES_LINE="$instance_types_line"
+
 # Extract all spot prices
 spot_prices=$(echo "$data" | grep -oP 'Spot price: \K[0-9.]+')
 
