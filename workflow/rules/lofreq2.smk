@@ -103,7 +103,7 @@ rule lofreq2:
         """
         touch {log};
         start_time=$(date +%s);
-        dchr={params.cpre}{params.dchrm};
+        dchr=$(echo {params.cpre}{params.dchrm} | sed 's/~/\:/g')
 
         if [[ "{params.dchrm}" == "23" ]]; then
             dchr='{params.cpre}X';
