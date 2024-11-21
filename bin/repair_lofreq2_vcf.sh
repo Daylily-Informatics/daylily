@@ -8,7 +8,7 @@ fi
 
 # Input arguments
 calls_vcf=$1
-output_vcf_gz=$2
+output_vcf=$2
 prefix=$3
 sample=$4
 
