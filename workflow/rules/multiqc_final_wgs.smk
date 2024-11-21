@@ -117,6 +117,10 @@ rule multiqc_final_wgs:  # TARGET: the big report
 
         perl -pi -e 's/REGSUB_EMAIL/$DAY_CONTACT_EMAIL/g' $(dirname {output})/multiqc_header.yaml;
 
+        source bin/proc_spot_price_logs.sh >> {log} 2>&1;
+        perl -pi -e 's/REGSUB_SPOTCOST/ median:$MEDIAN_SPOT_PRICE  mean:$AVERAGE_SPOT_PRICE/g' $(dirname {output})/multiqc_header.yaml;
+        perl -pi -e 's/REGSUB_INSTANCES/ $INSTANCE_TYPES_LIST /g' $(dirname {output})/multiqc_header.yaml;
+
         multiqc -f  \
         --config   $(dirname {output})/multiqc_header.yaml \
         --config  config/external_tools/multiqc_config.yaml  \
