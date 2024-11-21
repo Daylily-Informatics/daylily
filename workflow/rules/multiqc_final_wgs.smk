@@ -130,6 +130,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         multiqc -f  \
         --config   $(dirname {output})/multiqc_header.yaml \
         --config  config/external_tools/multiqc_config.yaml  \
+        --custom-css-file config/external_tools/multiqc.css \
         --template default \
         --filename {output} \
         -i 'Final Multiqc Report' \
