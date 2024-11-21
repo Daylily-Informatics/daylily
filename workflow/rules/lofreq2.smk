@@ -121,6 +121,7 @@ rule lofreq2:
 
         lofreq call -f {params.huref} -r $dchr -o {output.vcf} {input.bam} >> {log} 2>&1;
 
+        sleep 100000;
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));
 
