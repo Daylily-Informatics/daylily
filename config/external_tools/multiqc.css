@@ -13,12 +13,12 @@
 
   body {
     font-family: "IBM Plex Mono", monospace;
-    font-size: 18px; /* Larger chart titles */
+    font-size: 11px; /* Larger chart titles */
   }
 
   .highcharts-title {
     font-family: "IBM Plex Mono", monospace;
-    font-size: 18px; /* Larger chart titles */
+    font-size: 17px; /* Larger chart titles */
   }
 
   .highcharts-axis-title {
