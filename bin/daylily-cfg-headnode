@@ -135,12 +135,3 @@ echo "\t... and please remember to re-clone the repo for each new analysis in th
 echo " "
 echo "\nSetup complete. You can now start working with Daylily on the head node.\n"
 
-
-
-echo " "
-echo " "
-echo " "
-echo "_______ REMINDER TO REPLACE THE SNAKEMAKE BENCHMARK.PY FILE WITH THE ONE IN THE DAYLILY REPO _______ "
-echo " ... better, automate this soon"
-echo "sleeping for 1min "
-sleep 60
