@@ -1,10 +1,16 @@
 ---
-analysis_manifest: .test_data/data/0.01xwgs_HG002.samplesheet.csv
-unit_test: false
-profile_name: slurm
-valid_biome: AWSPC
+
+# ___GENOME BUILD AND DEFAULT TEST ANALYSIS MANIFEST___
+# change for b37 or hg38
+# .... to create an analysis manifest for your data, see the script in bin/sample_sheet_2_analysis_manifest.sh
+
+analysis_manifest: .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv # or .test_data/data/0.01xwgs_HG002_b37.samplesheet.csv
 genome_build: "hg38"  # or b37
 
+# TO DEPRECATE
+unit_test: false
+profile_name: local
+valid_biome: AWSPC
 
 
 # ###### Tool Selection CONFIG ----------------------------------------
