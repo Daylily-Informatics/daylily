@@ -368,7 +368,8 @@ rule oct_concat_index_chunks:
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
         bcftools view -O z -o {output.vcfgz} {output.vcf};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
-        {latency_wait}; > {log} """
+        {latency_wait}; > {log} 
+        """
 
 
 localrules:

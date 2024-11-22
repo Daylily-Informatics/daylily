@@ -207,13 +207,6 @@ rule deep_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.vcf.gz.tbi"
         ),	    #gvcf=touch(            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf"),        #gvcfgz=touch(            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf.gz"),
-        #gvcfgztbi=touch(     MDIR            + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf.gz.tbi"        ),
-        #bcf=touch(
-        #    MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.bcf"
-        #),
-        #bcfi=touch(
-        #    MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.bcf.csi"
-        #), #        gbcf=touch(  MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.bcf"),        gbcfi=touch(            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.bcf.csi"       ),
     threads: 4
     resources:
         vcpu=4,
@@ -236,14 +229,11 @@ rule deep_concat_index_chunks:
         """
         (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFAIL;
         mkdir -p $(dirname {log});
-
+        ### export LD_LIBRARY_PATH=$PWD/resources/libs/;
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
         bcftools view -O z -o {output.vcfgz} {output.vcf};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
- 
-        rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;  # clean up all the crap
-        {latency_wait};
-        touch {log};
+        {latency_wait}; > {log}
         """
 
 
