@@ -348,7 +348,6 @@ octopus:
     addl_options: |
         --max-indel-errors 10 \
         --max-haplotypes 20 \
-        --read-buffer-size 512 \
         --max-variant-size 51 \
         --downsampling-strategy high-coverage \
         --batch-size 200 \
