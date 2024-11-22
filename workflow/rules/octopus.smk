@@ -226,14 +226,6 @@ rule octopus:
         """
         export BRTOL="NORMAL";  
 
-        export variable_args=" {params.addl_options} ";
-
-        midel="{params.max_idel_err}";
-        mhap="{params.max_haplotypes}";
-
-        BRTL=" --bad-region-tolerance $BRTOL ";
-        echo MOP {params.max_open_read_files};
-
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/octo_tmp_$timestamp;
         mkdir -p $TMPDIR;
