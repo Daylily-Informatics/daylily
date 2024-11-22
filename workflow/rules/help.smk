@@ -215,26 +215,20 @@ rule util_profile_config_reset:  # TARGET: clears all profile config files so th
 
 # help returns all TARGET annotated rules in the rules dir
 
-
 rule help:
     container: None
     benchmark:
-        "help.bench.tsv"
+        "logs/help.bench.tsv"
     threads: 1
     params:
         c=get_ccmd(),
-        cluster_sample=ret_sample,
-        kmer_len="19" if 'kmer' not in config['kat'] else config['kat']['kmer'],
-        p5trim="8" if 'p5trim' not in config['kat'] else config['kat']['p5trim'],
-        subsample="0.013",
-        print_every="50",
         cluster_sample="help"
     log:
         "logs/help.log"
     resources:
-        vcpu=4,
-        threads=4,
-        partition=config['lofreq2']['partition_other'],
+        vcpu=1,
+        threads=1,
+        partition="i8",
     shell:
         """
         echo "help running" >> {log} 2>&1;
