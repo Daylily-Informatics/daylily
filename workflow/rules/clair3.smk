@@ -205,12 +205,6 @@ rule clair3_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.sort.vcf.gz.tbi"
         ),
-        bcf=touch(
-            MDIR + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.sort.bcf"
-        ),
-        bcfi=touch(
-            MDIR + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.sort.bcf.csi"
-        ),
     threads: 4
     resources:
         vcpu=4,
@@ -238,11 +232,8 @@ rule clair3_concat_index_chunks:
         bcftools view -O z -o {output.vcfgz} {output.vcf};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
 
-        # Convert to BCF and index it
-        bcftools view -O b -o {output.bcf} --threads {threads} {output.vcfgz};
-        bcftools index --threads {threads} {output.bcf};
 
-        rm -rf $(dirname {output.bcf})/vcfs >> {log} 2>&1;  # clean up all the crap
+        rm -rf $(dirname {output.vcf})/vcfs >> {log} 2>&1;  # clean up all the crap
         {latency_wait};
         touch {log};
         """
