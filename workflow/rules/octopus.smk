@@ -234,7 +234,7 @@ rule octopus:
         
         export oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
 
-        {params.ld_pre} octopus -T $oochrm_mod --threads {threads}    \
+        /opt/octopus/bin/octopus -T $oochrm_mod --threads {threads}    \
         --reference {params.huref}  \
         --temp-directory $TMPDIR \
         --reads {input.b}   \
