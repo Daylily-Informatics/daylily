@@ -3,10 +3,11 @@ args = commandArgs(trailingOnly=TRUE)
 in_tsv <- args[1]
 sample <- args[2]
 chrm <- args[3]
+alnr <- args[4]
 
 require(data.table);
 
-col_names <- c('CHR','START','END','COV');
+col_names <- c('CHR','START','END','COV','ALNR');
 col_classes <- c('factor','integer','integer','numeric');
 dcov <- fread(in_tsv,header=FALSE,sep='\t', na.strings=c(""), colClasses=col_classes);
 setnames(dcov,col_names);
@@ -22,4 +23,4 @@ RCcoefofvar = sdRCov/mean(dcov$COV);
 NCcoefofvar = sdNCov/mean(dcov$COVnorm);
 
 
-write.table(matrix(as.character(c(sample,chrm,mean(dcov$COV),median(dcov$COV),sdRCov,RCcoefofvar,mean(dcov$COVnorm),median(dcov$COVnorm),sdNCov,NCcoefofvar,pct0,pctLT5,pctLT10)),nrow=1),sep="\t",row.names=FALSE,col.names=FALSE)
+write.table(matrix(as.character(c(sample,chrm,mean(dcov$COV),median(dcov$COV),sdRCov,RCcoefofvar,mean(dcov$COVnorm),median(dcov$COVnorm),sdNCov,NCcoefofvar,pct0,pctLT5,pctLT10,alnr)),nrow=1),sep="\t",row.names=FALSE,col.names=FALSE)

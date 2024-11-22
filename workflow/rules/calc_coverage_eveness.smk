@@ -32,14 +32,15 @@ rule calc_coverage_evenness:
         rm -rf {output.mos_pre}* || echo nothingToDel;
         mkdir -p $( dirname {output.mos_pre} )/logs;
         touch {output.mos_pre};
-        alnr=$(echo {log} |  cut -d '/' -f 6);
+        touch {log};
+        alnr=$(echo $(dirname {}) | cut -d '/' -f 6);
         echo "Sample\tCHRM\tmeanRawCov\tmedianRawCov\tstdevRawCov\tRawCovCoefofvar\tNCmean\tNCmedian\tstdevNC\tNCcoefofvar\tpctEQ0\tpctLT5\tpctLT10" > {output.mos_pre}.norm_cov_eveness.mqc.tsv;
         for i in {params.l}1..22{params.r};
         do
             echo "Processing {params.cluster_sample} Chrm:{params.chr}$i";
             mosdepth -x  -Q 1 -T 0 -m --by 50 -c {params.chr}$i --threads 20 {output.mos_pre}.{params.chr}$i {input.bam};
             touch {output.mos_pre}.{params.chr}$i.regions.bed.gz;
-            Rscript workflow/scripts/calc_norm_cov_sd.R {output.mos_pre}.{params.chr}$i.regions.bed.gz  "{params.cluster_sample}_$alnr_{params.chr}$i" {params.chr}$i | sed 's/\\"//g;' >> {output.mos_pre}.norm_cov_eveness.mqc.tsv ;
+            Rscript workflow/scripts/calc_norm_cov_sd.R {output.mos_pre}.{params.chr}$i.regions.bed.gz  "{params.cluster_sample}_$alnr" {params.chr}$i $alnr | sed 's/\\"//g;' >> {output.mos_pre}.norm_cov_eveness.mqc.tsv ;
         done;
         {latency_wait};
         ls {output};
