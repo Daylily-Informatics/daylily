@@ -28,7 +28,6 @@ fi
 grep "^#" $temp_full > $temp_header
 grep -v "^#" $temp_full > $temp_body
 
-
 to_add_a='##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype quality">'
 to_add_b='##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">'
 new_title="#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t$sample"
@@ -48,7 +47,7 @@ if [[ -s $temp_body ]]; then
         {
             if (NF < 9) {  # If FORMAT and Sample columns are missing
                 $9 = "GT:GQ";
-                $10 = "0/1:99";
+                $10 = "1/1:35";
             } else if ($9 !~ /GQ/) {  # Add GQ to FORMAT if missing
                 $9 = $9 ":GQ";
                 $10 = $10 ":99";
