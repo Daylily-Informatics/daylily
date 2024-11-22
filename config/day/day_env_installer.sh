@@ -2,7 +2,7 @@
 
 #Move to environment dir if called from elsewhere
 ABSOLUTE_PATH_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
-SCRIPT_DIR=$2
+SCRIPT_DIR=config/day/
 AMBA_DISABLE_LOCKFILE=TRUE
 echo "path to environment working dir is $SCRIPT_DIR"
 #cd $SCRIPT_DIR
