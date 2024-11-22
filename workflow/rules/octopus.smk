@@ -239,8 +239,7 @@ rule octopus:
         --temp-directory $TMPDIR \
         --reads {input.b}   \
         --annotations {params.anno}   \
-        --skip-regions-file {params.skr}  \
-        {params.addl_options} --max-open-read-files {params.mor} >> {log} 2>&1;";
+        --skip-regions-file {params.skr}  {params.addl_options} >> {log} 2>&1;";
         
         """
 
