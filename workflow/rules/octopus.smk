@@ -204,7 +204,7 @@ rule octopus:
         + "{sample}/align/{alnr}/snv/oct/log/vcfs/{sample}.{alnr}.oct.{ochrm}.snv.log",
     threads: calc_oct_threads  # config['octopus']['threads']
     container:
-        "docker://dancooke/octopus:invitae--eae1ab48_0" 
+        "docker://daylilyinformatics/octopus-skylake:0.7.4" 
     priority: 45
     benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.oct.{ochrm}.bench.tsv"
