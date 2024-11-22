@@ -568,6 +568,9 @@ REGSUB_XMR_POOL_URL=$xmr_pool_url
 REGSUB_XMR_WALLET=$xmr_wallet
 REGSUB_FSX_SIZE=$sel_fsx_size
 REGSUB_DETAILED_MONITORING=$act_detailed_monitoring
+REGSUB_CLUSTER_NAME=$cluster_name
+REGSUB_USERNAME=$USER
+REGSUB_PROJECT=$budget_name
 EOF
 
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf

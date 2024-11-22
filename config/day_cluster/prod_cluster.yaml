@@ -132,13 +132,13 @@ SharedStorage:  # This is the local FS which is expensive but fast, could be swa
       AutoImportPolicy: NEW_CHANGED_DELETED
 Tags:  # TAGs necessary for per-user/project/job cost tracking 
   - Key: aws-parallelcluster-username
-    Value: NA
+    Value: REGSUB_USERNAME
   - Key: aws-parallelcluster-jobid
     Value: NA
   - Key: aws-parallelcluster-project
-    Value: NA 
+    Value: REGSUB_PROJECT
   - Key: aws-parallelcluster-clustername
-    Value: NA
+    Value: REGSUB_CLUSTER_NAME
 DevSettings:
   Timeouts:
     HeadNodeBootstrapTimeout: 3600
