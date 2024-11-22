@@ -1,7 +1,8 @@
 intro_text: ""
 
 custom_logo: "resources/mqcimg/daylilylogo.png"
-
+custom_logo_url: "https://github.com/Daylily-Informatics/daylily"
+custom_logo_title: "daylily ephemeral informatics framework"
 
 max_table_rows: 2200
 decimalPoint_format: "."
@@ -116,12 +117,16 @@ custom_data:
     plot_type: 'table'
     pconfig:
       id: 'giab_concordance'
+      format: "{:.4f}"
   norm_cov_evenness_combo:
     id: 'norm_cov_evenness_combo'
     section_name: 'Coverage Eveness Metrics'
     description: 'Coverage Eveness Metrics'
     file_format: 'tsv'
     plot_type: 'table'
+    section_href: 'https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff'
+    section_extra: '...'
+    format: "{:.4f}"
     pconfig:
       id: 'norm_cov_evenness_combo'
   rules_benchmark_data:
