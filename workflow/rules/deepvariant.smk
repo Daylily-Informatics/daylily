@@ -68,7 +68,6 @@ rule deepvariant:
         deep_threads=config['deepvariant']['deep_threads'],
     shell:
         """
-        touch {log};
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
         echo "INSTANCE TYPE: $itype" > {log};
@@ -78,7 +77,6 @@ rule deepvariant:
         start_time=$(date +%s);
         echo "Start-Time-sec:$itype\t0" >> {log} 2>&1;
 
-        dchr={params.cpre}{params.dchrm};
         dchr=$(echo {params.cpre}{params.dchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/MT\:/');
 
         timestamp=$(date +%Y%m%d%H%M%S);
@@ -86,7 +84,7 @@ rule deepvariant:
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
-        echo "DCHRM: $dchr" >> {log} 2>&1;";
+        echo "DCHRM: $dchr" >> {log} 2>&1;
         
         {params.numa} \
         /opt/deepvariant/bin/run_deepvariant \
@@ -96,7 +94,7 @@ rule deepvariant:
         --output_vcf={output.vcf} \
         --num_shards={params.deep_threads} \
         --logging_dir=$(dirname {log}) \
-        --dry_run=false >> {log} 2>&1;  #         --output_gvcf= output.gvcf 
+        --dry_run=false >> {log} 2>&1;  
 
         end_time=$(date +%s);
         elapsed_time=$((($end_time - $start_time) / 60));

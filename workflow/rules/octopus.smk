@@ -20,20 +20,6 @@ THREAD_PARTITION_MAP= {
 }
 
 
-def get_oct_err_model(wildcards):
-
-    # [library preparation]<.sequencer>. library preparation is selected from: PCR, PCR-FREE, or 10X. sequencer is selected from: HISEQ-2000, HISEQ-2500, HISEQ-4000, X10, NOVASEQ, BGISEQ-5000. 
-    em=config["octopus"]["err_model"]  # ignoring this for now
-    inst="NOVASEQ"  # See oct docs, but HISEQ, MISEQ
-    lib_prep="PCR-FREE" # PCR or PCR-FREE
-    if wildcards.sample in config['sample_info']:
-        if 'instrument' in config['sample_info'][wildcards.sample]:
-            inst=config['sample_info'][wildcards.sample]['instrument']
-        if 'lib_prep' in config['sample_info'][wildcards.sample]:
-            lib_prep = config['sample_info'][wildcards.sample]['lib_prep']      
-    return f"{lib_prep}.{inst}"
-
-
 def get_ploidy(wildcards):
 
     ploidy_str = " "
@@ -96,31 +82,31 @@ def get_ochrm_mod(wildcards):
 
 
 chrm_slots = {
-    "1": "96",
-    "2": "96",
-    "3": "96",
-    "4": "64",
-    "5": "64",
-    "6": "64",
-    "7": "64",
-    "8": "32",
-    "9": "32",
-    "10": "96",
-    "11": "32",
-    "12": "32",
-    "13": "32",
-    "14": "32",
-    "15": "64",
-    "16": "32",
-    "17": "32",
-    "18": "32",
-    "19": "32",
-    "20": "32",
-    "21": "32",
-    "22": "32",
-    "23": "64",
-    "24": "32",
-    "25": "32",
+    "1": "192",
+    "2": "192",
+    "3": "192",
+    "4": "192",
+    "5": "192",
+    "6": "192",
+    "7": "192",
+    "8": "192",
+    "9": "192",
+    "10": "192",
+    "11": "192",
+    "12": "192",
+    "13": "192",
+    "14": "192",
+    "15": "192",
+    "16": "192",
+    "17": "192",
+    "18": "192",
+    "19": "192",
+    "20": "192",
+    "21": "192",
+    "22": "192",
+    "23": "192",
+    "24": "192",
+    "25": "192",
 }
 
 
@@ -221,53 +207,21 @@ rule octopus:
         "docker://dancooke/octopus:invitae--eae1ab48_0" 
     priority: 45
     benchmark:
-        repeat(
-            MDIR + "{sample}/benchmarks/{sample}.{alnr}.oct.{ochrm}.bench.tsv",
-            0
-            if "bench_repeat" not in config["octopus"]
-            else config["octopus"]["bench_repeat"],
-        )
+            MDIR + "{sample}/benchmarks/{sample}.{alnr}.oct.{ochrm}.bench.tsv"
     resources:
         vcpu=calc_oct_threads,
         attempt_n=lambda wildcards, attempt:  (attempt + 0),
         partition="i192",
         threads=calc_oct_threads
     params:
-        ts=calc_oct_threads,
-        mor=get_max_open_rds,
-        cluster_sample=ret_sample, #
-        cluster_slots=calc_oct_threads,  #config['octopus']['threads'],  # calc_oct_threads,
+        cluster_sample=ret_sample, 
         ochrm_mod=get_ochrm_mod,
-        max_idel_err="  "
-        if "max_idel_err" not in config["octopus"]
-        else config["octopus"]["max_idel_err"],
-        max_haplotypes=" "
-        if "max_haplotypes" not in config["octopus"]
-        else config["octopus"]["max_haplotypes"],
-        max_open_read_files=config["octopus"]["max_open_read_files_modifier"],
-        X=calc_oct_x,
-        B=calc_oct_b,
         anno=config["octopus"]["anno"],
-        target_working_memory=" ",  #config['octopus']['target_working_memory'],
         addl_options=" " if "addl_options" not in config["octopus"] else config["octopus"]["addl_options"],
-        dup_read_detection=" ", # --duplicate-read-detection-policy AGGRESSIVE "        if "dup_policy" not in config["octopus"]        else config["octopus"]["dup_policy"]
-        min_for_qual="  --min-forest-quality 0 " , #if "min_forest_quality" not in config["octopus"]        else config["octopus"]["min_forest_quality"],
-        limit_calling_regions_to=config["octopus"]["regions_to_call"],
-        tm=config["octopus"]["testing_model"],
-        em=get_oct_err_model,
-        fm=config['supporting_files']['files']['octopus']['forest_model_a']['name'],
         huref=config["supporting_files"]["files"]["octopus"]["huref"]["name"],
         skr=config['supporting_files']['files']['ucsc']['build_gaps']['name'],
-        brt=" --bad-regon-tolerance NORMAL " if "brt" not in config["octopus"] else config["octopus"]["brt"],  
         ld_pre=config['octopus']['ld_pre'],
         mdir=MDIR,
-        ploidy=" ", # get_ploidy,
-        refcall=" ",
-        tgt_working_mem=" --target-working-mem 6G "
-        if "tgt_working_memory" not in config["octopus"]
-        else config["octopus"]["tgt_working_memory"],
-        octo_threads=calc_oct_threads,  #config['octopus']['threads'],
-        model_posterior=" ",  #--model-posterior ALL ",
     shell:
         """
         export BRTOL="NORMAL";  
@@ -280,8 +234,6 @@ rule octopus:
         BRTL=" --bad-region-tolerance $BRTOL ";
         echo MOP {params.max_open_read_files};
 
-        threads_flag=' --threads  ';
-
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/octo_tmp_$timestamp;
         mkdir -p $TMPDIR;
@@ -290,11 +242,14 @@ rule octopus:
         
         export oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
 
-        ocmd="octopus -T $oochrm_mod $threads_flag     --reference {params.huref}  --reads {input.b}   --annotations {params.anno}   --skip-regions-file {params.skr}    {params.tgt_working_mem} --max-open-read-files {params.mor} ";
+        {params.ld_pre} octopus -T $oochrm_mod --threads {threads}    \
+        --reference {params.huref}  \
+        --temp-directory $TMPDIR \
+        --reads {input.b}   \
+        --annotations {params.anno}   \
+        --skip-regions-file {params.skr}    {params.tgt_working_mem} \
+        {params.addl_options} --max-open-read-files {params.mor} >> {log} 2>&1;";
         
-        echo $ocmd 1&>2 > ocmd.log;
-
-        $ocmd > {output.vcf};
         """
 
 

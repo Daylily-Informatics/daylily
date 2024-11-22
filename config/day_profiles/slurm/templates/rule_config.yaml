@@ -325,29 +325,38 @@ multiqc:
     partition: "i192"
 
 octopus:
-    regions_to_call: '  '
-    testing_model: '  ' 
-    threads: 32 # Dynamically reset- this represents the cap
+    threads: 192 
     octo_chrms: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     b37_chr1_chunks: "1~1-49850125,1~49850126-99700250,1~99700251-149550375,1~149550376-199400500,1~199400501-249250621" # demonstration
     hg38_chr1_chunks: "1~1-49791285,1~49791286-99582570,1~99582571-149373855,1~149373856-199165140,1~199165141-248956422" # demonstration, note chr is added based on the genome build selected above
     anno: " AD ADP AF AFB ARF BQ CRF DP FRF GC GQ MC MF MQ MQ0 QD GQD QUAL SB STRL STRP SMQ SB DC NC PP MP "    
     ld_pre: "   "
-    brt: " --bad-region-tolerance NORMAL "
-    err_model: "PCR-FREE.NOVASEQ"  #  option, which accepts inputs of the form [library preparation]<.sequencer>. library preparation is selected from: PCR, PCR-FREE, or 10X. sequencer is selected from: HISEQ-2000, HISEQ-2500, HISEQ-4000, X10, NOVASEQ, BGISEQ-5000. For example, PCR.NOVASEQ would select the sequence error model parametrised for a PCR library preparation and a NOVASEQ sequencer. If no sequencer is provided then the default is used (s
-    max_idel_err: " --max-indel-errors 37 "  # 36   ##  12 for test 36 prod
-    max_haplotypes: " --max-haplotypes 360 "  # 350  ## 10 for test 300 prod
     env_yaml: "../envs/octopus_v0.7.yaml"
     oct_gather_env: "../envs/vanilla_v0.1.yaml"
-    bench_repeat: 0
-    glances: " "
-    numactl: "none"
-    max_open_read_files_modifier: 300   # 250* this number
-    target_working_memory: " "  # invalid option?--target-working-memory  155G "
-    min_forest_quality: " --min-forest-quality 0 "
-    max_reference_cache_footprint: " -X 12000M  "  #  dynamically set
-    target_read_buffer_footprint: "   -B 360M  "  #  dynamically set
-    addl_options: "  --max-variant-size 51 --downsample-above 41 --downsample-target 40 --min-mapping-quality 6 --use-wide-hmm-scores  "  #  --assemble-all --keep-unfiltered-calls --max-region-to-assemble 600/2000 --max-assembly-region-size ### --assemble-all--downsample-above 50 --downsample-target 50 --max-variant-size 2000 --min-mapping-quality 6 --use-wide-hmm-scores "   # --min-mapping-quality 6 --max-variant-size 50  --downsample-above 50 --downsample-target 50 "  #--max-variant-size 2000  --downsample-above 57 --downsample-target 56 --no-adapter-contaminated-reads  --ignore-unmapped-contigs  --mask-low-quality-tails 6 --mask-soft-clipped-boundary-bases 3  --mask-inverted-soft-clipping --mask-3prime-shifted-soft-clipped-heads --use-wide-hmm-scores --min-candidate-credible-vaf-probability 0.36 --allow-secondary-alignments --allow-supplementary-alignments --consider-unmapped-reads "  # from 0.35 bk is new  ## First set of options to explore:: --use-wide-hmm-scores --consider-unmapped-reads  "  ## --refcall BLOCKED --mask-low-quality-tails 5 --min-mapping-quality 8 --allow-secondary-alignments --min-supporting-reads 3 --max-variant-size 1500 --min-candidate-credible-vaf-probability 0.35"  # --max-read-length n --disable-read-preprocessing / --consider-unmapped-reads  --allow-supplementary-alignments  --downsample-target 100 --downsample-above 500  --num-fallback-kmers 20 --kmer-sizes 10,15,20...19,24,29,34 5 10 15 20 25 30 35 40 45 50       --fallback-kmer-gap 5  --max-region-to-assemble large value finds bigger events at loss of sens of smaller....   --assembler-mask-base-quality  --downsample-above 51 --downsample-target 50  #  --use-wide-hmm-scores --allow-supplementary-alignments --downsample-target 9 --downsample-above 10
+    addl_options: |
+        --output-compression-level 1
+        ---max-indel-errors 30
+        --max-haplotypes 500
+        --read-buffer-size 16384
+        --max-variant-size 51
+        --downsampling-strategy high-coverage
+        --batch-size 20000
+        --downsample-above 41
+        --downsample-target 40
+        --min-mapping-quality 6
+        --use-wide-hmm-scores
+        --assemble-all
+        --ignore-unmapped-contigs
+        --allow-supplementary-alignments
+        --bad-region-tolerance NORMAL 
+        --sequence-error-model PCR-FREE.NOVASEQ
+        --min-forest-quality 0
+        --max-reference-cache-memory 32000M
+        --target-read-buffer-memory 10G
+        --target-working-mem 300G
+        --model-posterior ALL
+        --max-open-reads 500000
+        --forrest /fsx/data/tool_specific_resources/H_sapiens/b37/octopus/forests/germline.v0.7.4.forest
     partition: "i192"
 
 
