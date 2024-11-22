@@ -237,8 +237,6 @@ rule clair3_concat_index_chunks:
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
         bcftools view -O z -o {output.vcfgz} {output.vcf};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
-        stats_f=$(echo "{output.vcfgz}.bcf.stats");
-        bcftools stats -F {params.huref}  {output.vcfgz} > $stats_f;
 
         # Convert to BCF and index it
         bcftools view -O b -o {output.bcf} --threads {threads} {output.vcfgz};

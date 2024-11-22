@@ -240,9 +240,7 @@ rule deep_concat_index_chunks:
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
         bcftools view -O z -o {output.vcfgz} {output.vcf};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
-        stats_f=$(echo "{output.vcfgz}.bcf.stats");
-        bcftools stats -F {params.huref}  {output.vcfgz} > $stats_f;
-
+ 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;  # clean up all the crap
         {latency_wait};
         touch {log};
