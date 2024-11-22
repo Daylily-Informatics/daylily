@@ -225,7 +225,7 @@ rule clair3_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/clair3/log/{sample}.{alnr}.clair3.snv.merge.sort.gathered.log",
     shell:
         """
-        (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFAIL;
+
         mkdir -p $(dirname {log});
 
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
