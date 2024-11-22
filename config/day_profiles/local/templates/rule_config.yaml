@@ -23,7 +23,7 @@ dynamic_scaling_factor: 1.0  # Takes the presets and scales them up/down based o
 # #### Select one to all of the available SNV callers
 active_snv_callers:
     - deep
-    - oct
+#    - oct
 #    - clair3
 #    - sentd
 #    - lfq2
@@ -37,20 +37,12 @@ active_s_v_callers:
 
 # #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
 active_aligners:
-    - strobe:
+    - bwa2a:
         mkdup: dppl
 #    - sent:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
 #        mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
 #    - strobe:
 #        mkdup: dppl
-#    - bwa2a:
-#           mkdup: dppl
-#    - bwa2b:
-#          mkdup: dppl
-#    - sent:
-#          mkdup: dppl
-#    - sent:
-#          mkdup: dppl
 
 # env JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1
 
