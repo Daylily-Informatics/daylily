@@ -2,7 +2,7 @@
 
 #Move to environment dir if called from elsewhere
 ABSOLUTE_PATH_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
-SCRIPT_DIR=$(python -c "import os; print(os.path.abspath(os.path.dirname(\"$ABSOLUTE_PATH_SCRIPT\")));")
+SCRIPT_DIR=$2
 AMBA_DISABLE_LOCKFILE=TRUE
 echo "path to environment working dir is $SCRIPT_DIR"
 #cd $SCRIPT_DIR
