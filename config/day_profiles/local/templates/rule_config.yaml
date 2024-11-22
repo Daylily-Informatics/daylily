@@ -1,9 +1,14 @@
 ---
-analysis_manifest: .test_data/data/0.01xwgs_HG002.samplesheet.csv
+# ___GENOME BUILD AND DEFAULT TEST ANALYSIS MANIFEST___
+# change for b37 or hg38
+analysis_manifest: .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv # or .test_data/data/0.01xwgs_HG002_b37.samplesheet.csv
+genome_build: "hg38"  # or b37
+
+
+# TO DEPRECATE
 unit_test: false
 profile_name: local
 valid_biome: AWSPC
-genome_build: "hg38"  # or b37
 
  
 #### Default Resources
