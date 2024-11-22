@@ -337,7 +337,6 @@ octopus:
         --max-indel-errors 30 \
         --max-haplotypes 500 \
         --max-variant-size 51 \
-        --downsampling-strategy high-coverage \
         --batch-size 20000 \
         --downsample-above 41 \
         --downsample-target 40 \
