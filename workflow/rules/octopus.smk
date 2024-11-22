@@ -228,7 +228,6 @@ rule octopus:
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/octo_tmp_$timestamp;
-        mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
         trap "sleep 2 && rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         
