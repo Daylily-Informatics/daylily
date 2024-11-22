@@ -1,4 +1,3 @@
-
 ##### LoFreq2
 # ---------------------------
 #
@@ -115,7 +114,7 @@ rule lofreq2:
             -o {output.vcf} {input.bam} >> {log} 2>&1;
         else
             echo "lofreq single thread" >> {log} 2>&1;
-            lofreq call --no-bq-filter --min-alt-bq 10 --min-cov 6 --af-thresh 0.05 \
+            lofreq call \
             --force-overwrite \
             -f {params.huref} \
             -r $dchr \
