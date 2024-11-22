@@ -240,7 +240,6 @@ rule sentD_concat_index_chunks:
 
         """
 
-
 localrules:
     clear_combined_sentD_vcf,
 
