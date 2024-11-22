@@ -7,7 +7,7 @@ import sys
 # Help info re: daylily
 #
 
-cdsx = {"2": "20", "1": "128", "17": "33"}
+cdsx = {"2": "20", "1": "128", "17": "33"} 
 
 
 # I had fun with some terminal color and appearance hacking...
@@ -219,6 +219,8 @@ localrules:
 
 rule help:
     container: None
+    benchmark:
+        "help.bench.tsv"
     params:
         c=get_ccmd(),
     shell:
