@@ -40,7 +40,7 @@ rule calc_coverage_evenness:
             echo "Processing {params.cluster_sample} Chrm:{params.chr}$i";
             mosdepth -x  -Q 1 -T 0 -m --by 50 -c {params.chr}$i --threads 20 {output.mos_pre}.{params.chr}$i {input.bam};
             touch {output.mos_pre}.{params.chr}$i.regions.bed.gz;
-            Rscript workflow/scripts/calc_norm_cov_sd.R {output.mos_pre}.{params.chr}$i.regions.bed.gz  "{params.cluster_sample}_$alnr" {params.chr}$i $alnr | sed 's/\\"//g;' >> {output.mos_pre}.norm_cov_eveness.mqc.tsv ;
+            Rscript workflow/scripts/calc_norm_cov_sd.R {output.mos_pre}.{params.chr}$i.regions.bed.gz  "{params.cluster_sample}" {params.chr}$i $alnr | sed 's/\\"//g;' >> {output.mos_pre}.norm_cov_eveness.mqc.tsv ;
         done;
         {latency_wait};
         ls {output};
