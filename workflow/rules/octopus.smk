@@ -226,8 +226,9 @@ rule octopus:
         """
         export BRTOL="NORMAL";  
 
+        touch {output.vcf};
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/octo_tmp_$timestamp;
+        export TMPDIR=$(dirname {output.vcf})/scratch/octo_tmp_$timestamp;
         export APPTAINER_HOME=$TMPDIR;
         trap "sleep 2 && rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         
