@@ -334,7 +334,7 @@ octopus:
     env_yaml: "../envs/octopus_v0.7.yaml"
     oct_gather_env: "../envs/vanilla_v0.1.yaml"
     addl_options: |
-        ---max-indel-errors 30 \
+        --max-indel-errors 30 \
         --max-haplotypes 500 \
         --read-buffer-size 16384 \
         --max-variant-size 51 \
