@@ -33,7 +33,7 @@ rule calc_coverage_evenness:
         mkdir -p $( dirname {output.mos_pre} )/logs;
         touch {output.mos_pre};
         touch {log};
-        alnr=$(echo $(dirname {}) | cut -d '/' -f 6);
+        alnr=$(echo $(dirname {log}) | cut -d '/' -f 6);
         echo "Sample\tCHRM\tmeanRawCov\tmedianRawCov\tstdevRawCov\tRawCovCoefofvar\tNCmean\tNCmedian\tstdevNC\tNCcoefofvar\tpctEQ0\tpctLT5\tpctLT10" > {output.mos_pre}.norm_cov_eveness.mqc.tsv;
         for i in {params.l}1..22{params.r};
         do
