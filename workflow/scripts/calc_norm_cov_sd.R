@@ -7,7 +7,7 @@ alnr <- args[4]
 
 require(data.table);
 
-col_names <- c('CHR','START','END','COV','ALNR');
+col_names <- c('CHR','START','END','COV');
 col_classes <- c('factor','integer','integer','numeric');
 dcov <- fread(in_tsv,header=FALSE,sep='\t', na.strings=c(""), colClasses=col_classes);
 setnames(dcov,col_names);
