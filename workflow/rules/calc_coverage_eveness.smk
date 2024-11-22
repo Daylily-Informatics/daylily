@@ -34,7 +34,7 @@ rule calc_coverage_evenness:
         touch {output.mos_pre};
         touch {log};
         alnr=$(echo $(dirname {log}) | cut -d '/' -f 6);
-        echo "Sample\tCHRM\tmeanRawCov\tmedianRawCov\tstdevRawCov\tRawCovCoefofvar\tNCmean\tNCmedian\tstdevNC\tNCcoefofvar\tpctEQ0\tpctLT5\tpctLT10" > {output.mos_pre}.norm_cov_eveness.mqc.tsv;
+        echo "Sample\tCHRM\tmeanRawCov\tmedianRawCov\tstdevRawCov\tRawCovCoefofvar\tNCmean\tNCmedian\tstdevNC\tNCcoefofvar\tpctEQ0\tpctLT5\tpctLT10\taligner" > {output.mos_pre}.norm_cov_eveness.mqc.tsv;
         for i in {params.l}1..22{params.r};
         do
             echo "Processing {params.cluster_sample} Chrm:{params.chr}$i";
