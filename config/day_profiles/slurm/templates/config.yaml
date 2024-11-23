@@ -19,7 +19,7 @@ default-resources:
   - disk_mb=1000
   - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type
   - threads=1
-  - time=7240
+  - time=5440
   - partition=i192
   - vcpu=1
   - distribution=block
@@ -29,7 +29,7 @@ jobs: 200
 cores: 3072  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 latency-wait: 100
 local-cores: 8
-restart-times: 2
+restart-times: 1
 max-jobs-per-second: 10
 keep-going: True
 keep-remote: True

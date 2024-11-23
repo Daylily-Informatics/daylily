@@ -126,7 +126,7 @@ bwa_mem2a_aln_sort:
     sort_threads: 32 # from 48
     write_threads: 32 # from 48
     mem_mb: 200000 
-    igz_threads: "  igzip -cd -T 16 " # from 32
+    igz_threads: "  igzip -cd -T 64 " # from 32
     ldpre: ""
     orig_sort_threads: 32
     benchmark_runs: 0
@@ -150,7 +150,7 @@ strobe_align_sort:
     sort_threads: 32
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     benchmark_runs: 0
-    igz_threads: "  igzip -cd -T 32  "
+    igz_threads: "  igzip -cd -T 64 "
     softclip_alts: "  "
     ld_preload: "  "
     ldpre: " "
