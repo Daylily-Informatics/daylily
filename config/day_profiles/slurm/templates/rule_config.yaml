@@ -121,7 +121,7 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 192
+    bwa_threads: 128
     orig_threads: 2
     sort_threads: 48 # from 96
     write_threads: 48 # from 96
