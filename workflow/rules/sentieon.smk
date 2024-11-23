@@ -99,8 +99,8 @@ rule sentieon_bwa_sort:
         -x {params.bwa_model} \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.huref} \
-         {params.subsample_head} <(igzip {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
-         {params.subsample_head} <(igzip  {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}    \
+         {params.subsample_head} <( {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
+         {params.subsample_head} <( {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}    \
         | mbuffer {params.mbuffer_mem} \
         | /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {params.sort_threads} \
