@@ -121,14 +121,14 @@ bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
     partition: "i192"
     threads: 192
-    bwa_threads: 134 # from 128
+    bwa_threads: 128 # from 128
     orig_threads: 2
-    sort_threads: 64 # from 48
-    write_threads: 64 # from 48
+    sort_threads: 32 # from 48
+    write_threads: 32 # from 48
     mem_mb: 200000 
     igz_threads: "  igzip -cd -T 16 " # from 32
     ldpre: ""
-    orig_sort_threads: 64
+    orig_sort_threads: 32
     benchmark_runs: 0
     softclip_alts: " "
     ld_preload: "  "
@@ -136,8 +136,8 @@ bwa_mem2a_aln_sort:
     K: "  -k 19 -Y -M -K 100000000  "
     glances: " "
     k: " "
-    orig_sort_mem: "3510M" # from 4000M
-    sort_thread_mem: "3510M"
+    orig_sort_mem: "6100M" # from 4000M
+    sort_thread_mem: "6100M"
     numactl: ""
     mbuffer_mem: " | mbuffer -m 10G -q -s 1M " 
 
