@@ -123,12 +123,12 @@ bwa_mem2a_aln_sort:
     threads: 192
     bwa_threads: 192
     orig_threads: 2
-    sort_threads: 192 # from 96
-    write_threads: 192 # from 96
-    mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
-    igz_threads: "  igzip -cd -T 96 "
+    sort_threads: 48 # from 96
+    write_threads: 48 # from 96
+    mem_mb: 200000 
+    igz_threads: "  igzip -cd -T 32 "
     ldpre: ""
-    orig_sort_threads: 192
+    orig_sort_threads: 48
     benchmark_runs: 0
     softclip_alts: " "
     ld_preload: "  "
@@ -136,8 +136,8 @@ bwa_mem2a_aln_sort:
     K: "  -k 19 -Y -M -K 1000000000  "
     glances: " "
     k: " "
-    orig_sort_mem: "1170M"
-    sort_thread_mem: "1170M"
+    orig_sort_mem: "4000M"
+    sort_thread_mem: "4000M"
     numactl: ""
     mbuffer_mem: " | mbuffer -m 10G -q -s 1M " 
 
