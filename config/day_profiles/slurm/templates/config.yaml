@@ -14,12 +14,12 @@ cluster:
     --chdir=$PWD
     --mem={resources.mem_mb}
     --comment $DAY_PROJECT
-    --distribution={resources.distribution} {resources.exclusive}
+    --distribution={resources.distribution} 
 default-resources:  
   - disk_mb=1000
   - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type
   - threads=1
-  - time=4440
+  - time=7240
   - partition=i192
   - vcpu=1
   - distribution=block

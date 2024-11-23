@@ -125,7 +125,7 @@ bwa_mem2a_aln_sort:
     orig_threads: 2
     sort_threads: 48 # from 96
     write_threads: 48 # from 96
-    mem_mb: 300000 
+    mem_mb: 200000 
     igz_threads: "  igzip -cd -T 32 "
     ldpre: ""
     orig_sort_threads: 48
@@ -148,7 +148,7 @@ strobe_align_sort:
     strobe_threads: 192
     write_threads: 48
     sort_threads: 48
-    mem_mb: 300000  # Should be set to calculate dyanamically by FASTQsize
+    mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     benchmark_runs: 0
     igz_threads: "  igzip -cd -T 32  "
     softclip_alts: "  "
@@ -468,7 +468,7 @@ sentieon:
     mask_regions: " "
     numactl: " "  # JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4'   "  
     numactlO: "  "  # JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  "  
-    mem_mb: 300000
+    mem_mb: 200000
     metrics_threads: 48
     partition: "i192"
     sort_threads: 48
