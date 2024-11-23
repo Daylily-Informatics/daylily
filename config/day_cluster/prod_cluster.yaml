@@ -90,7 +90,7 @@ Scheduling:
             - InstanceType: r7i.48xlarge
             - InstanceacType: r7i.metal-48xl
           MinCount: 0
-          MaxCount: 16
+          MaxCount: 20
           SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
           Networking:
             PlacementGroup:
