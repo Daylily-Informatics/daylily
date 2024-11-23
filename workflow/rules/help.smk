@@ -228,7 +228,7 @@ rule help:
     resources:
         vcpu=1,
         threads=1,
-        partition="i8",
+        partition="i192,i8",
     shell:
         """
         echo "help running" >> {log} 2>&1;
