@@ -68,7 +68,7 @@ if "dppl" in DDUP:
              -clip-padding {params.clip_padding} \
              -logtostderr \
     	     -disk-mate-shards 0 \
-	         -max-depth 300000 \
+	         -max-depth 100000 \
 	         -scratch-dir $tdir \
             -output {output.bamo} \
              -min-bases {params.min_bases} \
