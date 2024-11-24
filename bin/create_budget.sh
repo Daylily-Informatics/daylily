@@ -11,14 +11,17 @@ print_help() {
   echo "  -e    Email address for budget alerts (required)"
   echo "  -t    Comma-separated alert thresholds (required, e.g., 50,80,100)"
   echo "  -c    Cluster name (required)"
+  echo "  -u    csv of users allowed to run with budget"
+  echo "  -z    AWS AZ"
   echo "  -h    Display this help message"
+  echo "  -b    S3 bucket Name Tags are stored in (s3://<bucket-name>/data/budget_tags/<project_name>-tags.tsy)"
   echo ""
   echo "Example:"
   echo "  $0 -p my-project -a 5000 -r us-west-2 -e user@example.com -t 50,80,100"
 }
 
 # Parse command-line options
-while getopts "p:a:r:e:t:h:c" opt; do
+while getopts "p:a:r:e:t:c:u:z:b:h" opt; do
   case ${opt} in
     p) PROJECT_NAME=$OPTARG ;;
     a) AMOUNT=$OPTARG ;;
@@ -26,6 +29,9 @@ while getopts "p:a:r:e:t:h:c" opt; do
     e) EMAIL=$OPTARG ;;
     t) THRESHOLDS=$OPTARG ;;
     c) CLUSTER_NAME=$OPTARG ;;
+    u) USERS=$OPTARG ;;
+    z) AZ=$OPTARG ;;
+    b) S3_BUCKET_URL=$OPTARG ;; # Parse -b option correctly
     h) 
       print_help
       exit 0
@@ -37,12 +43,69 @@ while getopts "p:a:r:e:t:h:c" opt; do
   esac
 done
 
+
 # Check if all required parameters are provided
-if [[ -z "$PROJECT_NAME" || -z "$AMOUNT" || -z "$REGION" || -z "$EMAIL" || -z "$THRESHOLDS" || "$CLUSTER_NAME" ]]; then
+if [[ -z "$PROJECT_NAME" || -z "$AMOUNT" || -z "$REGION" || -z "$EMAIL" || -z "$THRESHOLDS" || -z "$CLUSTER_NAME" ]]; then
   echo "ERROR: Project name, amount, region, email, and thresholds are required."
   print_help
   exit 1
 fi
+
+
+
+# Ensure S3_BUCKET_URL is set
+if [[ -z "$S3_BUCKET_URL" ]]; then
+  echo "ERROR: S3 bucket URL is required (-b)."
+  print_help
+  exit 1
+fi
+
+# Function to write or append tags to the S3 file# Function to write or append tags to the S3 file
+write_or_append_tags_to_s3() {
+  # Ensure S3_BUCKET_URL ends with a proper path
+  S3_BUCKET_PATH="${S3_BUCKET_URL}/data/budget_tags/${PROJECT_NAME}-tags.tsv"
+
+  # Temporary local file for manipulation
+  TEMP_LOCAL_FILE=$(mktemp)
+
+  echo "Checking if S3 file exists: $S3_BUCKET_PATH"
+
+  echo "Writing or appending tags to S3 file: $S3_BUCKET_PATH" url: $S3_BUCKET_URL
+  # Check if the file exists in S3
+  if aws s3 ls "$S3_BUCKET_PATH" > /dev/null 2>&1; then
+    echo "File exists. Downloading the existing file."
+    aws s3 cp "$S3_BUCKET_PATH" "$TEMP_LOCAL_FILE" --region "$REGION"
+
+    if [[ $? -ne 0 ]]; then
+      echo "ERROR: Failed to download existing file from S3."
+      rm -f "$TEMP_LOCAL_FILE"
+      return 1
+    fi
+  else
+    echo "File does not exist. Creating a new file."
+    touch "$TEMP_LOCAL_FILE"
+  fi
+
+  # Append the new tag to the local file
+  echo -e "$PROJECT_NAME\tubuntu,$USERS" >> "$TEMP_LOCAL_FILE"
+
+  # Upload the updated file back to S3
+  echo "Uploading updated file to S3..."
+  aws s3 cp "$TEMP_LOCAL_FILE" "$S3_BUCKET_PATH" --region "$REGION"
+
+  if [[ $? -eq 0 ]]; then
+    echo "Successfully updated S3 file: $S3_BUCKET_PATH"
+  else
+    echo "ERROR: Failed to upload updated file to S3."
+  fi
+
+  # Clean up the temporary local file
+  rm -f "$TEMP_LOCAL_FILE"
+}
+
+
+
+
 
 # Define the budget JSON template
 BUDGET_TEMPLATE='{
@@ -50,7 +113,7 @@ BUDGET_TEMPLATE='{
         "Amount": "<amount>",
         "Unit": "USD"
     },
-    "BudgetName": "<project_name>",
+    "BudgetName": "<budget_name>",
     "BudgetType": "COST",
     "CostFilters": {
         "TagKeyValue": [
@@ -77,6 +140,7 @@ BUDGET_TEMPLATE='{
 BUDGET_JSON=$(echo "$BUDGET_TEMPLATE" | \
     sed "s/<amount>/$AMOUNT/g" | \
     sed "s/<cluster_name>/$CLUSTER_NAME/g" | \
+    sed "s/<budget_name>/$PROJECT_NAME/g" | \
     sed "s/<project_name>/$PROJECT_NAME/g")
 
 # Save budget JSON to a temporary file
@@ -115,6 +179,10 @@ if [[ $? -eq 0 ]]; then
 else
   echo "ERROR: Failed to create budget. Please check your AWS credentials, permissions, and region."
 fi
+
+
+# Call this function after creating the budget
+write_or_append_tags_to_s3
 
 # Clean up temporary JSON file
 rm "$TEMP_BUDGET_JSON"

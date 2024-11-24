@@ -50,7 +50,6 @@ Scheduling:
         - Name: r7gb64
           Instances:
           - InstanceType: r7i.2xlarge
-          - InstanceType: r7iz.2xlarge
           MinCount: 0
           MaxCount: 20
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
@@ -96,10 +95,6 @@ Scheduling:
           Instances:
             - InstanceType: c6i.metal
             - InstanceType: c6i.32xlarge 
-            - InstanceType: c6id.32xlarge 
-            - InstanceType: c6id.metal
-            - InstanceType: c6in.metal
-            - InstanceType: c6in.32xlarge 
           MinCount: 0
           MaxCount: 8
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
@@ -112,10 +107,6 @@ Scheduling:
           Instances:
             - InstanceType: m6i.32xlarge 
             - InstanceType: m6i.metal 
-            - InstanceType: m6id.32xlarge 
-            - InstanceType: m6id.metal 
-            - InstanceType: m6in.metal 
-            - InstanceType: m6in.32xlarge 
           MinCount: 0
           MaxCount: 10
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
@@ -128,25 +119,8 @@ Scheduling:
           Instances:
             - InstanceType: r6i.metal 
             - InstanceType: r6i.32xlarge 
-            - InstanceType: r6in.metal 
-            - InstanceType: r6in.32xlarge 
-            - InstanceType: r6id.32xlarge
-            - InstanceType: r6idn.metal 
-            - InstanceType: r6idn.32xlarge
           MinCount: 0
           MaxCount: 10
-          SpotPrice: CALCULATE_MAX_SPOT_PRICE
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-        - Name: r7gb1024
-          Instances:
-            - InstanceType: r7iz.32xlarge 
-            - InstanceType: r7iz.metal-32xl
-          MinCount: 0
-          MaxCount: 20
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:

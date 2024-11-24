@@ -313,38 +313,6 @@ fi
 echo "Using key: $selected_key with PEM file $pem_file"
 
 
-# Default Budget Check
-echo "Checking if the 'daylily-omics-analysis-${region}' budget exists..."
-budget_name="daylily-omics-analysis-${region}"
-
-# Query AWS for the budget
-budget_exists=$(aws budgets describe-budgets \
-    --query "Budgets[?BudgetName=='$budget_name'] | [0].BudgetName" \
-    --output text --region "$region" --account-id "$ACCOUNT_ID"  --profile $AWS_PROFILE )
-
-# Check if the output is empty
-if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
-    echo "Budget '$budget_name' not found."
-    echo -n "Enter an email address to receive alerts: "
-    read user_email
-    echo -n "Enter a budget amount (default: 500): "
-    read amount
-    amount=${amount:-500}
-
-    echo "Creating the budget..."
-    echo "bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c na"
-    bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c na
-    if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to create the budget. Exiting."
-        return 3
-    else
-        echo "Budget '$budget_name' created successfully."
-    fi
-else
-    echo "Default budget '$budget_name' exists. Proceeding"
-fi
-
-
 # Query available S3 buckets and present only those in the correct region
 echo "Fetching S3 buckets matching 'omics-analysis' in $region..."
 buckets=$(aws s3api list-buckets --profile $AWS_PROFILE --query "Buckets[].Name" --output text  --profile $AWS_PROFILE | tr '\t' '\n' | \
@@ -399,7 +367,10 @@ echo "Validating required folders in bucket: $selected_bucket"
 check_s3_folder "$bucket" "data" || return 3
 check_s3_folder "$bucket" "cluster_boot_config" || return 3 
 
-echo "All required folders exist in $bucket."
+
+bucket_url="s3://$selected_bucket"
+bucket_name=$bucket
+echo "All required folders exist in $bucket_url."
 
 ## TODO: add a check to confirim the bucket has the expected s3://%{bucket}/data and s3://%{bucket}/cluster_boot_config folders
 
@@ -474,6 +445,43 @@ if [[ ! "$cluster_name" =~ ^[a-zA-Z0-9\-]+$ ]]; then
     echo "Error: Invalid cluster name."
     return 3
 fi
+
+
+# Default Budget Check
+echo "Checking if the 'daylily-omics-analysis-${region}' budget exists..."
+budget_name="da-${region_az}-${cluster_name}"
+
+# Query AWS for the budget
+budget_exists=$(aws budgets describe-budgets \
+    --query "Budgets[?BudgetName=='$budget_name'] | [0].BudgetName" \
+    --output text --region "$region" --account-id "$ACCOUNT_ID"  --profile $AWS_PROFILE )
+
+# Check if the output is empty
+if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
+    echo "Budget '$budget_name' not found."
+
+    echo -n "Enter csv string of allowed user names for budget (ubuntu is allowed for all budgets):"
+    read allowed_users
+    echo -n "Enter an email address to receive alerts: "
+    read user_email
+    echo -n "Enter a budget amount (default: 500): "
+    read amount
+    amount=${amount:-500}
+
+    echo "Creating the budget..."
+    echo "bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c $cluster_name -z $region_az -b $bucket_url  -u $allowed_users "
+    bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c $cluster_name -z $region_az -b $bucket_url  -u $allowed_users 
+
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to create the budget. Exiting."
+        return 3
+    else
+        echo "Budget '$budget_name' created successfully."
+    fi
+else
+    echo "Default budget '$budget_name' exists. Proceeding"
+fi
+
 
 # Cluster config file input
 echo -n "Enter the path to the Daylily cluster config YAML file [press Enter to use default 'config/day_cluster/prod_cluster.yaml']: "
@@ -550,8 +558,6 @@ regsub_vals=$HOME/.config/daylily/${cluster_name}_cluster_init_vals.txt
 cp "$cluster_yaml" "$target_conf"
 pem_name=$(basename "$pem_file" | cut -d '.' -f 1)
 
-bucket_url="s3://$selected_bucket"
-bucket_name=$bucket
 
 # Write variables to config
 cat <<EOF > $regsub_vals
@@ -576,7 +582,7 @@ EOF
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
 
 echo "Calculating max spot bid prices per partition resource group..."
-python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE
+python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE -b 0.10
 
 # Check the exit status of the previous command
 if [[ $? -ne 0 ]]; then
