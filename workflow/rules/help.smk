@@ -215,16 +215,19 @@ rule util_profile_config_reset:  # TARGET: clears all profile config files so th
 
 # help returns all TARGET annotated rules in the rules dir
 
+
+import random
+ri=random.randint(1,100000)
 rule help:
     container: None
     benchmark:
-        "logs/help.bench.tsv"
+        f"flogs/help_{ri}.bench.tsv"
     threads: 1
     params:
         c=get_ccmd(),
         cluster_sample="help"
     log:
-        "logs/help.log"
+        f"logs/help_{ri}.log"
     resources:
         vcpu=1,
         threads=1,
