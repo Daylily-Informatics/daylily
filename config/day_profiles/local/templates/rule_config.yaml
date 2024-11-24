@@ -146,7 +146,7 @@ strobe_align_sort:
     mem_mb: 200000 # This can be set to dynamically set based on fasta input size
     mbuffer: " | mbuffer  -m 50M -q -s 128k " 
     igz: " igzip -cd -T 2 "
-    constraint: " "
+    constraint: "  | mbuffer -m 100M -q -s 100M "
 
 clair3:
     threads: 8
