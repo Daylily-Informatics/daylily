@@ -237,7 +237,7 @@ FORCE_COLOR=1
 #!/usr/bin/env bash
 
 # Run the Snakemake command and process its output
-( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
+( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) 1>&2 ) | \
 while IFS= read -r line; do
     # Capture the latest progress value
     if [[ -s progress.log ]]; then
@@ -261,6 +261,13 @@ while IFS= read -r line; do
     # Print the line with progress appended to stderr
     printf "%s%s%s\n" "$line" "$padding" "$latest_progress" 1>&2
 done
+ret_code=$?
+
+# Print the return code to stderr and exit with the same code
+echo "Snakemake exited with return code: $ret_code" 1>&2
+exit $ret_code
+
+
 ret_code=$?
 
 
