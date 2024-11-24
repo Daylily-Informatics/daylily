@@ -466,9 +466,15 @@ pcluster describe-cluster -n $cluster_name --region us-west-2 | grep 'publicIpAd
 ```
 
 #### SSH Into Cluster Headnode
+##### Basic
 From your local shell, you can ssh into the head node of the cluster using the following command.
 ```bash
 ssh -i $pem_file ubuntu@$cluster_ip_address 
+```
+##### Facilitated
+```bash
+export AWS_PROFILE=<profile_name>
+bin/daylily-ssh-into-headnode 
 ```
 
 ##### First Time Logging Into Head Node
