@@ -189,7 +189,7 @@ doppelmark:
     partition: "i192"
     mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
     clip_padding: 600000
-    shard_size: 100000000
+    shard_size: 70000000
     min_bases: 20000
     queue_length: 10000
     xld_preload: " "
