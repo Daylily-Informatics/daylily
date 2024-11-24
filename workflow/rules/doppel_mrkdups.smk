@@ -38,11 +38,11 @@ if "dppl" in DDUP:
             clip_padding=config['doppelmark']['clip_padding'],
             min_bases=config['doppelmark']['min_bases'],
             queue_length=config['doppelmark']['queue_length'],
-	    read_buffer_size=config['doppelmark']['read_buffer_size'],
-	    huref_fasta=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
-	    compress_mem=config["doppelmark"]["compress_mem"],
-	    compress_threads=config["doppelmark"]["compress_threads"],
-	    mbuffer_mem=config["doppelmark"]["mbuffer_mem"],
+	        read_buffer_size=config['doppelmark']['read_buffer_size'],
+	        huref_fasta=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
+	        compress_mem=config["doppelmark"]["compress_mem"],
+	        compress_threads=config["doppelmark"]["compress_threads"],
+	        mbuffer_mem=config["doppelmark"]["mbuffer_mem"],
         log:
             "{MDIR}{sample}/align/{alnr}/logs/dedupe.{sample}.{alnr}.log",
         shell:
@@ -69,7 +69,6 @@ if "dppl" in DDUP:
              -clip-padding {params.clip_padding} \
              -logtostderr \
     	     -disk-mate-shards 0 \
-	 
 	         -scratch-dir $tdir \
             -output {output.bamo} \
              -min-bases {params.min_bases} \
