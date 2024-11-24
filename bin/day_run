@@ -244,9 +244,9 @@ while IFS= read -r line; do
         printf "\r%-80s" "$latest_progress"  # Print the latest progress line
         tput rc  # Restore cursor position
     fi
-    echo "$line"  # Display original Snakemake output
+    # Display original Snakemake output with color preserved
+    echo -e "$line"
 done
-
 ret_code=$?
 
 echo "$ret_code" > "ret_code.txt"
