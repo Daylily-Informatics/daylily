@@ -171,6 +171,7 @@ check_policies() {
         fi
     done
 }
+echo ""
 
 # IAM policy check (continue on warning for root users)
 echo "Checking required policies for your AWS user/role..."
@@ -204,27 +205,35 @@ check_quota() {
         echo "$resource_name quota is sufficient: $quota_value."
     fi
 }
+echo ""
 
 # Quota Checks for Key AWS Resources
 echo "Performing AWS quota checks..."
 
 # Dedicated Instances
 check_quota "Spot vCPU Max" "L-1216C47A" 20 ec2
+echo ""
 
 # Spot vCPU Max Quota 
 check_quota "Spot vCPU Max" "L-34B43A08" 310 ec2
+echo ""
 
 # VPC Quota (Default: 5 per region)
 check_quota "VPCs" "L-F678F1CE" 4 vpc
+echo ""
 
 # Elastic IP Quota (Default: 5 per region)
 check_quota "Elastic IPs" "L-0263D0A3" 4 ec2
+echo ""
 
 # NAT Gateway Quota (Default: 5 per AZ)
 check_quota "NAT Gateways" "L-FE5A380F" 4 vpc
+echo ""
 
 # Internet Gateway Quota (Default: 5 per region)
 check_quota "Internet Gateways" "L-A4707A72" 4 vpc
+
+echo ""
 
 # Check for 'pcluster-omics-analysis' policy and create if necessary
 echo "Checking for required IAM policy 'pcluster-omics-analysis'..."
@@ -250,6 +259,7 @@ if [[ -z "$policy_arn" ]]; then
     aws iam create-policy --policy-name "$policy_name" --policy-document "$policy_document" --region "$region"  --profile $AWS_PROFILE 
 fi
 
+echo ""
 
 ## PEM File Check
 # Fetch all key pairs in the given region
@@ -278,6 +288,7 @@ for key_info in "${filtered_keys[@]}"; do
         ((index++))
     fi
 done
+echo ""
 
 # Check if no valid keys were found
 if [[ ${#valid_keys[@]} -eq 0 ]]; then
@@ -298,6 +309,7 @@ select key_info in "${filtered_keys[@]}"; do
     fi
 done
 
+echo ""
 
 # Proceed with further operations using the selected key
 # Example: connect to an instance or perform other operations
@@ -312,6 +324,7 @@ else
 fi
 echo "Using key: $selected_key with PEM file $pem_file"
 
+echo ""
 
 # Query available S3 buckets and present only those in the correct region
 echo "Fetching S3 buckets matching 'omics-analysis' in $region..."
@@ -374,6 +387,8 @@ echo "All required folders exist in $bucket_url."
 
 ## TODO: add a check to confirim the bucket has the expected s3://%{bucket}/data and s3://%{bucket}/cluster_boot_config folders
 
+echo ""
+
 # Query for public and private subnets and ARN
 echo "Checking subnets and ARN in the specified AZ: $region_az..."
 
@@ -400,8 +415,11 @@ elif [[ -z "$public_subnets" || -z "$private_subnets"  ]]; then
 else
     echo "All required resources are available."
 fi
+echo ""
 
 echo "Setup complete. Proceeding with the remaining steps..."
+
+echo ""
 
 # Select public and private subnets
 public_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text  --profile $AWS_PROFILE | grep "Public Subnet" | grep $region_az)
@@ -449,8 +467,9 @@ fi
 
 # Default Budget Check
 
+echo ""
 # CLuster Budget Check
-global_budget_name="daylily-global"
+global_budget_name="daylily-global-alt"
 echo "Checking if the $global_budget_name budget exists..."
 
 # Query AWS for the budget
@@ -468,11 +487,11 @@ if [[ -z "$global_budget_exists" || "$global_budget_exists" == "None" ]]; then
     read guser_email
     echo -n "Enter a budget amount (default: 500): "
     read gamount
-    amount=${amount:-500}
+    gamount=${gamount:-500}
 
     echo "Creating the budget..."
     echo "bin/create_budget.sh -p $global_budget_name -r $region -t 75 -e $guser_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users "
-    bin/create_budget.sh -p $budget_name -r $region -t 75 -e $guser_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users 
+    bin/create_budget.sh -p $global_budget_name -r $region -t 75 -e $guser_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users 
 
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the budget. Exiting."
@@ -520,6 +539,7 @@ if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
 else
     echo "Default budget '$budget_name' exists. Proceeding"
 fi
+echo ""
 
 # Budget enforcement
 echo "Enforce budget for the cluster? (1) No (2) Yes:"
@@ -533,6 +553,7 @@ select enforce_budget in "No" "Yes"; do
     fi
     break
 done
+echo ""
 
 # Cluster config file input
 echo -n "Enter the path to the Daylily cluster config YAML file [press Enter to use default 'config/day_cluster/prod_cluster.yaml']: "
@@ -548,6 +569,7 @@ if [[ ! -f "$cluster_yaml" ]]; then
     return 3
 fi 
 
+echo ""
 
 # XMR Mining Setup
 # not reliable yet
@@ -575,6 +597,7 @@ enable_xmr=0
 #    fi
 #    break
 #done
+echo ""
 
 echo "Choose the FSX Lustre File System Size (tested with 4800):"
 fsx_options="2400 4800 7200"
@@ -586,6 +609,7 @@ select fsx_size in $fsx_options; do
     break
 done
 echo "FSX Lustre File System Size: $sel_fsx_size"
+echo ""
 
 echo "Enable detailed monitoring (yes == incurs addl cost)? (1) No (2) Yes:"
 det_mon_options="No Yes"
@@ -601,6 +625,7 @@ select detailed_monitoring in $det_mon_options; do
 done
 
 echo "Detailed monitoring enabled: $act_detailed_monitoring"
+echo ""
 
 # Prepare configuration
 mkdir -p $HOME/.config/daylily
@@ -621,6 +646,7 @@ select delete_local_root in "No" "Yes"; do
     fi
     break
 done
+echo ""
 
 echo "Save FSx Lustre file system on termination? (1) No (2) Yes:"
 select save_fsx in "No" "Yes"; do
@@ -631,6 +657,7 @@ select save_fsx in "No" "Yes"; do
     fi
     break
 done
+echo ""
 
 # Write variables to config
 cat <<EOF > $regsub_vals
@@ -655,10 +682,16 @@ REGSUB_SAVE_FSX=$save_fsx
 REGSUB_ENFORCE_BUDGET=$enforce_budget_bool
 EOF
 
+echo ""
+
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
+echo ""
 
 echo "Calculating max spot bid prices per partition resource group..."
+echo ""
+
 python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE -b 1.01
+echo ""
 
 # Check the exit status of the previous command
 if [[ $? -ne 0 ]]; then
@@ -667,12 +700,16 @@ if [[ $? -ne 0 ]]; then
     echo "Please refer to the quickstart guide for more information on required policies."
     return 3  # Use 'exit 3' if outside a function or script
 fi
+echo ""
 
 # Dry run cluster creation
 echo "Running a cluster creation dry run..."
+echo ""
+
 json_response=$(pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --dryrun true --region "$region"  )
 
 message=$(echo "$json_response" | jq -r '.message')
+echo ""
 
 # Validate the message
 if [[ "$message" == "Request would have succeeded, but DryRun flag is set." ]]; then
@@ -684,17 +721,26 @@ else
     echo "Error: Dry run failed (  pcluster create-cluster -n $cluster_name -c $target_conf_fin --dryrun true --region $region   ). Exiting."
     return 3
 fi
+echo ""
 
 # Create the cluster
 echo "Creating the cluster '$cluster_name' in region $region"
+echo ""
+
 pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --region "$region"
+echo ""
 
 # Monitor cluster creation
 echo "Monitoring cluster creation... this may take 10-15 minutes."
 python bin/helpers/watch_cluster_status.py "$region"
+echo ""
 
 echo "Once the cluster is complete, configure the head node by running 'source ./bin/daylily-cfg-headnode $pem_file $region $AWS_PROFILE' ."
 echo "....trying this now!"
+echo ""
+
 sleep 2
 source ./bin/daylily-cfg-headnode $pem_file $region $AWS_PROFILE
+echo ""
+
 echo "....fin! "
