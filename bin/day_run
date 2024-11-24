@@ -234,22 +234,21 @@ ret_code=111
 
 FORCE_COLOR=1
 
-# Run the Snakemake command
-( $snakecmd 1>&2 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
+# Run the Snakemake command and process its output
+( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
 while IFS= read -r line; do
-    # Check if progress log is non-empty
+    # Check if progress.log exists and is not empty
     if [[ -s progress.log ]]; then
         latest_progress=$(tail -n 1 progress.log)  # Get the latest progress
-        tput sc  # Save cursor position
+        tput sc  # Save the cursor position
         tput cup $(($(tput lines) - 1)) 0  # Move to the bottom row
-        printf "%-80s" "$latest_progress"  # Print the latest progress line, padded
+        printf "\r%-80s" "$latest_progress"  # Print the latest progress line
         tput rc  # Restore cursor position
     fi
-    echo -e "$line"  # Print the original Snakemake output with preserved color
+    echo -e "$line"  # Print the original Snakemake output
 done
-
-
 ret_code=$?
+
 
 echo "$ret_code" > "ret_code.txt"
 
