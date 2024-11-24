@@ -232,12 +232,17 @@ echo """SMK> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB
 echo "$snakecmd" 1>&2
 export ret_code=111
 
-# $snakecmd
+# Run the snakemake command
 ( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
 while read -r line; do
-    tput cup $(tput lines) 0
-    printf "\r$(tail -n 1 progress.log)"
+    # Move cursor to the last row, right corner, and print the progress
+    tput sc # Save cursor position
+    tput cup $(($(tput lines) - 1)) 0 # Move to bottom row
+    printf "%-80s" "$(tail -n 1 progress.log)" # Print the latest progress line, padded
+    tput rc # Restore cursor position
+    echo "$line" # Print the original line to stdout/stderr
 done
+
 ret_code=$?
 
 echo "$ret_code" > "ret_code.txt"
