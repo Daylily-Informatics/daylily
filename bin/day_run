@@ -232,7 +232,6 @@ echo """SMK> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB
 echo "$snakecmd" 1>&2
 ret_code=111
 
-export FORCE_COLOR=1
 # Run the Snakemake command with progress tracking
 ( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
 while IFS= read -r line; do
