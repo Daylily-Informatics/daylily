@@ -400,7 +400,7 @@ rtg_vcfeval:
     env_yaml: "../envs/rtgtools_v0.1.yaml"
     ld_preload: " "
     partition: "i8"
-    partition_other: "i192,i128,i8""
+    partition_other: "i192,i128,i8"
 
 run_concordance:
     threads: 8
