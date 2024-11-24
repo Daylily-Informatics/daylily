@@ -141,7 +141,7 @@ strobe_align_sort:
     sort_threads: 8
     benchmark_runs: 0
     cmd: " OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign "
-    strobe_opts: "  -k 19  -N 5   " 
+    strobe_opts: "   -N 5   " 
     sort_thread_mem: "50M"  
     mem_mb: 200000 # This can be set to dynamically set based on fasta input size
     mbuffer: " | mbuffer  -m 50M -q -s 128k " 
