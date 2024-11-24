@@ -374,7 +374,7 @@ peddy:
 
 prep_for_concordance_check:
     threads: 4
-    partition: "i192"
+    partition: "i192,i128"
 
 picard:
     threads: 16
@@ -387,14 +387,14 @@ qualimap:
     env_yaml: "../envs/qualimap_v0.1.yaml"
     glances: " "
     numactl: "none"
-    partition: "i192"
+    partition: "i192,i128"
 
 rtg_vcfeval:
     threads: 32
     env_yaml: "../envs/rtgtools_v0.1.yaml"
     ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
     partition: "i192"
-    partition_other: "i192"
+    partition_other: "i192,i128"
     rtg_region: " " 
 
 run_concordance:
