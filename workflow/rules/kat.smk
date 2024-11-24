@@ -41,6 +41,7 @@ rule kat:
     conda:
         "../envs/kat_v0.1.yaml"
     resources:
+        partition=config['kat']['partition'],
         attempt_n=get_cat_attempt,  # Hacking getting the attempt number from the res block for use in shell.
     shell:
         """

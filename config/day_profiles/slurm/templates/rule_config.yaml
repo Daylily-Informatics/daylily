@@ -51,11 +51,6 @@ active_aligners:
 
 # #######  FASTQ PREP
 
-# env JEMALLOC_CONF="oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4" LD_PRELOAD=resources/lib/libjemalloc.so.1
-
-# env  MIMALLOC_RESERVE_HUGE_OS_PAGES=1 MIMALLOC_PAGE_RESET=1 MIMALLOC_RESET_DECOMMITS=1  MIMALLOC_ABANDONED_PAGE_RESET=1 MIMALLOC_SHOW_STATS=1  MIMALLOC_VERBOSE=1 MIMALLOC_SHOW_ERRORS=1   env LD_PRELOAD=resources/lib/libmimalloc.so
-# 
-
 prep_input_sample_files:
     source_read_method: " ln -s  "
 
@@ -63,7 +58,7 @@ prep_input_sample_files:
 # ###### RULE CONFIG ----------------------------------------
 
 malloc_alt:
-    ld_preload: "  "  # env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: "  "
 
 alignstats:
     threads: 32
@@ -71,7 +66,7 @@ alignstats:
     num_reads_in_mem: " "  # 100000
     env_yaml: "../envs/alignstats_v0.2.yaml"
     glances: " "
-    ld_preload: "  "  # env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: "  "
 
 bcftools_vcfstat:
     threads: 16
@@ -167,7 +162,7 @@ deepvariant:
     threads: 64
     deep_threads: 64
     deep_cmd: " "
-    ld_preload: " "  # env LD_PRELOAD=./resources/libs/libllalloc.so "
+    ld_preload: " " 
     partition: "i192"
     partition_other: "i192"
     mem_mb: 85000 ## Potentially this can be dynmoic by input BAM size
@@ -192,7 +187,6 @@ doppelmark:
     shard_size: 70000000
     min_bases: 20000
     queue_length: 5000
-    xld_preload: " "
     ld_preload: "  "
     compress_threads: 96
     compress_mem: "2750M"
@@ -240,12 +234,11 @@ go_left:
     partition: "i192"
 
 kat:
-    threads: 96
+    threads: 64
     heap_size: "3G"
     benchmark_rounds: 0
     env_yaml: "../envs/kat_v0.1.yaml"
-    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
-    partition: "i192"
+    partition: "i192,i128"
 
 
 lofreq2:
@@ -282,7 +275,7 @@ duphold_sort_index:
 
 tiddit_sort_index:
     threads: 8
-    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so "
+    ld_preload: " "
     partition: "i192"
 
 merge_bam:
@@ -360,7 +353,7 @@ concat_index_sentD_chunks:
 peddy:
     threads: 16
     env_yaml: "../envs/peddy_v0.1.yaml"
-    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: " "
     partition: "i192"
 
 
@@ -384,7 +377,7 @@ qualimap:
 rtg_vcfeval:
     threads: 32
     env_yaml: "../envs/rtgtools_v0.1.yaml"
-    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: " "
     partition: "i192"
     partition_other: "i192,i128"
     rtg_region: " " 
@@ -401,7 +394,7 @@ sentieon_haplocaller:
 rtg_vcfstats:
     threads: 16
     env_yaml: "../envs/rtgtools_v0.1.yaml"
-    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: " "
     partition: "i192"
 
 sambamba_markdups:
@@ -412,7 +405,7 @@ sambamba_markdups:
     benchmark_runs: 0
     ulimit: " ulimit -Sn 810000 "
     env_yaml: "../envs/sambamba_v0.1.yaml"
-    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: "  "
     partition: "i192"
 
 samtools_markdups:
@@ -454,7 +447,7 @@ sentieon_markdups:
     env_yaml: "../envs/sentieon_v0.1.yaml"
     glances: " "
     numactl: "none"
-    ld_preload: "  env LD_PRELOAD=resources/lib/libtcmalloc_and_profiler.so.4 "
+    ld_preload: "  "
     partition: "i192"
 
 stargazer:
@@ -467,24 +460,24 @@ tiddit:
     threads: 16
     min_sv_size: 10  # default is 100, min 10.
     env_yaml: "../envs/tiddit_v0.1.yaml"
-    ld_preload: " "  # " env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: " " 
     partition: "i192"
 
 vanilla:
     threads: 8
     env_yaml: "../envs/vanilla_v0.1.yaml"
-    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: "   "
     partition: "i192"
 
 verifybamid2_contam:
     env_yaml: "../envs/verifybamid2_v0.1.yaml"
     threads: 16
-    ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: " "
     partition: "i192"
 
 gen_samstats:
     threads: 16
-    ld_preload: "   env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: "  "
     partition: "i192"
 
 sentieon_qc_metrics:
@@ -516,23 +509,23 @@ produce_fastqs_from_bams:
 svim_asm:
     threads: 16
     env_yaml: "../envs/svim_asm_v0.1.yaml"
-    ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: "  "
     partition: "i192"
 
 hisat2:
     threads: 96
     env_yaml: "../envs/hisat2_v0.1.yaml"
-    ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so "
+    ld_preload: "  "
     partition: "i192"
     sthreads: 32
     smem: "26G"
     wthreads: 84
-    ldpre: " LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1 "
+    ldpre: " "
 
 seqfu:
     threads: 16
     env_yaml: "../envs/fastqc_v0.1.yaml"
-    ld_preload: "  env LD_PRELOAD=./resources/libs/libllalloc.so  "
+    ld_preload: "  "
     partition: "i192"
 
 vep:
