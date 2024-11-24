@@ -325,7 +325,7 @@ octopus:
     oct_gather_env: "../envs/vanilla_v0.1.yaml"
     addl_options: |
         --max-variant-size 51 \ 
-        --very-fast \
+        --fast \
         --ignore-unmapped-contigs \
         --sequence-error-model PCR-FREE.NOVASEQ \
         --min-forest-quality 0 \                 
