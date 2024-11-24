@@ -67,6 +67,7 @@ rule bwa_mem2_sort:
 
         epocsec=$(date +'%s');
         
+
          {params.bwa_mem2a_cmd} mem \
          -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.bwa_opts}  -t {params.bwa_threads}  \
