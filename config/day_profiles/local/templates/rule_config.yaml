@@ -338,14 +338,13 @@ octopus:
         --bad-region-tolerance LOW \
         --sequence-error-model PCR-FREE.NOVASEQ \
         --min-forest-quality 0 \
-        -X 30G \
-        -B 300M \
         --max-reference-cache-memory 20M \
         --target-read-buffer-memory 100M \
         --target-working-mem 100G \
         --model-posterior ALL \
         --forest-model /fsx/data/tool_specific_resources/H_sapiens/b37/octopus/forests/germline.v0.7.4.forest \
     partition: "i192"
+
 
 sentD:
     regions_to_call: '  '  # testing:' --regions 11:1-115169878 MT:1-16569  '
