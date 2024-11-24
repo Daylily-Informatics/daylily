@@ -16,7 +16,7 @@ HeadNode:
     RootVolume:
       Size: 775
       VolumeType: gp3
-      DeleteOnTermination: true
+      DeleteOnTermination: REGSUB_DELETE_LOCAL_ROOT
     EphemeralVolume:
       MountDir: /head_root
   CustomActions:
@@ -239,6 +239,7 @@ SharedStorage:  # This is the local FS which is expensive but fast, could be swa
   - MountDir: /fsx  # The cost of this will be roughly $22.93 per day, so it should not be kept hot unless in active use.
     Name: fsx-for-daylily-x3  # WARNING, EDIT NAME WILL DEL EXISTING DATA
     StorageType: FsxLustre
+    SkipDeletion: REGSUB_SAVE_FSX  # Set to true to keep the FSX after the cluster is deleted
     FsxLustreSettings:
       ImportPath: REGSUB_S3_BUCKET_REF/data/
       StorageCapacity: REGSUB_FSX_SIZE 

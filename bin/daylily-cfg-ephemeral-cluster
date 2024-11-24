@@ -558,6 +558,26 @@ regsub_vals=$HOME/.config/daylily/${cluster_name}_cluster_init_vals.txt
 cp "$cluster_yaml" "$target_conf"
 pem_name=$(basename "$pem_file" | cut -d '.' -f 1)
 
+# capture 'true' or 'false' for delete_local_root
+echo "Delete local root volume on termination? (1) No (2) Yes:"
+select delete_local_root in "No" "Yes"; do
+    if [[ "$delete_local_root" == "Yes" ]]; then
+        delete_local_root="true"
+    else
+        delete_local_root="false"
+    fi
+    break
+done
+
+echo "Save FSx Lustre file system on termination? (1) No (2) Yes:"
+select save_fsx in "No" "Yes"; do
+    if [[ "$save_fsx" == "Yes" ]]; then
+        save_fsx="true"
+    else
+        save_fsx="false"
+    fi
+    break
+done
 
 # Write variables to config
 cat <<EOF > $regsub_vals
@@ -577,6 +597,8 @@ REGSUB_DETAILED_MONITORING=$act_detailed_monitoring
 REGSUB_CLUSTER_NAME=$cluster_name
 REGSUB_USERNAME=$USER
 REGSUB_PROJECT=$budget_name
+REGSUB_DELETE_LOCAL_ROOT=$delete_local_root
+REGSUB_SAVE_FSX=$save_fsx
 EOF
 
 bash bin/other/regsub_yaml.sh $regsub_vals $target_conf
