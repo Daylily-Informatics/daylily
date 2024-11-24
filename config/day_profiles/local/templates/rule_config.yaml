@@ -335,7 +335,7 @@ octopus:
         --assemble-all \
         --ignore-unmapped-contigs \
         --allow-supplementary-alignments \
-        --bad-region-tolerance NORMAL \
+        --bad-region-tolerance LOW \
         --sequence-error-model PCR-FREE.NOVASEQ \
         --min-forest-quality 0 \
         -X 30G \
