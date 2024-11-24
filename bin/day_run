@@ -233,6 +233,9 @@ echo "$snakecmd" 1>&2
 ret_code=111
 
 FORCE_COLOR=1
+
+#!/usr/bin/env bash
+
 # Run the Snakemake command and process its output
 ( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
 while IFS= read -r line; do
@@ -255,11 +258,10 @@ while IFS= read -r line; do
     fi
     padding=$(printf "%*s" "$padding_length")
 
-    # Print the line with progress appended
-    printf "%s%s%s\n" "$line" "$padding" "$latest_progress"
+    # Print the line with progress appended to stderr
+    printf "%s%s%s\n" "$line" "$padding" "$latest_progress" 1>&2
 done
 ret_code=$?
-
 
 
 echo "$ret_code" > "ret_code.txt"
