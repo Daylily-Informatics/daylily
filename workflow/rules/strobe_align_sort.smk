@@ -54,28 +54,16 @@ rule strobe_align_sort:
 
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/strobe_tmp_$timestamp;
+        TMPDIR=/fsx/scratch/strobe_tmp_$timestamp;
         mkdir -p $TMPDIR;
-        export APPTAINER_HOME=$TMPDIR;
+        APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
-        export tdir=$TMPDIR;
+        tdir=$TMPDIR;
 
         epocsec=$(date +'%s');
 
         ulimit -n 65536 || echo "ulimit mod failed";
 
-
-        # Find the jemalloc library in the active conda environment
-        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
-
-        # Check if jemalloc was found and set LD_PRELOAD accordingly
-        if [[ -n "$jemalloc_path" ]]; then
-            export LD_PRELOAD="$jemalloc_path";
-            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
-        else
-            echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
-            exit 3;
-        fi
 
         {params.strobe_cmd} \
         -t {params.strobe_threads} {params.strobe_opts} \

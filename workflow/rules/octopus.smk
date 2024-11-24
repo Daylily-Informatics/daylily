@@ -224,15 +224,13 @@ rule octopus:
         mdir=MDIR,
     shell:
         """
-        export BRTOL="NORMAL";  
-
         touch {output.vcf};
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=./octo_tmp_$timestamp;
-        export APPTAINER_HOME=$TMPDIR;
+        TMPDIR=./octo_tmp_$timestamp;
+        APPTAINER_HOME=$TMPDIR;
         trap "sleep 2 && rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         
-        export oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
+        oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
 
         /opt/octopus/bin/octopus -T $oochrm_mod --threads {threads}    \
         --reference {params.huref}  \
@@ -317,7 +315,7 @@ rule oct_concat_fofn:
     shell:
         """
         (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFailOK >> {log} && ls ./ >> {log};
-        ### export LD_LIBRARY_PATH=$PWD/resources/libs/;
+
         for i in {input.chunk_tbi}; do
             ii=$(echo $i | perl -pe 's/\.tbi$//g'; );
             echo $ii >> {output.tmp_fofn};
@@ -364,7 +362,7 @@ rule oct_concat_index_chunks:
         """
         (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFAIL;
         mkdir -p $(dirname {log});
-        ### export LD_LIBRARY_PATH=$PWD/resources/libs/;
+        
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
         bcftools view -O z -o {output.vcfgz} {output.vcf};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};

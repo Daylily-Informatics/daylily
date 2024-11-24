@@ -67,15 +67,15 @@ rule sentieon_bwa_sort:
         echo "INSTANCE TYPE: $itype" > {log};
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
-        export bwt_max_mem={params.max_mem} ;
+        bwt_max_mem={params.max_mem} ;
         epocsec=$(date +'%s');
 
         ulimit -n 65536 || echo "ulimit mod failed";
         
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
+        TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
         mkdir -p $TMPDIR;
-        export APPTAINER_HOME=$TMPDIR;
+        APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         tdir=$TMPDIR;
 
@@ -84,7 +84,7 @@ rule sentieon_bwa_sort:
 
         # Check if jemalloc was found and set LD_PRELOAD accordingly
         if [[ -n "$jemalloc_path" ]]; then
-            export LD_PRELOAD="$jemalloc_path";
+            LD_PRELOAD="$jemalloc_path";
             echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
         else
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";

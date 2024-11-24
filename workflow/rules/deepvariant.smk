@@ -80,9 +80,9 @@ rule deepvariant:
         dchr=$(echo {params.cpre}{params.dchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/MT\:/');
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/deepvariant_tmp_$timestamp;
+        TMPDIR=/fsx/scratch/deepvariant_tmp_$timestamp;
         mkdir -p $TMPDIR;
-        export APPTAINER_HOME=$TMPDIR;
+        APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         echo "DCHRM: $dchr" >> {log} 2>&1;
         
@@ -229,7 +229,7 @@ rule deep_concat_index_chunks:
         """
         (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFAIL;
         mkdir -p $(dirname {log});
-        ### export LD_LIBRARY_PATH=$PWD/resources/libs/;
+        
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
         bcftools view -O z -o {output.vcfgz} {output.vcf};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
