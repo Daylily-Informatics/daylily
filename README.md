@@ -911,8 +911,13 @@ If the `S3` bucket mounted to the FSX filesystem is too large (the default bucke
 ## Cloudstack Formation Fails When Creating Clusters In >1 AZ A Region (must be manually sorted ATM)
 The command `bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml "$res_prefix" "$region_az" "$region" $AWS_PROFILE` does not yet gracefully handle being run >1x per region.  The yaml can be edited to create the correct scoped resources for running in >1 AZ in a region (this all works fine when running in 1AZ in >1 regions), or you can manually create the pub/private subnets, etc for running in multiple AZs in a region. The fix is not difficult, but is not yet automated.
 
-## Advanced Topics
 
+# Costs
+## PCUI
+- *[< $1/month>](https://docs.aws.amazon.com/parallelcluster/latest/ug/install-pcui-costs-v3.html)*
+
+# Advanced Topics
+## Monero mining
 - [Monero Mining](docs/advanced/monero_mining.md)
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>

@@ -232,7 +232,12 @@ echo """SMK> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB
 echo "$snakecmd" 1>&2
 export ret_code=111
 
-$snakecmd
+# $snakecmd
+( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
+while read -r line; do
+    tput cup $(tput lines) 0
+    printf "\r$(tail -n 1 progress.log)"
+done
 ret_code=$?
 
 echo "$ret_code" > "ret_code.txt"
