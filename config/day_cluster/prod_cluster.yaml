@@ -96,7 +96,7 @@ Scheduling:
             - InstanceType: c6i.metal
             - InstanceType: c6i.32xlarge 
           MinCount: 0
-          MaxCount: 8
+          MaxCount: 10
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
