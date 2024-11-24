@@ -324,16 +324,12 @@ octopus:
     env_yaml: "../envs/octopus_v0.7.yaml"
     oct_gather_env: "../envs/vanilla_v0.1.yaml"
     addl_options: |
-        --max-indel-errors 30 \
-        --max-haplotypes 500 \
         --max-variant-size 51 \
         --downsample-above 41 \
         --downsample-target 40 \
         --min-mapping-quality 6 \
         --use-wide-hmm-scores \
-        --assemble-all \
         --ignore-unmapped-contigs \
-        --allow-supplementary-alignments \
         --bad-region-tolerance NORMAL \
         --sequence-error-model PCR-FREE.NOVASEQ \
         --min-forest-quality 0 \
