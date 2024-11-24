@@ -1,0 +1,9 @@
+
+echo "NOT IMPLEMENTED YET"
+
+echo "... however!"
+
+echo "You may use pcluster delete-cluster or the PCUI to delete specific clusters."
+echo "WARNING: This will delete the cluster and all data on the cluster."
+echo "Be sure to migrate any data on FSX back to S3 before deleting the cluster and the FSX filesystem."
+echo "If you chose to not have the FSX filesystem delete whern the cluster is deleted, you will need to manually delete the FSX filesystem! (same with the EC2 headnode root volume)"

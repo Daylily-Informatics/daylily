@@ -27,9 +27,8 @@ default-resources:
   - constraint='' 
   - exclude=''
   - include=''
-resources: vcpu=3072 # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
-jobs: 200
-cores: 3072  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
+jobs: 300
+cores: 4608  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 latency-wait: 100
 local-cores: 8
 restart-times: 1
@@ -44,7 +43,7 @@ conda-frontend: conda
 conda-prefix: "/fsx/resources/environments/conda/USER_REGSUB/HOSTNAME"
 cluster-status: config/day_profiles/slurm/templates/status-scontrols.sh
 cluster-cancel: scancel
-max-status-checks-per-second: 10
+max-status-checks-per-second: 20
 force-use-threads: True
 stats: "day_pipe_stats.json"
 use-singularity: True

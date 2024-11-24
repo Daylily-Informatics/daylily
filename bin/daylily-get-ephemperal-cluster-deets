@@ -1,0 +1,4 @@
+
+
+echo "use the PCUI, or pcluster list-clusters --region <region> to get the cluster ID, then pcluster describe-cluster --region <region> -n <cluster-id> to get the details"
+
