@@ -85,16 +85,8 @@ rule prep_results_dirs:
         touch {output}; ) > {log} 2>&1;
         """
 
-if "unit_test" in config and config["unit_test"]:
-
-    ### THIS unit_test STUFF IS OLD AND TO BE DEPRECATED - the snakemake
-    ###   feature to auto-build tests never worked as advertised.
-    rule enter_unittestingland:
-        output:
-            "logs/unit_test.prepared",
-        shell:
-            "touch {output};"
-
+if 1 == 2:
+    pass
 else:
 
 

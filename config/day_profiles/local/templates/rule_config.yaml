@@ -8,9 +8,10 @@ analysis_manifest: .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv # or .tes
 genome_build: "hg38"  # or b37
 
 
-# TO DEPRECATE
-unit_test: false
+
 profile_name: local
+
+# TO DEPRECATE
 valid_biome: AWSPC
 
  
@@ -399,7 +400,7 @@ rtg_vcfeval:
     env_yaml: "../envs/rtgtools_v0.1.yaml"
     ld_preload: " "
     partition: "i8"
-    partition_other: "i192,i128,"i8""
+    partition_other: "i192,i128,i8""
 
 run_concordance:
     threads: 8

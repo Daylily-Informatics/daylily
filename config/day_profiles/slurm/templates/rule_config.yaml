@@ -7,9 +7,10 @@
 analysis_manifest: .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv # or .test_data/data/0.01xwgs_HG002_b37.samplesheet.csv
 genome_build: "hg38"  # or b37
 
-# TO DEPRECATE
-unit_test: false
+
 profile_name: local
+
+# TO DEPRECATE
 valid_biome: AWSPC
 
 
