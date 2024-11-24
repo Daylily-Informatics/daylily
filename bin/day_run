@@ -236,7 +236,7 @@ FORCE_COLOR=1
 
 
 # Run the Snakemake command and process its output
-( $snakecmd 1>&2 | tee 2>(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
+( $snakecmd 1>&2 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
 while IFS= read -r line; do
     # Capture the latest progress value
     if [[ -s progress.log ]]; then
