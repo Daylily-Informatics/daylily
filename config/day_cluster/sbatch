@@ -13,9 +13,10 @@ fi
 slurm_command=$(basename "$0")
 
 if [ -z "${project}" ]; then
-    echo "ERROR: Please specify a project/budget name with the comment flag. '--comment ProjectName'"
-    echo "Available budgets/projects in /fsx/data/budget_tags/pcluster-project-budget-tags.tsv are:"
-    cat /fsx/data/budget_tags/pcluster-project-budget-tags.tsv
+    echo "ERROR: Please specify a project/budget name with the comment flag. '--comment ProjectName' to proceed with any sbatch command." >&2
+    echo "Available budgets/projects in /fsx/data/budget_tags/pcluster-project-budget-tags.tsv are:" >&2
+    cat /fsx/data/budget_tags/pcluster-project-budget-tags.tsv >&2
+    echo "" >&2
     exit 1
 fi
 
@@ -27,74 +28,82 @@ modified_project="${project}"
 
 # Check if the budget file exists
 if [ ! -f "${budget_file}" ]; then
-    echo "WARNING: Budget file ${budget_file} not found."
+    echo "WARNING: Budget file ${budget_file} not found." >&2
     modified_project="${project}-no-file"
-    echo "Proceeding with the tag: $modified_project  ...continuing in 10 seconds."
-    sleep 10
+    echo "" >&2
+    echo "Proceeding with the tag: $modified_project  ...continuing in 3 seconds." >&2
+    echo "" >&2
+    sleep 3
 
 else
     # Check if the project exists and the user is authorized
     project_users=$(awk -F'\t' -v proj="${project}" '$1 == proj && NF == 2 {print $2}' "${budget_file}" | tr ',' '\n')
 
     if [ -z "${project_users}" ]; then
-        echo "WARNING: Project '${project}' not found in budget file. Available budgets/projects are:"
-        cat "${budget_file}"
+        echo "WARNING: Project '${project}' not found in budget file. " >&2
+        echo "Available budgets/projects are:" >&2
+        cat "${budget_file}" >&2
+        echo "" >&2
         modified_project="${project}-invalid-project"
-        echo "Proceeding with the tag: $modified_project  ...continuing in 10 seconds."
-        sleep 10
+        echo "Proceeding with the tag: $modified_project  ...continuing in 3 seconds." >&2
+        sleep 3
     elif ! echo "${project_users}" | grep -qx "${USER}"; then
-        echo "WARNING: User '${USER}' is not authorized for project '${project}'."
+        echo "WARNING: User '${USER}' is not authorized for project '${project}'." >&2
+        echo "" >&2
         modified_project="${project}-invalid-user"
-        echo "Proceeding with the tag: $modified_project  ...continuing in 10 seconds."
-        sleep 10
+        echo "Proceeding with the tag: $modified_project  ...continuing in 3 seconds." >&2
+        sleep 3
     fi
 fi
 
+
+## HELLO- THIS IS NOT SUPER TESTED YET. THE PIECES SHOULD ALL BE IN PLACE, BUT HAVE NOT RUN MANY USE CASES YET.
 # Check for 'aws-parallelcluster-enforce-budget' tag in pcluster-config.yaml
 enforce_budget=$(awk '/Key: aws-parallelcluster-enforce-budget/ {getline; print $2}' /opt/parallelcluster/shared/cluster-config.yaml)
 
 if [ "$enforce_budget" != "true" ]; then
-    echo "Budget enforcement is not enabled. Skipping budget check."
+    #echo "Budget enforcement is not enabled. Skipping budget check."
+    sleep 0.0001
 else
     # Budget Check
     AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
     region=$(grep "Region" /etc/parallelcluster/cfnconfig | awk '{print $2}')
 
     if [ -z "$region" ]; then
-        echo "ERROR: Region is not set. Cannot verify budget."
+        echo "ERROR: Region is not set. Cannot verify budget." >&2
         exit 1
     fi
 
     BUDGETS=$(aws budgets describe-budgets --account-id "$AWS_ACCOUNT_ID" --region "$region" 2>/dev/null)
 
     if [ -z "$BUDGETS" ]; then
-        echo "WARNING: Unable to retrieve AWS budgets. Continuing without budget check."
+        echo "WARNING: Unable to retrieve AWS budgets. Continuing without budget check." >&2
     else
         MATCHING_BUDGET=$(echo "$BUDGETS" | jq -r ".Budgets[] | select(.BudgetName==\"$project\")")
 
         if [ -z "$MATCHING_BUDGET" ]; then
-            echo "WARNING: No matching AWS budget found for project '$project'. Continuing..."
+            echo "WARNING: No matching AWS budget found for project '$project'. Continuing..." >&2
         else
             TOTAL_BUDGET=$(echo "$MATCHING_BUDGET" | jq -r ".BudgetLimit.Amount")
             USED_BUDGET=$(echo "$MATCHING_BUDGET" | jq -r ".CalculatedSpend.ActualSpend.Amount")
 
             if [ -z "$TOTAL_BUDGET" ] || [ -z "$USED_BUDGET" ]; then
-                echo "ERROR: Unable to retrieve budget details for project '$project'."
+                echo "ERROR: Unable to retrieve budget details for project '$project'." >&2
                 exit 1
             fi
 
             PERCENT_USED=$(awk "BEGIN {print ($USED_BUDGET / $TOTAL_BUDGET) * 100}")
 
-            echo ""
-            echo "________________________________________________________"
-            echo "AWS Budget for project '$project' in region '$region':"
-            echo "  Total: $TOTAL_BUDGET USD"
-            echo "  Used: $USED_BUDGET USD"
-            echo "  Percent Used: $PERCENT_USED%"
-            echo "________________________________________________________"
+            echo "" >&2
+            echo "________________________________________________________" >&2
+            echo "AWS Budget for project '$project' in region '$region':" >&2
+            echo "  Total: $TOTAL_BUDGET USD" >&2
+            echo "  Used: $USED_BUDGET USD" >&2
+            echo "  Percent Used: $PERCENT_USED%" >&2
+            echo "________________________________________________________" >&2
 
             if (( $(echo "$PERCENT_USED >= 100" | bc -l) )); then
-                echo "WARNING: Budget for project '$project' is exhausted! Continuing anyway..."
+                echo "WARNING: Budget for project '$project' is exhausted! Continuing anyway..." >&2
             fi
         fi
     fi

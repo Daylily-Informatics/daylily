@@ -202,17 +202,17 @@ rule octopus:
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/oct/log/vcfs/{sample}.{alnr}.oct.{ochrm}.snv.log",
-    threads: calc_oct_threads  # config['octopus']['threads']
+    threads: config['octopus']['threads']
     container:
         "docker://daylilyinformatics/octopus-skylake:0.7.4" 
     priority: 45
     benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.oct.{ochrm}.bench.tsv"
     resources:
-        vcpu=calc_oct_threads,
+        vcpu= config['octopus']['threads'],
         attempt_n=lambda wildcards, attempt:  (attempt + 0),
-        partition="i192",
-        threads=calc_oct_threads
+        partition="i192.i128",
+        threads= config['octopus']['threads']
     params:
         cluster_sample=ret_sample, 
         ochrm_mod=get_ochrm_mod,
@@ -262,7 +262,7 @@ rule oct_sort_index_chunk_vcf:
     resources:
         vcpu=8,
         threads=8,
-        partition="i192"
+        partition="i192,i128"
     params:
         cluster_sample=ret_sample,
     threads: 8 #config["config"]["sort_index_oct_chunk_vcf"]['threads']
@@ -344,7 +344,7 @@ rule oct_concat_index_chunks:
     resources:
         vcpu=8,
         threads=8,
-        partition="i192"
+        partition="i192,i128"
     priority: 47
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
