@@ -230,38 +230,10 @@ echo """SMK> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB
 
 # Then run the snamemake cmd
 echo "$snakecmd" 1>&2
-ret_code=111
+export ret_code=111
 
-FORCE_COLOR=1
-
-
-# Run the Snakemake command and process its output
-( $snakecmd 1>&2 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
-while IFS= read -r line; do
-    # Capture the latest progress value
-    if [[ -s progress.log ]]; then
-        latest_progress=$(tail -n 1 progress.log)
-    else
-        latest_progress=""
-    fi
-
-    # Get terminal dimensions
-    cols=$(tput cols)
-    line_length=${#line}
-    progress_length=${#latest_progress}
-
-    # Calculate padding to align progress at the end of the line
-    padding_length=$((cols - line_length - progress_length))
-    if ((padding_length < 0)); then
-        padding_length=0  # Prevent negative padding
-    fi
-    padding=$(printf "%*s" "$padding_length")
-
-    # Print the line with progress appended to stderr
-    printf "%s%s%s\n" "$line" "$padding" "$latest_progress" 1>&2
-done
+$snakecmd
 ret_code=$?
-
 
 echo "$ret_code" > "ret_code.txt"
 
