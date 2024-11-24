@@ -11,13 +11,6 @@ import os
 
 config["snv_pos_samps"] = {}
 
-THREAD_PARTITION_MAP= {
-'8' : 'i8,i64,i96',
-'16'  : 'i8,i64,i96',
-'32'  : 'i64,i96',
-'64'  : 'i64,i96',
-'96' : 'i96',
-}
 
 
 def get_ploidy(wildcards):
@@ -42,11 +35,6 @@ def get_ploidy(wildcards):
     return " "  # ploidy_str
 
 
-# swap with conda directive to run
-#    container:
-#        "docker://dancooke/octopus"
-#    container:
-#        "docker://daylilyinformatics/octopus-skylake:0.7.4"
 
 
 def get_ochrm_mod(wildcards):
@@ -80,109 +68,6 @@ def get_ochrm_mod(wildcards):
 
     return ret_str
 
-
-chrm_slots = {
-    "1": "192",
-    "2": "192",
-    "3": "192",
-    "4": "192",
-    "5": "192",
-    "6": "192",
-    "7": "192",
-    "8": "192",
-    "9": "192",
-    "10": "192",
-    "11": "192",
-    "12": "192",
-    "13": "192",
-    "14": "192",
-    "15": "192",
-    "16": "192",
-    "17": "192",
-    "18": "192",
-    "19": "192",
-    "20": "192",
-    "21": "192",
-    "22": "192",
-    "23": "192",
-    "24": "192",
-    "25": "192",
-}
-
-
-def calc_oct_threads(wildcards, input):
-    act_ochrm = str(wildcards.ochrm).split("-")[0].split("~")[0].split(":")[0]
-    slot_n = 96
-    if act_ochrm not in chrm_slots.keys():
-        print(
-            f" WEIRD CHROM NOT MATCHING OCT DICT:  {wildcards.ochrm}", file=sys.stderr
-        )
-    else:
-        slot_n = chrm_slots[act_ochrm]
-
-    return int(slot_n)
-
-
-def calc_oct_partition(wildcards, input):
-    act_ochrm = str(wildcards.ochrm).split("-")[0].split("~")[0].split(":")[0]
-    slot_n = 96
-    if act_ochrm not in chrm_slots.keys():
-        print(
-            f" WEIRD CHROM NOT MATCHING OCT DICT:  {wildcards.ochrm}", file=sys.stderr
-        )
-    else:
-        slot_n = chrm_slots[act_ochrm]
-
-    return str(THREAD_PARTITION_MAP[slot_n])
-
-
-def calc_oct_x(wildcards):
-    act_ochrm = str(wildcards.ochrm).split("-")[0].split("~")[0].split(":")[0]
-    ret_x = " -X 4G  "
-    if act_ochrm not in chrm_slots.keys():
-        pass
-
-    elif int(chrm_slots[act_ochrm]) == 96:
-        ret_x = " -X 9G "
-    elif int(chrm_slots[act_ochrm]) == 64:
-        ret_x = " -X 8G "
-    elif int(chrm_slots[act_ochrm]) == 32:
-        ret_x = " -X  6G "
-    elif int(chrm_slots[act_ochrm]) == 16:
-        ret_x = " -X  5G "
-    return f"{ret_x}"
-
-
-def calc_oct_b(wildcards):
-    act_ochrm = str(wildcards.ochrm).split("-")[0].split("~")[0].split(":")[0]
-    ret_b = " -B 60M  "
-    if act_ochrm not in chrm_slots.keys():
-        pass
-    elif int(chrm_slots[act_ochrm]) == 96:
-        ret_x = " -B 180M "
-    elif int(chrm_slots[act_ochrm]) > 64:
-        ret_b = " -B 140M "
-    elif int(chrm_slots[act_ochrm]) == 32:
-        ret_b = " -B 100M "
-    elif  int(chrm_slots[act_ochrm]) == 16:
-        ret_b = " -B 75M "
-    return f"{ret_b}"
-
-
-def get_max_open_rds(wildcards):
-    act_ochrm = str(wildcards.ochrm).split("-")[0].split("~")[0].split(":")[0]
-    mor = "2500"
-    if act_ochrm not in chrm_slots.keys():
-        pass
-    elif int(chrm_slots[act_ochrm]) == 96:
-        mor = "60000"
-    elif int(chrm_slots[act_ochrm]) == 64:
-        mor = "38000"
-    elif int(chrm_slots[act_ochrm]) == 32:
-        mor="11000"
-    elif int(chrm_slots[act_ochrm]) == 16:
-        mor="5000"
-    return f"{mor}"
 
 
 def ret_oct_clust_samp(wildcards):
@@ -232,7 +117,7 @@ rule octopus:
         
         oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
 
-        /opt/octopus/bin/octopus -T $oochrm_mod --threads {threads}    \
+        {params.ld_pre} /opt/octopus/bin/octopus -T $oochrm_mod --threads {threads}    \
         --reference {params.huref}  \
         --temp-directory $TMPDIR \
         --reads {input.b}   \
