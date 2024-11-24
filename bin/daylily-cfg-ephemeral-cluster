@@ -420,6 +420,7 @@ echo ""
 echo "Setup complete. Proceeding with the remaining steps..."
 
 echo ""
+echo ""
 
 # Select public and private subnets
 public_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text  --profile $AWS_PROFILE | grep "Public Subnet" | grep $region_az)
@@ -428,12 +429,14 @@ public_subnet_choices=()
 while read -r subnet_id subnet_name; do
     public_subnet_choices+=("$subnet_name ($subnet_id)")
 done <<< "$public_subnets_new"
+echo ""
 
 select public_subnet_choice in "${public_subnet_choices[@]}"; do
     public_subnet=$(echo "$public_subnet_choice" | sed -n 's/.*(\(.*\)).*/\1/p')
     echo "You selected Public Subnet: $public_subnet"
     break
 done
+echo ""
 
 echo "Select a Private Subnet:"
 private_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text  --profile $AWS_PROFILE | grep "Public Subnet" | grep $region_az)
@@ -441,6 +444,7 @@ private_subnet_choices=()
 while read -r subnet_id subnet_name; do
     private_subnet_choices+=("$subnet_name ($subnet_id)")
 done <<< "$private_subnets_new"
+echo ""
 
 select private_subnet_choice in "${private_subnet_choices[@]}"; do
     private_subnet=$(echo "$private_subnet_choice" | sed -n 's/.*(\(.*\)).*/\1/p')
@@ -448,6 +452,8 @@ select private_subnet_choice in "${private_subnet_choices[@]}"; do
     break
 done
 
+
+echo ""
 # Select an IAM policy ARN for 'pclusterTagsAndBudget'
 policy_arns=($(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region" --profile $AWS_PROFILE ))
 echo "Select an IAM policy ARN for 'pclusterTagsAndBudget':"
@@ -455,7 +461,9 @@ select arn_policy_id in "${policy_arns[@]}"; do
     echo "You selected: $arn_policy_id"
     break
 done
+echo ""
 
+echo ""
 # Cluster name input
 echo -n "Enter the name for your cluster (alphanumeric and '-'): "
 read cluster_name
@@ -469,7 +477,7 @@ fi
 
 echo ""
 # CLuster Budget Check
-global_budget_name="daylily-global-alt"
+global_budget_name="daylily-global"
 echo "Checking if the $global_budget_name budget exists..."
 
 # Query AWS for the budget
@@ -648,12 +656,12 @@ select delete_local_root in "No" "Yes"; do
 done
 echo ""
 
-echo "Save FSx Lustre file system on termination? (1) No (2) Yes:"
-select save_fsx in "No" "Yes"; do
-    if [[ "$save_fsx" == "Yes" ]]; then
-        save_fsx="true"
+echo "[Retain|Delete] FSx Lustre file system on custer [update|termination]? (1) Retain (2) Delete:"
+select save_fsx in "Retain" "Delete"; do
+    if [[ "$save_fsx" == "Delete" ]]; then
+        save_fsx="Delete"
     else
-        save_fsx="false"
+        save_fsx="Retain"
     fi
     break
 done
