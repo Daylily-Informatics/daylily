@@ -42,7 +42,6 @@ if "dppl" in DDUP:
 	        huref_fasta=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
 	        compress_mem=config["doppelmark"]["compress_mem"],
 	        compress_threads=config["doppelmark"]["compress_threads"],
-	        mbuffer_mem=config["doppelmark"]["mbuffer_mem"],
         log:
             "{MDIR}{sample}/align/{alnr}/logs/dedupe.{sample}.{alnr}.log",
         shell:

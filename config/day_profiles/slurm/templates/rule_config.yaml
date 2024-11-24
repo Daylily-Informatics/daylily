@@ -199,7 +199,6 @@ doppelmark:
     env_yaml: "../envs/vanilla_v0.1.yaml"
     dop_opts:  " -max-depth 300000 "
     numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
-    mbuffer_mem: " | mbuffer -m 10G -q -s 1M " 
     constraint: " --constraint 'm7gb768|r7gb1536' "
 
 dysgu:
