@@ -51,8 +51,6 @@ rule strobe_align_sort:
         echo "INSTANCE TYPE: $itype"
         start_time=$(date +%s);
 
-
-
         timestamp=$(date +%Y%m%d%H%M%S);
         TMPDIR=/fsx/scratch/strobe_tmp_$timestamp;
         mkdir -p $TMPDIR;
