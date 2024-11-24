@@ -16,7 +16,7 @@ HeadNode:
     RootVolume:
       Size: 775
       VolumeType: gp3
-      DeleteOnTermination: false
+      DeleteOnTermination: true
     EphemeralVolume:
       MountDir: /head_root
   CustomActions:
@@ -47,13 +47,107 @@ Scheduling:
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: all
+        - Name: r7gb64
           Instances:
-            - InstanceType: r7i.2xlarge 
-            - InstanceType: r6i.2xlarge 
+          - InstanceType: r7i.2xlarge
+          - InstanceType: r7iz.2xlarge
+          MinCount: 0
+          MaxCount: 20
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: r6gb64
+          Instances:
+          - InstanceType: r6i.2xlarge
+          MinCount: 0
+          MaxCount: 20
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+      Networking:
+        SubnetIds:
+          - REGSUB_PRIVATE_SUBNET
+      CustomActions:
+        OnNodeConfigured:
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_combined.sh
+          Args:
+            - REGSUB_REGION
+            - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGSUB_XMR_WALLET
+      Iam:
+        S3Access:
+          - BucketName: REGSUB_S3_BUCKET_NAME
+            EnableWriteAccess: false
+        AdditionalIamPolicies:
+          - Policy: REGSUB_S3_IAM_POLICY
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+    - Name: i128
+      CapacityType: SPOT
+      AllocationStrategy: lowest-price
+      ComputeResources:
+        - Name: c6gb256
+          Instances:
+            - InstanceType: c6i.metal
+            - InstanceType: c6i.32xlarge 
+            - InstanceType: c6id.32xlarge 
+            - InstanceType: c6id.metal
+            - InstanceType: c6in.metal
+            - InstanceType: c6in.32xlarge 
           MinCount: 0
           MaxCount: 8
-          SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: m6gb512
+          Instances:
+            - InstanceType: m6i.32xlarge 
+            - InstanceType: m6i.metal 
+            - InstanceType: m6id.32xlarge 
+            - InstanceType: m6id.metal 
+            - InstanceType: m6in.metal 
+            - InstanceType: m6in.32xlarge 
+          MinCount: 0
+          MaxCount: 10
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: r6gb1024r6
+          Instances:
+            - InstanceType: r6i.metal 
+            - InstanceType: r6i.32xlarge 
+            - InstanceType: r6in.metal 
+            - InstanceType: r6in.32xlarge 
+            - InstanceType: r6id.32xlarge
+            - InstanceType: r6idn.metal 
+            - InstanceType: r6idn.32xlarge
+          MinCount: 0
+          MaxCount: 10
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: r7gb1024
+          Instances:
+            - InstanceType: r7iz.32xlarge 
+            - InstanceType: r7iz.metal-32xl
+          MinCount: 0
+          MaxCount: 20
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
               Enabled: false
@@ -81,17 +175,37 @@ Scheduling:
       CapacityType: SPOT
       AllocationStrategy: lowest-price
       ComputeResources:
-        - Name: all
+        - Name: c7gb384
           Instances:
             - InstanceType: c7i.48xlarge 
             - InstanceType: c7i.metal-48xl 
-            - InstanceType: m7i.metal-48xl 
-            - InstanceType: m7i.48xlarge 
-            - InstanceType: r7i.48xlarge
-            - InstanceacType: r7i.metal-48xl
           MinCount: 0
           MaxCount: 20
-          SpotPrice: CALCULATE_MIN_DEDICATED_PRICE_OF_THE_SPECIFIED_SET_IN_THIS_GROUP_DIVIDE_BY_2
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: m7gb768
+          Instances:
+            - InstanceType: m7i.metal-48xl 
+            - InstanceType: m7i.48xlarge 
+          MinCount: 0
+          MaxCount: 20
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+        - Name: r7gb1536
+          Instances:
+            - InstanceType: r7i.48xlarge 
+            - InstanceType: r7i.metal-48xl 
+          MinCount: 0
+          MaxCount: 20
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
               Enabled: false
