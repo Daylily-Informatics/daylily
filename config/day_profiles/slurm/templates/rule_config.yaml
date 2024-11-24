@@ -143,7 +143,7 @@ strobe_align_sort:
     benchmark_runs: 0
     igz: "  igzip -cd -T 64 "
     cmd: "  OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign  " 
-    strobe_opts: "  -k 19 -Y -M " 
+    strobe_opts: "  -k 19  -N 5   " 
     sort_thread_mem: "2500M"  
     mbuffer: "  | mbuffer -m 10G -q -s 1M "
     constraint: " --constraint 'm7gb768|r7gb1536' "
