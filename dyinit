@@ -29,7 +29,9 @@ usage() {
   echo "Region is autodetected as $region"
   echo "Usage: $0 [--project <project_name>] [--skip-project-check]"
   echo " ... if --project is not specified, the defauly budget for the region is used: daylily-omics-analysis-${region}."
-  echo "Valid projects: $(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2)"
+  echo "Valid projects/budget and users auth to run them: "
+  cat /fsx/data/budget_tags/pcluster-project-budget-tags.tsv
+  echo ""
   echo "Valid regions: Use a valid AWS region (e.g., us-east-1, us-west-2)."
   return 3
 }
@@ -96,26 +98,36 @@ validate_region() {
 validate_region "$region" || return 3
 
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-
 # Skip project check if the flag is provided
 if [[ "$SKIP_PROJECT_CHECK" == false ]]; then
-  # Ensure the project is valid for the current user
-  USER_PROJECTS=$(grep "^${USER}=" /opt/slurm/etc/projects_list.conf | cut -d'=' -f2 | tr -d ' ')
+  # Path to the budget file
+  budget_file="/fsx/data/budget_tags/pcluster-project-budget-tags.tsv"
+
+  # Ensure the budget file exists
+  if [[ ! -f "${budget_file}" ]]; then
+    echo "Error: Budget file '${budget_file}' not found."
+    echo "Skipping project validation."
+    return 3
+  fi
+
+  # Validate the project for the current user
+  USER_PROJECTS=$(awk -F'\t' -v user="${USER}" '$2 ~ user {print $1}' "${budget_file}" | tr '\n' ',' | sed 's/,$//')
   if [[ ! ",${USER_PROJECTS}," =~ ",${PROJECT}," ]]; then
     echo "Error: Project '$PROJECT' is not valid for user '$USER'."
-    echo "Valid projects for $USER: $USER_PROJECTS"
+    echo "Valid projects for '$USER': ${USER_PROJECTS}"
     return 3
   fi
 else
   echo "Skipping project validation as --skip-project-check was passed."
 fi
 
+
 # Function to create a new AWS budget
 create_budget() {
 
   echo "To create budget, please exit and run the following command:"
-  echo "bash bin/create_budget.sh --amount <AMOUNT> --project <budgetAWSname> --region <REGION>"   
-  echo "...you will then need to add the new project name to /opt/slurm/etc/projects_list.conf"
+  echo "bash bin/create_budget.sh --help"
+  echo "...you will then need to append the new project/budget name to the end of /fsx/data/budget_tags/pcluster-project-budget-tags.tsv (or create it) (can not be done via /fsx/data, which is read-only, you'll need to update the file via s3)."
   return 3
 }
 

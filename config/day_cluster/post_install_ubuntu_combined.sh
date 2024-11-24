@@ -118,8 +118,6 @@ if [ "${cfn_node_type}" == "HeadNode" ];then
   mv /opt/slurm/bin/srun /opt/slurm/sbin/srun
   ln -s /opt/slurm/bin/sbatch /opt/slurm/bin/srun
 
-  aws s3 cp s3://${bucket}/cluster_boot_config/projects_list.conf /opt/slurm/etc/projects_list.conf
-
   aws s3 cp s3://${bucket}/cluster_boot_config/sleep_test.sh /opt/slurm/bin/sleep_test.sh
   chmod a+x /opt/slurm/bin/sleep_test.sh
 
@@ -129,8 +127,6 @@ if [ "${cfn_node_type}" == "HeadNode" ];then
   touch /tmp/$(hostname).postslurmcfg
 
 fi
-
-
 
 # Tagging and Budget Bits
 

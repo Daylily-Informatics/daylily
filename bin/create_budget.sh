@@ -63,7 +63,7 @@ fi
 # Function to write or append tags to the S3 file# Function to write or append tags to the S3 file
 write_or_append_tags_to_s3() {
   # Ensure S3_BUCKET_URL ends with a proper path
-  S3_BUCKET_PATH="${S3_BUCKET_URL}/data/budget_tags/${PROJECT_NAME}-tags.tsv"
+  S3_BUCKET_PATH="${S3_BUCKET_URL}/data/budget_tags/pcluster-project-budget-tags.tsv"
 
   # Temporary local file for manipulation
   TEMP_LOCAL_FILE=$(mktemp)

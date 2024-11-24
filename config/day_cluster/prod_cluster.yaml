@@ -228,6 +228,8 @@ Tags:  # TAGs necessary for per-user/project/job cost tracking
     Value: REGSUB_PROJECT
   - Key: aws-parallelcluster-clustername
     Value: REGSUB_CLUSTER_NAME
+  - Key: aws-parallelcluster-enforce-budget
+    Value: REGSUB_ENFORCE_BUDGET
 DevSettings:
   Timeouts:
     HeadNodeBootstrapTimeout: 3600

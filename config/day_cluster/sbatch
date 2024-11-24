@@ -2,58 +2,102 @@
 
 # MIT No Attribution
 # Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this
-# software and associated documentation files (the "Software"), to deal in the Software
-# without restriction, including without limitation the rights to use, copy, modify,
-# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so.
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-# The script is used as wrapper to the Slurm sbatch command. Replace <account_id> with the id of your account.
 
 parameters=$@
 
-#enable or disable the budget checks for the projects
-budget="no"
-
-account_id=$(aws sts get-caller-identity --query Account --output text)
-
-if [ -z "${project}" ];then
-  export project=$(echo $@ | sed -n -e 's/.*comment //p' | awk '{print $1}')
+# Extract the project name from --comment
+if [ -z "${project}" ]; then
+    export project=$(echo $@ | sed -n -e 's/.*comment //p' | awk '{print $1}')
 fi
+
 slurm_command=$(basename "$0")
 
-if [ -z "${project}" ];then
- echo 'You need to specify a project. "--comment ProjectName"'
- exit 1
+if [ -z "${project}" ]; then
+    echo "ERROR: Please specify a project/budget name with the comment flag. '--comment ProjectName'"
+    echo "Available budgets/projects in /fsx/data/budget_tags/pcluster-project-budget-tags.tsv are:"
+    cat /fsx/data/budget_tags/pcluster-project-budget-tags.tsv
+    exit 1
 fi
 
-cat /opt/slurm/etc/projects_list.conf | grep $USER | grep ${project} > /dev/null
-if [ $? -eq 0 ];then
- if [ "${budget}" == "yes" ]; then
-     budget=$(aws budgets describe-budget --account-id $account_id --budget-name "${project}" --query 'Budget.[CalculatedSpend.ActualSpend.Amount,BudgetLimit.Amount]' --output text 2>/dev/null)
-     if [ -z "${budget}" ];then
-       echo "The Project ${project} does not have any associated budget. Please ask the administrator to create it."
-       exit 1
-     else
-       ActualSpend=$(echo ${budget} | awk '{print $1}')
-       BudgetLimit=$(echo ${budget} | awk '{print $2}')
-       if (( $(echo "${ActualSpend} < ${BudgetLimit}" | bc -l) ));then
-         /opt/slurm/sbin/${slurm_command}  $@
-         exit 0
-       else
-         echo "The Project ${project} does not have more budget allocated for this month."
-         exit 1
-       fi
-     fi
-  else
-    /opt/slurm/sbin/${slurm_command} --export=ALL $@
-  fi
+# Path to the file containing budget names and users
+budget_file="/fsx/data/budget_tags/pcluster-project-budget-tags.tsv"
+
+# Default value for the modified project name
+modified_project="${project}"
+
+# Check if the budget file exists
+if [ ! -f "${budget_file}" ]; then
+    echo "WARNING: Budget file ${budget_file} not found."
+    echo "...continuing in 10 seconds."
+    sleep 10
+    modified_project="${project}-no-file"
 else
- exit 1
+    # Check if the project exists and the user is authorized
+    project_users=$(awk -F'\t' -v proj="${project}" '$1 == proj && NF == 2 {print $2}' "${budget_file}" | tr ',' '\n')
+
+    if [ -z "${project_users}" ]; then
+        echo "WARNING: Project '${project}' not found in budget file. Available budgets/projects are:"
+        cat "${budget_file}"
+        echo "...continuing in 10 seconds."
+        sleep 10
+        modified_project="${project}-invalid"
+    elif ! echo "${project_users}" | grep -qx "${USER}"; then
+        echo "WARNING: User '${USER}' is not authorized for project '${project}'."
+        echo "...continuing in 10 seconds."
+        sleep 10
+        modified_project="${project}-invalid"
+    fi
 fi
+
+# Check for 'aws-parallelcluster-enforce-budget' tag in pcluster-config.yaml
+enforce_budget=$(awk '/Key: aws-parallelcluster-enforce-budget/ {getline; print $2}' /opt/parallelcluster/shared/cluster-config.yaml)
+
+if [ "$enforce_budget" != "true" ]; then
+    echo "Budget enforcement is not enabled. Skipping budget check."
+else
+    # Budget Check
+    AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+    region=$(grep "Region" /etc/parallelcluster/cfnconfig | awk '{print $2}')
+
+    if [ -z "$region" ]; then
+        echo "ERROR: Region is not set. Cannot verify budget."
+        exit 1
+    fi
+
+    BUDGETS=$(aws budgets describe-budgets --account-id "$AWS_ACCOUNT_ID" --region "$region" 2>/dev/null)
+
+    if [ -z "$BUDGETS" ]; then
+        echo "WARNING: Unable to retrieve AWS budgets. Continuing without budget check."
+    else
+        MATCHING_BUDGET=$(echo "$BUDGETS" | jq -r ".Budgets[] | select(.BudgetName==\"$project\")")
+
+        if [ -z "$MATCHING_BUDGET" ]; then
+            echo "WARNING: No matching AWS budget found for project '$project'. Continuing..."
+        else
+            TOTAL_BUDGET=$(echo "$MATCHING_BUDGET" | jq -r ".BudgetLimit.Amount")
+            USED_BUDGET=$(echo "$MATCHING_BUDGET" | jq -r ".CalculatedSpend.ActualSpend.Amount")
+
+            if [ -z "$TOTAL_BUDGET" ] || [ -z "$USED_BUDGET" ]; then
+                echo "ERROR: Unable to retrieve budget details for project '$project'."
+                exit 1
+            fi
+
+            PERCENT_USED=$(awk "BEGIN {print ($USED_BUDGET / $TOTAL_BUDGET) * 100}")
+
+            echo ""
+            echo "________________________________________________________"
+            echo "AWS Budget for project '$project' in region '$region':"
+            echo "  Total: $TOTAL_BUDGET USD"
+            echo "  Used: $USED_BUDGET USD"
+            echo "  Percent Used: $PERCENT_USED%"
+            echo "________________________________________________________"
+
+            if (( $(echo "$PERCENT_USED >= 100" | bc -l) )); then
+                echo "WARNING: Budget for project '$project' is exhausted! Continuing anyway..."
+            fi
+        fi
+    fi
+fi
+
+# Append the modified --comment to the Slurm command
+/opt/slurm/sbin/${slurm_command} --export=ALL "$@" --comment="${modified_project}"
