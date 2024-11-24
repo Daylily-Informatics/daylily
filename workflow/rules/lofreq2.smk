@@ -187,7 +187,7 @@ rule lofreq2_concat_fofn:
     resources:
         vcpu=2,
         threads=2,
-        partition="i128,i192",
+        partition="i192,i128",
     params:
         fn_stub="{sample}.{alnr}.lfq2.",
         cluster_sample=ret_sample,
