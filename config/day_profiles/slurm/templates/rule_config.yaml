@@ -185,6 +185,7 @@ duphold:
 
 doppelmark:
     threads: 192
+    doppelmark_threads: 190
     partition: "i192"
     mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
     clip_padding: 600000
@@ -198,7 +199,7 @@ doppelmark:
     compress_mem: "2750M"
     env_yaml: "../envs/vanilla_v0.1.yaml"
     dop_opts:  " -max-depth 300000 "
-    numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    numa: " OMP_NUM_THREADS=190 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
     constraint: " --constraint 'm7gb768|r7gb1536' "
 
 dysgu:

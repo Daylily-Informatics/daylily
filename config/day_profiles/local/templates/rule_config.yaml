@@ -184,6 +184,7 @@ duphold:
 
 doppelmark:
     threads: 8
+    doppelmark_threads: 7
     partition: "i8"
     clip_padding: 600000
     mem_mb: 50000
@@ -194,7 +195,7 @@ doppelmark:
     compress_threads: 8
     compress_mem: "100M"
     env_yaml: "../envs/vanilla_v0.1.yaml"
-    numa: " OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    numa: " OMP_NUM_THREADS=7 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
     dop_opts:  " -max-depth 30000 "
     constraint: " "
 

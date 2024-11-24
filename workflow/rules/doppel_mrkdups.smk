@@ -34,6 +34,7 @@ if "dppl" in DDUP:
         params:
             cluster_sample=ret_sample,
 	        numa=config['doppelmark']['numa'],
+            doppelmark_threads=config['doppelmark']['doppelmark_threads'],
             shard_size=config['doppelmark']['shard_size'],
             clip_padding=config['doppelmark']['clip_padding'],
             min_bases=config['doppelmark']['min_bases'],
@@ -63,7 +64,7 @@ if "dppl" in DDUP:
             tdir=$TMPDIR;
 
             {params.numa} resources/DOPPLEMARK/doppelmark \
-             -parallelism {threads} \
+             -parallelism {params.doppelmark_threads} \
              -bam {input.bam} \
              -clip-padding {params.clip_padding} \
              -logtostderr \
