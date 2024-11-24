@@ -73,7 +73,7 @@ if "dppl" in DDUP:
             -output {output.bamo} \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
-             -shard-size {params.shard_size}  {params.mbuffer_mem}  >> {log} 2>&1;
+             -shard-size {params.shard_size}   >> {log} 2>&1;
 
             samtools index -b -@ {threads} {output.bamo}  >> {log} 2>&1;
 
