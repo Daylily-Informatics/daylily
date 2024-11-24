@@ -201,7 +201,7 @@ if [[ $1 == "justinit" ]]; then
 fi
 
 # This ensures the snakedir is unlocked after a crash or successful exit 0
-trap '(snakemake --unlock --profile $DAY_ROOT/config/day_profiles/$DAY_PROFILE  &>> ./unlock_fails.log ) & ' EXIT
+trap '(snakemake --unlock --profile $DAY_ROOT/config/day_profiles/$DAY_PROFILE  &>> ./unlock_fails.log & ) & ' EXIT
 
 if [[ $1 == "--help" || $1 == "-h" || $@ == ""  ]]; then
 
