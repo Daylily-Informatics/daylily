@@ -87,8 +87,8 @@ rule strobe_align_sort:
         --rg=CN:"{params.rgcn}" \
         --rg=PG:"{params.rgpg}" \
         --use-index {params.huref}  \
-        {params.subsample_head} <(  {params.igz_threads} -q  {input.f1} )  {params.subsample_tail} \
-        {params.subsample_head}  <( {params.igz_threads} -q {input.f2} )  {params.subsample_tail}  {params.mbuffer_mem} \
+        {params.subsample_head} <(  {params.igz} -q  {input.f1} )  {params.subsample_tail} \
+        {params.subsample_head}  <( {params.igz} -q {input.f2} )  {params.subsample_tail}  {params.mbuffer} \
         |  samtools sort \
         -l 1  \
         -m {params.sort_thread_mem}   \

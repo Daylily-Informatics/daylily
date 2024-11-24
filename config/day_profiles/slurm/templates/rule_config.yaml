@@ -188,8 +188,8 @@ doppelmark:
     partition: "i192"
     mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
     clip_padding: 600000
-    shard_size: 28000000
-    read_buffer_size: 450000000
+    shard_size: 30000000
+    read_buffer_size: 500000000
     min_bases: 20000
     queue_length: 3000
     xld_preload: " "
@@ -197,8 +197,10 @@ doppelmark:
     compress_threads: 96
     compress_mem: "2750M"
     env_yaml: "../envs/vanilla_v0.1.yaml"
+    dop_opts:  " -max-depth 300000 "
     numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
     mbuffer_mem: " | mbuffer -m 10G -q -s 1M " 
+    constraint: " --constraint 'm7gb768|r7gb1536' "
 
 dysgu:
     threads: 64
@@ -447,21 +449,16 @@ sentieon:
     bwa_threads: 192
     benchmark_runs: 0
     max_mem: "130G"
-    K: "  -k 19 -Y -M -K 10000000 "
+    sent_opts: "  -k 19 -Y -M -K 10000000 "
     env_yaml: "../envs/sentieon_v0.1.yaml"
-    glances: " "
-    mask_regions: " "
-    numactl: " "  # JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4'   "  
-    numactlO: "  "  # JEMALLOC_CONF='oversize_threshold:1024,background_thread:true,huge:true,huge_page:1G,arena_max:4' LD_PRELOAD=resources/lib/libjemalloc.so.1   resources/numa/numactl --cpunodebind=0,1 --membind=0,1  "  
     mem_mb: 200000
-    metrics_threads: 48
     partition: "i192"
     sort_threads: 64
-    write_threads: 64
-    igz_threads: "  igzip -cd -T 32 "
+    igz: "  igzip -cd -T 32 "
     sort_thread_mem: "3510M" 
-    mbuffer_mem: " -m 10G -q -s 1M "
+    mbuffer: " | mbuffer -m 10G -q -s 1M "
     bwa_model: "/fsx/data/tool_specific_resources/sentieon_models_2_2/sentieon_bwa_2_2.model"
+    constraint: " "
 
 sentieon_markdups:
     threads: 32

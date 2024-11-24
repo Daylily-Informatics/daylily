@@ -196,6 +196,8 @@ doppelmark:
     env_yaml: "../envs/vanilla_v0.1.yaml"
     numa: " OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
     mbuffer_mem: " | mbuffer -m 1G -q -s 128k "
+    dop_opts:  " -max-depth 30000 "
+    constraint: " "
 
 dysgu:
     threads: 8
@@ -438,20 +440,16 @@ sentieon:
     bwa_threads: 8
     benchmark_runs: 0
     max_mem: "50G"
-    K: " -k 19 -Y -M -K 10000000  "
+    sent_opts: " -k 19 -Y -M -K 10000000  "
     env_yaml: "../envs/sentieon_v0.1.yaml"
-    mask_regions: " "
-    numactl: ""
-    metrics_threads: 8
-    ld_preload: "   "  #env LD_PRELOAD=./resources/libs/libllalloc.so "
-    partition: "i96,i128"
+    partition: "i128"
     sort_thread_mem: "100M"
     sort_threads: 4
     mem_mb: 200000 
-    write_threads: 4
-    igz_threads:   " -cd -T 2 "
-    mbuffer_mem: " -m 1G -q -s 128k "
+    igz:   " igzip -cd -T 2 "
+    mbuffer: " | mbuffer -m 1G -q -s 128k "
     bwa_model: "/fsx/data/tool_specific_resources/sentieon_models_2_2/sentieon_bwa_2_2.model"
+    constraint: ""
 
 
 sentieon_markdups:

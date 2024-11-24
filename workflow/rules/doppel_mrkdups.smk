@@ -30,6 +30,7 @@ if "dppl" in DDUP:
             partition=config["doppelmark"]["partition"],
             vcpu=config["doppelmark"]["threads"],
             mem_mb=config["doppelmark"]["mem_mb"],
+            constraint=config["doppelmark"]["constraint"],
         params:
             cluster_sample=ret_sample,
 	        numa=config['doppelmark']['numa'],
@@ -68,7 +69,7 @@ if "dppl" in DDUP:
              -clip-padding {params.clip_padding} \
              -logtostderr \
     	     -disk-mate-shards 0 \
-	         -max-depth 300000 \
+	 
 	         -scratch-dir $tdir \
             -output {output.bamo} \
              -min-bases {params.min_bases} \

@@ -24,17 +24,14 @@ rule sentieon_bwa_sort:
         vcpu=config['sentieon']['threads'],
         threads=config['sentieon']['threads'],
         mem_mb=config['sentieon']['mem_mb'],
+        constraint=config['sentieon']['constraint'],
     params:
         huref=config["supporting_files"]["files"]["huref"]["bwa_mem_sent"]["name"],
-        cluster_end="echo done"
-        if "cluster_end" not in config["sentieon"]
-        else config["sentieon"]["cluster_end"],
         max_mem="130G"
         if "max_mem" not in config["sentieon"]
         else config["sentieon"]["max_mem"],
-        K="-K 100000000" if "K" not in config["sentieon"] else config["sentieon"]["K"],
+        sent_opts=config["sentieon"]["sent_opts"],
         cluster_sample=ret_sample,
-        numactl=config["sentieon"]["numactl"],
         bwa_threads=config["sentieon"]["bwa_threads"],
         rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/ :\ : note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
         rgpu="presumedCombinedLanes",  # ideally flowcell_lane(s)
@@ -45,9 +42,8 @@ rule sentieon_bwa_sort:
         rgpg="sentieonBWAmem",  #program
         sort_thread_mem=config['sentieon']['sort_thread_mem'],
         sort_threads=config['sentieon']['sort_threads'],
-        write_threads=config['sentieon']['write_threads'],
-        igz_threads=config['sentieon']['igz_threads'],
-        mbuffer_mem=config['sentieon']['mbuffer_mem'],
+        igz=config['sentieon']['igz'],
+        mbuffer=config['sentieon']['mbuffer'],
         bwa_model=config['sentieon']['bwa_model'],
         subsample_head=get_subsample_head,
         subsample_tail=get_subsample_tail,
@@ -95,13 +91,12 @@ rule sentieon_bwa_sort:
             exit 3;
         fi
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon bwa mem \
-        -t {params.bwa_threads}  {params.K}  \
+        -t {params.bwa_threads}  {params.sent_opts}  \
         -x {params.bwa_model} \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.huref} \
-         {params.subsample_head} <( {params.igz_threads} -q  {input.f1} )  {params.subsample_tail}  \
-         {params.subsample_head} <( {params.igz_threads} -q  {input.f2} )  {params.subsample_tail}    \
-        | mbuffer {params.mbuffer_mem} \
+         {params.subsample_head} <( {params.igz} -q  {input.f1} )  {params.subsample_tail}  \
+         {params.subsample_head} <( {params.igz} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer} \
         | /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
         --thread_count {params.sort_threads} \
         --sortblock_thread_count {params.sort_threads} \
