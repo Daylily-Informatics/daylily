@@ -143,11 +143,11 @@ rule lofreq2_sort_index_chunk_vcf:
         MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{dvchrm}/log/{sample}.{alnr}.lfq2.{dvchrm}.snv.sort.vcf.gz.log",
     resources:
         vcpu=4,
-        threads=4,
-        partition=config['lofreq2']['partition_other'],
+        threads=config['lofreq2']['threads'],
+        partition=config['lofreq2']['partition'],
     params:
         cluster_sample=ret_sample,
-    threads: 4
+    threads: config['lofreq2']['threads']
     shell:
         """
 
@@ -187,7 +187,7 @@ rule lofreq2_concat_fofn:
     resources:
         vcpu=2,
         threads=2,
-        partition="i192",
+        partition="i128,i192",
     params:
         fn_stub="{sample}.{alnr}.lfq2.",
         cluster_sample=ret_sample,
@@ -221,7 +221,7 @@ rule lofreq2_concat_index_chunks:
     resources:
         vcpu=4,
         threads=4,
-        partition=config['lofreq2']['partition_other'],
+        partition=config['lofreq2']['partition'],
     priority: 47
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
