@@ -464,14 +464,28 @@ done
 echo ""
 
 echo ""
-# Cluster name input
-echo -n "Enter the name for your cluster (alphanumeric and '-'): "
-read cluster_name
-if [[ ! "$cluster_name" =~ ^[a-zA-Z0-9\-]+$ ]]; then
-    echo "Error: Invalid cluster name."
-    return 3
-fi
 
+# Function to validate cluster name
+validate_cluster_name() {
+    if [[ ! "$1" =~ ^[a-zA-Z0-9\-]+$ ]] || [[ ${#1} -gt 25 ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+# Prompt user for cluster name
+while true; do
+    echo -n "Enter the name for your cluster (alphanumeric and '-', max 25 chars): "
+    read cluster_name
+
+    if validate_cluster_name "$cluster_name"; then
+        echo "Cluster name accepted: $cluster_name"
+        break
+    else
+        echo "Error: Invalid cluster name. Please ensure it is alphanumeric, may include '-', and is 25 characters or fewer."
+    fi
+done
 
 # Default Budget Check
 
@@ -555,9 +569,9 @@ echo "if enforced, new jobs will be blocked if the budget is exceeded, but the c
 enforce_budget_bool="false"
 select enforce_budget in "No" "Yes"; do
     if [[ "$enforce_budget" == "Yes" ]]; then
-        enforce_budget_bool="true"
+        enforce_budget_bool="enforce"
     else
-        enforce_budget_bool="false"
+        enforce_budget_bool="skip"
     fi
     break
 done

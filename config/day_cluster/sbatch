@@ -61,7 +61,7 @@ fi
 # Check for 'aws-parallelcluster-enforce-budget' tag in pcluster-config.yaml
 enforce_budget=$(awk '/Key: aws-parallelcluster-enforce-budget/ {getline; print $2}' /opt/parallelcluster/shared/cluster-config.yaml)
 
-if [ "$enforce_budget" != "true" ]; then
+if [ "$enforce_budget" != "enforce" ]; then
     #echo "Budget enforcement is not enabled. Skipping budget check."
     sleep 0.0001
 else
