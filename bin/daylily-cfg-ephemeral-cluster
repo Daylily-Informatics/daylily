@@ -513,7 +513,7 @@ if [[ -z "$global_budget_exists" || "$global_budget_exists" == "None" ]]; then
 
     echo "Creating the budget..."
     echo "bin/create_budget.sh -p $global_budget_name -r $region -t 75 -e $guser_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users "
-    bin/create_budget.sh -p $global_budget_name -r $region -t 75 -e $guser_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users 
+    bin/create_budget.sh -p $global_budget_name -r $region -t 75 -e "$guser_email" -a "$gamount" -c $cluster_name -z $region_az -b $bucket_url  -u "$gallowed_users "
 
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the budget. Exiting."
@@ -550,7 +550,7 @@ if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
 
     echo "Creating the budget..."
     echo "bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c $cluster_name -z $region_az -b $bucket_url  -u $allowed_users "
-    bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c $cluster_name -z $region_az -b $bucket_url  -u $allowed_users 
+    bin/create_budget.sh -p $budget_name -r $region -t 75 -e "$user_email" -a "$amount" -c $cluster_name -z $region_az -b $bucket_url  -u "$allowed_users "
 
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the budget. Exiting."
@@ -622,7 +622,7 @@ enable_xmr=0
 echo ""
 
 echo "Choose the FSX Lustre File System Size (tested with 4800):"
-fsx_options="2400 4800 7200"
+fsx_options="4800 7200"
 
 # Define select loop
 select fsx_size in $fsx_options; do

@@ -20,6 +20,11 @@ print_help() {
   echo "  $0 -p my-project -a 5000 -r us-west-2 -e user@example.com -t 50,80,100"
 }
 
+
+# Default values
+USERS=''  # Default USERS to an empty string
+EMAIL='none@specified.com'  # Default EMAIL to an empty string
+
 # Parse command-line options
 while getopts "p:a:r:e:t:c:u:z:b:h" opt; do
   case ${opt} in
