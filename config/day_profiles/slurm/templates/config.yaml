@@ -14,7 +14,7 @@ cluster:
     --chdir=$PWD
     --mem={resources.mem_mb}
     --comment $DAY_PROJECT
-    --distribution={resources.distribution} 
+    --distribution={resources.distribution} {resources.constraint} {resources.exclude} {resources.include}
 default-resources:  
   - disk_mb=1000
   - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type
@@ -24,6 +24,9 @@ default-resources:
   - vcpu=1
   - distribution=block
   - exclusive=''
+  - constraint='' 
+  - exclude=''
+  - include=''
 resources: vcpu=3072 # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 jobs: 200
 cores: 3072  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances

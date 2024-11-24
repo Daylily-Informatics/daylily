@@ -16,23 +16,16 @@ rule strobe_align_sort:
         threads=config['strobe_align_sort']['threads'],
         mem_mb=config['strobe_align_sort']['mem_mb'],
         partition=config['strobe_align_sort']['partition'],
-        vcpu=config['strobe_align_sort']['threads']
+        vcpu=config['strobe_align_sort']['threads'],
+        constraint=config['strobe_align_sort']['constraint'],
     threads: config['strobe_align_sort']['threads']
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.strobe.alNsort.bench.tsv"
     params:
-        cluster_slots=94,
         cluster_sample=ret_sample,
-        mdir=MDIR,
-        samtmpd="/align/strobe/logs/sam_tmpd/",
-        write_threads=config["strobe_align_sort"]["write_threads"],
         sort_threads= config["strobe_align_sort"]["sort_threads"],
-        benchmark_runs=config["strobe_align_sort"]["softclip_alts"],
-        softclip_alts=config["strobe_align_sort"]["softclip_alts"],
         strobe_cmd=config["strobe_align_sort"]["cmd"],
-        ldpre=config['strobe_align_sort']['ldpre'],
-        k=config["strobe_align_sort"]["k"],  # little kay
-        K=config["strobe_align_sort"]["K"],  # BIG KAY
+        strobe_opts=config["strobe_align_sort"]["K"],  # BIG KAY
         sort_thread_mem=config["strobe_align_sort"]["sort_thread_mem"],
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
@@ -45,10 +38,9 @@ rule strobe_align_sort:
         subsample_tail=get_subsample_tail,
         strobe_threads=config["strobe_align_sort"]["strobe_threads"],
         samp=get_samp_name,
-        mbuffer_mem=config["strobe_align_sort"]["mbuffer_mem"],
+        mbuffer=config["strobe_align_sort"]["mbuffer"],
         rgpg="strobealigner",
-        numa=config["strobe_align_sort"]["numa"],
-        igz_threads=config['strobe_align_sort']['igz_threads']
+        igz=config['strobe_align_sort']['igz']
     conda:
         config["strobe_align_sort"]["env_yaml"]
     shell:
@@ -86,7 +78,7 @@ rule strobe_align_sort:
         fi
 
         {params.strobe_cmd} \
-        -t {params.strobe_threads} \
+        -t {params.strobe_threads} {params.strobe_opts} \
         --rg-id="{params.rgid}_$epocsec" \
         --rg="SM:{params.rgsm}" \
         --rg=LB:"{params.samp}{params.rglb}" \

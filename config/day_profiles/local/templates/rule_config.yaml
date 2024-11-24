@@ -119,27 +119,18 @@ bcl2fq_by_lane:
 
 bwa_mem2a_aln_sort:
     env_yaml: "../envs/bwasamtools_v0.1.yaml"
-    partition: "i128"
+    partition: ""
     threads: 8
     bwa_threads: 8
-    orig_threads: 2
     sort_threads: 4
-    write_threads: 2
-    ldpre: ""
-    orig_sort_threads: 2
     benchmark_runs: 0
-    softclip_alts: "  "
-    ld_preload: "  "
     mem_mb: 200000 # This can be set to dynamically set based on fasta input size
     cmd: " OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  
-    K: "  -k 19 -Y -M -K 100000 " 
-    glances: " "
-    k: " "
-    orig_sort_mem: "50M"
+    bwa_opts: "  -k 19 -Y -M -K 100000 " 
     sort_thread_mem: "50M"  # 1350M
-    numactl: ""
-    mbuffer_mem: " | mbuffer -m 50M -q -s 128k " 
-    igz_threads: " igzip -cd -T 2 "
+    mbuffer: " | mbuffer -m 50M -q -s 128k " 
+    igz: " igzip -cd -T 2 "
+    constraint: " "
 
 
 strobe_align_sort:
@@ -147,26 +138,15 @@ strobe_align_sort:
     partition: "i192"
     threads: 8
     strobe_threads: 8
-    orig_threads: 8
     sort_threads: 8
-    write_threads: 0
-    igz_threads: 4
-    ldpre: ""
-    orig_sort_threads: 7
     benchmark_runs: 0
-    softclip_alts: "  "
-    ld_preload: "  "
-    numa: " " # resources/numa/numactl --physcpubind=0-128 --membind=0-1   " 
     cmd: " OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign "
-    K: " "
-    glances: " "
-    k: " -k 19 -M -Y "
-    orig_sort_mem: "50M"
+    strobe_opts: " -k 19 -M -Y "
     sort_thread_mem: "50M"  
-    numactl: ""
     mem_mb: 200000 # This can be set to dynamically set based on fasta input size
-    mbuffer_mem: " | mbuffer  -m 50M -q -s 128k " 
-    igz_threads: " igzip -cd -T 2 "
+    mbuffer: " | mbuffer  -m 50M -q -s 128k " 
+    igz: " igzip -cd -T 2 "
+    constraint: " "
 
 clair3:
     threads: 8
