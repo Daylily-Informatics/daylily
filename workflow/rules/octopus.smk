@@ -96,7 +96,7 @@ rule octopus:
     resources:
         vcpu= config['octopus']['threads'],
         attempt_n=lambda wildcards, attempt:  (attempt + 0),
-        partition="i192.i128",
+        partition="i192,i128",
         threads= config['octopus']['threads']
     params:
         cluster_sample=ret_sample, 
