@@ -233,16 +233,18 @@ echo "$snakecmd" 1>&2
 ret_code=111
 
 export FORCE_COLOR=1
-
-# Run the snakemake command
+# Run the Snakemake command with progress tracking
 ( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
-while read -r line; do
-    # Move cursor to the last row, right corner, and print the progress
-    tput sc # Save cursor position
-    tput cup $(($(tput lines) - 1)) 0 # Move to bottom row
-    printf "%-80s" "$(tail -n 1 progress.log)" # Print the latest progress line, padded
-    tput rc # Restore cursor position
-    echo "$line" # Print the original line to stdout/stderr
+while IFS= read -r line; do
+    # Update progress in real-time
+    if [[ -s progress.log ]]; then
+        latest_progress=$(tail -n 1 progress.log)
+        tput sc  # Save cursor position
+        tput cup $(($(tput lines) - 1)) 0  # Move to the bottom row
+        printf "\r%-80s" "$latest_progress"  # Print the latest progress line
+        tput rc  # Restore cursor position
+    fi
+    echo "$line"  # Display original Snakemake output
 done
 
 ret_code=$?
