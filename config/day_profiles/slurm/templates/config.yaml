@@ -1,5 +1,5 @@
 ---
-# Adopted from
+# Adapted from
 # # https://github.com/cbrueffer/snakemake-aws-parallelcluster-slurm 
 cluster:
   mkdir -p logs/slurm/{rule}/ &&
@@ -17,14 +17,14 @@ cluster:
     --distribution={resources.distribution} {resources.constraint} {resources.exclude} {resources.include}
 default-resources:  
   - disk_mb=1000
-  - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type
+  - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type.
   - threads=1
   - time=5440
   - partition=i8,i128,i192
   - vcpu=1
   - distribution=block
   - exclusive=''
-  - constraint='' 
+  - constraint='' # --constraint resourcegroup_name,feature in the rules if desired
   - exclude=''
   - include=''
 jobs: 300

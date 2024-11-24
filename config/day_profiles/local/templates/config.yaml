@@ -5,7 +5,7 @@ use-conda: true
 conda-frontend: conda
 conda-prefix: "/fsx/resources/environments/conda/USER_REGSUB/HOSTNAME"
 force-use-threads: true
-restart-times: 0  # set this to  2 once stable.  now, fail fasst
+restart-times: 0  
 cores: 8
 scheduler: greedy
 jobs: 1
@@ -17,4 +17,4 @@ use-singularity: true
 singularity-args: "   -B ./results:$PWD/results -B /fsx:/fsx -B /tmp:/tmp -B resources/fsx:/fsx  -B $PWD/:$PWD  -B /fsx/scratch:/fsx/scratch "
 singularity-prefix: "/fsx/resources/environments/containers/USER_REGSUB/HOSTNAME"
 printshellcmds: true
-resources: vcpu=8  # OR HOWEVER MANY LOCAL vCPUs there are
+resources: vcpu=8  
