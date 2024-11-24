@@ -185,20 +185,20 @@ duphold:
 
 doppelmark:
     threads: 192
-    doppelmark_threads: 192
+    doppelmark_threads: 184
     partition: "i192"
     mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
     clip_padding: 600000
     shard_size: 70000000
     min_bases: 20000
-    queue_length: 10000
+    queue_length: 7000
     xld_preload: " "
     ld_preload: "  "
     compress_threads: 96
     compress_mem: "2750M"
     env_yaml: "../envs/vanilla_v0.1.yaml"
     dop_opts:  " -max-depth 10000 "
-    numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    numa: " OMP_NUM_THREADS=184 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
     constraint: " --constraint 'm7gb768|r7gb1536' "
 
 dysgu:
