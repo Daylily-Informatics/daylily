@@ -115,7 +115,10 @@ if [[ "$SKIP_PROJECT_CHECK" == false ]]; then
   if [[ ! ",${USER_PROJECTS}," =~ ",${PROJECT}," ]]; then
     echo "Error: Project '$PROJECT' is not valid for user '$USER'."
     echo "Valid projects for '$USER': ${USER_PROJECTS}"
-    return 3
+    PROJECT="daylily-global"
+    echo ""
+    echo "DEFAULTING TO PROJECT=daylily-global"
+    echo ""
   fi
 else
   echo "Skipping project validation as --skip-project-check was passed."
