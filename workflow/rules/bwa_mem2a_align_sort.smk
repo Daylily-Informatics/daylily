@@ -82,8 +82,7 @@ rule bwa_mem2_sort:
 
          {params.bwa_mem2a_cmd} mem \
          -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
-         {params.softclip_alts}  {params.bwa_opts} \
-         -t {params.bwa_threads}  \
+        {params.bwa_opts}  -t {params.bwa_threads}  \
          {params.huref} \
          {params.subsample_head} <( {params.igz} -q  {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <( {params.igz} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer} \
