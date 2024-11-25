@@ -12,7 +12,7 @@ cluster:
     --error=logs/slurm/{rule}/{rule}.{params.cluster_sample}.{jobid}.err
     --partition={resources.partition}
     --chdir=$PWD
-    --mem={resources.mem_mb} $DAY_PRIORITY_OVERRIDE
+    --mem={resources.mem_mb} 
     --comment $DAY_PROJECT
     --distribution={resources.distribution} {resources.constraint} {resources.exclude} {resources.include}
 default-resources:  
