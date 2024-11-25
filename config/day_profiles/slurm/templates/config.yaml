@@ -20,7 +20,7 @@ default-resources:
   - mem_mb=3000 # This should be total for the job, and the amount avail will be 0.95*published mem for instance type.
   - threads=1
   - time=5440
-  - partition=i8,i128,i192
+  - partition=i192,i128,i8
   - vcpu=1
   - distribution=block
   - exclusive=''

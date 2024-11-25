@@ -15,13 +15,14 @@ rule fastqc_subsampled:
         f"{MDIR}" + "{sample}/benchmarks/{sample}.fastqc.bench.tsv"
     threads: config["fastqc"]["threads"]
     resources:
-        vcpu=config["fastqc"]["threads"]
+        vcpu=config["fastqc"]["threads"],
+        partition=config['fastqc']['partition'],
     params:
         tmp=f"{MDIR}" + "{sample}/seqqc/fastqc/tmp",
         tool_dir=f"{MDIR}" + "{sample}/seqqc/fastqc",
         cluster_sample=ret_sample,
         fastqc_threads=config["fastqc"]["fastqc_threads"],
-        subsample_pct="0.25" if 'subsample_pct' not in config['fastqc'] else config['fastqc']['subsample_pct']
+        subsample_pct="0.25" if 'subsample_pct' not in config['fastqc'] else config['fastqc']['subsample_pct'],
     log:
         f"{MDIR}" + "{sample}/logs/fastqc/{sample}.fastqc.log",
     conda:

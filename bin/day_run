@@ -230,8 +230,9 @@ echo """SMK> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB
 
 # Then run the snamemake cmd
 echo "$snakecmd" 1>&2
-ret_code=111
+export ret_code=111
 
+<<<<<<< HEAD
 
 
 # Run the Snakemake command and process its output
@@ -259,8 +260,10 @@ while IFS= read -r line; do
     # Print the line with progress appended to stderr
     printf "%s%s%s\n" "$line" "$padding" "$latest_progress" 2>&1
 done
+=======
+$snakecmd
+>>>>>>> acce83b1a9e48fbb265b5542875a0697afd39e2a
 ret_code=$?
-
 
 echo "$ret_code" > "ret_code.txt"
 

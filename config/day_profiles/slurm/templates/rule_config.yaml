@@ -221,7 +221,7 @@ fastqc:
     env_yaml: "../envs/fastqc_v0.1.yaml"
     extract: "  "
     ld_preload: " "
-    partition: "i192"
+    partition: "i192,i128"
 
 fastv:
     threads: 8
