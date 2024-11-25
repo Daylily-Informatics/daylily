@@ -108,7 +108,7 @@ rule octopus:
         ld_pre=config['octopus']['ld_pre'],
         mdir=MDIR,
     shell:
-        """
+        """ 
         touch {output.vcf};
         timestamp=$(date +%Y%m%d%H%M%S);
         TMPDIR=./octo_tmp_$timestamp;
@@ -122,7 +122,7 @@ rule octopus:
         --temp-directory $TMPDIR \
         --reads {input.b}   \
         --annotations {params.anno}   \
-        --skip-regions-file {params.skr}  {params.addl_options} > {output.vcf} 2> {log};
+        --skip-regions-file {params.skr}  {params.addl_options} > {output.vcf};
         
         """
 
