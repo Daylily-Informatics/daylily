@@ -255,10 +255,10 @@ lofreq2:
 
 manta_sort_and_index:
     threads: 8
-    partition: "i192,i128,i8"
+    partition: "i192,i128"
 
 manta:
-    threads: 96
+    threads: 128
     env_yaml: "../envs/manta_v0.1.yaml"
     numactl: "none"
     ld_preload: "  "

@@ -51,7 +51,7 @@ Scheduling:
           Instances:
           - InstanceType: r7i.2xlarge
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 1
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -62,7 +62,7 @@ Scheduling:
           Instances:
           - InstanceType: r6i.2xlarge
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 1
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
