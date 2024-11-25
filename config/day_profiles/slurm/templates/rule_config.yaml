@@ -318,12 +318,23 @@ octopus:
     env_yaml: "../envs/octopus_v0.7.yaml"
     oct_gather_env: "../envs/vanilla_v0.1.yaml"
     addl_options: |
+        --max-indel-errors 10 \
         --fast \
+        --max-haplotypes 50 \
+        --max-variant-size 51 \
+        --downsample-above 41 \
+        --downsample-target 40 \
+        --min-mapping-quality 6 \
+        --use-wide-hmm-scores \
+        --assemble-all \
+        --ignore-unmapped-contigs \
+        --allow-supplementary-alignments \
+        --bad-region-tolerance LOW \
         --sequence-error-model PCR-FREE.NOVASEQ \
         --min-forest-quality 0 \
+        --model-posterior ALL \
         --forest-model /fsx/data/tool_specific_resources/H_sapiens/b37/octopus/forests/germline.v0.7.4.forest \
     partition: "i192"
-
 
 sentD:
     threads: 192
