@@ -337,7 +337,6 @@ octopus:
         --bad-region-tolerance LOW \
         --sequence-error-model PCR-FREE.NOVASEQ \
         --min-forest-quality 0 \
-        --max-reference-cache-memory 20M \
         --target-read-buffer-memory 100M \
         --target-working-mem 100G \
         --model-posterior ALL \
