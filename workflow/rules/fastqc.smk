@@ -32,7 +32,7 @@ rule fastqc_subsampled:
         mkdir -p {params.tool_dir} ;
         mkdir -p {params.tmp}  ;
         #fastqc -o {params.tool_dir} -t {threads} -d {params.tmp}  <(seqkit sample --proportion {params.subsample_pct} <(seqfu interleave -1 <(unpigz -c -q -- {input.fqr1s}) -2 <(unpigz -c -q -- {input.fqr2s}) ) )  ;
-        fastqc -o {params.tool_dir} -t {params.threads} -d {params.tmp}  {input.fqr1s}  {input.fqr2s}
+        fastqc -o {params.tool_dir} -t {threads} -d {params.tmp}  {input.fqr1s}  {input.fqr2s}
         touch {output};
         touch {output}_subsampled_at_{params.subsample_pct};
         {latency_wait}; ls {output};
