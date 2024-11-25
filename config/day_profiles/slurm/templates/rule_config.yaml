@@ -201,7 +201,7 @@ dysgu:
     env_yaml: "../envs/dysgu_sv_v0.2.yaml"
     min_sv_size: 30
     ld_preload: "  "
-    partition: "i192"
+    partition: "i192,i128"
 
 dysgu_sort_index:
     threads: 8
@@ -271,11 +271,11 @@ mosdepth:
     partition: "i192,i128"
 
 duphold_sort_index:
-    threads: 8
+    threads: 4
     partition: "i192"
 
 tiddit_sort_index:
-    threads: 8
+    threads: 4
     ld_preload: " "
     partition: "i192"
 
@@ -465,11 +465,11 @@ stargazer:
     partition: "i192"
 
 tiddit:
-    threads: 16
+    threads: 64
     min_sv_size: 10  # default is 100, min 10.
     env_yaml: "../envs/tiddit_v0.1.yaml"
     ld_preload: " " 
-    partition: "i192"
+    partition: "i192,i128"
 
 vanilla:
     threads: 8
