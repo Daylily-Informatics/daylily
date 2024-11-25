@@ -318,9 +318,8 @@ octopus:
     env_yaml: "../envs/octopus_v0.7.yaml"
     oct_gather_env: "../envs/vanilla_v0.1.yaml"
     addl_options: |
-        --max-indel-errors 10 \
-        --fast \
-        --max-haplotypes 50 \
+        --max-indel-errors 48 \
+        --max-haplotypes 100 \
         --max-variant-size 51 \
         --downsample-above 41 \
         --downsample-target 40 \
