@@ -437,17 +437,18 @@ sentieon:
     threads: 192
     bwa_threads: 192
     benchmark_runs: 0
-    max_mem: "130G"
+    max_mem: "180G"
     sent_opts: "  -k 19 -Y -M -K 10000000 "
     env_yaml: "../envs/sentieon_v0.1.yaml"
     mem_mb: 200000
     partition: "i192"
-    sort_threads: 64
-    igz: "  igzip -cd -T 32 "
-    sort_thread_mem: "3510M" 
+    sort_threads: 192
+    igz: "  igzip -cd -T 48 "
+    sort_thread_mem: "2600M" 
     mbuffer: " | mbuffer -m 10G -q -s 1M "
     bwa_model: "/fsx/data/tool_specific_resources/sentieon_models_2_2/sentieon_bwa_2_2.model"
-    constraint: " "
+    constraint: " --constraint 'm7gb768|r7gb1536' "
+
 
 sentieon_markdups:
     threads: 32
