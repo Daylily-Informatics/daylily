@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.131b)
+# Daylily AWS Ephemeral Cluster Setup (0.7.131c)
 
 
 **beta release**
@@ -214,27 +214,50 @@ See the secion on [shared Fsx filesystem](#shared-fsx-filesystem) for more on ho
 ```
 
 
-#### Create The Bucket
-#### Replicate `daylily-references-public` Public References/Resources To Your New Bucket
-- Use the following script.
+#### <prefix>-omics-analysis-<REGION> Reference Bucket
+Daylily relies on a variety of pre-built reference data and resources to run. These are stored in the `daylily-references-public` bucket. You will need to clone this bucket to a new bucket in your account, once per region you intend to operate in.  
+
+> This is a design choice based on leveraging the `FSX` filesystem to mount the data to the cluster nodes. Reference data in this S3 bucket are auto-mounted an available to the head and all compute nodes (*Fsx supports 10's of thousands of concurrent connections*), further, as analysis completes on the cluster, you can choose to reflect data back to this bucket (and then stage elsewhere). Having these references pre-arranged aids in reproducibility and allows for the cluster to be spun up and down with negligible time required to move / create refernce data. 
+
+> BONUS: the 7 giab google brain 30x ILMN read sets are included with the bucket to standardize benchmarking and concordance testing.
+
+> You may add / edit (not advised) / remove data (say, if you never need one of the builds, or don't wish to use the GIAB reads) to suit your needs.
+
+##### Reference Bucket Metrics
+*Onetime* cost of between ~$27 to ~$108 per region to create bucket.
+*monthly S3 standard* cost of ~$14/month to continue hosting it.
+- Size: 617.2GB, and contains 599 files.
+- Source bucket region: `us-west-2`
+- Cost to store S3 (standard: $14.20/month, IA: $7.72/month, Glacier: $2.47 to $0.61/month)
+- Data transfer costs to clone source bucket
+  - within us-west-2: ~$3.40
+  - to other regions: ~$58.00
+- Accelerated transfer is used for the largest files, and adds ~$24.00 w/in `us-west-2` and ~$50 across regions.
+- Cloning w/in `us-west-2` will take ~2hr, and to other regions ~7hrs.
+- Moving data between this bucket and the FSX filesystem and back is not charged by size, but by number of objects, at a cost of `$0.005 per 1,000 PUT`. The cost to move 599 objecsts back and forth once to Fsx is `$0.0025`(you do pay for Fsx _when it is running, which is only when you choose to run analysus_).
+
+
+##### Clone `daylily-references-public` to <YOURPREFIX>-omics-analysis-<REGION>
+- Please note, you will only specify `<YOURPREFIX>`, please keep it short. `omics-analysis-<REGION>` will be automatically added to the prefix you specify as the new bucket name (this suffix is not formally required for everything to work, but will be annoying if you mess with this).  
+- The bucket will be created in the region you specify.
+- Cloning it will take several 1 to many hours.
+  
+**Use the following script**
+_from a tmux or screen session, as the copy will take 1 to many hours_
+
 ```bash
-sni
-##### Copy The `daylily` Public References/Resources To Your New Bucket (choose the most recent version)
-From your terminal/shell (and to be safe, in a screen or tmux session as it may run for a while).
 
-You will need to copy the daylily ephemeral cluster s3 data to a bucket named `YOURPREFIX-omics-analysis-REGION` in your account. There will need to be one of these per region you intende to run in. Default is `us-west-2`. This locality dependence is due to the `Fsx` filesystem requiring the S3 bucket it mounts to be in the same region as it and the subnets.
+# help
+bash ./bin/create_daylily_omics_analysis_s3.sh -h
 
-**only needs to be done 1x per region** _and will take an hour or so to run_
-```bash
+# dryrun
+AWS_PROFILE=<your_profile>
+bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region us-west-2 --profile daylily --bucket-prefix daylily5 
 
-./bin/create_daylily_omics_analysis_s3.sh -h
+# run for real
+AWS_PROFILE=<your_profile>
+bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region us-west-2 --profile daylily --bucket-prefix daylily5  --disable-dryrun
 
-Usage: ./bin/create_daylily_omics_analysis_s3.sh --prefix <PREFIX> [--daylily-s3-version <version>] [--region <region>] [--dryrun] [-h]
-
-./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.7 --dryrun
-
-# Run it for real, may take a while to run! be in tmux or screen...
-./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.7 
 ```
 
 
