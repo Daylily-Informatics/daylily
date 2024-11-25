@@ -67,8 +67,7 @@ if [ "$enforce_budget" != "enforce" ]; then
 else
     # Budget Check
     AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-    region=$(grep "Region" /etc/parallelcluster/cfnconfig | awk '{print $2}')
-
+    region=$(cat  /etc/parallelcluster/cfnconfig | grep cfn_region | cut -d '=' -f 2)
     if [ -z "$region" ]; then
         echo "ERROR: Region is not set. Cannot verify budget." >&2
         exit 1
