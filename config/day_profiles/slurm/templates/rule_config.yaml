@@ -319,11 +319,8 @@ octopus:
     oct_gather_env: "../envs/vanilla_v0.1.yaml"
     addl_options: |
         --fast \
-        --ignore-unmapped-contigs \
         --sequence-error-model PCR-FREE.NOVASEQ \
         --min-forest-quality 0 \
-        --target-read-buffer-memory 1G \
-        --target-working-mem 100G \
         --forest-model /fsx/data/tool_specific_resources/H_sapiens/b37/octopus/forests/germline.v0.7.4.forest \
     partition: "i192"
 
