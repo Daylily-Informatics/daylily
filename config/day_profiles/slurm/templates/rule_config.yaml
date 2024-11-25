@@ -208,7 +208,7 @@ dysgu_sort_index:
     partition: "i192"
 
 fastp:
-    threads: 8
+    threads: 32
     env_yaml: "../envs/fastp_v0.1.yaml"
     filter_avg_q_score: 9
     other_args: "  "
@@ -216,15 +216,15 @@ fastp:
     partition: "i192"
 
 fastqc:
-    threads: 8
-    fastqc_threads: 32
+    threads: 48
+    fastqc_threads: 48
     env_yaml: "../envs/fastqc_v0.1.yaml"
     extract: "  "
     ld_preload: " "
     partition: "i192,i128"
 
 fastv:
-    threads: 8
+    threads: 32
     env_yaml: "../envs/fastv_v0.1.yaml"
     ld_preload: "  "
     partition: "i192"
