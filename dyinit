@@ -68,7 +68,7 @@ if [[ -z "$PROJECT" ]]; then
         echo "Error: Region is not set. Please set the 'region' variable."
         return 3
     fi
-    PROJECT="daylily-omics-analysis-${region}"
+    PROJECT=$(awk '/Key: aws-parallelcluster-project/ {getline; print $2}' /opt/parallelcluster/shared/cluster-config.yaml)
     echo "Notice: --project not set. Using default project name: $PROJECT"
 fi
 
