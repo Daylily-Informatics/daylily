@@ -234,26 +234,26 @@ rule help:
         partition="i8,i192",
     shell:
         """
-	touch {log};
+	    touch {log};
         echo "help running" >> {log} 2>&1;
         {params.c} '##### DY-CLI HELP                                                    ' "$DY_IT2" "$DY_IB2" "$DY_IS2" 1>&2;
         {params.c} '/-----------------------------------------------------------------------------' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2;
         {params.c} 'Welcome to daylily. 
 
-       More complete docs can be found here: 
+        More complete docs can be found here: 
               https://github.com/Daylily-Informatics/daylily 
      
 
-       ========================================================================
-       The dy- cli , first source it:
+        ========================================================================
+        The dy- cli , first source it:
 
-       . dyinit
-       . dyinit -h
+        . dyinit
+        . dyinit -h
 
 
-       Day CLI initialized for project $PROJECT in region $region.
-       The Daylily CLI is now available.
-       The following commands are available:\n\t**TAB COMPLETION(single and double tabbing) IS ENABLED FOR ALL CLI COMMANDS AND FLAGS, tab following a space or following a - to see completions**
+        Day CLI initialized for project $PROJECT in region $region.
+        The Daylily CLI is now available.
+        The following commands are available:\n\t**TAB COMPLETION(single and double tabbing) IS ENABLED FOR ALL CLI COMMANDS AND FLAGS, tab following a space or following a - to see completions**
 
           (day-help / dy-h)         - Display this help message.
           (day-activate / dy-a) (slurm | local) - Activate a Slurm or local environment.
@@ -263,9 +263,9 @@ rule help:
           (day-build / dy-b)         - Build a new environment. **Only needs to be run once per head node user.**
 
 
-       ========================================================================
-       For use with dy-r [rules, try produce_<tab><tab>] [flags, try --con<tab><tab>]
-       + Important snakemake arguments (all optional):
+        ========================================================================
+        For use with dy-r [rules, try produce_<tab><tab>] [flags, try --con<tab><tab>]
+        + Important snakemake arguments (all optional):
           `-n` == dryrun, generates an execution plan, but runs no commands.  
               Good practice to run with -n before pulling the trigger.
           `-p` == print shell commands, pretty much always include this one
@@ -287,7 +287,7 @@ rule help:
           `--dag|--rulegraph|--filegraph` == use as follows to produce 
               various graph visualizations of the TARGET being asked for: 
               `dy-r produce_deduplicated_bams --rulegraph | dot -Tpng > rg.png`
-       ========================================================================
+         ========================================================================
                 + TARGETS (which are snakemake rules that are a terminal point
                       in the larger DAG of rules). A few common ones:
                    - produce_deduplicated_bams == will run the specified 
@@ -305,7 +305,8 @@ rule help:
                       
        {params.c} '/----------------------------------------------------------\
 -------------------' "$DY_IT2" "$DY_IB2" "$DY_IS2"  1>&2;
-        """
+    nohup (sleep 10 && rm {log}) &; 
+    """
 
 
 # Method to update jira by creating tickets with the following info
