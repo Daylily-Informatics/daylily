@@ -8,7 +8,7 @@ pass_on_warn=false  # Default for warnings causing failures
 # Function to display help
 usage() {
     echo "Usage: source $0 [--region-az REGION-AZ] [--pass-on-warn]"
-    echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (default: us-west-2d)"
+    echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (tested w us-west-2c/d)"
     echo "       --pass-on-warn          Allow warnings to pass without failure (default: false)"
     echo "       --profile  aws profile to use"
 }
@@ -90,9 +90,7 @@ handle_warning() {
 }
 
 validate_region() {
-  echo "RGN:" $1
-  echo "NOTE:  you are advised to run _aws configure set region $1 _ to set the region for use with the pcluster CLI, to avoid the errors you will cause when the _region_ flag is not used."
- 
+  echo "REGION:" $1 
 }
 
 echo "Welcome to the Daylily CLI Setup"

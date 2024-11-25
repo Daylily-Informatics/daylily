@@ -36,7 +36,7 @@ TEMPLATE_FILE=$1      # Full path to the CloudFormation template file
 RESOURCES_PREFIX=$2   # A prefix for all resources created by the stack
 AVAILABILITY_ZONE=$3  # Availability zone, e.g., us-west-2a
 REGION=$4  # Extract region from AZ by removing the trailing letter
-STACK_NAME="pcluster-vpc-stack" # DO NOT CHANGE THIS!! 
+STACK_NAME="pcluster-vpc-stack-"$(echo $3 | cut -d '-' -f 3) # DO NOT CHANGE THIS!! 
 AWS_PROFILE=$5
 
 VPC_CIDR="10.0.0.0/16"
