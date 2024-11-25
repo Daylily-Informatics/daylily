@@ -235,7 +235,7 @@ ret_code=111
 
 
 # Run the Snakemake command and process its output
-( $snakecmd 2>&1 | tee >(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
+( $snakecmd 1>&2 | tee 2>(grep --line-buffered -oE '[0-9]+ of [0-9]+ steps \([0-9]+%\) done' > progress.log) ) | \
 while IFS= read -r line; do
     # Capture the latest progress value
     if [[ -s progress.log ]]; then
@@ -257,7 +257,7 @@ while IFS= read -r line; do
     padding=$(printf "%*s" "$padding_length")
 
     # Print the line with progress appended to stderr
-    printf "%s%s%s\n" "$line" "$padding" "$latest_progress" 1>&2
+    printf "%s%s%s\n" "$line" "$padding" "$latest_progress" 2>&1
 done
 ret_code=$?
 
