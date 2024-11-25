@@ -7,7 +7,6 @@ ACTIVE_PATH="daylily2:daylily4-omics-analysis-us-west-2/cluster_boot_config/"
 
 # List of files to copy
 FILES=(
-    "post_install_ubuntu_combined.sh"
     "sbatch"
 )
 
