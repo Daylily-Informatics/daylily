@@ -216,26 +216,20 @@ rule util_profile_config_reset:  # TARGET: clears all profile config files so th
 # help returns all TARGET annotated rules in the rules dir
 
 
-#import random
-#ri=random.randint(1,100000)
+
 rule help:
     container: None
-    benchmark:
-        "logs/help.bench.tsv"
     threads: 1
     params:
         c=get_ccmd(),
         cluster_sample="help"
-    log:
-        "logs/help.log"
     resources:
         vcpu=1,
         threads=1,
         partition="i8,i192",
     shell:
         """
-	    touch {log};
-        echo "help running" >> {log} 2>&1;
+
         {params.c} '##### DY-CLI HELP                                                    ' "$DY_IT2" "$DY_IB2" "$DY_IS2" 1>&2;
         {params.c} '/-----------------------------------------------------------------------------' "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2;
         {params.c} 'Welcome to daylily. 
@@ -305,7 +299,7 @@ rule help:
                       
        {params.c} '/----------------------------------------------------------\
 -------------------' "$DY_IT2" "$DY_IB2" "$DY_IS2"  1>&2;
-    nohup (sleep 10 && rm {log}) &; 
+
     """
 
 
