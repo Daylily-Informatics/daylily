@@ -18,6 +18,9 @@ rule calc_coverage_evenness:
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.norm_cov_eveness.bench.tsv"
     threads: config['calc_coverage_evenness']['threads']
+    resources:
+        vcpu=config['calc_coverage_evenness']['threads'],
+        partition=config['calc_coverage_evenness']['partition'],
     log:
         MDIR + "{sample}/align/{alnr}/alignqc/norm_cov_eveness/logs/norm_cov_eveness.mqc.log",
     params:

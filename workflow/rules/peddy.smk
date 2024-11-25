@@ -44,6 +44,7 @@ rule peddy:
     threads: config["peddy"]["threads"]
     resources:
         vcpu=config["peddy"]["threads"],
+        partition=config["peddy"]["partition"],
     params:
         cluster_sample=ret_sample,
         ld_preload=config["malloc_alt"]["ld_preload"],

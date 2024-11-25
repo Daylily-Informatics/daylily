@@ -22,7 +22,8 @@ rule verifybamid2_contam:
         config["verifybamid2_contam"]["env_yaml"]
     threads: config["verifybamid2_contam"]["threads"]
     resources:
-        vcpu=config["verifybamid2_contam"]["threads"]
+        vcpu=config["verifybamid2_contam"]["threads"],
+        partition=config["verifybamid2_contam"]["partition"],
     params:
         cluster_sample=ret_sample,
         huref=config["supporting_files"]["files"]["octopus"]["huref"]["name"],

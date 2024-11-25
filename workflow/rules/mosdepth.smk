@@ -13,7 +13,8 @@ rule mosdepth:
         + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",
     threads: config["mosdepth"]["threads"]
     resources:
-        threads=config["mosdepth"]["threads"]
+        threads=config["mosdepth"]["threads"],
+        partition=config["mosdepth"]["partition"],
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.mosdepth.bench.tsv"
     log:

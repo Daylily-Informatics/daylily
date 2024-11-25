@@ -9,7 +9,8 @@ rule picard:
         sent=touch(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done"),
     threads: config["picard"]["threads"]
     resources:
-        vcpu=config["picard"]["threads"]
+        vcpu=config["picard"]["threads"],
+        partition=config["picard"]["partition"],
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.mrkdup.sort.picard.bench.tsv"
     log:

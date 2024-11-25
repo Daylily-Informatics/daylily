@@ -80,6 +80,9 @@ rule multiqc_final_wgs:  # TARGET: the big report
     benchmark:
         f"{MDIR}benchmarks/DAY_all.final_multiqc.bench.tsv"
     threads: config["multiqc"]["threads"]
+    resources:
+        threads=config["multiqc"]["threads"],
+        partition=config["multiqc"]["partition"],
     priority: 50
     params:
         odir2=MDIRreportsd,

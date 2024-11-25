@@ -23,7 +23,7 @@ rule tiddit:
     threads: config["tiddit"]["threads"]
     resources:
         vcpu=config["tiddit"]["threads"],
-        partition="i192",
+        partition=config["tiddit"]["partition"],
         threads=config["tiddit"]["threads"]
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.tiddit.sv.vcf.bench.tsv"

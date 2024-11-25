@@ -20,6 +20,7 @@ rule qualimap:
     resources:
         vcpu=config["qualimap"]["threads"],
         threads=config["qualimap"]["threads"],
+        partition=config["qualimap"]["partition"],
     params:
         java_mem_size=config["qualimap"]["java_mem_size"],
         cluster_sample=ret_sample,

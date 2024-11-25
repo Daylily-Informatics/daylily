@@ -24,6 +24,9 @@ rule rtg_vcfstats:
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.{snv_caller}.rtgvcfstats.bench.tsv"
     threads: config["rtg_vcfstats"]["threads"]
+    resources:
+        threads=config["rtg_vcfstats"]["threads"],
+        partition=config["rtg_vcfstats"]["partition"],
     params:
         work_dir=MDIR + "{sample}/align/{alnr}/snv/{snv_caller}/vcf_stats/",
         cluster_sample=ret_sample,

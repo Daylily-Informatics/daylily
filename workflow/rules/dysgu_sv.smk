@@ -20,7 +20,8 @@ rule dysgu:
         ld_p=config['malloc_alt']['ld_preload'] if 'ld_preload' not in config['dysgu'] else config['dysgu']['ld_preload'],
     threads: config["dysgu"]["threads"]
     resources:
-        threads=config['dysgu']['threads']
+        threads=config['dysgu']['threads'],
+        partition=config['dysgu']['partition'],
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.dysgu.sv.vcf.bench.tsv"
     log:
@@ -65,6 +66,7 @@ rule dysgu_sort_index:
     threads: config["dysgu_sort_index"]["threads"]
     resources:
         threads=config['dysgu_sort_index']['threads'],
+        partition=config['dysgu_sort_index']['partition']
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.dysgu.sv.vcf.sort.bench.tsv"
     log:

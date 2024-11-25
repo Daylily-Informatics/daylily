@@ -17,6 +17,9 @@ rule goleft:
         cluster_sample=ret_sample,
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.goleft.bench.tsv"
+    resources:
+        vcpu=config["go_left"]["threads"],
+        partition=config["go_left"]["partition"],
     log:
         MDIR + "{sample}/align/{alnr}/alignqc/goleft/logs/goleft.log",
     threads: config["go_left"]["threads"]

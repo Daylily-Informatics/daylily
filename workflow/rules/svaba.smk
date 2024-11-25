@@ -65,7 +65,8 @@ rule svaba:
         #microbial_genomes=config['supporting_files']['files']['microbial']['reprDB']['name'],
     threads: config['svaba']['threads']  #{threads}  # eval( "lambda wildcards, input, threads, attempt: attempt, 254 if int(attempt) > 1  else 255 ")
     resources:
-        vcpu=config['svaba']['threads']  
+        vcpu=config['svaba']['threads'],
+        partition=config['svaba']['partition'],
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.svb.svabavcf.bench.tsv"
     log:

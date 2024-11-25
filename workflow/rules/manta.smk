@@ -29,7 +29,8 @@ rule manta:
     log:
         MDIR + "{sample}/align/{alnr}/sv/manta/logs/{sample}.{alnr}.manta.log",
     resources:
-        vcpu=config["manta"]["threads"]
+        vcpu=config["manta"]["threads"],
+        partition=config["manta"]["partition"],
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         work_dir=MDIR + "{sample}/align/{alnr}/sv/manta/manta_work/",

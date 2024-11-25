@@ -23,6 +23,9 @@ rule fastp:
         proceed=MDIR + "{sample}/{sample}.proc",
         bench=MDIR + "{sample}/benchmarks/{sample}.fastp.bench.tsv",
     threads: config["fastp"]["threads"]
+    resources:
+        threads=config["fastp"]["threads"],
+        partition=config["fastp"]["partition"]
     params:
         odir=MDIR + "{sample}/seqqc/fastp/",
         qscore_filter=config["fastp"]["filter_avg_q_score"],

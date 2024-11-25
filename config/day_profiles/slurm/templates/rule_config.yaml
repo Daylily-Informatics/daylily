@@ -232,7 +232,7 @@ fastv:
 go_left:
     env_yaml: "../envs/go_left_v0.1.yaml"
     threads: 16
-    partition: "i192"
+    partition: "i192,i128"
 
 kat:
     threads: 64
@@ -254,15 +254,15 @@ lofreq2:
 
 
 manta_sort_and_index:
-    threads: 16
-    partition: "i192"
+    threads: 8
+    partition: "i192,i128,i8"
 
 manta:
-    threads: 64
+    threads: 96
     env_yaml: "../envs/manta_v0.1.yaml"
     numactl: "none"
     ld_preload: "  "
-    partition: "i192"
+    partition: "i192,i128"
 
 mosdepth:
     threads: 16
@@ -470,7 +470,7 @@ verifybamid2_contam:
     env_yaml: "../envs/verifybamid2_v0.1.yaml"
     threads: 16
     ld_preload: " "
-    partition: "i192"
+    partition: "i192,i128"
 
 gen_samstats:
     threads: 16
