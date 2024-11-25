@@ -126,6 +126,7 @@ cmd_cluster_boot_config="aws s3 cp s3://${source_bucket}/cluster_boot_config s3:
 cmd_cached_envs="aws s3 cp s3://${source_bucket}/data/cached_envs s3://${new_bucket}/data/cached_envs --recursive --request-payer requester "
 cmd_libs="aws s3 cp s3://${source_bucket}/data/lib s3://${new_bucket}/data/lib --recursive --request-payer requester  "
 cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_resources s3://${new_bucket}/data/tool_specific_resources --recursive --request-payer requester "
+cmd_budget="aws s3 cp s3://${source_bucket}/data/budget_tags s3://${new_bucket}/data/budget_tags --recursive --request-payer requester "
 
 # b37 references
 cmd_b37_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
@@ -154,6 +155,7 @@ if [ "$disable_dryrun" = false ]; then
     echo "$cmd_cached_envs"
     echo "$cmd_libs"
     echo "$cmd_tool_specific_resources"
+    echo "$cmd_budget"
     
     if [ "$exclude_hg38_refs" = true ]; then
         echo ">>>> THESE TO BE EXCLUDED"
@@ -206,6 +208,11 @@ else
     echo "$cmd_tool_specific_resources"
     eval "$cmd_tool_specific_resources"
     check_for_errors $? "$cmd_tool_specific_resources"
+
+    echo "NOW RUNNING"
+    echo "$cmd_budget"
+    eval "$cmd_budget"
+    check_for_errors $? "$cmd_budget"
 
     # Execute commands based on flags
     if [ "$exclude_hg38_refs" = true ]; then
