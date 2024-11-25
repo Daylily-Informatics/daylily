@@ -156,38 +156,39 @@ def get_region_name(region_code):
     # Fallback to region code if no match is found
     return region_code
 
-def calculate_median_price(resource, az, profile, price_type, bump_price):
-    """Calculate the median price for all instances in the compute resource."""
-    prices = []
-    for instance in resource.get('Instances', []):
-        instance_type = instance.get('InstanceType')
-        price = get_instance_price(instance_type, az, profile, price_type)
-        if price is not None:
-            prices.append(price)
-    if prices:
-        median_price = round(statistics.median(prices), 4)
-        pap=price_type 
+
+def calculate_partition_price(queue, az, profile, price_type, bump_price):
+    """Calculate the median price for all instances in the partition."""
+    all_prices = []
+    for resource in queue.get('ComputeResources', []):
+        for instance in resource.get('Instances', []):
+            instance_type = instance.get('InstanceType')
+            price = get_instance_price(instance_type, az, profile, price_type)
+            if price is not None:
+                all_prices.append(price)
+    
+    if all_prices:
+        median_price = round(statistics.median(all_prices), 4)
         if price_type == 'dedicated':
-            pap="(median on-demand/2)"
-            median_price = round(median_price/2.0, 4)
+            median_price = round(median_price / 2.0, 4)
         else:
-            pap=f"(median spot price)+{bump_price}"
-            median_price = round(median_price+float(bump_price),4)
-            
-        resource['SpotPrice'] = median_price
+            median_price = round(median_price + float(bump_price), 4)
         
-        # Add a comment indicating the price type
-        resource.yaml_add_eol_comment(f'Calculated using {pap}.', key='SpotPrice', column=0)
+        # Apply the median price to all resource groups in the partition
+        for resource in queue.get('ComputeResources', []):
+            resource['SpotPrice'] = median_price
+            pap = "(median spot price)" if price_type == 'spot' else "(median on-demand/2)"
+            resource.yaml_add_eol_comment(f'Calculated using {pap}.', key='SpotPrice', column=0)
     else:
-        print(f"Could not retrieve {price_type} prices for instances in resource {resource.get('Name')}.")
+        print(f"Could not retrieve {price_type} prices for instances in partition {queue.get('Name')}.")
 
 def process_slurm_queues(config, az, profile, price_type, bump_price):
     """Process all Slurm queues to calculate and update prices."""
     for queue in config.get('Scheduling', {}).get('SlurmQueues', []):
-        for resource in queue.get('ComputeResources', []):
-            if not isinstance(resource, CommentedMap):
-                resource = CommentedMap(resource)
-            calculate_median_price(resource, az, profile, price_type, bump_price)
+        if not isinstance(queue, CommentedMap):
+            queue = CommentedMap(queue)
+        calculate_partition_price(queue, az, profile, price_type, bump_price)
+
 
 def main():
     args = parse_arguments()
