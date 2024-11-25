@@ -24,7 +24,7 @@ default-resources:
   - vcpu=1
   - distribution=block
   - exclusive=''
-  - constraint='' # --constraint resourcegroup_name,feature in the rules if desired
+  - constraint=''
   - exclude=''
   - include=''
 jobs: 300
