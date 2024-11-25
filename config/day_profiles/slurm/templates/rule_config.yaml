@@ -8,7 +8,7 @@ analysis_manifest: .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv # or .tes
 genome_build: "hg38"  # or b37
 
 
-profile_name: local
+profile_name: slurm
 
 # TO DEPRECATE
 valid_biome: AWSPC
