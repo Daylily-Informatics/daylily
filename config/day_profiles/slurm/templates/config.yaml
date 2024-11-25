@@ -36,7 +36,6 @@ max-jobs-per-second: 10
 keep-going: True
 keep-remote: True
 rerun-incomplete: True
-printshellcmds: True
 scheduler: greedy
 use-conda: True
 conda-frontend: conda
