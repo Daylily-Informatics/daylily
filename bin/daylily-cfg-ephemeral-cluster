@@ -101,7 +101,13 @@ echo "Please ensure your ~/.aws/config file matches this region."
 
 # Ensure Conda exists
 if ! command -v conda &> /dev/null; then
-    echo "Error: Conda is not available in this shell. Please install miniconda (see docs). Exiting."
+    echo "Error: Conda is not available in this shell. Attempting to determine if autoinstall is possible."
+    
+    source bin/install_miniconda
+fi
+
+if ! command -v conda &> /dev/null; then
+    echo "Error: Conda is not available in this shell despite attempting an autoinstall. Exiting."
     return 3
 fi
 
@@ -146,7 +152,7 @@ fi
 # Call the region validation function
 validate_region "$region" || return 3
 
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text  --profile $AWS_PROFILE )
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text  --profile $AWS_PROFILE )
 
 # Get AWS caller identity
 caller_identity_arn=$(aws sts get-caller-identity --query 'Arn' --output text --region "$region"  --profile $AWS_PROFILE )
@@ -496,7 +502,7 @@ echo "Checking if the $global_budget_name budget exists..."
 # Query AWS for the budget
 global_budget_exists=$(aws budgets describe-budgets \
     --query "Budgets[?BudgetName=='$global_budget_name'] | [0].BudgetName" \
-    --output text --region "$region" --account-id "$ACCOUNT_ID"  --profile $AWS_PROFILE )
+    --output text --region "$region" --account-id "$AWS_ACCOUNT_ID"  --profile $AWS_PROFILE )
 
 # Check if the output is empty
 if [[ -z "$global_budget_exists" || "$global_budget_exists" == "None" ]]; then
@@ -533,7 +539,7 @@ budget_name="da-${region_az}-${cluster_name}"
 # Query AWS for the budget
 budget_exists=$(aws budgets describe-budgets \
     --query "Budgets[?BudgetName=='$budget_name'] | [0].BudgetName" \
-    --output text --region "$region" --account-id "$ACCOUNT_ID"  --profile $AWS_PROFILE )
+    --output text --region "$region" --account-id "$AWS_ACCOUNT_ID"  --profile $AWS_PROFILE )
 
 # Check if the output is empty
 if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
@@ -701,6 +707,7 @@ REGSUB_PROJECT=$budget_name
 REGSUB_DELETE_LOCAL_ROOT=$delete_local_root
 REGSUB_SAVE_FSX=$save_fsx
 REGSUB_ENFORCE_BUDGET=$enforce_budget_bool
+REGSUB_AWS_ACCOUNT_ID=aws_profile-$AWS_PROFILE
 EOF
 
 echo ""
@@ -752,7 +759,7 @@ pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --region "$regi
 echo ""
 
 # Monitor cluster creation
-echo "Monitoring cluster creation... this may take 10-15 minutes."
+echo "Monitoring cluster creation... this may take 15-60 minutes."
 python bin/helpers/watch_cluster_status.py "$region"
 echo ""
 

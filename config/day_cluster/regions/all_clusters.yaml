@@ -249,7 +249,7 @@ Tags:  # TAGs necessary for per-user/project/job cost tracking
   - Key: aws-parallelcluster-username
     Value: REGSUB_USERNAME
   - Key: aws-parallelcluster-jobid
-    Value: NA
+    Value: REGSUB_AWS_ACCOUNT_ID
   - Key: aws-parallelcluster-project
     Value: REGSUB_PROJECT
   - Key: aws-parallelcluster-clustername
