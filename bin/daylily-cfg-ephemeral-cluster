@@ -120,9 +120,10 @@ conda activate DAYCLI
 
 # Ensure AWS CLI is installed
 echo "Checking AWS CLI version..."
+aver='2.22.4'
 aws_version=$(aws --version --profile $AWS_PROFILE 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
-if [[ "$aws_version" != "1.27.92" ]]; then
-    handle_warning "Warning: Expected AWS CLI version 1.27.92, but found version $aws_version."
+if [[ "$aws_version" != "$aver" ]]; then
+    handle_warning "Warning: Expected AWS CLI version $aver, but found version $aws_version."
 fi
 
 # Ensure pcluster is installed

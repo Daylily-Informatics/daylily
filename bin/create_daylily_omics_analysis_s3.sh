@@ -126,6 +126,17 @@ create_bucket() {
         echo "Bucket '$new_bucket' created successfully."
         aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled
 
+        # Add tags to the bucket
+        echo "Adding tags to bucket '$new_bucket'..."
+        aws s3api put-bucket-tagging --bucket "$new_bucket" --region "$region" --tagging 'TagSet=[
+            {Key=aws-parallelcluster-username,Value=NA},
+            {Key=aws-parallelcluster-jobid,Value=NA},
+            {Key=aws-parallelcluster-project,Value=daylily-global},
+            {Key=aws-parallelcluster-clustername,Value=NA},
+            {Key=aws-parallelcluster-enforce-budget,Value=daylily-global}
+        ]'
+        echo "Tags added to bucket '$new_bucket'."
+        
     fi
 }
 

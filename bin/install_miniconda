@@ -1,0 +1,107 @@
+# Ensure the script is sourced and not executed directly
+if [[ -n "$ZSH_VERSION" ]]; then
+    # Check if the script is being sourced in zsh
+    # Check if the script is sourced or executed
+    if [ -n "$ZSH_EVAL_CONTEXT" ] && [[ "$ZSH_EVAL_CONTEXT" =~ :file$ ]]; then
+        echo "This script is sourced, proceed"
+    else
+        echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
+        exit 3
+    fi
+elif [[ -n "$BASH_VERSION" ]]; then
+    # Check if the script is being sourced in bash
+    if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
+        echo "This script must be sourced. Use: source $0 or . $0"
+        return 1
+    fi
+else
+    echo "Unsupported shell. Please use bash or zsh to run this script."
+    return 1
+fi
+
+# Check if Miniconda is already installed
+if ! command -v conda &>/dev/null; then
+    echo "Miniconda is not installed. Proceeding with installation..."
+else
+    echo "Miniconda is already installed. Please uninstall it before proceeding."
+    return 0
+fi
+
+
+# Detect the machine type if MACHINE is not set
+if [[ -z "$MACHINE" ]]; then
+    uname_output=$(uname -m)
+    case "$uname_output" in
+        arm64)
+            if [[ "$(uname)" == "Darwin" ]]; then
+                MACHINE="apple_silicon"
+            else
+                MACHINE="linux_arm"
+            fi
+            ;;
+        x86_64)
+            if [[ "$(uname)" == "Darwin" ]]; then
+                MACHINE="intel_mac"
+            else
+                MACHINE="linux_x86"
+            fi
+            ;;
+        *)
+            echo "Unsupported architecture: $uname_output"
+            return 1
+            ;;
+    esac
+fi
+
+# Proceed with installation
+if [[ "$MACHINE" == "apple_silicon" ]]; then
+    echo "Autoinstalling Miniconda for Apple Silicon..."
+    wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -O Miniconda3-MacOSX-arm64.sh
+    chmod +x Miniconda3-MacOSX-arm64.sh
+    ./Miniconda3-MacOSX-arm64.sh -b -p ~/miniconda3
+    rm Miniconda3-MacOSX-arm64.sh
+elif [[ "$MACHINE" == "intel_mac" ]]; then
+    echo "Autoinstalling Miniconda for Intel Mac..."
+    wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O Miniconda3-MacOSX-x86_64.sh
+    chmod +x Miniconda3-MacOSX-x86_64.sh
+    ./Miniconda3-MacOSX-x86_64.sh -b -p ~/miniconda3
+    rm Miniconda3-MacOSX-x86_64.sh
+elif [[ "$MACHINE" == "linux_x86" ]]; then
+    echo "Autoinstalling Miniconda for Linux x86..."
+    wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda3-Linux-x86_64.sh
+    chmod +x Miniconda3-Linux-x86_64.sh
+    ./Miniconda3-Linux-x86_64.sh -b -p ~/miniconda3
+    rm Miniconda3-Linux-x86_64.sh
+elif [[ "$MACHINE" == "linux_arm" ]]; then
+    echo "Autoinstalling Miniconda for Linux ARM..."
+    wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O Miniconda3-Linux-aarch64.sh
+    chmod +x Miniconda3-Linux-aarch64.sh
+    ./Miniconda3-Linux-aarch64.sh -b -p ~/miniconda3
+    rm Miniconda3-Linux-aarch64.sh
+else
+    echo "Unsupported machine type: $MACHINE"
+    echo "Please visit https://docs.conda.io/en/latest/miniconda.html for manual installation instructions."
+    return 2
+fi
+
+# Initialize Conda
+if [[ -x ~/miniconda3/bin/conda ]]; then
+    echo "Initializing Conda..."
+    ~/miniconda3/bin/conda init "$(basename "$SHELL")"
+
+    echo "Reloading the shell..."
+    if [[ $- == *i* ]]; then
+        source ~/.bashrc 2>/dev/null || source ~/.zshrc 2>/dev/null
+    else
+        echo "Please restart your terminal or run: source ~/.bashrc or source ~/.zshrc"
+    fi
+
+    if command -v conda &>/dev/null; then
+        echo "Miniconda installed and initialized successfully!"
+    else
+        echo "Miniconda installation succeeded but initialization failed. Please check your shell configuration."
+    fi
+else
+    echo "Miniconda installation failed. Please try again."
+    return 3
+fi

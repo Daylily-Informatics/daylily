@@ -22,8 +22,16 @@ fi
 
 # Ensure Conda exists
 if ! command -v conda &> /dev/null; then
-    echo "Error: Conda is not available in this shell. Please install miniconda (see docs). Exiting."
-    return 3
+    echo "Error: Conda is not available in this shell. Attempting to install Miniconda..."
+    echo ""
+
+    echo "source ./bin/install_miniconda"
+    source ./bin/install_miniconda
+fi
+
+if ! command -v conda &> /dev/null; then
+    echo "Error: Conda is not available in this shell. Autoinstall failed, please see the miniconda docs."
+    return 1
 fi
 
 # Activate or create the Daylily CLI conda environment
