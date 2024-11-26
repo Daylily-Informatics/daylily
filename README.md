@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.130b)
+# Daylily AWS Ephemeral Cluster Setup (0.7.131d)
 
 
 **beta release**
@@ -25,218 +25,216 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
 ---
 
+# What's It All About?
 
-# Before Beginning
-- `daylily` can run in multiple AZs, but this capability is not end-to-end automated yet. It is straightforward to run 1-many ephemeral clusters in one AZ of a region, and to do so in multiple regions.  Running in multipe AZs w/in a region is allowed, but the automation to set these up is not complete (read: you'll need to build subnets and a few other AZ specific resources by hand ATM).
-- A cloudstack formation template will run which will create some important resources for the epheral cluster, namely: the public VPC, public subnet, private subnet, and a policy to allow tagging and budget tracking of resources by pcluster.
-- The install steps should work for both `bash` and `zsh` shells, but the `bash` shell is the default for the `pcluster` environment.
-- Daylily `projects` are synonymous with AWS `budgets`. When initializing daylily `. dyinit  --project PROJECT`, the project specified will be checked vs the slurm registry of projects, found `/opt/slurm/etc/projects_list.conf` and be checked to confirm there is a matching AWS budget of the specified name. If not, you will be prompted to create a budget (which may also be completed via the AWS dashboard, use a simplified `monthly spend` type). for now, you willneed to update the `projects_list.conf` file manually with each new budget added, *importantly* both in the current ephemeral cluster conf file as well as the s3 bucket hosted version which is used to build new nodes.
+## BFAIR: Bioinformatics FAIR Principles 
+_this is a title rough idea! - not likely final, but is the gist of it_
 
-# Strongly Suggested --> Parallel CLuster UI ( _PCUI_ )
+## Comprehensive Cost Transparency & Predictability
 
-> [PCUI](https://us-west-2.console.aws.amazon.com/parallelcluster/home?region=us-west-2#clusters) is a useful tool for managing all parallel clusters across AZ's. You can accomplish everything the `pcluster` cli allows, and in addition, much more convenient stackformation/log monitoring. Bonus: job monitoring, dynamic volume management & integrated budget/cost monitoring (`daylily` adds to this budget enforcement and finer grained cost tracking).
+> 30x FASTQ->VCF, in 1hr, for <img src="docs/images/000000.png" valign="bottom" width=2 >~$3.00<img src="docs/images/000000.png" valign="bottom" width=2 > @ F-score 0.99xx
 
-## Cluster Jobs
-![](docs/images/cluster_jobs.png)
+> Be up and running in a few hours from reading this sentence. 
+> - Have your first GIAB 30x Fastq->VCF (both snv and sv) ~60min later. 
+> - The (_onetime_) cost of staging data is ~$20, analysis will be ` ~$3.00 to $5.00 ` (pricing is established dynamically at cluster creation, and you can inspect the max bound on spot prices which are possible, this sets your upper bound... as does complexity of pipeline, but more on that latter).
 
-## Cluster Queue Management
-![](docs/images/cluster_queues.png)
+**Time to result, Cost of analysis, Accuracy && Integrated Concordance/Comparison**: These are key elements required in making solid analysis decisions, and in setting the stage for analysis decisions which can improve in tandem as the field advances. 
+**Cost Optimization & Predictability**:  With benchmarked, reproducible analysis on stable and reproducible computing platforms, it is possible to optimze for the most beneficial compute locale && to predict expected (and bound highest) per-sample cost to analyze.
+**Cost Transparency & Management**:  IRT views into what is being spent, and where.  Not just compute, but data transfer, sroage, and other _ALL_ other costs. No specialized hardware investment needed, no contracts, pay for what you use. 
+**Fully & Unabashedly Open Source**: All out of the box functionality here is open source, and does not require any investment in software liscneces, etc. This is important for both future proof reproducibility and ongoing cost management. This said, daylily is not hostile to s/w that requires liscences (if selection of closed s/w is made understanding tradeoffs, if any, in long term reproducibility), but you will need to purchase those separately.
 
 
 
-  <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
+  <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff00ff><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
   <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
-# Installation Steps
+# Installation -- PREREQUISITES
 
-## On Your Local Machine, A Terminal
-Your local machine will be used to instantiate and manage ephemeral clusters. To date, this developmnent has been carried out on a MAC laptop (zsh shell).
+## AWS 
+
+### Quotas
+There are a handful of quotas which will greatly limit (or block) your ability to create and run an ephemeral cluster.  These quotas are set by AWS and you must request increases. The `daylily-cfg=ephemeral-cluster` script will check these quotas for you, and warn if it appears they are too low,  but you should be aware of them and [request increases proactively // these requests have no cost](https://console.aws.amazon.com/servicequotas/home).
+
+**dedicated instances**
+_pre region quotas_
+- `Running Dedicated r7i Hosts` >= 1 **!!(AWS default is 0) !!**
+- `Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances` must be >= 9 **!!(AWS default is 5) !!** just to run the headnode, and will need to be increased further for ANY other dedicated instances you (presently)/(will) run.
+
+**spot instances**
+_per region quotas_
+- `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 310 (and preferable >=2958) **!!(AWS default is 5) !!**
+
+**fsx lustre**
+_per region quotas_
+- should minimally allow creation of a FSX Lustre filesystem with >= 4.8 TB storage, which should be the default.
+
+**other quotas**
+May limit you as well, keep an eye on `VPC` & `networking` specifically.
 
 
-### Install Conda (if not already installed)
-_bash and zsh are known to work_
-- [Conda, miniconda specifically, is required to be setup in your shell to proceed.](docs/install/Install.md#run-daylily-init)
+### Activate Cost Allocation Tags (optional, but strongly suggested)
+The cost management built into daylily requires use of budgets and cost allocation tags. Someone with permissions to do so will need to activate these tags in the billing console. *note: if no clusters have yet been created, these tags may not exist to be activeted until the first cluster is running. Activating these tags can happen at any time, it will not block progress on the installation of daylily if this is skipped for now*. See [AWS cost allocation tags](https://us-east-1.console.aws.amazon.com/billing/home#/tags)
 
-### Clone The `daylily` Repository
+The tags to activate are:
+  ```text
+  aws-parallelcluster-jobid
+  aws-parallelcluster-username
+  aws-parallelcluster-project
+  aws-parallelcluster-clustername
+  aws-parallelcluster-enforce-budget
+  ```
+
+
+### CLI User Account
+#### CLI Credentials
+- Whoever will be creating and managing the daylily ephemeral clusters will need to have aws cli credentials saved in their ~/.aws directory. Please ensure these are saved before proceeding.
+
+#### Inline Policies
+- The user must have these [inline policies and permissions to proceed](config/aws/daylily-omics-analysis.json).
+- As an admin, you can apply these to the user with the following:
+
 ```bash
-git clone git@github.com:Daylily-Informatics/daylily.git
-cd daylily
+# Define variables
+AWS_USERNAME="<your_username>" # Replace with your actual AWS IAM username
+AWS_ACCOUNT_NUMBER="<your_account_number>" # Replace with your actual AWS account number
+
+# Copy the template JSON file to a temporary file
+cp config/aws/daylily-omics-analysis.json ./daylily-omics-analysis.tmp.json
+
+# Replace placeholders in the temporary file
+perl -pi -e "s/AWS_USERNAME/$AWS_USERNAME/g" ./daylily-omics-analysis.tmp.json
+perl -pi -e "s/AWS_ACCOUNT_NUMBER/$AWS_ACCOUNT_NUMBER/g" ./daylily-omics-analysis.tmp.json
+
+# Apply the IAM policy
+aws iam put-user-policy --user-name "$AWS_USERNAME" --policy-name daylily-omics-analysis --policy-document file://./daylily-omics-analysis.tmp.json
+
+# Clean up the temporary file
+rm -f ./daylily-omics-analysis.tmp.json
+```
+  - Or, copy the policy from `./daylily-omics-analysis.tmp.json` and apply it to the user via the AWS IAM console.
+
+#### SSH Key Pair(s)
+You will need one keypair per region you intend to run in.
+- via the EC2 Networking Dashboard
+- The key name must include `-omics-analysis` in the name.
+- The key must be of type: **ed25519**)
+-  Downloaded `.pem` locally & be sure to have a copy on the local machine you intend to manage things from, you can't download it again!
+
+##### Place .pem File & Set Permissions
+
+```bash
+chmod 700 ~/.ssh
+
+mv ~/Downloads/<yourkey>.pem  ~/.ssh/<yourkey>.pem 
+chmod 400 ~/.ssh/<yourkey>.pem`
 ```
 
-## via Your AWS Dashboard / Account 
-_note:_ the following steps need to happen only once per-scope of the resource. I have begun to wrap managing these AWS resources in the overall ephemeral cluster build process (which is only well tested for a single cluster per-region). The following notes should help you if you go beyond a single cluster per-region. tldr:  some of these things happen once per account, per-region, per-az.
-### 0. AWS Quotas
-- You must request increases to the default quotas for the resources `pcluster` requires to be available.  
-- This is a critical step, and you should do this before attempting to create a cluster.  
-  - And, you should monitor your usage and request additional increases as your needs grow.
-- [See Section On AWS Quotas](#critically-important-words-on-quotas----you-must-request-increases-from-the-defaults) for specifics on common default quotas that need to be increased. tldr:
-> **dedicated instances**
-> - `Running Dedicated r7i Hosts` >= 1 **!!(AWS default is 0) !!**
-> - `Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances` must be >= 16 **!!(AWS default is 5) !!** just to run the headnode, and will need to be increased further for ANY other dedicated instances you (presently)/(will) run.
-> **spot instances**
-> - `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 310 (and preferable >=2958) **!!(AWS default is 5) !!**
-> **fsx lustre**
-> - should minimally allow creation of a FSX Lustre filesystem with >= 4.8 TB storage, which should be the default.
+---
 
-### 1. Activate Cost Allocation Tags (optional)
-If you have not created an ephemeral cluster yet, the tags will not be known to your AWS account, you may need to tag something with these tags if not yet known. Someone with 'payer' access to the account will need to activate cost allocation tags.  This is important for the cost tracking and budgeting of the daylily ephemeral clusters.
 
-* [AWS Cost Allocation Tags](https://us-east-1.console.aws.amazon.com/billing/home#/tags)
-* The tags to activate are:
-```text
-aws-parallelcluster-jobid
-aws-parallelcluster-project
-aws-parallelcluster-username
+## Prerequisites (On Your Local Machine) 
+Local machine development has been exclusively on a mac, using the `zsh` shell (I am moving everything to bash slowly, so there is a mix of bash and zsh at the moment). _suggestion: run things in tmux or screen_
+
+Very good odds this will work on any mac and most Linux distros (ubuntu 22.04 are what the cluster nodes run). Windows, I would not hazard a guess.
+
+### System Packages
+Install with `brew` or `apt-get` or ... :
+- `python3`
+- `git`
+- `jq`
+- `wget`
+- `tmux` (optional, but suggested)
+- `emacs` (optional, I guess, but I'm not sure how you live without it)
+
+
+
+### AWS CLI
+#### Install
+Use `brew install awscli` or `sudo apt-get install awscli` or see [Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
+
+#### AWS CLI Configure - Opt 1
+Run `aws configure` and enter your credentials and region.
+
+#### AWS CLI Configure - Opt 2
+Create the files and directories manually:
+
+```bash
+mkdir ~/.aws
+chmod 700 ~/.aws
+
+touch ~/.aws/credentials
+chmod 600 ~/.aws/credentials
+
+touch ~/.aws/config
+chmod 600 ~/.aws/config
 ```
 
+Edit `~/.aws/config`, which should look like:
 
-### 2. Install / Configure The AWS CLI
-_Create And Save AWS CLI Credentials In `.aws`_
-- For your terminal/shell account these files `~/.aws/{credentials,config}` should exist.
-
-**config** should look like:
-```
+```yaml
 [default]
 region = us-west-2
 output = json
 ```
 
-**credentials** should look like:
-Setting your region will help avoid error caused when a --region flag is omitted from a pcluster command.
-```
+Edit `~/.aws/credentials`, and add your deets, which should look like:
+```yaml
 [default]
 aws_access_key_id = <ACCESS_KEY>
 aws_secret_access_key = <SECRET_ACCESS_KEY>
 region = <REGION>
 ```
 
-#### Confirm The CLI User Has The Necessary Permissions For AWS Parallel Cluster To Operate
-Please refer to the pcluster docs to verify your cli user has the appropriate permissions to create and manage the resources necessary for the cluster.  [AWS Parallel Cluster Permissions](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam.html).
 
-#### Add Two Inline Policies To Add To The CLI User
-Add 'inline json' policies to the user who will be running the `pcluster` commands.  These policies are necessary for the `pcluster` headnode to manage spot instances and query spot price histories.
-
-**pcluster-omics-analysis-fleet**
-- Add this inline policy to the cli user from the aws iam user dashboard. It allows the pcluster headnode to manage spot instances. If missing, you might be able to spin up a head but not be able to add spots. Name it `pcluster-omics-analysis-fleet`.
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "iam:CreateServiceLinkedRole",
-      "Resource": "*",
-      "Condition": {
-        "StringLike": {
-          "iam:AWSServiceName": "spot.amazonaws.com"
-        }
-      }
-    }
-  ]
-}
+### Miniconda
+Install with:
+```
+source bin/install_miniconda.sh
 ```
 
-**spot-price-history**
-Your user must have the ability to query spot price histories. Add the following inline policy, and name it with the suffix `omics-analysis-spot-price-history`.
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DescribeSpotPriceHistory"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
+### DAYCLI Environment
 ```
 
+```
 
-### 3. Create A New SSH Key Pair (type: **ed25519**) & Downloaded `.pem` File
+## [daylily-references-public](#daylily-references-public-bucket-contents) Reference Bucket(s)
+- The `daylily-references-public` bucket is preconfigured with all the necessary reference data to run the various pipelines, as well as including GIAB reads for automated concordance. 
+- This bucket will need to be cloned to a new bucket with the name `<YOURPREFIX>-omics-analysis-<REGION>`, one for each region you intend to run in.
+- These S3 buckets are tightly coupled to the `Fsx lustre` filesystems (which allows 1000s of concurrnet spot instances to read/write to the shared filesystem, making reference and data management both easier and highly performant). 
+- [Continue for more on this topic,,,](#s3-reference-bucket--fsx-filesystem).
+- This will cost you ~$23 to clone w/in `us-west-2`, up to $110 across regions. _(one time, per region, cost)_ 
+- The bust will cost ~$14.50/mo to keep hot in `us-west-2`. It is not advised, but you may opt to remove unused reference data to reduce the monthly cost footprint by up to 65%. _(monthly ongoing cost)_
 
-_keypairs are region specific, and you will need to create a new keypair for each region you intend to run in_
-
-- _suggested name `PREFIX-omics-analysis-REGION`_
+### Clone `daylily-references-public` to YOURPREFIX-omics-analysis-REGION
+- `YOURPREFIX` will be used as the bucket name prefix. Please keep it short. The new bucket name will be `YOURPREFIX-omics-analysis-REGION` and created in the region you specify. You may name the buckets in other ways, but this will block you from using the `daylily-cfg-ephemeral-cluster` script, which is largely why you're here.
+- Cloning it will take 1 to many hours.
+  
+**Use the following script**
+_from a tmux or screen session, as the copy will take 1 to many hours_
 
 ```bash
-Move, copy and chmod: 
-```bash
-mv ~/Downloads/<yourkey>.pem  ~/.ssh/<yourkey>.pem 
-chmod 400 ~/.ssh/<yourkey>.pem`
+conda activate DAYCLI
+# help
+bash ./bin/create_daylily_omics_analysis_s3.sh -h
+
+# dryrun
+AWS_PROFILE=<your_profile>
+bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region us-west-2 --profile daylily --bucket-prefix daylily5 
+
+# run for real
+AWS_PROFILE=<your_profile>
+bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region us-west-2 --profile daylily --bucket-prefix daylily5  --disable-dryrun
+
 ```
 
-* Your keypair will need to be available in ~/.ssh/
-
-### 4. The `YOURPREFIX-omics-analysis-REGION` s3 Bucket
-- Your new bucket name needs to end in `-omics-analysis-REGION` and be unique to your account.
-- One bucket must be created per `REGION` you intend to run in.
-- The reference data version is currently `0.7`, and will be replicated correctly using the script below.
-- The total size of the bucket will be 779.1GB, and the cost of standard S3 storage will be ~$30/mo.
-- Copying the daylily-references-public bucket will take ~7hrs using the script below.
-
-#### `daylily-references-public` Bucket Contents
-- `hg38` and `b37` reference data files (including supporting tool specific files).
-- 7 google-brain ~`30x` Illunina 2x150 `fastq.gz` files for all 7 GIAB samples (`HG001,HG002,HG003,HG004,HG005,HG006,HG007`).
-- snv and sv truth sets (`v4.2.1`) for all 7 GIAB samples in both `b37` and `hg38`.
-- A handful of pre-built conda environments and docker images (for demonstration purposes, you may choose to add to your own instance of this bucket to save on re-building envs on new eclusters).
-- A handful of scripts and config necessary for the ephemeral cluster to run.
-
-_note:_ you can choose to eliminate the data for `b37` or `hg38` to save on storage costs. In addition, you may choose to eliminate the GIAB fastq files if you do not intend to run concordance or benchmarking tests (which is advised against as this framework was developed explicitly to facilitate these types of comparisons in an ongoing way).
-
-##### Top Level Diretories
-See the secion on [shared Fsx filesystem](#shared-fsx-filesystem) for more on hos this bucket interacts with these ephemeral cluster region specific S3 buckets.
-```text
-.
-├── cluster_boot_config  # used to configure the head and compute nodes in the ephemeral cluster, is not mounted to cluster nodes
-└── data # this directory is mounted to the head and compute nodes under /fsx/data as READ-ONLY. Data added to the S3 bucket will become available to the fsx mount, but can not be written to via FSX
-    ├── cached_envs
-    │   ├── conda
-    │   └── containers
-    ├── genomic_data
-    │   ├── organism_annotations
-    │   │   └── H_sapiens
-    │   │       ├── b37
-    │   │       └── hg38
-    │   ├── organism_reads
-    │   │   └── H_sapiens
-    │   │       └── giab
-    │   └── organism_references
-    │       └── H_sapiens
-    │           ├── b37
-    │           └── hg38
-    └── tool_specific_resources
-        └── verifybam2
-            ├── exome
-            └── test
-```
-
-
-#### Create The Bucket
-#### Replicate `daylily-references-public` Public References/Resources To Your New Bucket
-- Use the following script.
+### 5.pre?
 ```bash
-sni
-##### Copy The `daylily` Public References/Resources To Your New Bucket (choose the most recent version)
-From your terminal/shell (and to be safe, in a screen or tmux session as it may run for a while).
+AWS_PROFILE=<your_profile>
+region_az=<region-az>
+source bin/daylily-cfg-ephemeral-cluster --region-az $region_az --profile <your_profile>
 
-You will need to copy the daylily ephemeral cluster s3 data to a bucket named `YOURPREFIX-omics-analysis-REGION` in your account. There will need to be one of these per region you intende to run in. Default is `us-west-2`. This locality dependence is due to the `Fsx` filesystem requiring the S3 bucket it mounts to be in the same region as it and the subnets.
-
-**only needs to be done 1x per region** _and will take an hour or so to run_
-```bash
-
-./bin/create_daylily_omics_analysis_s3.sh -h
-
-Usage: ./bin/create_daylily_omics_analysis_s3.sh --prefix <PREFIX> [--daylily-s3-version <version>] [--region <region>] [--dryrun] [-h]
-
-./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.7 --dryrun
-
-# Run it for real, may take a while to run! be in tmux or screen...
-./bin/create_daylily_omics_analysis_s3.sh --prefix hello-new-bucket --region us-west-2 --daylily-s3-version v0.7 
-```
-
+ ```
 
 ### 5. Create A New `pcluster` Stack
 #### **but first, choose the most affordable avaiability zone**
@@ -348,42 +346,6 @@ pcluster list-clusters --region us-west-2
 
 ## Working With The Ephemeral Clusters (via `pcluster`)
 **PCUI is a new tool, and should replicate the pcluster CLI completely, the future is there, but I had these docs already written, so here we are.**
-
-###  Quotas -- You Must Request Increases From The Defaults
-* AWS assigned default quotas will not allow creating a pcluser cluster.
-* AWS quotas limit many of the resources needed by pcluster to build and run ephemeral clusters. 
-* The default resource quotas on a standard AWS account may not be sufficent to run an ephemeral cluster. 
-* Please review you account quotas, monitor your usage, and if you are encountering strange behaviour with getting clusters to build, or spot instances to spin up, this is _one_ place to look first.
-
-**Proactively Request Quota Increases Before You Encounter Problems**
-  
-#### A Few Important Quotas To Monitor
-**quotas are applied by region. be sure you are looking at the `us-west-2` region quotas && be sure when you make quota increase requests you are doing so in `us-west-2`**
-- The following are important quotas to review, but is not exhaustive as quota assignment can vary unpredictably by account.
-
-
-##### VPC Quotas / Networking
-- [VPC Quotas Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/vpc/quotas)
-If there are problems with VPC or networking quotas, these should cause hard fails very early in setting up daylily clusters. There are restrictive limits to the number of VPCs, subnets, and security groups you can create in a region.
-
-##### EC2 Quotas
-- [EC2 Quotas Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/ec2/quotas)
-Quotas are applied by class of instance and by total number `vCPU` used across the class which a quota applies. 
-
-> **dedicated instances** 
-> `Running Dedicated r7i Hosts` >= 1 **!!(AWS default is 0) !!**
-> - This allows the r7i type headnode to be created.  If you alter the headnode instance type in the cluster config, you may need to adjust a different dedicated instance quota.
-> `Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances` must be >= 16 **!!(AWS default is 5) !!** just to run the headnode, and will need to be increased further for ANY other dedicated instances you (presently)/(will) run. 
-> - This is the max total number of vcpus allowed for standard dedicated instances to hold for your account in this region.
-
-> **spot instances**
-> `All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests` must be >= 310 (and preferable >=2958) **!!(AWS default is 5) !!**
-> - This is the max total number of vcpus allowed for spot instances to hold for your account in this region.
-
-##### FSX Lustre Quotas
-Default FSX quotas should be 
-- [FSX Lustre Quota Console](https://us-west-2.console.aws.amazon.com/servicequotas/home/services/fsx/quotas)
-- This is the max total number of vcpus allowed for spot instances to hold for your account in this region.
 
 ## DAYCLI
 
@@ -717,37 +679,6 @@ _alias it for your shell:_ `alias goday=". ~/projects/daylily/bin/ssh_into_dayli
 - Reports are not automaticaly created for spot instances, but you may extend this base report as you like.  This dashboard is automatically created by `pcluster` for each new cluster you create (and will be deleted when the cluster is deleted).
 
 
-# Fsx Filesystem
-Are region specific, and may only intereact with `S3` buckets in the same region as the filesystem. There are region specific quotas to be aware of.
-- Fsx filesystems are extraordinarily fast, massively scallable (both in IO operations as well as number of connections supported -- you will be hard pressed to stress this thing out until you have 10s of thousands of concurrent connected instances).  It is also a pay-to-play product, and is only cost effective to run while in active use.  
-- Daylily uses a `scratch` type instance, which auto-mounts the region specific `s3://PREFIX-omics-analysis-REGION/data` directory to the fsx filesystem as `/fsx/data`.  `/fsx` is available to the head node and all compute nodes.  
-- When you delete a cluster, the attached `Fsx Lustre` filesystem will be deleted as well.  
-- > **BE SURE YOU REFLECT ANALYSIS REUSLTS BACK TO S3 BEFORE DELETING YOUR EPHEMERAL CLUSTER** ... do this via the Fsx dashboard and create a data export task to the same s3 bucket you used to seed the fsx filesystem ( you will probably wish to define exporting `analysis_results`, which will export back to `s3://PREFIX-omics-analysis-REGION/FSX-export-DATETIME/` everything in `/fsx/analysis_results` to this new FSX-export directory.  **do not export the entire `/fsx` mount, this is not tested and might try to duplicate your reference data as well!** ).  This can take 10+ min to complete, and you can monitor the progress in the fsx dashboard & delete your cluster once the export is complete.
-- Fsx can only mount one s3 bucket at a time, the analysis_results data moved back to S3 via the export should be moved again to a final destination (w/in the same region ideally) for longer term storage.  
-- All of this handling of data is amendable to being automated, and if someone would like to add a cluster delete check which blocks deletion if there is unexported data still on /fsx, that would be awesome.
-- Further, you may write to any path in `/fsx` from any instance it is mounted to, except `/fsx/data` which is read only and will only update if data mounted from the `s3://PREFIX-omics-analysis-REGION/data` is added/deleted/updated (not advised).
-
-## Fsx Directory Structure
-The following directories are created and accessible via `/fsx` on the headnode and compute nodes.
-```text
-
-/fsx/
-├── analysis_results
-│   ├── cromwell_executions  ## in development
-│   ├── daylily   ## deprecated
-│   └── ubuntu  ## <<<< run all analyses here <<<<
-├── data  ## mounted to the s3 bucket PREFIX-omics-analysis-REGION/data
-│   ├── cached_envs
-│   ├── genomic_data
-│   └── tool_specific_resources
-├── miners  ## experimental & disabled by default
-├── resources
-│   └── environments  ## location of cached conda envs and docker images. so they are only created/pulled once per cluster lifetime.
-├── scratch  ## scratch space for high IO tools
-└── tmp ## tmp used by slurm by default
-```
-
-
 
 # In Progress // Future Development
 
@@ -932,3 +863,105 @@ _named in honor of Margaret Oakley Dahoff_
  
  
  
+# And There Is More
+
+## S3 Reference Bucket & Fsx Filesystem
+
+### PREFIX-omics-analysis-REGION Reference Bucket
+Daylily relies on a variety of pre-built reference data and resources to run. These are stored in the `daylily-references-public` bucket. You will need to clone this bucket to a new bucket in your account, once per region you intend to operate in.  
+
+> This is a design choice based on leveraging the `FSX` filesystem to mount the data to the cluster nodes. Reference data in this S3 bucket are auto-mounted an available to the head and all compute nodes (*Fsx supports 10's of thousands of concurrent connections*), further, as analysis completes on the cluster, you can choose to reflect data back to this bucket (and then stage elsewhere). Having these references pre-arranged aids in reproducibility and allows for the cluster to be spun up and down with negligible time required to move / create refernce data. 
+
+> BONUS: the 7 giab google brain 30x ILMN read sets are included with the bucket to standardize benchmarking and concordance testing.
+
+> You may add / edit (not advised) / remove data (say, if you never need one of the builds, or don't wish to use the GIAB reads) to suit your needs.
+
+#### Reference Bucket Metrics
+*Onetime* cost of between ~$27 to ~$108 per region to create bucket.
+*monthly S3 standard* cost of ~$14/month to continue hosting it.
+- Size: 617.2GB, and contains 599 files.
+- Source bucket region: `us-west-2`
+- Cost to store S3 (standard: $14.20/month, IA: $7.72/month, Glacier: $2.47 to $0.61/month)
+- Data transfer costs to clone source bucket
+  - within us-west-2: ~$3.40
+  - to other regions: ~$58.00
+- Accelerated transfer is used for the largest files, and adds ~$24.00 w/in `us-west-2` and ~$50 across regions.
+- Cloning w/in `us-west-2` will take ~2hr, and to other regions ~7hrs.
+- Moving data between this bucket and the FSX filesystem and back is not charged by size, but by number of objects, at a cost of `$0.005 per 1,000 PUT`. The cost to move 599 objecsts back and forth once to Fsx is `$0.0025`(you do pay for Fsx _when it is running, which is only when you choose to run analysus_).
+
+### The `YOURPREFIX-omics-analysis-REGION` s3 Bucket
+- Your new bucket name needs to end in `-omics-analysis-REGION` and be unique to your account.
+- One bucket must be created per `REGION` you intend to run in.
+- The reference data version is currently `0.7`, and will be replicated correctly using the script below.
+- The total size of the bucket will be 779.1GB, and the cost of standard S3 storage will be ~$30/mo.
+- Copying the daylily-references-public bucket will take ~7hrs using the script below.
+
+#### daylily-references-public Bucket Contents
+- `hg38` and `b37` reference data files (including supporting tool specific files).
+- 7 google-brain ~`30x` Illunina 2x150 `fastq.gz` files for all 7 GIAB samples (`HG001,HG002,HG003,HG004,HG005,HG006,HG007`).
+- snv and sv truth sets (`v4.2.1`) for all 7 GIAB samples in both `b37` and `hg38`.
+- A handful of pre-built conda environments and docker images (for demonstration purposes, you may choose to add to your own instance of this bucket to save on re-building envs on new eclusters).
+- A handful of scripts and config necessary for the ephemeral cluster to run.
+
+_note:_ you can choose to eliminate the data for `b37` or `hg38` to save on storage costs. In addition, you may choose to eliminate the GIAB fastq files if you do not intend to run concordance or benchmarking tests (which is advised against as this framework was developed explicitly to facilitate these types of comparisons in an ongoing way).
+
+##### Top Level Diretories
+See the secion on [shared Fsx filesystem](#shared-fsx-filesystem) for more on hos this bucket interacts with these ephemeral cluster region specific S3 buckets.
+```text
+.
+├── cluster_boot_config  # used to configure the head and compute nodes in the ephemeral cluster, is not mounted to cluster nodes
+└── data # this directory is mounted to the head and compute nodes under /fsx/data as READ-ONLY. Data added to the S3 bucket will become available to the fsx mount, but can not be written to via FSX
+    ├── cached_envs
+    │   ├── conda
+    │   └── containers
+    ├── genomic_data
+    │   ├── organism_annotations
+    │   │   └── H_sapiens
+    │   │       ├── b37
+    │   │       └── hg38
+    │   ├── organism_reads
+    │   │   └── H_sapiens
+    │   │       └── giab
+    │   └── organism_references
+    │       └── H_sapiens
+    │           ├── b37
+    │           └── hg38
+    └── tool_specific_resources
+        └── verifybam2
+            ├── exome
+            └── test
+```
+
+
+
+
+# Fsx Filesystem
+Are region specific, and may only intereact with `S3` buckets in the same region as the filesystem. There are region specific quotas to be aware of.
+- Fsx filesystems are extraordinarily fast, massively scallable (both in IO operations as well as number of connections supported -- you will be hard pressed to stress this thing out until you have 10s of thousands of concurrent connected instances).  It is also a pay-to-play product, and is only cost effective to run while in active use.  
+- Daylily uses a `scratch` type instance, which auto-mounts the region specific `s3://PREFIX-omics-analysis-REGION/data` directory to the fsx filesystem as `/fsx/data`.  `/fsx` is available to the head node and all compute nodes.  
+- When you delete a cluster, the attached `Fsx Lustre` filesystem will be deleted as well.  
+- > **BE SURE YOU REFLECT ANALYSIS REUSLTS BACK TO S3 BEFORE DELETING YOUR EPHEMERAL CLUSTER** ... do this via the Fsx dashboard and create a data export task to the same s3 bucket you used to seed the fsx filesystem ( you will probably wish to define exporting `analysis_results`, which will export back to `s3://PREFIX-omics-analysis-REGION/FSX-export-DATETIME/` everything in `/fsx/analysis_results` to this new FSX-export directory.  **do not export the entire `/fsx` mount, this is not tested and might try to duplicate your reference data as well!** ).  This can take 10+ min to complete, and you can monitor the progress in the fsx dashboard & delete your cluster once the export is complete.
+- Fsx can only mount one s3 bucket at a time, the analysis_results data moved back to S3 via the export should be moved again to a final destination (w/in the same region ideally) for longer term storage.  
+- All of this handling of data is amendable to being automated, and if someone would like to add a cluster delete check which blocks deletion if there is unexported data still on /fsx, that would be awesome.
+- Further, you may write to any path in `/fsx` from any instance it is mounted to, except `/fsx/data` which is read only and will only update if data mounted from the `s3://PREFIX-omics-analysis-REGION/data` is added/deleted/updated (not advised).
+
+## Fsx Directory Structure
+The following directories are created and accessible via `/fsx` on the headnode and compute nodes.
+```text
+
+/fsx/
+├── analysis_results
+│   ├── cromwell_executions  ## in development
+│   ├── daylily   ## deprecated
+│   └── ubuntu  ## <<<< run all analyses here <<<<
+├── data  ## mounted to the s3 bucket PREFIX-omics-analysis-REGION/data
+│   ├── cached_envs
+│   ├── genomic_data
+│   └── tool_specific_resources
+├── miners  ## experimental & disabled by default
+├── resources
+│   └── environments  ## location of cached conda envs and docker images. so they are only created/pulled once per cluster lifetime.
+├── scratch  ## scratch space for high IO tools
+└── tmp ## tmp used by slurm by default
+```
+
