@@ -65,6 +65,11 @@ if [[ -z "$S3_BUCKET_URL" ]]; then
   exit 1
 fi
 
+
+echo "THERE IS A BUG IN APPENDING DATA TO A FILE CREATED BY OTHER USERS"
+echo "sleep forever"
+sleep 1000000000
+
 # Function to write or append tags to the S3 file# Function to write or append tags to the S3 file
 write_or_append_tags_to_s3() {
   # Ensure S3_BUCKET_URL ends with a proper path
