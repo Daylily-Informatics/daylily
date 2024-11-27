@@ -29,14 +29,6 @@ ___________________
 fi
 
 
-profile_dir="$DAY_ROOT/config/day_profiles/$DAY_PROFILE"
-if [[ ! -d "$profile_dir" ]]; then
-    colr "ERROR: Profile directory: $profile_dir does not exist." "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
-    echo "Have you run 'day-activate'?"
-    exit 3
-fi
-
-source bin/util/profile_freshness_warn.bash $profile_dir
 
 # Build the snakemake command
 snakecmd=("snakemake" "--profile=$profile_dir" "$@")
@@ -45,7 +37,7 @@ snakecmd=("snakemake" "--profile=$profile_dir" "$@")
 trap "(snakemake --unlock --profile $DAY_ROOT/config/day_profiles/$DAY_PROFILE  &>> ./unlock_fails.log & ) & " EXIT
 
 # Log the command
-cmd_log="$PWD/day_cmd.log"
+cmd_log="$PWD/dyly_cmd.log"
 cmddt=$(date --iso-8601="seconds")
 echo "SMK> D:$cmddt / U:$USER / PWD:$PWD / CMD: (${snakecmd[*]})" >> "$cmd_log"
 
