@@ -90,7 +90,7 @@ else
     fi
 
     if [[ "$gbuild_ret_code" != "0" || "$conda_ret_code" != "0" ]]; then
-        colr  "ERROR: conda activate DAY -or- dy-b $gbuild have failed."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+        colr  "ERROR: conda activate DAY -or- dy-b $gbuild have failed."  "$DY_WI1" "$DY_IB2" "$DY_IS1" 1>&2
         return 5
     fi
     colr "       _______ GREAT SUCCESS _______       " "$DY_IT0" "$DY_IB0" "$DY_IS1"
