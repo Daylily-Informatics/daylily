@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
-build=""
+build=$DAY_GENOME_BUILD
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo " run from the DAY_ROOT dir, with no arguments, until day is build aware, then it will accept the build name as the first arg"
     exit 0
-elif [[ "$1" != "" ]]; then
-    build=$DAY_GENOME_BUILD
 fi
 
 if [[ "$build" == "" ]]; then
