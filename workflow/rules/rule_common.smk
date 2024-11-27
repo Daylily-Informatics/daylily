@@ -73,6 +73,8 @@ ALIGNERS = []
 if 'aligners' not in config:
     print("WARNING: No aligners set in the config.", file=sys.stderr)
 else:
+    from IPython import embed
+    embed()
     ALIGNERS = sorted(set([] if 'aligners' not in config else config["aligners"]))
     ## PRINT INFO
     os.system(
