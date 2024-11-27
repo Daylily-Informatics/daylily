@@ -1,132 +1,126 @@
-#!/bin/bash
-
-#Move to environment dir if called from elsewhere
-ABSOLUTE_PATH_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
-SCRIPT_DIR=config/day/
-AMBA_DISABLE_LOCKFILE=TRUE
-echo "path to environment working dir is $SCRIPT_DIR"
-#cd $SCRIPT_DIR
-
-mkdir -p ~$USER/.parallel
+#!/usr/bin/env bash
 
 ################################################################################
-# Sets up miniconda and other environments for imputation.
+# Script Name: day_env_installer.sh
+# Description: Sets up Miniconda and installs the DAY conda environment.
+# Usage:       ./day_env_installer.sh DAY
+#              Provide 'DAY' as the argument to start the installation.
+#              If the 'DAY' environment already exists, the script will prompt accordingly.
 ################################################################################
+
+# Ensure the script is being run, not sourced
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    echo "Error: This script should be executed, not sourced."
+    return 1
+fi
+
+# Function to display usage information
+usage() {
+    echo "Usage: $0 DAY"
+    echo "This script installs Miniconda and sets up the DAY conda environment."
+    echo "Provide 'DAY' as the argument to start the installation."
+    exit 2
+}
+
+# Check if the correct argument is provided
 DY_ENVNAME="DAY"
-
-
-if [[ $1 != "$DY_ENVNAME" ]]; then
-
-    echo """
-    Hello! This is the  __ $DY_ENVNAME ___ installation script.
-
-    The DAY env installs the s/w needed to trigger snakemake and run the day (abbreviated to dy-) CLI.  The tools DAY can run have individual environments which are managed by snakemake. You should not need to worry about them(tm).  This code continues to run on both Navops and local
-
-An important detail:
-
-***one*** If you have an existing DAY install, the DAY install will be skipped ==> it must be rebuilt from scratch to save many headaches<==.  To remove the DAY env, activate conda, but not DAY, and run:
-   `conda env remove -n DAY`
-
-When that is complete, you may run this script.  If DAY is present and you run this scirpt-- nothing very meaningful should happen.
-
-To run and start the install, rather than see this message, provide just one argument 'DAY'
-"""
-    return 2
+if [[ "$1" != "$DY_ENVNAME" ]]; then
+    echo "Hello! This is the __ $DY_ENVNAME __ installation script."
+    echo ""
+    echo "The DAY environment installs the software needed to trigger Snakemake and run the Day (dy-) CLI."
+    echo "To run and start the install, provide 'DAY' as the argument."
+    echo ""
+    echo "Usage: $0 DAY"
+    echo ""
+    echo "If you have an existing DAY install, you may need to remove it first:"
+    echo "  conda env remove -n DAY"
+    echo ""
+    usage
 fi
 
+# Check if the shell is bash
 if [[ "$SHELL" != "/bin/bash" ]]; then
-    echo "bash is the only supported shell, and you must have a ~/.bashrc file as well. If your bash path is something other than /bin/bash, this script will proceed, but no promises if the shell is not bash."
-    sleep 6
+    echo "Warning: This script is designed to work with bash."
+    echo "Your current shell is $SHELL. Proceeding, but compatibility is not guaranteed."
+    sleep 2
 fi
 
-export CONDA_DIR="~/miniconda3/"
-conda_detected=$(which conda)
-if [[ "$conda_detected" != "" ]]; then
-    export CONDA_DIR=$(dirname $conda_detected)
+# Set the script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config/day"
+echo "Path to environment working directory is $SCRIPT_DIR"
 
-    echo "
-     conda was detected in your path PATH ::  ( $conda_detected ).  
+# Create .parallel directory if it doesn't exist
+mkdir -p "$HOME/.parallel"
 
+# Function to install Miniconda
+install_miniconda() {
+    echo "No conda environment detected."
+    echo "Installing Miniconda to $CONDA_DIR"
 
-    "
+    wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/Miniconda3.sh
+    bash /tmp/Miniconda3.sh -b -p "$CONDA_DIR"
+    rm /tmp/Miniconda3.sh
 
-
-
-else
-    export CONDA_DIR="$HOME/miniconda3/"
-    echo "|||   No conda environment detected.
- Installing to $CONDA_DIR :
-    >    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    >    bash Miniconda3-latest-Linux-x86_64.sh -b -p  $CONDA_DIR
-    >    rm Miniconda3-latest-Linux-x86_64.sh
-
-    > source $CONDA_DIR/etc/profile.d/conda.sh
-    > ~/conda/bin/conda init bash
-    > source ~/.bashrc
-    > conda activate
-    "
-
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p  $CONDA_DIR
-    rm Miniconda3-latest-Linux-x86_64.sh
-
-    source $CONDA_DIR/etc/profile.d/conda.sh
-    ~/conda/bin/conda init bash
-    source ~/.bashrc
-
+    source "$CONDA_DIR/etc/profile.d/conda.sh"
+    conda init bash
+    source "$HOME/.bashrc"
     conda activate
 
-    echo "CONDA install complete."
+    echo "Conda installation complete."
+}
 
+# Detect or install conda
+if command -v conda &> /dev/null; then
+    CONDA_DIR="$(dirname "$(dirname "$(which conda)")")"
+    echo "Conda detected at $CONDA_DIR"
+else
+    CONDA_DIR="$HOME/miniconda3"
+    install_miniconda
 fi
 
-$CONDA_DIR/bin/conda init bash  # prob not necessary                                                                                                       
-
+# Ensure conda is initialized
+source "$CONDA_DIR/etc/profile.d/conda.sh"
 
 # Update Conda Config
 conda config --add channels conda-forge
 conda config --add channels bioconda
 
+conda config --set channel_priority strict || echo 'Failed to set conda priority to strict'
+conda config --set repodata_threads 10 || echo 'Failed to set repodata_threads'
+conda config --set verify_threads 4 || echo 'Failed to set verify_threads'
+conda config --set execute_threads 4 || echo 'Failed to set execute_threads'
+conda config --set always_yes yes || echo 'Failed to set always_yes'
+conda config --set default_threads 10 || echo 'Failed to set default_threads'
 
-(conda config --set channel_priority strict && echo '' ) || echo 'failed to set conda pri to strict';
-(conda config --set repodata_threads 10 || echo "" ) || echo "repodata_threads not set";
-(conda config --set verify_threads 4 && echo '' )   || echo "verify threads not set";
-(conda config --set execute_threads 4 && echo '' )   || echo "default threads not set";
-(conda config --set always_yes yes && echo 'conda always yes set' ) || echo 'failed to set conda yes';
-(conda config --set default_threads 10 && echo "DefThreads=44")      || echo 'failed to set conda default threads';
-
-#  Install DAY If Not Present.
-
-mgcnt=$(ls -d1 "$(dirname $(which conda))"/../envs/DAY | wc -l)
-if [[ "$mgcnt" == "0" ]]; then
-    echo "Installing DAY \(which will be sourced for you when you \'source dyinit  --project <PROJECT> \' \(see docs\)  you should not need to source MG directly.  Beginning install... "
-    echo "..."
-    sleep 1.4
-
-    (export PIP_NO_INPUT=1 && export PIP_INDEX_URL="https://pypi.org/simple" && export PIP_EXTRA_INDEX_URL="https://pypi.org/simple"  &&  conda env create   -n DAY -f $SCRIPT_DIR/DAY.yaml && echo "DAY env created") || echo "DAY env not created"
-
-    echo "Install exited with > $? < (if not zero, not the best sign)."
-    echo "try the following:
-
-       source dyinit  --project <PROJECT> ; dy-a local; dy-r help;
-
-       #initialized the day CLI, activate the local env settings, runs day to get basic help info on targets
-       "
-    colr "
-
-
-     .... And that is that" "red" "ivory" "b"
-
+# Check if the DAY environment already exists
+if conda env list | grep -q "^$DY_ENVNAME\s"; then
+    echo ""
+    echo "It appears you have a DAY environment already."
+    echo "You may need to manually remove the conda env dir for DAY and try again."
+    echo "To remove the environment, run:"
+    echo "  conda env remove -n DAY"
+    exit 0
 else
-    dn="$(dirname $(which conda))"/../envs/
-    echo "
-       It appears you have a DAY env (located $dn ), or part of one at least.  You may need to manually remove the conda env dir for DAY, and hack a conf file (google it to be sure).  Then try this again."
+    echo "Installing DAY environment..."
+    # Create the DAY environment
+    if conda env create -n "$DY_ENVNAME" -f "$SCRIPT_DIR/DAY.yaml"; then
+        echo "DAY environment created successfully."
+        echo ""
+        echo "Try the following commands to get started:"
+        echo "  source dyinit --project <PROJECT>"
+        echo "  dy-a local"
+        echo "  dy-r help"
+    else
+        echo "Failed to create DAY environment."
+        exit 1
+    fi
+fi
 
-fi;
+echo ""
+echo "Installation complete."
+echo "Please log out and log back in, then run:"
+echo "  source dyinit --project <PROJECT>"
+echo "  dy-a local"
+echo "  dy-r help"
 
-
-echo "==="
-echo "___"
-echo 'you should log out of this shell and log back into a fresh shell, run source dyinit  --project <PROJECT> , dy-a *****, etc.'
-
-return 0
+exit 0
