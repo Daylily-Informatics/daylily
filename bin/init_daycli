@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+
+mkdir -p ~/.config/daylily
+
 # Check if the script is running in Zsh and emulate Zsh behavior
 if [ -n "$ZSH_VERSION" ]; then
     emulate -L zsh  # Ensure Zsh behaves like Zsh (if required)

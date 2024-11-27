@@ -275,7 +275,8 @@ echo ""
 check_quota "Elastic IPs" "L-0263D0A3" 4 ec2
 if [[ $? -ne 0 ]]; then
     return 3
-fiecho ""
+fi
+echo ""
 
 # NAT Gateway Quota (Default: 5 per AZ)
 check_quota "NAT Gateways" "L-FE5A380F" 4 vpc

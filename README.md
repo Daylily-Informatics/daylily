@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.132c)
+# Daylily AWS Ephemeral Cluster Setup (0.7.133)
 
 
 **beta release**
@@ -103,21 +103,17 @@ AWS Parellel Cluster requires a number of permissions and policies be attached t
 - As an admin, you can apply these to the user with the following:
 
 ```bash
-# Define variables
-AWS_USERNAME="<your_username>" # Replace with your actual AWS IAM username
-AWS_ACCOUNT_ID="<your_account_id>" # Replace with your actual AWS account number
 
-# Copy the template JSON file to a temporary file
+AWS_PROFILE=<your_profile>
+AWS_USERNAME=<cli_username>
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text  --profile $AWS_PROFILE )
+
 cp config/aws/daylily-omics-analysis.json ./daylily-omics-analysis.tmp.json
 
-# Replace placeholders in the temporary file
-perl -pi -e "s/AWS_USERNAME/$AWS_USERNAME/g" ./daylily-omics-analysis.tmp.json
 perl -pi -e "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g" ./daylily-omics-analysis.tmp.json
 
-# Apply the IAM policy
 aws iam put-user-policy --user-name "$AWS_USERNAME" --policy-name daylily-omics-analysis --policy-document file://./daylily-omics-analysis.tmp.json
 
-# Clean up the temporary file
 rm -f ./daylily-omics-analysis.tmp.json
 ```
   - Or, copy the policy from `./daylily-omics-analysis.tmp.json` and apply it to the user via the AWS IAM console.
