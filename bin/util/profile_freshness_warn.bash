@@ -5,7 +5,7 @@ profile_dir=$DAY_PROFILE_DIR
 
 if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.yaml"  && ! -f "$DAY_PROFILE_DIR/profile_env.sh" ]]; then   
 
-    colr -n " > >> >>> " "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
+    colr " > >> >>> " "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
 
     colr "ACTIVE CONFIG FILES NOT FOUND IN $profile_dir ... copying" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
 
@@ -14,7 +14,7 @@ if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.
 
     for i in "${!profile_files[@]}"; do
         if [[ ! -f "${profile_files[i]}" || "${templates[i]}" -nt "${profile_files[i]}" ]]; then
-            colr "Copying template files to active config files in $profile_dir" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
+            colr "Copying template files to active config files $i" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
             cp "$profile_dir/templates/"*yaml "$profile_dir/" || {
                 colr "ERROR: Failed to copy template files." "$DY_ET2" "$DY_EB1" "$DY_ES2" 1>&2
                 return 48
@@ -65,7 +65,7 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/profile_env.bash" -nt  "con
     colr -n "  =================||>" "$DY_WT0" "$DY_WB0" "$DY_ES1" && colr -n "  WARNING  " "$DY_ET0" "black" "$DY_ES0" && colr "<||=================  " "$DY_WT0" "$DY_WB0" "$DY_ES1"
     colr "  One+ of the template config files in :               " "$DY_ET2" "$DY_EB1" "$DY_ES2"
     colr "$profile_dir/templates" "$DY_IT0" "$DY_IB1" "$DY_IS2"
-    colr "     is newer than your active config files.           " "$DY_ET2" "$DY_EB1" "$DY_ES2"
+    colr "     is newer than your active config files (or missing and is expected).           " "$DY_ET2" "$DY_EB1" "$DY_ES2"
     colr "  You hace 2 options. 1) remove the active files  :    " "$DY_ET2" "$DY_EB1" "$DY_ES2"
     colr "(1) rm $profile_dir/*  " "$DY_IT0" "$DY_IB1" "$DY_IS2"
 
@@ -112,5 +112,4 @@ else
     sleep 0.1
 fi
 
-echo " XXXX"
 return 0
