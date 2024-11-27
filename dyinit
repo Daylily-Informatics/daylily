@@ -10,6 +10,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     return 3
 fi
 
+
+
 # Set default contact email if not already set
 export DAY_CONTACT_EMAIL="${DAY_CONTACT_EMAIL:-john@daylilyinformatics.com}"
 
@@ -58,6 +60,7 @@ fi
 
 # Parse input arguments
 SKIP_PROJECT_CHECK=false
+DEACTIVATE=false
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
         --project)
@@ -68,6 +71,10 @@ while [[ "$#" -gt 0 ]]; do
             SKIP_PROJECT_CHECK=true
             shift
             ;;
+        --deactivate)
+            DEACTIVATE=true
+            shift
+            ;;          
         -h|--help|help)
             usage
             return 0
@@ -79,6 +86,18 @@ while [[ "$#" -gt 0 ]]; do
             ;;
     esac
 done
+
+
+# Check if DEACTIVATE flag is set
+if [[ "$DEACTIVATE" == true ]]; then
+    echo "Deactivating existing environments..."
+    source bin/day_deactivate &> /dev/null || {
+        echo "Error during environment deactivation."
+        return 4
+    }
+    echo "Environment deactivated successfully."
+fi
+
 
 # Set default project name if not provided
 if [[ -z "$PROJECT" ]]; then
