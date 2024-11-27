@@ -88,9 +88,9 @@ rule strobe_align_sort:
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         """
 
-localrules: produce_strobe_align,
+localrules: produce_strobe_align_sort_bam,
 
-rule produce_strobe_align:  # TARGET: only produce strobe align
+rule produce_strobe_align_sort_bam:  # TARGET: strobe aligner sorted bam
      input:
          expand(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam", sample=SAMPS)
  

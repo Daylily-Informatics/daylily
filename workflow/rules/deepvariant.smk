@@ -254,7 +254,7 @@ rule clear_combined_deep_vcf:  # TARGET:  clear combined deep vcf so the chunks 
         "(rm {input.vcf}*   1> /dev/null  2> /dev/null ) || echo 'file not found for deletion: {input}';"
 
 
-rule produce_deepDna_vcf:  # TARGET: just gen deep calls
+rule produce_deep_vcf:  # TARGET: deep variant vcf
     input:
         vcftb=expand(
             MDIR

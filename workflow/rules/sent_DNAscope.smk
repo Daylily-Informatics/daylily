@@ -262,7 +262,7 @@ localrules:
     produce_sentD_vcf,
 
 
-rule produce_sentD_vcf:  # TARGET: just gen sentD calls
+rule produce_sentD_vcf:  # TARGET: sentieon dnascope vcf
     input:
         expand(
             MDIR

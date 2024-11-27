@@ -6,7 +6,7 @@ import os
 #
 
 
-rule sentieon_bwa_sort:
+rule sentieon_bwa_sort:  #TARGET: sent bwa sort
     input:
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         f1=getR1s,
@@ -112,3 +112,9 @@ rule sentieon_bwa_sort:
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         rm -rf $tdir;
         """
+
+localrules: produce_sentieon_bwa_sort_bam,
+
+rule produce_sentieon_bwa_sort_bam:  # TARGET: produce_sentieon_bwa_sort_bam
+     input:
+         expand(MDIR + "{sample}/align/sent/{sample}.sent.sort.bam", sample=SAMPS)

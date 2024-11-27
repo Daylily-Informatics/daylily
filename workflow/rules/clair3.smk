@@ -251,7 +251,7 @@ rule clear_combined_clair3_vcf:
     shell:
         "(rm {input.vcf}*  1> /dev/null  2> /dev/null ) || echo 'file not found for deletion: {input}';"
 
-rule produce_clair3_vcf:
+rule produce_clair3_vcf:  # TARGET: clair3 vcf
     input:
         vcftb=expand(
             MDIR

@@ -89,8 +89,8 @@ rule bwa_mem2_sort:
         """
 
 
-localrules: produce_bwa_mem2,
+localrules: produce_bwa_mem2_sort_bam,
 
-rule produce_bwa_mem2:  # TARGET: only produce bwamem2a
+rule produce_bwa_mem2_sort_bam:  # TARGET: produce_bwa_mem2_sort_bam
      input:
          expand(MDIR + "{sample}/align/bwa2a/{sample}.bwa2a.sort.bam", sample=SAMPS)

@@ -276,7 +276,7 @@ localrules:
     produce_oct_vcf,
 
 
-rule produce_oct_vcf:  # TARGET: just gen octo calls
+rule produce_oct_vcf:  # TARGET: octopus vcf
     input:
         expand(
             MDIR
