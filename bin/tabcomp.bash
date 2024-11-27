@@ -56,7 +56,7 @@ _dyr() {
 # Completion for set geonome build
 _dyg() {
     if [[ ${#COMP_WORDS[@]} == 2 ]]; then
-        COMPREPLY+=($(compgen -W "hg19 hg38 mm10" -- "${COMP_WORDS[$COMP_CWORD]}"))
+        COMPREPLY+=($(compgen -W "hg38 b37" -- "${COMP_WORDS[$COMP_CWORD]}"))
     fi
 }
 
