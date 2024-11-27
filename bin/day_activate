@@ -4,11 +4,13 @@
 
 envi="$1"
 echo "Requesting environment: $envi"
+DP=${DAY_PROJECT:-""}
 
 # Attempt to deactivate any existing environment
-source bin/day_deactivate activate &> /dev/null || {
-    echo "Attempted to deactivate existing environments but an error occurred."
-    echo "Proceeding, but please check your PATH after completion."
+source bin/day_deactivate &> /dev/null || {
+    echo "Attempting to deactivate existing environments & re-init with --project $DP ."
+
+    . dayinit --project $DP &> /dev/null
 }
 
 # Check if DAY_ROOT is set
