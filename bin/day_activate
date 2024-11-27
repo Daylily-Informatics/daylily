@@ -54,7 +54,7 @@ fi
 # Check for errors during activation
 if [[ "$ret_code" != "0" ]]; then
     echo "ERROR: Activation failed with return code $ret_code."
-    source bin/utils/col_error.bash
+    source bin/util/col_error.bash
     echo ""
     echo "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dayinit; day-activate local;'"
     return $ret_code

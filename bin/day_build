@@ -53,7 +53,7 @@ else
     if [[ "$ret_code" != "0" ]]; then
 
     if [[ "$ret_code" != "0" ]]; then
-        source bin/utils/col_error.bash
+        source bin/util/col_error.bash
         echo "ERROR: Something went wrong. Check the README for alternate install instructions."
         return $ret_code
     else
