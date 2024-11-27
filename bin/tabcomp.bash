@@ -39,8 +39,7 @@ _dyb() {
 }
 
 
-# Completion function for day-run
-_dyr() {
+# Completion function for day-run_dyr() {
     if [[ "${COMP_WORDS[$COMP_CWORD]}" == "" || "${COMP_WORDS[$COMP_CWORD]:0:1}" != "-" ]]; then
         local targets
         # Extract targets, remove trailing colons, and ensure unique values
@@ -48,10 +47,21 @@ _dyr() {
         COMPREPLY+=($(compgen -W "$targets" -- "${COMP_WORDS[$COMP_CWORD]}"))
     else
         local options
+        # Add the available Snakemake options and the new custom option
         options=$(snakemake --help | grep -E '^  --' | awk '{print $1}' | tr -d ',')
-        COMPREPLY+=($(compgen -W "$options" -- "${COMP_WORDS[$COMP_CWORD]}"))
+        options+=" --keep-temp"  # Add custom --keep-temp flag
+        
+        # Generate completion suggestions
+        local current_word="${COMP_WORDS[$COMP_CWORD]}"
+        COMPREPLY+=($(compgen -W "$options" -- "$current_word"))
+        
+        # Replace --keep-temp with --notemp if selected
+        if [[ "$current_word" == "--keep-temp" ]]; then
+            COMP_WORDS[$COMP_CWORD]="--notemp"
+        fi
     fi
 }
+
 
 # Completion for set genome build
 _dyg() {
