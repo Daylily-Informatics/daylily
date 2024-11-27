@@ -19,6 +19,11 @@ if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.
                 echo "ERROR: Failed to copy template files."
                 exit 48
             }
+            cp "$profile_dir/templates/"*bash "$profile_dir/" || {
+                echo "ERROR: Failed to copy template files."
+                exit 48
+            }
+
             break
         fi
     done
