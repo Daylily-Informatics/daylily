@@ -1,7 +1,7 @@
 #!/bin/echo "this script is intended to only be sourced"
 
 if  [[ "$DAY_ROOT" == "" ]]; then
-    . dyinit
+    . dayinit
 fi
 
 envi=$1
@@ -58,7 +58,7 @@ fi
 
 
 
-source dyinit local > /dev/null 2>&1
+source dayinit local > /dev/null 2>&1
 
 c=`which colr` &> /dev/null || ls &> /dev/null
 
@@ -96,11 +96,11 @@ else
   else
     colr "       _______ GREAT SUCCESS _______       " "chartreuse" "darkgreen" "b"
     export PS1="$DYPS1 $PS1"
-    source dyinit local > /dev/null 2>&1
+    source dayinit local > /dev/null 2>&1
     colr "       please start a new bash session and test the install:
 
         bash ;
-        source dyinit;
+        source dayinit;
         dy-a local
 	dy-r help
 	"	

@@ -49,7 +49,7 @@ rule sentieon_mm2:
         """
 
         if [ -z "$SENTIEON_LICENSE" ]; then
-            echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well.";
+            echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dayinit file as well.";
             exit 3;
         fi
 

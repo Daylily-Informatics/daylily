@@ -49,7 +49,7 @@ cd daylily
 cp .test/
 
 # initialize the DAY conda env + other helpful tools
-. dyinit  # you can speciy --project AWSBUDGETNAME to change from the default region specific budget. New budgets created in AWS must also be added to the allowed ubuntu projects in /opt/slurm/etc/projects_list.conf to be recognized by the cluster. jobs will not launch if the budget is not recognized.
+. dayinit  # you can speciy --project AWSBUDGETNAME to change from the default region specific budget. New budgets created in AWS must also be added to the allowed ubuntu projects in /opt/slurm/etc/projects_list.conf to be recognized by the cluster. jobs will not launch if the budget is not recognized.
 
 # move an analysis manifest into place, which haas a tiny toy dataset.
 cp .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv confiig/analysis_manifest.csv # YOU WILL USE THE ./bin/create_analysis_manifest script to create your own manifest for your own data when the time comes.
@@ -110,7 +110,7 @@ ls results/day/{hg38,b37}/reports/*.html
 Copy the pre-configured giab analysis manifest for hg38, and run the analysis. This manifest points to the fastq.gz files for each, as well as the truth data set needed to produce the concordance reports.
 ```bash
 
-. dyinit 
+. dayinit 
 dy-a slurm
 
 vi config/day_profiles/slurm/rule_config.yaml # the default build is hg38, so no changes are needed here 
@@ -130,7 +130,7 @@ ls results/day/hg38/other_reports/*giab*
 You will need to modify the rule_config.yaml to use b37, and copy the pre-configured giab analysis manifest for b37.
 ```bash
 
-. dyinit 
+. dayinit 
 dy-a slurm
 
 # you will need to chang ethe reference build to b37 from hg38
@@ -183,7 +183,7 @@ bash bin/create_analysis_manifest -f fastq_manifest.tsv -o config/analysis_manif
 - From the github repo directory on the headnode, in a tmux terminal, with your desired `config/analysis_manifest.csv` in place:
 ```bash
 
-. dyinit
+. dayinit
 dy-a slurm
 
 # If you wish to enable an aligner other than bwa mem2 or a variant caller other than deep variant, you will need to edit the config/day_profiles/slurm/rule_config.yaml before proceeding.  
@@ -208,7 +208,7 @@ find results/ | grep -E 't.vcf.gz|bam.bai'
 - From the github repo directory on the headnode, in a tmux terminal, with your desired `config/analysis_manifest.csv` in place:
 ```bash
 
-. dyinit
+. dayinit
 dy-a slurm
 
 dy-r produce_multiqc_final_wgs -p -k -j 9 -n

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # This script is intended to be sourced, not executed directly.
 
-# Source dyinit if necessary
+# Source dayinit if necessary
 if [[ -z "$2" ]]; then
-    source dyinit
+    source dayinit
 fi
 
 envi="$1"
@@ -17,7 +17,7 @@ source bin/day_deactivate activate &> /dev/null || {
 
 # Check if DAY_ROOT is set
 if [[ -z "$DAY_ROOT" ]]; then
-    echo "ERROR: DAY_ROOT is not set. Have you executed 'source dyinit'? Use -h for help."
+    echo "ERROR: DAY_ROOT is not set. Have you executed 'source dayinit'? Use -h for help."
     return 2
 fi
 
@@ -59,7 +59,7 @@ if [[ "$ret_code" != "0" ]]; then
     echo "ERROR: Activation failed with return code $ret_code."
     source bin/utils/col_error.bash
     echo ""
-    echo "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dyinit; day-activate local;'"
+    echo "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dayinit; day-activate local;'"
     return $ret_code
 else
     echo "GREAT SUCCESS!"

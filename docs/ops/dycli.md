@@ -4,8 +4,8 @@
 ```bash
 
 # init the dy-cli
-source dyinit -h
-source dyinit  --project <PROJECT>
+source dayinit -h
+source dayinit  --project <PROJECT>
 
 # activate the local or slurm running environment
 dy-a local # or slurm  # tab complete for avail envs

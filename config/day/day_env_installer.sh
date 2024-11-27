@@ -107,7 +107,7 @@ else
         echo "DAY environment created successfully."
         echo ""
         echo "Try the following commands to get started:"
-        echo "  source dyinit --project <PROJECT>"
+        echo "  source dayinit --project <PROJECT>"
         echo "  dy-a local"
         echo "  dy-r help"
     else
@@ -119,7 +119,7 @@ fi
 echo ""
 echo "Installation complete."
 echo "Please log out and log back in, then run:"
-echo "  source dyinit --project <PROJECT>"
+echo "  source dayinit --project <PROJECT>"
 echo "  dy-a local"
 echo "  dy-r help"
 

@@ -142,7 +142,7 @@ rule util_print_targets:  # TARGET : Return a List of All Targets
         set +euo pipefail; echo AAAAAA$?;
         echo 'The Following Targets Are Available: ' 1>&2;
         {params.c} '''           {params.tgts}''' $DY_IT1 $DY_IB2 $DY_IS2  1>&2 ;
-        {params.c} '   .....you may run (source dyinit && mod-activate PROFILE && mod-run [TARGETNAME, ...]  -p  -n) or just  (mod-run [TARGETNAME,]  -p  -n) if you are already init+active. This will show you what rules will be run with the analysis manifest detected, if none specified then the test data will be used.' $DY_IT1 $DY_IB1 $DY_IS1 1>&2;
+        {params.c} '   .....you may run (source dayinit && mod-activate PROFILE && mod-run [TARGETNAME, ...]  -p  -n) or just  (mod-run [TARGETNAME,]  -p  -n) if you are already init+active. This will show you what rules will be run with the analysis manifest detected, if none specified then the test data will be used.' $DY_IT1 $DY_IB1 $DY_IS1 1>&2;
         """
 
 
@@ -241,8 +241,8 @@ rule help:
         ========================================================================
         The dy- cli , first source it:
 
-        . dyinit
-        . dyinit -h
+        . dayinit
+        . dayinit -h
 
 
         Day CLI initialized for project $PROJECT in region $region.
