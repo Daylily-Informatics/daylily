@@ -299,9 +299,11 @@ You can now SSH into the head node with the following command:
 ssh -i /Users/daylily/.ssh/omics-analysis-b.pem ubuntu@52.24.138.65
 Once logged in, as the 'ubuntu' user, run the following commands:
   cd ~/projects/daylily
-  source dyinit -h
+  source dyinit
   source dyinit  --project PROJECT
   dy-a local
+  dy-g hg38
+
   dy-r help
  
 Setup complete. You can now start working with Daylily on the head node.
@@ -495,7 +497,10 @@ bin/daylily-ssh-into-headnode
 cd ~/projects/daylily
 . dyinit # inisitalizes the daylily cli
 dy-a local # activates the local config
-dy-r help # should show the help menu
+dy-g hg38 # sets the genome to hg38
+```
+# if . dyinit works, but dy-a local fails, try 'dy-b BUILD'
+
 ```
 
 This should produce a magenta `WORKFLOW SUCCESS` message and `RETURN CODE: 0` at the end of the output.  If so, you are set. If not, see the next section.
@@ -528,10 +533,12 @@ drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 ```
 
 ##### Run A Local Test Workflow
-
+> init daylily, activate an analysis profile, set genome, stage an analysis_manigest.csv and run a test workflow.
 ```bash
 . dyinit  --project PROJECT
+
 dy-a local
+dy-g hg38
 
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
 
@@ -577,6 +584,8 @@ This should exit with a magenta success message and `RETURN CODE: 0`. Results ca
 The following will submit jobs to the slurm scheduler on the headnode, and spot instances will be spun up to run the jobs (modulo limits imposed by config and quotas).
 
 First, create a working directory on the `/fsx/` filesystem.
+
+> init daylily, activate an analysis profile, set genome, stage an analysis_manigest.csv and run a test workflow.
 ```bash
 # create a working analysis directory
 mkdir -p /fsx/analysis_results/ubuntu/init_test
@@ -588,6 +597,7 @@ cd daylily
 tmux new -s slurm_test
 . dyinit 
 dy-a slurm
+dy-g hg38
 
 # create a test manifest for one giab sample only, which will run on the 0.01x test dataset
 head -n 2 .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv > config/analysis_manifest.csv
@@ -644,6 +654,7 @@ cd daylily
 
 . dyinit  --project PROJECT 
 dy-a slurm
+dy-g hg38
 
 # TO create a single sample manifest
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv > config/analysis_manifest.csv
@@ -667,6 +678,7 @@ cd daylily
 
 . dyinit  --project PROJECT 
 dy-a slurm
+dy-g hg38
 
 # copy full 30x giab sample template to config/analysis_manifest.csv
 cp .test_data/data/giab_30x_hg38_analysis_manifest.csv  config/analysis_manifest.csv

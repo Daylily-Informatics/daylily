@@ -59,11 +59,11 @@ config["supporting_files"] = {
 
 
 # SNV caller chunk arrays
-SENTD_CHRMS = config["sentD"]["sentD_chrms"].split(",")
-DEEPD_CHRMS = config["deepvariant"]["deep_chrms"].split(",")
-OCTO_CHRMS = config["octopus"]["octo_chrms"].split(",")
-CLAIR3_CHRMS = config["clair3"]["clair3_chrms"].split(",")
-LOFREQ_CHRMS = config["lofreq2"]["lofreq_chrms"].split(",")
+SENTD_CHRMS = config["sentD"][f"{config['genome_build']}_sentD_chrms"].split(",")
+DEEPD_CHRMS = config["deepvariant"][f"{config['genome_build']}_deep_chrms"].split(",")
+OCTO_CHRMS = config["octopus"][f"{config['genome_build']}_octo_chrms"].split(",")
+CLAIR3_CHRMS = config["clair3"][f"{config['genome_build']}_clair3_chrms"].split(",")
+LOFREQ_CHRMS = config["lofreq2"][f"{config['genome_build']}_lofreq_chrms"].split(",")
 
 # ##### Setting the allowed aligners to run and to which deduper to use.
 # presently, 1+ aligners may run, but all must use the same deduper
