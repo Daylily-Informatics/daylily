@@ -7,11 +7,10 @@ echo "Requesting environment: $envi"
 DP=${DAY_PROJECT:-""}
 
 # Attempt to deactivate any existing environment
-source bin/day_deactivate &> /dev/null || {
-    echo "Attempting to deactivate existing environments & re-init with --project $DP ."
+source bin/day_deactivate &> /dev/null 
+echo "Attempting to deactivate existing environments & re-init with --project $DP ."
+. dayinit --project $DP &> /dev/null
 
-    . dayinit --project $DP &> /dev/null
-}
 
 # Check if DAY_ROOT is set
 if [[ -z "$DAY_ROOT" ]]; then
