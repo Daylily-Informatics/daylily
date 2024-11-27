@@ -145,18 +145,23 @@ os.system(
 # expose amples as a global  Including to any other rule or called script from a rule  included from the
 # main snakefile
 
-if "override_analysis_manifest" in config:
+if "analysis_manifest" in config:
     os.system(
         """colr  '     _____ COMMAND LINE ANALYSIS MANIFEST SET. This will be copied to config/analysis_manifest.csv, and this copy used' "$DY_WT0" "$DY_WB0" "$DY_WS1"  """
     )
     if os.path.exists("config/analysis_manifest.csv"):
         raise Exception(
-            "\n\n A file exists in config/analysis_manifest.csv, you must remove it to use the command line specified manifest-  be careful.\n\n"
+            "\n\n A file exists in config/analysis_manifest.csv, you must remove it to use the command line specified manifest.\n\n"
         )
     else:
-        os.system(
-            f"cp {config['override_analysis_manifest']} config/analysis_manifest.csv"
-        )
+        default_analysis_manifest = f"{config[config['genome_build']_analysis_manifest}"
+        if os.path.exists(default_analysis_manifest):
+            os.system(f"cp {default_analysis_manifest} config/analysis_manifest.csv")
+        else:
+            raise Exception(
+                f"\n\nERROR::: The default analysis manifest file was not found at {default_analysis_manifest}.  Please check the path and try again, was the genome_build specified?"
+            )
+
 analysis_manifest = (
     "config/analysis_manifest.csv"
     if os.path.exists("config/analysis_manifest.csv")

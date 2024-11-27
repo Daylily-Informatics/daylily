@@ -7,6 +7,11 @@ gbuild="$2" # genome build code [hg38|b37]
 echo "Requesting profile: $dayp"
 DP=$DAY_PROJECT
 
+if [[ -z "$dayp" ]]; then
+    echo "ERROR: No profile specified, please specify [slurm|local] ([hg38|b37])"
+    return 1
+fi
+
 # Attempt to deactivate any existing environment
 source bin/day_deactivate &> /dev/null 
 echo "Attempting to deactivate existing environments & re-init with --project $DP ."

@@ -1,7 +1,9 @@
 ---
 
 # .... to create an analysis manifest for your data, see the script in bin/sample_sheet_2_analysis_manifest.sh
-analysis_manifest: .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv # or .test_data/data/0.01xwgs_HG002_b37.samplesheet.csv
+# these are defaults auto selected if not specified.
+hg38_analysis_manifest: .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv
+b37_analysis_manifest: .test_data/data/0.01xwgs_HG002_b37.samplesheet.csv
 
 
 profile_name: local
