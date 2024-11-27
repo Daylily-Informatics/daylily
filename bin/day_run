@@ -50,6 +50,7 @@ fi
 snakecmd_init=("snakemake" "--profile=$DAY_PROFILE_DIR" "$@")
 
 snakecmd="${snakemake_init//\-\-keep-temp/\-\-notemp}"
+
 # This ensures the snakedir is unlocked after a crash or successful exit 0
 trap "(snakemake --unlock --profile $DAY_PROFILE_DIR  &>> ./unlock_fails.log & ) & " EXIT
 
@@ -59,9 +60,9 @@ cmddt=$(date --iso-8601="seconds")
 echo "SMK> D:$cmddt / U:$USER / PWD:$PWD / CMD: (${snakecmd[*]})" >> "$cmd_log"
 
 # Run snakemake command
-echo "Executing: ${snakecmd[*]}"
+colr "Executing: ${snakecmd[*]}"  "$DY_IT0" "$DY_IB0" "$DY_IS1"  1>&2
 "${snakecmd[@]}"
 ret_code=$?
 
-echo "RETURN CODE: $ret_code"
+colr "RETURN CODE: $ret_code" "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
 exit $ret_code
