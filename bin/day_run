@@ -2,6 +2,14 @@
 
 export SNAKEMAKE_SINGULARITY_CMD="apptainer"
 
+
+timestamp=$(date +%Y%m%d%H%M%S);
+
+export TMPDIR=/fsx/scratch/day_run_$timestamp;
+mkdir -p $TMPDIR;
+export TMP=$TMPDIR
+export TEMP=$TMPDIR
+
 if [[ -z "$DAY_ROOT" || -z "$DAY_PROFILE" || -z "$DAY_PROFILE_DIR" ]]; then
     colr "ERROR: . dayiniy && day-activate [local|slurm] needs to have been run prior to day-run."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     exit 33
