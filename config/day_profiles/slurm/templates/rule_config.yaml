@@ -14,33 +14,32 @@ valid_biome: AWSPC
 # ###### Tool Selection CONFIG ----------------------------------------
 
 
-# Thread scaling activated  ## DEPRECATED
-dynamic_scaling: false
-dynamic_scaling_factor: 1.0  # Takes the presets and scales them up/down based on this scaling factor.  WARNING-  you can choke your machine if not careful, go below 1 and you begin to request more theads than are detected.  This param can be set on the command line with --config dynamic_scaling_factor=1.5
+
+# ###### Tool Selection CONFIG ----------------------------------------
+
+# these may be set on the command line as --config="aligners=['bwa2a','strobe']" --config="dedupers=['dppl']" --config="snv_callers=['deep']" --config="sv_callers=['tiddit']"
 
 # #### Select one to all of the available SNV callers
-active_snv_callers:
-    - deep
-#    - sentd
-#    - clair3
-#    - lfq2
-#    - oct
+aligners:
+    - bwa2a
+#    - sent 
+#    - strobe
 
-# #### Select one to all of the available SV callers
-active_s_v_callers:
+dedupers:
+    - dppl
+
+snv_callers:
+    - deep
+#    - oct
+#    - clair3
+#    - sentd
+#    - lfq2
+
+sv_callers:
     - tiddit
     - manta
     - dysgu
-#    - svaba 
-
-# #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
-active_aligners:
-    - bwa2a:
-        mkdup: dppl
-#    - sent:
-#        mkdup: dppl
-#    - strobe:
-#        mkdup: dppl
+#    - svaba
 
 
 # #######  FASTQ PREP

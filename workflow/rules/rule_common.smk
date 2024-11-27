@@ -68,76 +68,47 @@ LOFREQ_CHRMS = config["lofreq2"][f"{config['genome_build']}_lofreq_chrms"].split
 # ##### Setting the allowed aligners to run and to which deduper to use.
 # presently, 1+ aligners may run, but all must use the same deduper
 
-snv_CALLERS = config["active_snv_callers"]
-sv_CALLERS = config["active_s_v_callers"]
 
-
-ALIGNERS_D = {}
 ALIGNERS = []
-DDUP = {}
-
-# set day_i as the active alginer if in remote_mode(experimental!)
-if "active_aligners" not in config and "day_i" in config:
-    config["active_aligners"] = ["mgi"]
-# config[''] = []
-
-# Handle the cases where more than 1 aligner is specified.
-for aligner in config["active_aligners"]:
-    for ii in aligner:
-        if ii in ALIGNERS_D:
-            raise Exception(
-                "\n\nError:  You have specified this aligner >1x in the rules.yaml file. Please correct the file in the config/day_profiles/"
-                + os.environ.get("DAY_PROFILE", "na")
-                + "/rules.yaml file. The problem caller is: "
-                + ii
-                + "\n\n"
-            )
-        else:
-            ALIGNERS_D[ii] = True
-        ALIGNERS.append(ii)
-
-        if aligner[ii]["mkdup"] in ["sambamba", "samtools"]:
-            DDUP["other"] = True
-        elif aligner[ii]["mkdup"] in ["sent"]:
-            DDUP["sent"] = True
-        elif aligner[ii]["mkdup"] in ["dppl"]:
-            DDUP["dppl"] = True
-        elif aligner[ii]["mkdup"] in ["bbb2"]:
-            DDUP["bbb2"] = True
-        else:
-            raise Exception(
-                "\n\n\t ERROR ERROR:  The dedupe option set in the config file is unknown",
-                aligner[ii]["mkdup"],
-                "\n\n",
-            )
-        ALIGNERS = list(ALIGNERS_D.keys())
-if len(DDUP) != 1:
-    raise Exception("Only 1 dduper can run at a time", DDUP, "<---theese were set")
-
-
-# DELETE THE FOLLOWING CRAP
-# For multiqc sample naming, if multiple aligners or SNV callers produce data, then samples will have entries for multipletools, and the sample name must include more info so as not to collide.  This flags the most common uses case, 1 or each -or- flags if more than 1 of each so the multiqc regex is set correctly.
-if len(ALIGNERS) == 1 and len(snv_CALLERS) == 1:
-    # For multiqc, where to place '..' which indicates the end of the sample name, which for bakeoffs includes the aligner+snv code
-    config["multiqc_sampname_cfg"] = "config/external_tools/multiqc_blank.yaml"
-    os.system(
-        'colr "____There is 1 ALIGNER and 1 SNV_CALLER SET, MQC NAMES WILL NOT BE EXPANDED", "$DY_IT2" "$DY_IB2" "$DY_IS2" 1>&2; sleep 0.15;'
-    )
-
+if 'aligners' not in config:
+    print("WARNING: No aligners set in the config.", file=sys.stderr)
 else:
-    # Multiple of alignment or var calling or some other duplication in the pipe bfx analysis is happening such that sample names will be represented >1x per type of analysis duplicated. We wish to preserve this info so do not truncate the file names for ease of display in multiqc. Instead,they are left long to different treatments can be compared.
+    ALIGNERS = sorted(set([] if 'aligners' not in config else config["aligners"]))
+    ## PRINT INFO
     os.system(
-        'colr "____There are >1 ALIGNERS OR SNV_CALLERS SET, MQC NAMES WILL BE EXPANDED" "$DY_IT2" "$DY_IB2" "$DY_IS2" 1>&2; sleep 0.15;'
+        f"""colr 'aligners:{ALIGNERS}  "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2;"""
     )
-    config["multiqc_sampname_cfg"] = "config/external_tools/multiqc_blank.yaml"
 
-os.system(
-    f"""colr 'aligners:{ALIGNERS} , DDUP:{DDUP}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2 ; sleep {config['warn_err_sleep']} 1>&2;"""
-)
+DDUP = []
+if 'dedupers' not in config:
+    print("WARNING: No dedupers set in the config.", file=sys.stderr)
+else:
+    DDUP = sorted(set([] if 'dedupers' not in config else config["dedupers"]))
+    ## PRINT INFO
+    os.system(
+        f"""colr  deduper:{DDUP}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2;"""
+    )
 
-os.system(
-    f"""colr 'SNV Callers:{snv_CALLERS} ,  SV Callers:{sv_CALLERS}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2 ; sleep {config['warn_err_sleep']} 1>&2;"""
-)
+snv_CALLERS = []
+if 'snv_callers' not in config:
+    print("WARNING: No snv_callers set in the config.", file=sys.stderr)
+else:
+    snv_CALLERS = sorted(set([] if 'snv_callers' not in config else config["snv_callers"]))
+    ## PRINT INFO
+    os.system(
+        f"""colr 'SNV Callers:{snv_CALLERS}' "$DY_WT1" "$DY_B1" "$DY_WS1" 1>&2;"""
+    )
+
+sv_CALLERS = []
+if 'sv_callers' not in config:
+    print("WARNING: No sv_callers set in the config.", file=sys.stderr)
+else:
+    sv_CALLERS = sorted(set([] if 'sv_callers' not in config else config["sv_callers"]))
+    ## PRINT INFO
+    os.system(
+        f"""colr 'SV Callers:{sv_CALLERS}' "$DY_WT1" "$DY_B1" "$DY_WS1" 1>&2;"""
+    )   
+
 
 # ####  LOAD SAMPLE DATA FROM ANALYSIS MANIFEST
 # ---------------------

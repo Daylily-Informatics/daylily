@@ -11,44 +11,32 @@ profile_name: local
 # TO DEPRECATE
 valid_biome: AWSPC
 
- 
-#### Default Resources
-
-___default___:
-    resources:
-        mem_mb: 10000000
-        disk_mb: 10000000
-
 
 # ###### Tool Selection CONFIG ----------------------------------------
 
-# Thread scaling activated   ## DEPRECATED
-dynamic_scaling: false
-dynamic_scaling_factor: 1.0  # Takes the presets and scales them up/down based on this scaling factor.  WARNING-  you can choke your machine if not careful, go below 1 and you begin to request more theads than are detected.  This param can be set on the command line with --config dynamic_scaling_factor=1.5
+# these may be set on the command line as --config="aligners=['bwa2a','strobe']" --config="dedupers=['dppl']" --config="snv_callers=['deep']" --config="sv_callers=['tiddit']"
 
 # #### Select one to all of the available SNV callers
-active_snv_callers:
-    - deep
+aligners:
+#    - bwa2a
+#    - sent 
+#    - strobe
+
+dedupers:
+#    - dppl
+
+snv_callers:
+#    - deep
 #    - oct
 #    - clair3
 #    - sentd
 #    - lfq2
 
-# #### Select one to all of the available SV callers
-active_s_v_callers:
-    - tiddit
-    - manta
-    - dysgu
-#    - svaba
-
-# #### Select one or all of the available mappers (all must use the same deduper for now! dppl or sent or bb2)
-active_aligners:
-    - bwa2a:
-        mkdup: dppl
-#    - sent:  # uncomment to run aligner (same deduper must be used presently in all aligner outputs, unless bundled into the align rule)
-#        mkdup: dppl  # One ddup'r per analysis run.  dppl and sent currently are active
-#    - strobe:
-#        mkdup: dppl
+sv_callers:
+#    - tiddit
+#    - manta
+#    - dysgu
+#    - svaba # EXPERIMENTAL
 
 
 # #######  FASTQ PREP

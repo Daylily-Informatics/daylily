@@ -3,11 +3,6 @@ import os
 # so it can generate a final QC report, and that report will satisfy the input
 # requirement of all to run
 
-RU = [""]
-EX = [""]
-if len(samples) > 0:
-    RU = samples.RU
-    EX = samples.EX
 
 
 localrules:
@@ -85,25 +80,10 @@ rule multiqc_final_wgs:  # TARGET: the big report
         partition=config["multiqc"]["partition"],
     priority: 50
     params:
-        odir2=MDIRreportsd,
         fnamef=f"DAY_final_multiqc.html",
-        macro_cfg=config["multiqc"]["config_yaml"],
-        micro_cfg=config["multiqc"]["final"]["config_yaml"],
-        name_cfg=config["multiqc_sampname_cfg"],
-        gtag=config["gittag"],
         ghash=config["githash"],
         gbranch=config["gitbranch"],
-        jid="COMP-1" if "jid" not in config else config["jid"],
-        ruu=f"{RU[0]}",
-        exx=f"{EX[0]}",
-        cluster_sample=f"{RU[0]}_{EX[0]}",
-        ld_pre=" "
-        if "ld_preload" not in config["multiqc"]
-        else config["multiqc"]["ld_preload"],
-        dkr="none" if "default_container" not in config else config["default_container"],
-        mdir=MDIR,
-        ref=config["ref_code"],
-        mgroot=os.environ['DAY_ROOT'],
+        cluster_sample=f"multiqc_final",
     log:
         f"{MDIR}reports/logs/all__mqc_fin_a.log",
     conda:
