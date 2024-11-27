@@ -83,7 +83,7 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -n
     colr "     will keep the files and avoid this warning/block. " "$DY_ET2" "$DY_EB1" "$DY_ES2"
     echo " "
     echo " "
-
+    return 9
 
 
 else

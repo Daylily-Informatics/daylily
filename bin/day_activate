@@ -12,6 +12,7 @@ echo "Attempting to deactivate existing environments & re-init with --project $D
 . dayinit --project $DP &> /dev/null
 export DAY_PROFILE=$dayp
 
+echo 
 # Check if DAY_ROOT is set
 if [[ -z "$DAY_ROOT" ]]; then
     echo "ERROR: DAY_ROOT is not set. Have you executed 'source dayinit'? Use -h for help."
@@ -35,7 +36,10 @@ if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
 fi
 
 source bin/util/profile_freshness_warn.bash
-
+if [[ "$?" != "0" || 9]]; then
+    echo "error: profile_freshness_warn.bash"
+    return 4
+fi
 
 
 # Verify profile exists
