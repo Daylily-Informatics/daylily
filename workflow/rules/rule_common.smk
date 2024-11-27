@@ -73,9 +73,8 @@ ALIGNERS = []
 if 'aligners' not in config:
     print("WARNING: No aligners set in the config.", file=sys.stderr)
 else:
-    from IPython import embed
-    embed()
-    ALIGNERS = sorted(set([] if 'aligners' not in config else config["aligners"]))
+
+    ALIGNERS = sorted(set([] if 'aligners' not in config or config['aligners'] == None else config["aligners"]))
     ## PRINT INFO
     os.system(
         f"""colr 'aligners:{ALIGNERS}  "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2;"""
@@ -85,7 +84,7 @@ DDUP = []
 if 'dedupers' not in config:
     print("WARNING: No dedupers set in the config.", file=sys.stderr)
 else:
-    DDUP = sorted(set([] if 'dedupers' not in config else config["dedupers"]))
+    DDUP = sorted(set([] if 'dedupers' not in config or config['dedupers'] == None else config["dedupers"]))
     ## PRINT INFO
     os.system(
         f"""colr  deduper:{DDUP}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2;"""
@@ -95,7 +94,7 @@ snv_CALLERS = []
 if 'snv_callers' not in config:
     print("WARNING: No snv_callers set in the config.", file=sys.stderr)
 else:
-    snv_CALLERS = sorted(set([] if 'snv_callers' not in config else config["snv_callers"]))
+    snv_CALLERS = sorted(set([] if 'snv_callers' not in config or config['snv_callers'] == None else config["snv_callers"]))
     ## PRINT INFO
     os.system(
         f"""colr 'SNV Callers:{snv_CALLERS}' "$DY_WT1" "$DY_B1" "$DY_WS1" 1>&2;"""
@@ -105,7 +104,7 @@ sv_CALLERS = []
 if 'sv_callers' not in config:
     print("WARNING: No sv_callers set in the config.", file=sys.stderr)
 else:
-    sv_CALLERS = sorted(set([] if 'sv_callers' not in config else config["sv_callers"]))
+    sv_CALLERS = sorted(set([] if 'sv_callers' not in config or config['sv_callers'] == None else config["sv_callers"]))
     ## PRINT INFO
     os.system(
         f"""colr 'SV Callers:{sv_CALLERS}' "$DY_WT1" "$DY_B1" "$DY_WS1" 1>&2;"""
