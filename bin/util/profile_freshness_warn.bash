@@ -2,35 +2,28 @@
 
 profile_dir=$DAY_PROFILE_DIR
 
-echo "a"
 
-if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.yaml"  && ! -f "$DAY_PROFILE_DIR/profile_env.sh" ]]; then
-    echo "b"    
+if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.yaml"  && ! -f "$DAY_PROFILE_DIR/profile_env.sh" ]]; then   
 
     colr -n " > >> >>> " "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
-    echo "c"
-    colr "COPYING TEMPLATE FILES TO ACTIVE CONFIG FILES IN $profile_dir - none detected" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
-    echo "d"
-    profile_files=("$profile_dir/rule_config_lowcov.yaml" "$profile_dir/cluster.yaml" "$profile_dir/rule_config.yaml")
-    templates=("$profile_dir/templates/rule_config_lowcov.yaml" "$profile_dir/templates/cluster.yaml" "$profile_dir/templates/rule_config.yaml")
+
+    colr "ACTIVE CONFIG FILES NOT FOUND IN $profile_dir ... copying" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
+
+    profile_files=("$profile_dir/profile_env.bash" "$profile_dir/cluster.yaml" "$profile_dir/rule_config.yaml")
+    templates=("$profile_dir/templates/profile_env.bash" "$profile_dir/templates/cluster.yaml" "$profile_dir/templates/rule_config.yaml")
 
     for i in "${!profile_files[@]}"; do
         if [[ ! -f "${profile_files[i]}" || "${templates[i]}" -nt "${profile_files[i]}" ]]; then
-            echo "Copying template files to active config files in $profile_dir"
+            colr "Copying template files to active config files in $profile_dir" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
             cp "$profile_dir/templates/"*yaml "$profile_dir/" || {
-                echo "ERROR: Failed to copy template files."
-                exit 48
-            }
-            cp "$profile_dir/templates/"*bash "$profile_dir/" || {
-                echo "ERROR: Failed to copy template files."
-                exit 48
+                colr "ERROR: Failed to copy template files." "$DY_ET2" "$DY_EB1" "$DY_ES2" 1>&2
+                return 48
             }
 
             break
         fi
     done
 
-    echo "e"
     # Replace placeholders in config files
     re_safe_mgr=$(echo "$DAY_ROOT" | sed "s/\//\\\\\//g")
     sed -i "s/.DAY_ROOT\/c/$re_safe_mgr\/c/g" "$profile_dir/"*yaml
