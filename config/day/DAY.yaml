@@ -29,5 +29,7 @@ dependencies:
     - drmaa
     - docopt
     - colr
+    - xmltodict
+    - wrapt
     - chromedriver-binary-auto
     - rgbw-colorspace-converter

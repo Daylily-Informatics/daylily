@@ -1,223 +1,70 @@
-#!/bin/echo 'this script is intended to only be sourced'
+#!/usr/bin/env bash
+# This script is intended to be sourced, not executed directly.
 
-
-if [[ "$2" != "" ]]; then
-   #clear the existing profile files
-   echo "clearning active files from: config/mari
-gold_profiles/$DAY_PROFILE/*"
-   rm config/day_profiles/$DAY_PROFILE/*
-   echo done!
+# Source dyinit if necessary
+if [[ -z "$2" ]]; then
+    source dyinit
 fi
 
-if [[ "$1" == "" ]]; then
-    . dyinit
-fi
-envi=$1
+envi="$1"
+echo "Requesting environment: $envi"
 
+# Attempt to deactivate any existing environment
+source bin/day_deactivate activate &> /dev/null || {
+    echo "Attempted to deactivate existing environments but an error occurred."
+    echo "Proceeding, but please check your PATH after completion."
+}
 
-
-# Check if we're in the correct root
-python -c "import os; root=os.path.abspath(os.environ['DAY_ROOT']); other=os.path.abspath(os.environ['PWD']); os._exit(0) if (other.startswith(root)) else os._exit(0);"
-subcheck_stat=$?
-
-if [[ $subcheck_stat == "0" ]]; then
-
-   cmd_log=$PWD/day_activate_cmd.log
-   cmddt=$(date --iso-8601="seconds")
-   echo """CLEAR> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB:$DAY_BIOME / CMD: ( $@ )""" &>> $cmd_log
-
-else
-
-   # Outside the expected environment. Logging to PWD
-   cmd_log=$PWD/day_activate_cmd.log
-   cmddt=$(date --iso-8601="seconds")' >>> '"$@"
-   echo """ERROR> D:$cmddt / U:$USER / PWD:$PWD / MD:$DAY_ROOT / MP:$DAY_PROFILE / MB:$DAY_BIOME / CMD: ( $smkcmd )""" &>>$cmd_log
-    echo " " 1>&2
-    echo " " 1>&2
-    colr "|||<<<
-    You are not in the correct DAY_ROOT
-
-    **>> DETECTED:     $PWD
-
-    **>> EXPECTED:     $DAY_ROOT
-
-    You are strongly encouraged to run 'day-deactivate', then 'source dyinit && day-activate' from the intended analysis deployment directory.
-
-    **>> DETECTED:     $PWD
-
-
-    **>> EXPECTED:     $DAY_ROOT
-
-    You are strongly encouraged to run 'day-deactivate', then day-activate from the intended analysis deployment location.  You should be set then. unless you are attempting remote_mode, then all bets are off for the moment.
-
-
-
-If this hapened after a  dy-a NONEXISTENTPROFILE, try:
-____________________
----> try running : source ./bin/day_deactivate reset
-<      .
-___________________
-
-    >>>|||" "$DY_EF0" "$DY_EB0" "$DY_ES1" 1>&2
-    return 44
+# Check if DAY_ROOT is set
+if [[ -z "$DAY_ROOT" ]]; then
+    echo "ERROR: DAY_ROOT is not set. Have you executed 'source dyinit'? Use -h for help."
+    return 2
 fi
 
-
-
-echo "Requesting $envi"
-
-
-# attempting to deactivate
-. bin/day_deactivate activate >/dev/null 2>&1
-if [[ "$?" != "0" ]]; then
-
-    echo "attempted to deactivate   any mod envs but an error has occurred.   Proceeding, but please take a look at your PATH when     complete and confirm there are no    more than 1 paths to a mod    analysis deployment dir. "
-
+# Handle help argument
+if [[ "$1" =~ ^(-h|--help|help)$ ]]; then
+    echo "Usage: day-activate [profile]"
+    echo "This script activates a Daylily analysis profile."
+    echo "Valid profiles are located in 'config/day_profiles/'."
+    echo "Example: day-activate local"
+    return 0
 fi
 
-# If root is set, make a friendly instance endingn in / for use in the greps below
-DYR=""
-if [[ "$DAY_ROOT" != "" ]]; then
-    export DYR=$DAY_ROOT/
-fi
+# Verify profile exists
+profile_info="$DAY_ROOT/config/day_profiles/$1/templates/profile.info"
+if [[ -f "$profile_info" ]]; then
+    # Extract environment variables from profile.info
+    env_val=$(grep 'env_var_val' "$profile_info" | cut -d ':' -f 2)
+    env_script=$(grep 'env_script' "$profile_info" | cut -d ':' -f 2)
+    mgps1val=$(grep 'terminal_abbreviation' "$profile_info" | cut -d ':' -f 2)
 
-if [[ "$1" == "slurm" ]]; then
-    export TMPDIR="/fsx/scratch/";
-else
-    export TMPDIR="/tmp/";
-fi
-
-# is this a known profile?  if so, get the env var value
-env_val=$(grep env_var_val $DYR"config/day_profiles/$1/templates/profile.info" | cut -d ':' -f 2)
-
-
-ret_code=$?
-ret_code2=0
-# print test error msg
-if [[ "$1" == "testerr" ]]; then
-    ret_code=1
-
-elif [[ "$env_val" != "" ]]; then
-    # grep found a value matching the supplied profile string, process the day_profile
-
-    # get the env init script to run
-    env_script=$(grep env_script $DYR"config/day_profiles/$1/templates/profile.info" | cut -d ':' -f 2)
-
-    # get the terminal prompt PS1 value
-    ##[DAY.ANALYTISTUNEDFOR.COMPUTEENV]
-    mgps1val=$(grep terminal_abbreviation $DYR"config/day_profiles/$1/templates/profile.info" | cut -d ':' -f 2)
-
-    source $env_script
+    # Source the environment script
+    source "$env_script"
     ret_code=$?
-    export DAY_PROFILE=$env_val
-    export DYPS1=$mgps1val
-
-elif
-    [[ "$DAY_ROOT" == "" ]]
-then
-    # Something is not right....?
-    echo ""
-    echo ""
-    echo "DAY_ROOT is not set.  Have you executed 'source dyinit'? Or re-run with -h"
-    ret_code=2
-
-    if [[ "$1" == "h" || "$1" == "-h" || "$1" == "--help" || "$1" == "help" ]]; then
-        ret_code=0
-    fi
-
-elif [[ "$1" == "h" || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "SPECIFIED:$1"
-    c=$(which colr) &>/dev/null || sleep .1
-    if [[ "$c"  != "" ]]; then
-        colr '_______________________________________________________________' 'pink' 'black' 'b'
-
-    fi
-
-    echo "
-
-
-
-
-(disclaimer, only tested via bash on ubuntu)
-
-
-     This script will activate a mod analysis profile (each profile matches a dir of the same name in: config/day_profiles/). Some valid options are : local, drmaa).
-
-     so:  day-activate local
-
-     Here is what is transpiring in the background: \
-
-       (a) sourcing the conda DAY env (build it with day-build).
-
-       (b) set the DAY_ROOT env var and put \
-DAY_ROOT/bin in your path so scripts like this are \
-available. set DAY_PROFILE(stores profile name) and DAY_BIOME(describes the OS) \
- DAY_ROOT stores the root of the cloned repo and is used for several purposes, but \
-an important one is to to prevent you from running commands \
-outside the root of the deployment directory.  You should \
-always be using the s/w w/in the deployment dir.  This \
-prevents using a specific deployments code outside the intended deployment dir
-      Give it a shot after you activate, : 'cd .. && day-run' after you've activated').  Only day-clear will not throw and error, but will try to wipe the env vars and remove from your path any DAY dirs.
-
-
-      (c) leave you with a success or error message.  If \
-success, you're ready to roll. If error, there will \
-hopefully be useful tips in the docs dir.
-
-"
-    return 0
-
+    export DAY_PROFILE="$env_val"
+    export DYPS1="$mgps1val"
+else
+    echo "ERROR: Profile '$1' not found."
+    return 1
 fi
 
-c=$(which colr) &>/dev/null || ls &>/dev/null
+# Check for 'colr' command
+if ! command -v colr &> /dev/null; then
+    echo "ERROR: 'colr' package is missing. Things will probably work, but not look fabulous."
+    sleep 2
+fi
 
-if [[ "$c" == "" ]]; then
-
-
-     conda activate DAY; pip install --no-input -i https://pypi.org/simple --extra-index-url https://pypi.org/simple  chromedriver-binary-auto   rgbw-colorspace-converter docopt colr xmltodict wrapt
-
-    if [[ "$ex_code" == "0" ]]; then
-        echo "    SUCCESS!   But you seem to be missing the pkg colr, just attempted to add it."
-    else
-        echo " ---==]]>>>>> ERROR !!!!!!!!!!! "
-        echo " Returned with code $ex_code, try running a test 'day-activate local; day-run  -c 3 -j 2 sleep ' otherwise day-deactivate; bash; source dyinit; day-activate local;   If you have a 'colr not found error, pip may not have completed sucessfully, try:  'conda activate DAY; pip install --no-input -i https://pypi.org/simple --extra-index-url https://pypi.org/simple  chromedriver-binary-auto   rgbw-colorspace-converter  colr docopt snakemake pandas xmltodict wrapt
-          "
-        return 22
-    fi
-
-elif [[ "$ret_code" == "919" ]]; then
-    echo ""
-    echo ""
-    echo "Warning, your command returned a non error, but non passing state. "
-    return 0
-#else
-fi;
-
-
+# Check for errors during activation
 if [[ "$ret_code" != "0" ]]; then
-    colr "|\ " "turquoise" "debianred" "f"
-    colr "| \ " "turquoise" "debianred" "f"
-    colr "|  \ " "turquoise" "debianred" "f"
-    colr "| ! \ " "turquoise" "debianred" "f"
-    colr "|  E \ " "turquoise" "debianred" "f"
-    colr "|   R \ " "turquoise" "debianred" "f"
-    colr "|    R \ " "turquoise" "debianred" "f"
-    colr "|     O \ " "turquoise" "debianred" "f"
-    colr "|      R \ " "turquoise" "debianred" "f"
-    colr "|       ! \ " "turquoise" "debianred" "f"
-    colr "|_________/  " "turquoise" "debianred" "f"
-    colr "Something went awry. Check the README for alternate install instructuions. Else, ping JEM. ret code was $ret_code" "orangered" "black" "b"
-    echo "Have you run day_build?  If so this is worth a shot:'bin/day_deactivate reset; source dyinit; day-activate local;'"
-    return 0
+    echo "ERROR: Activation failed with return code $ret_code."
+    source bin/utils/col_error.bash
+    echo ""
+    echo "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dyinit; day-activate local;'"
+    return $ret_code
 else
-   colr "       _______ GREAT SUCCESS _______       " "$DY_IT0" "$DY_IB0" "$DY_IS1"
-   export PS1="$DYPS1$PS1"
-   #echo "$(which day-run)"
-   bin/day_run justinit
-
-fi;
+    echo "GREAT SUCCESS!"
+    export PS1="$DYPS1$PS1"
+    bin/day_run justinit
+fi
 
 return 0
-
-
-

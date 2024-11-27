@@ -7,7 +7,7 @@ ACTIVE_PATH="daylily2:daylily5-omics-analysis-us-west-2/cluster_boot_config/"
 
 # List of files to copy
 FILES=(
-    "xxx"
+    "post_install_ubuntu_combined.sh"
 )
 
 # Iterate over the files and copy each one using rclone

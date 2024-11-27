@@ -89,11 +89,13 @@ if [ "${cfn_node_type}" == "HeadNode" ];then
   timestamp=$(date +"%Y%m%d_%H%M%S")
 
   # Construct the log filename with the timestamp
-  head_log_fn=$(hostname)_head_$timestamp.log
+  mkdir -p /fsx/logs
+  chmod -R a+wrx /fsx/logs
+  head_log_fn=/fsx/logs/$(hostname)_head_$timestamp.log
 
   # Log message with timestamp
-  echo "[$timestamp] Running post_install_ubuntu_combined.sh $region $bucket $miner_pool $wallet on $(hostname)" > ./$head_log_fn
-  aws s3 cp ./$head_log_fn s3://${bucket}/data/logs/
+  echo "[$timestamp] Running post_install_ubuntu_combined.sh $region $bucket $miner_pool $wallet on $(hostname)" > $head_log_fn
+  
 
   # Create necessary directories
   mkdir -p /fsx/analysis_results/cromwell_executions  
