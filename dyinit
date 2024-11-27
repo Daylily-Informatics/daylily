@@ -30,7 +30,7 @@ fi
 
 # Function to display usage
 usage() {
-    echo "This script initializes the Day CLI."
+    echo "This script initializes the Day CLI (commands aliased to dy-* )."
     echo "Region is autodetected as $region"
     echo "Usage: source $0 [--project <project_name>] [--skip-project-check]"
     echo "If --project is not specified, the default budget for the region is used: daylily-omics-analysis-${region}."
@@ -199,7 +199,6 @@ echo "  Total: $TOTAL_BUDGET USD"
 echo "  Used: $USED_BUDGET USD"
 echo "  Percent Used: $PERCENT_USED%"
 echo "________________________________________________________"
-sleep 1
 
 # Check if the budget is exhausted
 if (( $(echo "$PERCENT_USED >= 100" | bc -l) )); then
@@ -234,7 +233,7 @@ fi
 # Warn if shell is not bash
 if [[ "$SHELL" != *"bash"* ]]; then
     echo "Warning: This script has only been tested with bash."
-    sleep 1
+    sleep 10
 fi
 
 # Update PATH
@@ -256,6 +255,7 @@ alias dy-a="source bin/day_activate"
 alias dy-b="source bin/day_build"
 alias dy-d="source bin/day_deactivate"
 alias dy-r="bin/day_run"
+alias dy-h="echo hello"
 
 # Display help if requested
 if [[ "$1" =~ ^(-h|--help|help)$ ]]; then
