@@ -13,8 +13,8 @@ print_help() {
   echo "  -c    Cluster name (required)"
   echo "  -u    csv of users allowed to run with budget"
   echo "  -z    AWS AZ"
-  echo "  -h    Display this help message"
   echo "  -b    S3 bucket Name Tags are stored in (s3://<bucket-name>/data/budget_tags/<project_name>-tags.tsy)"
+  echo "  -h    Display this help message"
   echo ""
   echo "Example:"
   echo "  $0 -p my-project -a 5000 -r us-west-2 -e user@example.com -t 50,80,100"
@@ -65,10 +65,6 @@ if [[ -z "$S3_BUCKET_URL" ]]; then
   exit 1
 fi
 
-
-echo "THERE IS A BUG IN APPENDING DATA TO A FILE CREATED BY OTHER USERS"
-echo "sleep forever"
-sleep 1000000000
 
 # Function to write or append tags to the S3 file# Function to write or append tags to the S3 file
 write_or_append_tags_to_s3() {

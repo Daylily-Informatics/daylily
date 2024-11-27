@@ -533,7 +533,7 @@ fi
 
 
 # CLuster Budget Check
-echo "Checking if the 'daylily-omics-analysis-${region}' budget exists..."
+echo "Checking if the 'daylily-omics-analysis-${region_az}' budget exists..."
 budget_name="da-${region_az}-${cluster_name}"
 
 # Query AWS for the budget
