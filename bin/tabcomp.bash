@@ -39,29 +39,27 @@ _dyb() {
 }
 
 
-# Completion function for day-run_dyr() {
+# Completion function for day-run
+_dyr() {
     if [[ "${COMP_WORDS[$COMP_CWORD]}" == "" || "${COMP_WORDS[$COMP_CWORD]:0:1}" != "-" ]]; then
         local targets
         # Extract targets, remove trailing colons, and ensure unique values
         targets=$(grep -s -E '^ *rule.*TARGET' workflow/{Snakefile,rules/*.smk} 2>/dev/null | awk '{print $2}' | sed 's/:$//' | sort -u)
         COMPREPLY+=($(compgen -W "$targets" -- "${COMP_WORDS[$COMP_CWORD]}"))
     else
+
+
         local options
-        # Add the available Snakemake options and the new custom option
         options=$(snakemake --help | grep -E '^  --' | awk '{print $1}' | tr -d ',')
-        options+=" --keep-temp"  # Add custom --keep-temp flag
+        # Add the --keep-temp option which also sets --notemp
+        options+=" --keep-temp"
+        COMPREPLY+=($(compgen -W "$options" -- "${COMP_WORDS[$COMP_CWORD]}"))
         
-        # Generate completion suggestions
-        local current_word="${COMP_WORDS[$COMP_CWORD]}"
-        COMPREPLY+=($(compgen -W "$options" -- "$current_word"))
-        
-        # Replace --keep-temp with --notemp if selected
-        if [[ "$current_word" == "--keep-temp" ]]; then
-            COMP_WORDS[$COMP_CWORD]="--notemp"
-        fi
+        local options
+        options=$(snakemake --help | grep -E '^  --' | awk '{print $1}' | tr -d ',')
+        COMPREPLY+=($(compgen -W "$options" -- "${COMP_WORDS[$COMP_CWORD]}"))
     fi
 }
-
 
 # Completion for set genome build
 _dyg() {
