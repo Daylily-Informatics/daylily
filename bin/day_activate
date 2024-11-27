@@ -9,13 +9,13 @@ DP=$DAY_PROJECT
 # Attempt to deactivate any existing environment
 source bin/day_deactivate &> /dev/null 
 echo "Attempting to deactivate existing environments & re-init with --project $DP ."
-. dayinit --project $DP &> /dev/null
+. dyinit --project $DP &> /dev/null
 export DAY_PROFILE=$dayp
 
 echo 
 # Check if DAY_ROOT is set
 if [[ -z "$DAY_ROOT" ]]; then
-    echo "ERROR: DAY_ROOT is not set. Have you executed 'source dayinit'? Use -h for help."
+    echo "ERROR: DAY_ROOT is not set. Have you executed 'source dyinit'? Use -h for help."
     return 2
 fi
 
@@ -74,7 +74,7 @@ if [[ "$pe_ret_code" != "0" ]]; then
     source bin/util/col_error.bash
     echo "ERROR: Activation failed with return code $pe_ret_code."
     echo ""
-    echo "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dayinit; day-activate local;'"
+    echo "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dyinit; day-activate local;'"
     return $pe_ret_code
 else
     conda activate DAY

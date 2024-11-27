@@ -26,7 +26,7 @@ fi
 
 ret_msg=""
 if [[ $DAY_ROOT == "" && $DAY_PROFILE == "" ]]; then
-    ret_msg="No DAY environment was detected as active.  However, if this is in error, try:  'source dayinit; day-deactivate reset;'"
+    ret_msg="No DAY environment was detected as active.  However, if this is in error, try:  'source dyinit; day-deactivate reset;'"
 fi
 
 if [[ $1 == "activate" ]]; then
@@ -66,7 +66,7 @@ fi
 echo " "
 echo ' '
 
-echo " ... if deactivate only partially ran and left a weird shell prompt, try: 'source dayinit; day-deactivate reset;' "
+echo " ... if deactivate only partially ran and left a weird shell prompt, try: 'source dyinit; day-deactivate reset;' "
 
 return 0
  

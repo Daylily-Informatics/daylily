@@ -299,8 +299,8 @@ You can now SSH into the head node with the following command:
 ssh -i /Users/daylily/.ssh/omics-analysis-b.pem ubuntu@52.24.138.65
 Once logged in, as the 'ubuntu' user, run the following commands:
   cd ~/projects/daylily
-  source dayinit -h
-  source dayinit  --project PROJECT
+  source dyinit -h
+  source dyinit  --project PROJECT
   dy-a local
   dy-r help
  
@@ -493,7 +493,7 @@ bin/daylily-ssh-into-headnode
 **Is `daylily` CLI Available & Working**
 ```bash
 cd ~/projects/daylily
-. dayinit # inisitalizes the daylily cli
+. dyinit # inisitalizes the daylily cli
 dy-a local # activates the local config
 dy-r help # should show the help menu
 ```
@@ -502,7 +502,7 @@ This should produce a magenta `WORKFLOW SUCCESS` message and `RETURN CODE: 0` at
 
 ###### Headnode Confiugration Incomplete
 
-If there is no `~/projects/daylily` directory, or the `dayinit` command is not found, the headnode configuration is incomplete. 
+If there is no `~/projects/daylily` directory, or the `dyinit` command is not found, the headnode configuration is incomplete. 
 
 **Attempt To Complete Headnode Configuration**
 From your remote terminal that you created the cluster with, run the following commands to complete the headnode configuration.
@@ -530,7 +530,7 @@ drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 ##### Run A Local Test Workflow
 
 ```bash
-. dayinit  --project PROJECT
+. dyinit  --project PROJECT
 dy-a local
 
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
@@ -586,7 +586,7 @@ cd daylily
 
 #  prepare to run the test
 tmux new -s slurm_test
-. dayinit 
+. dyinit 
 dy-a slurm
 
 # create a test manifest for one giab sample only, which will run on the 0.01x test dataset
@@ -642,7 +642,7 @@ cd /fsx/analysis_results/ubuntu/slurm_single
 git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
 cd daylily
 
-. dayinit  --project PROJECT 
+. dyinit  --project PROJECT 
 dy-a slurm
 
 # TO create a single sample manifest
@@ -665,7 +665,7 @@ cd /fsx/analysis_results/ubuntu/slurm_multi_30x_test
 git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
 cd daylily
 
-. dayinit  --project PROJECT 
+. dyinit  --project PROJECT 
 dy-a slurm
 
 # copy full 30x giab sample template to config/analysis_manifest.csv
@@ -1007,7 +1007,7 @@ active_aligners:
 ```
 - This will enable running these two tools.  You will also need a liscence file from sentieon in order to run these tools.  
 - Please [contact them](https://www.sentieon.com/company/) to obtain a valid liscense . 
-- Once you have a lisence file, edit the `dayinit` file to include the */fsx/* relative path to this file where `export SENTIEON_LICENSE=` is found.  
+- Once you have a lisence file, edit the `dyinit` file to include the */fsx/* relative path to this file where `export SENTIEON_LICENSE=` is found.  
 - Save the liscence file in the each region specific S3 reference bucket, ie: `s3://PREFIX-omics-analysis-REGION/data/cached_envs/`. When this bucket is mounted to the fsx filesystem, the liscence file will be available to all instances at `/fsx/data/cached_envs/`.
 
 

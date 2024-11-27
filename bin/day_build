@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # This script is intended to be sourced, not executed directly.
 
-# Check if DAY_ROOT is set; if not, source dayinit
+# Check if DAY_ROOT is set; if not, source dyinit
 if [[ -z "$DAY_ROOT" ]]; then
-    source dayinit
+    source dyinit
 fi
 
 envi="$1"
@@ -33,8 +33,8 @@ else
     fi
 fi
 
-# Source dayinit for local setup
-source dayinit local &> /dev/null
+# Source dyinit for local setup
+source dyinit local &> /dev/null
 
 # Check if 'colr' command is available
 if ! command -v colr &> /dev/null; then
@@ -59,10 +59,10 @@ else
     else
         echo "GREAT SUCCESS!"
         export PS1="$DYPS1 $PS1"
-        source dayinit local &> /dev/null
+        source dyinit local &> /dev/null
         echo "Please start a new bash session and test the install:"
         echo "  bash;"
-        echo "  source dayinit;"
+        echo "  source dyinit;"
         echo "  dy-a local"
         echo "  dy-r help"
     fi

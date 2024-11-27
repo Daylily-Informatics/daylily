@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# dayinit: Initialize the Daylily environment
+# dyinit: Initialize the Daylily environment
 # This script must be sourced, not executed directly.
 
 # Ensure the script is sourced

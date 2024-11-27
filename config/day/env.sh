@@ -2,7 +2,7 @@
 #conda_bin=$(which conda)
 #conda_dir=$(dirname $conda_bin)
 #if [[ $conda_dir == "" ]]; then
-#    echo" >>> ERROR: conda has not been found in your PATH.  If you do not have conda installed, you may run the mod installer+build command: source dayinit  --project <PROJECT> && mod-activate BUILD_all"
+#    echo" >>> ERROR: conda has not been found in your PATH.  If you do not have conda installed, you may run the mod installer+build command: source dyinit  --project <PROJECT> && mod-activate BUILD_all"
 #fi
 
 

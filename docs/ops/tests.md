@@ -3,7 +3,7 @@ Daylily comes with a test dataset of 0.01x coverage data.  This will automatical
 ```bash
 # from the cloned root directory
 
-source dayinit source dayinit  --project <PROJECT>
+source dyinit source dyinit  --project <PROJECT>
 dy-a local
 dy-r produce_deduplicated_bams
 
