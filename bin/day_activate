@@ -81,8 +81,14 @@ else
     conda activate DAY
     conda_ret_code=$?
 
-    source bin/day_set_genome_build $gbuild
-    if [[ "$?" != "0" || "$conda_ret_code" != "0" ]]; then
+    if [[ "$gbuild" != "" ]]; then
+        source bin/day_set_genome_build $gbuild
+        gbuild_ret_code=$?
+    else
+        colr "Skipping genome build activation." "$DY_WT0" "$DY_WB0" "$DY_WS1"
+    fi
+    
+    if [[ "$gbuild_ret_code" != "0" || "$conda_ret_code" != "0" ]]; then
         colr  "ERROR: conda activate DAY -or- dy-b $gbuild have failed."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
         return 5
     fi
