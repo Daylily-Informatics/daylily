@@ -25,7 +25,7 @@ dependencies:
   - fd-find
   - graphviz
   - pip:
-    - git+https://github.com/Daylily-Informatics/snakemake.git@7.25.0a111
+    - git+https://github.com/Daylily-Informatics/snakemake.git@7.25.0a112
     - drmaa
     - docopt
     - colr
