@@ -27,7 +27,7 @@ if [[ "$1" =~ ^(-h|--help|help)$ ]]; then
     return 0
 fi
 
-export $DAY_PROFILE_DIR="$DAY_ROOT/config/day_profiles/$DAY_PROFILE"
+export DAY_PROFILE_DIR="$DAY_ROOT/config/day_profiles/$DAY_PROFILE"
 if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
     colr "ERROR: Profile directory: $DAY_PROFILE_DIR does not exist." "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     echo "Have you run 'day-activate'?"
