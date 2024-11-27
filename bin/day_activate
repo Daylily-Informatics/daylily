@@ -36,8 +36,7 @@ if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
 fi
 
 source bin/util/profile_freshness_warn.bash
-if [[ "$?" != "0" || 9]]; then
-    echo "error: profile_freshness_warn.bash"
+if [[ "$?" -ne 0 && "$?" -ne 9 ]]; then
     return 4
 fi
 
