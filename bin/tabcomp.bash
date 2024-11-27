@@ -38,11 +38,13 @@ _dyb() {
     fi
 }
 
+
 # Completion function for day-run
 _dyr() {
     if [[ "${COMP_WORDS[$COMP_CWORD]}" == "" || "${COMP_WORDS[$COMP_CWORD]:0:1}" != "-" ]]; then
         local targets
-        targets=$(grep -s -E '^ *rule.*TARGET' workflow/{Snakefile,rules/*.smk} 2>/dev/null | awk '{print $2}')
+        # Extract targets, remove trailing colons, and ensure unique values
+        targets=$(grep -s -E '^ *rule.*TARGET' workflow/{Snakefile,rules/*.smk} 2>/dev/null | awk '{print $2}' | sed 's/:$//' | sort -u)
         COMPREPLY+=($(compgen -W "$targets" -- "${COMP_WORDS[$COMP_CWORD]}"))
     else
         local options
@@ -50,6 +52,8 @@ _dyr() {
         COMPREPLY+=($(compgen -W "$options" -- "${COMP_WORDS[$COMP_CWORD]}"))
     fi
 }
+
+
 
 # Register completion functions
 complete -F _dya day-activate dy-a day_activate
