@@ -216,6 +216,21 @@ rule util_profile_config_reset:  # TARGET: clears all profile config files so th
 # help returns all TARGET annotated rules in the rules dir
 
 
+rule test_benchmark:
+    container: None
+    threads: 2
+    params:
+        cluster_sample="test_benchmark"
+    resources:
+        vcpu=2,
+        threads=2,
+        partition="i8,i128,i192"
+    benchmark:
+        "logs/test_bench.tsv"
+    shell:
+        """
+	sleep 3;
+	"""
 
 rule help:
     container: None
