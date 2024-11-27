@@ -3,13 +3,14 @@
 
 
 if [[ "$1" == "b37" ]]; then
-    echo "Setting genome to b37"
     export DAY_GENOME_BUILD="b37"
 elif [[ "$1" == "hg38" ]]; then
-    echo "Setting genome to hg38"
     export DAY_GENOME_BUILD="hg38"
 else
     unset DAY_GENOME_BUILD
-    echo "Error: Invalid genome build. Only 'b37' or 'hg38' currently supported."
+    colr "Error: Invalid genome build. Only 'b37' or 'hg38' currently supported."  "$DY_WT0" "$DY_WB0" "$DY_ES1" 1>&2
     return 3
 fi
+
+colr " > >> >>> " "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
+colr "... genome build set to ::: $DAY_GENOME_BUILD :::  " "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
