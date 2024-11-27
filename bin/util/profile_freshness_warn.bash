@@ -14,9 +14,14 @@ if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.
 
     for i in "${!profile_files[@]}"; do
         if [[ ! -f "${profile_files[i]}" || "${templates[i]}" -nt "${profile_files[i]}" ]]; then
-            colr "Copying template files to active config files $i" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
+            colr "Copying template yaml files to active config files $profile_dir" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
             cp "$profile_dir/templates/"*yaml "$profile_dir/" || {
-                colr "ERROR: Failed to copy template files." "$DY_ET2" "$DY_EB1" "$DY_ES2" 1>&2
+                colr "ERROR: Failed to copy template yaml files." "$DY_ET2" "$DY_EB1" "$DY_ES2" 1>&2
+                return 48
+            }
+            colr "Copying template bash files to active config files $profile_dir" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
+            cp "$profile_dir/templates/"*bash "$profile_dir/" || {
+                colr "ERROR: Failed to copy template bash files." "$DY_ET2" "$DY_EB1" "$DY_ES2" 1>&2
                 return 48
             }
 
