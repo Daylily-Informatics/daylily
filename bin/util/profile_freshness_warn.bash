@@ -78,10 +78,6 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/profile_env.bash" -nt  "con
     echo " "
     
     echo "Please select:"
-#!/bin/bash
-
-while true; do
-    echo "Please select:"
     echo "1) Remove the active config files."
     echo "2) Touch the active config files."
     echo "3) Exit."
