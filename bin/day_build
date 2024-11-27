@@ -1,24 +1,19 @@
 #!/usr/bin/env bash
 # This script is intended to be sourced, not executed directly.
 
-# Check if DAY_ROOT is set; if not, source dyinit
-if [[ -z "$DAY_ROOT" ]]; then
-    source dyinit
-fi
 
-envi="$1"
 
-echo "Requesting environment: $envi"
+
+DP=$DAY_PROJECT
 
 # Attempt to deactivate any existing environment
-source bin/day_deactivate &> /dev/null || {
-    echo "Attempted to deactivate existing environments but an error occurred."
-    echo "Proceeding, but please check your PATH after completion."
-}
+source bin/day_deactivate &> /dev/null 
+echo "Attempting to deactivate existing environments & re-init with --project $DP ."
+. dyinit --project $DP --deactivate &> /dev/null
 
 
 # Handle build argument
-if [[ "$1" == "BUILD" && "$ret_code" != "0" ]]; then
+if [[ "$1" == "BUILD" ]]; then
 
     # Source the environment installer
     source config/day/day_env_installer.sh DAY

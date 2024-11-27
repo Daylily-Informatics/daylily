@@ -12,7 +12,7 @@ echo "Attempting to deactivate existing environments & re-init with --project $D
 . dyinit --project $DP --deactivate &> /dev/null
 export DAY_PROFILE=$dayp
 
-echo 
+
 # Check if DAY_ROOT is set
 if [[ -z "$DAY_ROOT" ]]; then
     echo "ERROR: DAY_ROOT is not set. Have you executed 'source dyinit'? Use -h for help."
