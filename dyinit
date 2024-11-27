@@ -256,7 +256,9 @@ alias dy-b="source bin/day_build"
 alias dy-d="source bin/day_deactivate"
 alias dy-r="bin/day_run"
 alias dy-h="echo hello"
+alias day-set-genome-build="source bin/day_set_genome_build"
 alias dy-g="source bin/day_set_genome_build"
+
 
 # Display help if requested
 if [[ "$1" =~ ^(-h|--help|help)$ ]]; then
@@ -288,13 +290,19 @@ echo "squeue helper alias 'sq' activated"
 
 # Final message
 echo "Day CLI initialized for project '$PROJECT' in region '$region'."
-echo -e "The Daylily CLI is now available.\n"
-echo -e "Available commands (tab completion is enabled for all):\n"
+echo -e "The Daylily CLI is now available."
+echo -e "Available commands (tab completion is enabled for all):"
 echo  " "
-echo -e "\t(day-activate / dy-a) (slurm | local) - Activate a Slurm or local environment."
+echo -e "\t(day-activate / dy-a) [slurm|local] - Activate a Slurm or local environment."
+echo -e "\t                           "
+echo -e "\t{day-set-genome-build / dy-g) [b37|hg38] - Set the genome build for the current environment."
+echo -e "\t                           "
 echo -e "\t(day-run / dy-r)          - Run a command in the current environment."
+echo -e "\t                           <tab> for exposed targets, -<tab> for all command line flags."
+echo -e "\t                           "
 echo -e "\t(day-deactivate / dy-d)   - Deactivate the current environment."
 echo -e "\t                           Use 'dy-d reset' to hard reset the environment."
+echo -e "\t                           "
 echo -e "\t(day-build / dy-b)        - Build a new environment (run once per head node user)."
 
 return 0
