@@ -4,7 +4,7 @@
 
 dayp="$1"
 echo "Requesting profile: $DAY_PROFILE"
-DP=${DAY_PROJECT:-""}
+DP=$DAY_PROJECT
 
 # Attempt to deactivate any existing environment
 source bin/day_deactivate &> /dev/null 

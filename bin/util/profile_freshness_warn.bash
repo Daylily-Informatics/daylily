@@ -2,13 +2,15 @@
 
 profile_dir=$DAY_PROFILE_DIR
 
+echo "a"
 
 if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.yaml"  && ! -f "$DAY_PROFILE_DIR/profile_env.sh" ]]; then
-    
+    echo "b"    
 
     colr -n " > >> >>> " "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
+    echo "c"
     colr "COPYING TEMPLATE FILES TO ACTIVE CONFIG FILES IN $profile_dir - none detected" "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
-
+    echo "d"
     profile_files=("$profile_dir/rule_config_lowcov.yaml" "$profile_dir/cluster.yaml" "$profile_dir/rule_config.yaml")
     templates=("$profile_dir/templates/rule_config_lowcov.yaml" "$profile_dir/templates/cluster.yaml" "$profile_dir/templates/rule_config.yaml")
 
@@ -28,6 +30,7 @@ if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.
         fi
     done
 
+    echo "e"
     # Replace placeholders in config files
     re_safe_mgr=$(echo "$DAY_ROOT" | sed "s/\//\\\\\//g")
     sed -i "s/.DAY_ROOT\/c/$re_safe_mgr\/c/g" "$profile_dir/"*yaml
@@ -39,7 +42,6 @@ if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.
     sed -i "s/HOSTNAME/$hn/g" "$profile_dir/"*yaml
 
 elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -nt  "config/day_profiles/$DAY_PROFILE/rule_config_lowcov.yaml" || "config/day_profiles/$DAY_PROFILE/templates/cluster.yaml" -nt "config/day_profiles/$DAY_PROFILE/cluster.yaml" || "config/day_profiles/$DAY_PROFILE/templates/config.yaml" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/rule_config.yaml" -nt "config/day_profiles/$DAY_PROFILE/rule_config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/profile.info" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" ]]; then
-    source bin/util/profile_freshness_warn.bash $profile_dir
 
 
     echo " "
@@ -87,4 +89,4 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -n
 else
     colr "Your config files in $profile_dir are newer than the templates. clear 2 go." "$DY_WT1" "$DY_WB2" "$DY_WS1 " 1>2
     sleep 0.1
-fi;
+fi
