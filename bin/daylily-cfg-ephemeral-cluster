@@ -240,6 +240,8 @@ check_quota "Internet Gateways" "L-A4707A72" 4 vpc
 
 echo ""
 
+AWS_CLI_USER=$(aws sts get-caller-identity --region $region --profile $AWS_PROFILE --query "Arn" --output text | awk -F '/' '{print $2}')
+
 # Check for 'pcluster-omics-analysis' policy and create if necessary
 echo "Checking for required IAM policy 'pcluster-omics-analysis'..."
 policy_name="pcluster-omics-analysis"
@@ -702,7 +704,7 @@ REGSUB_XMR_WALLET=$xmr_wallet
 REGSUB_FSX_SIZE=$sel_fsx_size
 REGSUB_DETAILED_MONITORING=$act_detailed_monitoring
 REGSUB_CLUSTER_NAME=$cluster_name
-REGSUB_USERNAME=$USER
+REGSUB_USERNAME=${USER}-${AWS_CLI_USER}
 REGSUB_PROJECT=$budget_name
 REGSUB_DELETE_LOCAL_ROOT=$delete_local_root
 REGSUB_SAVE_FSX=$save_fsx
