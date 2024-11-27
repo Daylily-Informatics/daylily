@@ -161,12 +161,8 @@ if "analysis_manifest" in config:
             raise Exception(
                 f"\n\nERROR::: The default analysis manifest file was not found at {default_analysis_manifest}.  Please check the path and try again, was the genome_build specified?"
             )
-
-analysis_manifest = (
-    "config/analysis_manifest.csv"
-    if os.path.exists("config/analysis_manifest.csv")
-    else config["analysis_manifest"]
-)
+config["analysis_manifest"] = "config/analysis_manifest.csv"
+analysis_manifest = congig["analysis_manifest"]
 
 # Alert is analysis manifest is not found
 os.system(
