@@ -85,6 +85,16 @@ chmod a+r /usr/local/bin/cromwell.jar /usr/local/bin/womtool.jar
 
 if [ "${cfn_node_type}" == "HeadNode" ];then
 
+  # Get the current date and time in seconds
+  timestamp=$(date +"%Y%m%d_%H%M%S")
+
+  # Construct the log filename with the timestamp
+  head_log_fn=$(hostname)_head_$timestamp.log
+
+  # Log message with timestamp
+  echo "[$timestamp] Running post_install_ubuntu_combined.sh $region $bucket $miner_pool $wallet on $(hostname)" > ./$head_log_fn
+  aws s3 cp ./$head_log_fn s3://${bucket}/data/logs/
+
   # Create necessary directories
   mkdir -p /fsx/analysis_results/cromwell_executions  
   mkdir -p /fsx/analysis_results/ubuntu  
@@ -142,7 +152,6 @@ if [ "${cfn_node_type}" == "ComputeFleet" ];then
 " | crontab -
   exit 0
 else
-  # HEADNODE ONLY
 
   # Cron script used to update the instance tags
 
