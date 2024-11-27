@@ -1,6 +1,5 @@
 ---
 
-
 # .... to create an analysis manifest for your data, see the script in bin/sample_sheet_2_analysis_manifest.sh
 analysis_manifest: .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv # or .test_data/data/0.01xwgs_HG002_b37.samplesheet.csv
 
@@ -40,10 +39,6 @@ active_aligners:
 #        mkdup: dppl
 #    - strobe:
 #        mkdup: dppl
-#    - bwa2m:
-#          mkdup: sent
-#    - sent:
-#          mkdup: bbb2
 
 
 # #######  FASTQ PREP
