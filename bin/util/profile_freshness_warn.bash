@@ -83,10 +83,12 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -n
     colr "     will keep the files and avoid this warning/block. " "$DY_ET2" "$DY_EB1" "$DY_ES2"
     echo " "
     echo " "
-    return 9
+    return 0
 
 
 else
     colr "Your config files in $profile_dir are newer than the templates. clear 2 go." "$DY_WT1" "$DY_WB2" "$DY_WS1 " 1>2
     sleep 0.1
 fi
+
+return 0
