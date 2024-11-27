@@ -86,16 +86,12 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/profile_env.bash" -nt  "con
 
     case $choice in
         1)
-            if [[ -f "./a_file" ]]; then
-                rm ./a_file
-                echo "a_file has been removed."
-            else
-                echo "a_file does not exist."
-            fi
+            rm $profile_dir/*
+            echo "Active config files removed."
             ;;
         2)
-            touch ./a_file
-            echo "a_file has been created."
+            touch $profile_dir/* 
+            echo "Active config files touched."
             ;;
         3)
             echo "Exiting."
