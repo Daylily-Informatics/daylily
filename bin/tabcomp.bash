@@ -53,6 +53,12 @@ _dyr() {
     fi
 }
 
+# Completion for set geonome build
+_dyg() {
+    if [[ ${#COMP_WORDS[@]} == 2 ]]; then
+        COMPREPLY+=($(compgen -W "hg19 hg38 mm10" -- "${COMP_WORDS[$COMP_CWORD]}"))
+    fi
+}
 
 
 # Register completion functions
@@ -61,3 +67,4 @@ complete -F _dyb day-build day_build dy-b
 complete -F _dyd day-deactivate day_deactivate dy-d
 complete -F _dyr day-run dy-r
 complete -F _scc day-script-cmds
+complete -F _dyg gay-set-genome-build dy-g
