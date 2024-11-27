@@ -53,12 +53,12 @@ _dyr() {
     fi
 }
 
-# Completion for set geonome build
+# Completion for set genome build
 _dyg() {
-    if [[ ${#COMP_WORDS[@]} == 2 ]]; then
-        COMPREPLY+=($(compgen -W "hg38 b37" -- "${COMP_WORDS[$COMP_CWORD]}"))
-    fi
+    local options="hg38 b37"
+    COMPREPLY=($(compgen -W "$options" -- "${COMP_WORDS[$COMP_CWORD]}"))
 }
+
 
 
 # Register completion functions
