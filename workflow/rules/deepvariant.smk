@@ -100,7 +100,6 @@ rule deepvariant:
         elapsed_time=$((($end_time - $start_time) / 60));
 
         # Log the elapsed time
-        echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         """
 

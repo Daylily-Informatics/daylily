@@ -35,7 +35,7 @@ rule fastqc_subsampled:
         fastqc -o {params.tool_dir} -t {threads} -d {params.tmp}  {input.fqr1s}  {input.fqr2s}
         touch {output};
         touch {output}_subsampled_at_{params.subsample_pct};
-        {latency_wait}; ls {output};
+        ls {output};
         """
 localrules:
     just_fastqc,

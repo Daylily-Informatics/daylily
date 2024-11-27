@@ -66,7 +66,6 @@ rule peddy:
         echo reallydone > {output.prefix} ;
         touch {output.done} ;
         touch {output.prefix} ;
-        sleep 4;
         """
 
 

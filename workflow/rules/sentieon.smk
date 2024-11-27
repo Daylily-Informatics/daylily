@@ -65,12 +65,11 @@ rule sentieon_bwa_sort:
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
         echo "INSTANCE TYPE: $itype" > {log};
-        echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
         bwt_max_mem={params.max_mem} ;
         epocsec=$(date +'%s');
 
-        ulimit -n 65536 || echo "ulimit mod failed";
+        ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
         
         timestamp=$(date +%Y%m%d%H%M%S);
         TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
@@ -110,7 +109,6 @@ rule sentieon_bwa_sort:
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));
-	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
         rm -rf $tdir;
         """
