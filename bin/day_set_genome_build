@@ -12,5 +12,5 @@ else
     return 3
 fi
 
-colr " > >> >>> " "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
+colr -n " > >> >>> " "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
 colr "... genome build set to ::: $DAY_GENOME_BUILD :::  " "$DY_IT0" "$DY_IB0" "$DY_IS1" 1>&2
