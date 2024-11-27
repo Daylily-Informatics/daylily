@@ -2,11 +2,14 @@
 
 export SNAKEMAKE_SINGULARITY_CMD="apptainer"
 
-if [[ -z "$DAY_ROOT" || -z "$DAY_PROFILE" ]]; then
+if [[ -z "$DAY_ROOT" || -z "$DAY_PROFILE" || -z "$DAY_PROFILE_DIR" ]]; then
     colr "ERROR: . dayiniy && day-activate [local|slurm] needs to have been run prior to day-run."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     exit 33
 fi
-
+if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
+    colr "ERROR: Profile directory: $DAY_PROFILE_DIR does not exist." "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+    exit 3
+fi
 
 # Check if we're in the correct root
 if [[ "$(pwd)" != "$DAY_ROOT"* ]]; then
@@ -34,7 +37,7 @@ fi
 snakecmd=("snakemake" "--profile=$profile_dir" "$@")
 
 # This ensures the snakedir is unlocked after a crash or successful exit 0
-trap "(snakemake --unlock --profile $DAY_ROOT/config/day_profiles/$DAY_PROFILE  &>> ./unlock_fails.log & ) & " EXIT
+trap "(snakemake --unlock --profile $DAY_PROFILE_DIR  &>> ./unlock_fails.log & ) & " EXIT
 
 # Log the command
 cmd_log="$PWD/dyly_cmd.log"
