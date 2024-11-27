@@ -154,7 +154,7 @@ if "analysis_manifest" in config:
             "\n\n A file exists in config/analysis_manifest.csv, you must remove it to use the command line specified manifest.\n\n"
         )
     else:
-        default_analysis_manifest = f"{config[config['genome_build']_analysis_manifest}"
+        default_analysis_manifest = config[f"{config['genome_build']}_analysis_manifest"]
         if os.path.exists(default_analysis_manifest):
             os.system(f"cp {default_analysis_manifest} config/analysis_manifest.csv")
         else:
