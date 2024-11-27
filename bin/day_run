@@ -40,7 +40,7 @@ snakecmd=("snakemake" "--profile=$DAY_PROFILE_DIR" "$@")
 trap "(snakemake --unlock --profile $DAY_PROFILE_DIR  &>> ./unlock_fails.log & ) & " EXIT
 
 # Log the command
-cmd_log="$PWD/dyly_cmd.log"
+cmd_log="$PWD/day_cmd.log"
 cmddt=$(date --iso-8601="seconds")
 echo "SMK> D:$cmddt / U:$USER / PWD:$PWD / CMD: (${snakecmd[*]})" >> "$cmd_log"
 
