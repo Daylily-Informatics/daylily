@@ -112,7 +112,7 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/profile_env.bash" -nt  "con
 
 
 else
-    echo "yo"
+
     colr "Your config files in $profile_dir are newer than the templates. clear 2 go." "$DY_WT1" "$DY_WB2" "$DY_WS1 " 
     sleep 0.1
 fi
