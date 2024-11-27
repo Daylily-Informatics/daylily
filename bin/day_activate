@@ -2,8 +2,8 @@
 # This script is intended to be sourced, not executed directly.
 
 
-dayp="$1"
-gbuild="$2"
+dayp="$1"  # Profile code [loal|slurm]
+gbuild="$2" # genome build code [hg38|b37]
 echo "Requesting profile: $dayp"
 DP=$DAY_PROJECT
 
@@ -86,11 +86,11 @@ else
         source bin/day_set_genome_build $gbuild
         gbuild_ret_code=$?
     else
-        colr "Skipping genome build activation." "$DY_WT0" "$DY_WB0" "$DY_WS1"
+        colr "Skipping genome build activation."  "$DY_WI1" "$DY_IB2" "$DY_IS1" 1>&2
     fi
 
     if [[ "$gbuild_ret_code" != "0" || "$conda_ret_code" != "0" ]]; then
-        colr  "ERROR: conda activate DAY -or- dy-b $gbuild have failed."  "$DY_WI1" "$DY_IB2" "$DY_IS1" 1>&2
+        colr  "ERROR: conda activate DAY -or- dy-b $gbuild have failed." "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
         return 5
     fi
     colr "       _______ GREAT SUCCESS _______       " "$DY_IT0" "$DY_IB0" "$DY_IS1"
