@@ -5,7 +5,12 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo " run from the DAY_ROOT dir, with no arguments, until day is build aware, then it will accept the build name as the first arg"
     exit 0
 elif [[ "$1" != "" ]]; then
-    build="$1"
+    build=$DAY_GENOME_BUILD
+fi
+
+if [[ "$build" == "" ]]; then
+    echo "No build specified, please set DAY_GENOME_BUILD with dy-g [hg38|b37] and rerun"
+    exit 1
 fi
 
 (mv results/day/$build/reports/benchmarks_summary.tsv results/day/$build/reports/benchmarks_summary.tsv.old) || echo "no file to move";
