@@ -78,29 +78,39 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/profile_env.bash" -nt  "con
     echo " "
     
     echo "Please select:"
+#!/bin/bash
 
+while true; do
+    echo "Please select:"
     echo "1) Remove the active config files."
-    echo "2) touch the active config files"."
+    echo "2) Touch the active config files."
     echo "3) Exit."
 
-    read -p "Enter your choice (1 , 2 or 3): " choice
+    read -p "Enter your choice (1, 2, or 3): " choice
 
     case $choice in
         1)
-            rm $profile_dir/* 
-            echo "Active config files have been removed."
+            if [[ -f "./a_file" ]]; then
+                rm ./a_file
+                echo "a_file has been removed."
+            else
+                echo "a_file does not exist."
+            fi
             ;;
         2)
-            touch $profile_dir/*
-            echo "Active config files have been touched."
+            touch ./a_file
+            echo "a_file has been created."
             ;;
         3)
             echo "Exiting."
+            break
             ;;
         *)
-            echo "Invalid choice. Please choose 1 , 2 , 3"
+            echo "Invalid choice. Please choose 1, 2, or 3."
             ;;
     esac
+    echo ""
+
     return 3
 
 
