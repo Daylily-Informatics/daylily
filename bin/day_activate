@@ -38,7 +38,6 @@ fi
 source bin/util/profile_freshness_warn.bash
 if [[ "$?" == "3" ]]; then
     echo "ERROR: source bin/util/profile_freshness_warn.bash"
-    sleep 10
     return 4
 fi
 
