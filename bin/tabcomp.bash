@@ -51,8 +51,7 @@ _dyr() {
 
         local options
         options=$(snakemake --help | grep -E '^  --' | awk '{print $1}' | tr -d ',')
-        # Add the --keep-temp option which also sets --notemp
-        options+=" --keep-temp"
+        options+=" --keep-temp"  # replace with --notemp bc this is not a snakemake native flag
         COMPREPLY+=($(compgen -W "$options" -- "${COMP_WORDS[$COMP_CWORD]}"))
         
         local options
