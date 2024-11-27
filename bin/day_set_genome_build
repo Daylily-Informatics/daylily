@@ -2,10 +2,10 @@
 
 
 
-if [[ "$1" == "b37" ]];
+if [[ "$1" == "b37" ]]; then
     echo "Setting genome to b37"
     export DAY_GENOME_BUILD="b37"
-elif [[ "$1" == "hg38" ]];
+elif [[ "$1" == "hg38" ]]; then
     echo "Setting genome to hg38"
     export DAY_GENOME_BUILD="hg38"
 else
