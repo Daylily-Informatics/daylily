@@ -16,14 +16,20 @@ source bin/day_deactivate &> /dev/null || {
     echo "Proceeding, but please check your PATH after completion."
 }
 
-# Source the environment installer
-source config/day/day_env_installer.sh DAY
-ret_code=$?
 
 # Handle build argument
 if [[ "$1" == "BUILD" && "$ret_code" != "0" ]]; then
-    source config/day/day_env_installer.sh DAY config/day/
-    ret_code=$?
+
+    # Source the environment installer
+    source config/day/day_env_installer.sh DAY
+    if [[ "$?" != "0" ]]; then
+        echo "Error: Failed to install the DAY environment."
+        return 1
+    else
+        echo "DAY environment installed successfully."
+        return 0
+    fi
+
 else
     if [[ "$1" =~ ^(-h|--help|help)$ ]]; then
         echo "Usage: day-build [BUILD]"
@@ -33,39 +39,5 @@ else
     fi
 fi
 
-# Source dyinit for local setup
-source dyinit local &> /dev/null
-
-# Check if 'colr' command is available
-if ! command -v colr &> /dev/null; then
-    if [[ "$ret_code" == "0" ]]; then
-        echo "SUCCESS! 'colr' package is missing; attempting to install it now."
-        pip install colr docopt
-    else
-        echo "ERROR: Command returned code $ret_code."
-        echo "Try running a test: 'day-activate local; day-run test-local -c 3 -j 2 seqqc'"
-        return $ret_code
-    fi
-elif [[ "$ret_code" == "919" ]]; then
-    echo "Warning: Command returned a non-passing state."
-    return 0
-else
-    if [[ "$ret_code" != "0" ]]; then
-
-    if [[ "$ret_code" != "0" ]]; then
-        source bin/util/col_error.bash
-        echo "ERROR: Something went wrong. Check the README for alternate install instructions."
-        return $ret_code
-    else
-        echo "GREAT SUCCESS!"
-        export PS1="$DYPS1 $PS1"
-        source dyinit local &> /dev/null
-        echo "Please start a new bash session and test the install:"
-        echo "  bash;"
-        echo "  source dyinit;"
-        echo "  dy-a local"
-        echo "  dy-r help"
-    fi
-fi
 
 return 0
