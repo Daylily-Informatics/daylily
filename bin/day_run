@@ -3,81 +3,55 @@
 export SNAKEMAKE_SINGULARITY_CMD="apptainer"
 
 if [[ -z "$DAY_ROOT" || -z "$DAY_PROFILE" ]]; then
-    echo "ERROR: 'day-activate' needs to have been run prior to 'day-run'."
+    colr "ERROR: . dayiniy && day-activate [local|slurm] needs to have been run prior to day-run."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     exit 33
 fi
 
-mkdir -p cluster_logs/drmaa_logs &> /dev/null
-echo 'go' > cluster_logs/drmaa_logs/hold.please
-echo 'on' > cluster_logs/get.moving
 
 # Check if we're in the correct root
-if [[ "$(pwd)" != "$DAY_ROOT"* && "$1" != "remote_mode" ]]; then
-    echo "ERROR: You are not in the correct DAY_ROOT."
-    echo "Detected: $(pwd)"
-    echo "Expected: $DAY_ROOT"
+if [[ "$(pwd)" != "$DAY_ROOT"* ]]; then
+    colr "|||<<<
+___________________
+
+    You are not in the correct DAY_ROOT
+
+    **>> DETECTED:     $PWD
+
+    **>> EXPECTED:     $DAY_ROOT
+
+    
+___________________
+
+    >>>|||" "$DY_ET0" "$DY_EB0" "$DY_ES1" 1>&2
+    echo ""
     echo "Please run 'day-deactivate' and 'day-activate' from the intended analysis deployment directory."
-    exit 44
+    exit 3
 fi
 
-# Verify profile directory exists
+
 profile_dir="$DAY_ROOT/config/day_profiles/$DAY_PROFILE"
 if [[ ! -d "$profile_dir" ]]; then
-    echo "ERROR: Profile directory '$profile_dir' does not exist."
+    colr "ERROR: Profile directory: $profile_dir does not exist." "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     echo "Have you run 'day-activate'?"
-    exit 67
+    exit 3
 fi
 
-# Create conda prefix directory if it doesn't exist
-conda_prefix_dir="/fsx/resources/environments/conda/$USER/$(hostname)"
-if [[ ! -d "$conda_prefix_dir" ]]; then
-    echo "Creating Conda prefix directory: $conda_prefix_dir"
-    mkdir -p "$conda_prefix_dir" || {
-        echo "ERROR: Failed to create Conda prefix directory."
-        exit 1
-    }
-    chmod a+wrx "/fsx/resources/environments/conda/$USER"
-    chmod a+wrx "/fsx/resources/environments/container/$USER"
-    chown -R "$USER:$USER" "/fsx/resources/environments/conda/$USER"
-    chown -R "$USER:$USER" "/fsx/resources/environments/container/$USER"
-fi
 
-# Initialize profile configuration files
-profile_files=("$profile_dir/rule_config_lowcov.yaml" "$profile_dir/cluster.yaml" "$profile_dir/rule_config.yaml")
-templates=("$profile_dir/templates/rule_config_lowcov.yaml" "$profile_dir/templates/cluster.yaml" "$profile_dir/templates/rule_config.yaml")
+if [[ ! -f "config/day_profiles/$DAY_PROFILE/rule_config_lowcov.yaml" && ! -f "config/day_profile/$DAY_PROFILE/cluster.yaml"  && ! -f "config/day_profiles/$DAY_PROFILE/rule_config.yaml" ]]; then
+    sleep 0.1
+elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -nt  "config/day_profiles/$DAY_PROFILE/rule_config_lowcov.yaml" || "config/day_profiles/$DAY_PROFILE/templates/cluster.yaml" -nt "config/day_profiles/$DAY_PROFILE/cluster.yaml" || "config/day_profiles/$DAY_PROFILE/templates/config.yaml" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/rule_config.yaml" -nt "config/day_profiles/$DAY_PROFILE/rule_config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/profile.info" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" ]]; then
+    source bin/util/profile_freshness_warn.bash $profile_dir
+else
+    colr "Your config files in $profile_dir are newer than the templates. clear 2 go." "$DY_WT1" "$DY_WB2" "$DY_WS1 " 1>2
+    sleep 0.1
+fi;
 
-for i in "${!profile_files[@]}"; do
-    if [[ ! -f "${profile_files[i]}" || "${templates[i]}" -nt "${profile_files[i]}" ]]; then
-        echo "Copying template files to active config files in $profile_dir"
-        cp "$profile_dir/templates/"*yaml "$profile_dir/" || {
-            echo "ERROR: Failed to copy template files."
-            exit 48
-        }
-        break
-    fi
-done
-
-# Replace placeholders in config files
-re_safe_mgr=$(echo "$DAY_ROOT" | sed "s/\//\\\\\//g")
-sed -i "s/.DAY_ROOT\/c/$re_safe_mgr\/c/g" "$profile_dir/"*yaml
-bn=$(basename "$profile_dir" | sed 's/-/\\-/g')
-sed -i "s/BASENAME_REGSUB/$bn/g" "$profile_dir/"*yaml
-u="$USER"
-sed -i "s/USER_REGSUB/$u/g" "$profile_dir/"*yaml
-hn="$HOSTNAME"
-sed -i "s/HOSTNAME/$hn/g" "$profile_dir/"*yaml
-
-# Unlock snakemake on exit
-trap 'snakemake --unlock --profile "$profile_dir" &>> ./unlock_fails.log &' EXIT
-
-# Display help if requested
-if [[ "$1" =~ ^(-h|--help|help)$ || -z "$@" ]]; then
-    echo "For help, please run: dy-r help"
-    exit 2
-fi
 
 # Build the snakemake command
 snakecmd=("snakemake" "--profile=$profile_dir" "$@")
+
+# This ensures the snakedir is unlocked after a crash or successful exit 0
+trap "(snakemake --unlock --profile $DAY_ROOT/config/day_profiles/$DAY_PROFILE  &>> ./unlock_fails.log & ) & " EXIT
 
 # Log the command
 cmd_log="$PWD/day_cmd.log"
