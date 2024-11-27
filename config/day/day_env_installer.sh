@@ -46,7 +46,7 @@ if [[ "$SHELL" != "/bin/bash" ]]; then
 fi
 
 # Set the script directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config/day"
+SCRIPT_DIR=config/day/
 echo "Path to environment working directory is $SCRIPT_DIR"
 
 # Create .parallel directory if it doesn't exist
