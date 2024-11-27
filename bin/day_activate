@@ -3,6 +3,7 @@
 
 
 dayp="$1"
+gbuild="$2"
 echo "Requesting profile: $dayp"
 DP=$DAY_PROJECT
 
@@ -37,7 +38,7 @@ fi
 
 source bin/util/profile_freshness_warn.bash
 if [[ "$?" == "3" ]]; then
-    echo "ERROR: source bin/util/profile_freshness_warn.bash"
+    colr "ERROR: source bin/util/profile_freshness_warn.bash"  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     return 4
 fi
 
@@ -48,7 +49,7 @@ if [[ -f "$profile_info" ]]; then
     # Extract environment variables from profile.info
     env_val=$(grep 'env_var_val' "$profile_info" | cut -d ':' -f 2)
     if [[ "$env_val" != "$DAY_PROFILE" ]]; then
-        echo "ERROR: Profile '$1' does not match the expected environment variable value."
+        colr "ERROR: Profile '$1' does not match the expected environment variable value."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
         return 1
     fi
     env_script=$(grep 'env_script' "$profile_info" | cut -d ':' -f 2)
@@ -59,25 +60,32 @@ if [[ -f "$profile_info" ]]; then
     pe_ret_code=$?
     export DYPS1="$mgps1val"
 else
-    echo "ERROR: Profile '$1' not found."
+    colr "ERROR: Profile '$1' not found."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     return 1
 fi
 
 # Check for 'colr' command
 if ! command -v colr &> /dev/null; then
-    echo "ERROR: 'colr' package is missing. Things will probably work, but not look fabulous."
+    colr "ERROR: 'colr' package is missing. Things will probably work, but not look fabulous."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     sleep 2
 fi
 
 # Check for errors during activation
 if [[ "$pe_ret_code" != "0" ]]; then
     source bin/util/col_error.bash
-    echo "ERROR: Activation failed with return code $pe_ret_code."
-    echo ""
-    echo "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dyinit; day-activate local;'"
+    colr "ERROR: Activation failed with return code $pe_ret_code."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+    colr ""  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+    colr  "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dyinit; day-activate local;'"  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     return $pe_ret_code
 else
     conda activate DAY
+    conda_ret_code=$?
+
+    source bin/day_set_genome_build $gbuild
+    if [[ "$?" != "0" || "$conda_ret_code" != "0" ]]; then
+        colr  "ERROR: conda activate DAY -or- dy-b $gbuild have failed."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+        return 5
+    fi
     colr "       _______ GREAT SUCCESS _______       " "$DY_IT0" "$DY_IB0" "$DY_IS1"
     export PS1="$DYPS1$PS1"
 fi
