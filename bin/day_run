@@ -34,7 +34,7 @@ fi
 
 
 # Build the snakemake command
-snakecmd=("snakemake" "--profile=$profile_dir" "$@")
+snakecmd=("snakemake" "--profile=$DAY_PROFILE_DIR" "$@")
 
 # This ensures the snakedir is unlocked after a crash or successful exit 0
 trap "(snakemake --unlock --profile $DAY_PROFILE_DIR  &>> ./unlock_fails.log & ) & " EXIT
