@@ -41,21 +41,15 @@ except Exception as e:
         + "\n\nERROR ERROR.  \n\t\tCan Not Proceed: packages colr and docopt are missing.  Please install with 'pip install colr docopt.'"
     )
 
-# Check the genome_build is an allowable reference
-PERMITTED_REFCODES = ["b37",  "hg38"]
+# Get the genome build from the env
 
-if config['genome_build'] not in PERMITTED_REFCODES:
-   print(f"The entered config.conf GENOME BUILD CODE {config['genome_build']} is not permitted: {config['genome_build']}, acceptable values are: {PERMITTED_REFCODES} .", file=sys.stdout)
-   raise(f"The entered config.conf GENOME BUILD CODE {config['genome_build']} is not permitted: {config['genome_build']}, acceptable values are: {PERMITTED_REFCODES} .")
+config['genome_build'] = os.environ.get("DAY_GENOME_BUILD", "error")
+if config['genome_build'] == "error":
+    print(        "The genome build is not set.  Please run 'dy-g [b37|hg38]' ", file=sys.stdout)
+    raise Exception(        "The genome build is not set.  Please run 'day-activate' and 'day-build' from the intended analysis deployment directory.")
 config["ref_code"] = config["genome_build"]
+os.environ["DY_REF_CODE"] = config["ref_code"]
 
-
-if config["ref_code"] not in PERMITTED_REFCODES:
-    raise Exception(
-        f" The provided code does not match {PERMITTED_REFCODES} .... should not get here now as we default to b37 at the moment."
-    )
-else:
-    os.environ["DY_REF_CODE"] = config["ref_code"]
 config["supporting_data"]["supporting_files_conf"] = config["supporting_data"]["supporting_files_conf"].replace("XREF_CODEX", config["ref_code"])
 
 

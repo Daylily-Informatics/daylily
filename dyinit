@@ -256,6 +256,7 @@ alias dy-b="source bin/day_build"
 alias dy-d="source bin/day_deactivate"
 alias dy-r="bin/day_run"
 alias dy-h="echo hello"
+alias dy-g="source bin/day_set_genome_build"
 
 # Display help if requested
 if [[ "$1" =~ ^(-h|--help|help)$ ]]; then

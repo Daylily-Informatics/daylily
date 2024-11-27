@@ -90,6 +90,7 @@ if [[ "$1" != "activate" ]]; then
     unset DAY_BIOME
     unset DAY_CONTACT_EMAIL
     unset DAY_PROFILE_DIR
+    unset DAY_GENOME_BUILD
 
 fi
 
