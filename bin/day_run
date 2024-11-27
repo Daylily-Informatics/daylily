@@ -36,16 +36,7 @@ if [[ ! -d "$profile_dir" ]]; then
     exit 3
 fi
 
-
-if [[ ! -f "config/day_profiles/$DAY_PROFILE/rule_config_lowcov.yaml" && ! -f "config/day_profile/$DAY_PROFILE/cluster.yaml"  && ! -f "config/day_profiles/$DAY_PROFILE/rule_config.yaml" ]]; then
-    sleep 0.1
-elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -nt  "config/day_profiles/$DAY_PROFILE/rule_config_lowcov.yaml" || "config/day_profiles/$DAY_PROFILE/templates/cluster.yaml" -nt "config/day_profiles/$DAY_PROFILE/cluster.yaml" || "config/day_profiles/$DAY_PROFILE/templates/config.yaml" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/rule_config.yaml" -nt "config/day_profiles/$DAY_PROFILE/rule_config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/profile.info" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" ]]; then
-    source bin/util/profile_freshness_warn.bash $profile_dir
-else
-    colr "Your config files in $profile_dir are newer than the templates. clear 2 go." "$DY_WT1" "$DY_WB2" "$DY_WS1 " 1>2
-    sleep 0.1
-fi;
-
+source bin/util/profile_freshness_warn.bash $profile_dir
 
 # Build the snakemake command
 snakecmd=("snakemake" "--profile=$profile_dir" "$@")

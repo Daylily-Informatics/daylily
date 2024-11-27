@@ -2,15 +2,15 @@
 # This script is intended to be sourced, not executed directly.
 
 
-envi="$1"
-echo "Requesting environment: $envi"
+dayp="$1"
+echo "Requesting profile: $DAY_PROFILE"
 DP=${DAY_PROJECT:-""}
 
 # Attempt to deactivate any existing environment
 source bin/day_deactivate &> /dev/null 
 echo "Attempting to deactivate existing environments & re-init with --project $DP ."
 . dayinit --project $DP &> /dev/null
-
+export DAY_PROFILE=$dayp
 
 # Check if DAY_ROOT is set
 if [[ -z "$DAY_ROOT" ]]; then
@@ -27,18 +27,32 @@ if [[ "$1" =~ ^(-h|--help|help)$ ]]; then
     return 0
 fi
 
+export $DAY_PROFILE_DIR="$DAY_ROOT/config/day_profiles/$DAY_PROFILE"
+if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
+    colr "ERROR: Profile directory: $DAY_PROFILE_DIR does not exist." "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+    echo "Have you run 'day-activate'?"
+    return 3
+fi
+
+source bin/util/profile_freshness_warn.bash
+
+
+
 # Verify profile exists
 profile_info="$DAY_ROOT/config/day_profiles/$1/templates/profile.info"
 if [[ -f "$profile_info" ]]; then
     # Extract environment variables from profile.info
     env_val=$(grep 'env_var_val' "$profile_info" | cut -d ':' -f 2)
+    if [[ "$env_val" != "$DAY_PROFILE" ]]; then
+        echo "ERROR: Profile '$1' does not match the expected environment variable value."
+        return 1
+    fi
     env_script=$(grep 'env_script' "$profile_info" | cut -d ':' -f 2)
     mgps1val=$(grep 'terminal_abbreviation' "$profile_info" | cut -d ':' -f 2)
 
     # Source the environment script
     source "$env_script"
     ret_code=$?
-    export DAY_PROFILE="$env_val"
     export DYPS1="$mgps1val"
 else
     echo "ERROR: Profile '$1' not found."
