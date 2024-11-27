@@ -183,9 +183,40 @@ echo "Checking required policies for your AWS user/role..."
 check_policies "$caller_identity_arn" "role"
 if [[ ${#missing_policies[@]} -gt 0 ]]; then
     handle_warning "Missing required inline policies: ${missing_policies[*]}"
-else
-    echo "All required policies are attached."
 fi
+
+# check if the policy name
+#!/bin/bash
+
+# Set the AWS user name and policy name
+DY_POLICY_NAME="daylily-omics-analysis"
+
+# Check if the policy is attached to the user
+POLICY_CHECK=$(aws iam list-attached-user-policies --user-name "$AWS_CLI_USER" --query "AttachedPolicies[?PolicyName=='$DY_POLICY_NAME']" --output text)
+
+# If the policy is not attached, print a warning and prompt the user
+if [ -z "$POLICY_CHECK" ]; then
+    echo "WARNING: The policy '$DY_POLICY_NAME' is not attached to the user '$AWS_CLI_USER'."
+    echo "Please see the README 'Inline Policies' section for instructions on attaching the policy."
+    echo ""
+    echo "Do you want to proceed without attaching the policy (maybe you rolled your own)?"
+    echo "1) Proceed anyway"
+    echo "2) Exit"
+    read -p "Enter your choice (1 or 2): " CHOICE
+    
+    if [ "$CHOICE" -eq 1 ]; then
+        echo "Proceeding anyway..."
+    elif [ "$CHOICE" -eq 2 ]; then
+        echo "Exiting."
+        exit 1
+    else
+        echo "Invalid choice. Exiting."
+        exit 1
+    fi
+else
+    echo "The policy '$DY_POLICY_NAME' is attached to the user '$AWS_CLI_USER'. Proceeding..."
+fi
+
 
 # AWS Quota Check Function
 check_quota() {
