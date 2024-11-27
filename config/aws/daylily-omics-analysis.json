@@ -24,18 +24,13 @@
                 "iam:TagRole",
                 "iam:PutRolePolicy"
             ],
-            "Resource": [
-                "arn:aws:iam::AWS_ACCOUNT_ID:policy/*",
-                "arn:aws:iam::aws:policy/*",
-                "arn:aws:iam::AWS_ACCOUNT_ID:instance-profile/*",
-                "arn:aws:iam::AWS_ACCOUNT_ID:role/*",
-                "arn:aws:iam::*:role/aws-service-role/imagebuilder.amazonaws.com/AWSServiceRoleForImageBuilder"
-            ]
+            "Resource": "*"
         },
         {
             "Effect": "Allow",
             "Action": [
-                "cognito-idp:*"
+                "cognito-idp:*",
+                "servicequotas:GetServiceQuota"
             ],
             "Resource": "*"
         },

@@ -3,7 +3,7 @@
 emulate -L bash
 
 # Default configuration
-pass_on_warn=false  # Default for warnings causing failures
+pass_on_warn=''  # Default for warnings causing failures
 
 # Function to display help
 usage() {
@@ -76,6 +76,23 @@ if [[ "$AWS_PROFILE" != "$AWS_PROFILEIN" ]]; then
     echo "Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
     return 3  # Exit the function with an error status
 fi
+
+if [[ -z "$region_az" ]]; then
+    echo "Error: --region-az flag not set"
+    return 3  # Exit the function with an error status
+fi
+
+# Extract the last character
+az_char="${region_az: -1}"
+
+# Check if the last character is a letter
+if [[ "$az_char" =~ [a-zA-Z] ]]; then
+    echo "The last character of --region-az ${region_az} '$az_char' is a letter."
+else
+    echo "ERROR: The last character of --region-az ${region_az} '$az_char' is a NOT letter."
+    return 3  # Exit the function with an error status
+fi
+
 AWS_PROFILE=$AWS_PROFILE
 echo "YOOUR AWS_PROFILE IS NOW SET TO: $AWS_PROFILE"
 
@@ -83,8 +100,9 @@ echo "YOOUR AWS_PROFILE IS NOW SET TO: $AWS_PROFILE"
 handle_warning() {
     local message="$1"
     echo -e "WARNING: $message"
-    echo "If appropriate, consider setting --pass-on-warn to continue without failure."
-    if ! $pass_on_warn; then
+    echo "If appropriate, consider setting --pass-on-warn to continue without failure. -$pass_on_warn-"
+    if [[ "$pass_on_warn" == "" ]]; then
+        echo "exiting"
         return 3
     fi
 }
@@ -130,6 +148,10 @@ aver='2.22.4'
 aws_version=$(aws --version --profile $AWS_PROFILE 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
 if [[ "$aws_version" != "$aver" ]]; then
     handle_warning "Warning: Expected AWS CLI version $aver, but found version $aws_version."
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to install the AWS CLI. Exiting."
+        return 3
+    fi
 fi
 
 # Ensure pcluster is installed
@@ -137,6 +159,10 @@ echo "Checking pcluster version..."
 pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
 if [[ "$pcluster_version" != "3.11.1" ]]; then
     handle_warning "Warning: Expected pcluster version 3.11.1, but found version $pcluster_version."
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to install the AWS CLI. Exiting."
+        return 3
+    fi
 fi
 
 ### AWS Configuration Setup
@@ -156,37 +182,7 @@ AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text  --pr
 
 # Get AWS caller identity
 caller_identity_arn=$(aws sts get-caller-identity --query 'Arn' --output text --region "$region"  --profile $AWS_PROFILE )
-required_policies=("pcluster-omics-analysis-fleet")
 
-# Check policies function
-check_policies() {
-    local entity_name="$1"
-    local entity_type="$2"
-    local policies=()
-
-    if [[ "$entity_type" == "user" ]]; then
-        policies=$(aws iam list-user-policies --user-name "$entity_name" --query 'PolicyNames' --output text --region "$region"  --profile $AWS_PROFILE )
-    else
-        policies=$(aws iam list-role-policies --role-name "$entity_name" --query 'PolicyNames' --output text --region "$region"  --profile $AWS_PROFILE )
-    fi
-
-    for policy_name in "${required_policies[@]}"; do
-        if ! echo "$policies" | grep -wq "$policy_name"; then
-            missing_policies+=("$policy_name")
-        fi
-    done
-}
-echo ""
-
-# IAM policy check (continue on warning for root users)
-echo "Checking required policies for your AWS user/role..."
-check_policies "$caller_identity_arn" "role"
-if [[ ${#missing_policies[@]} -gt 0 ]]; then
-    handle_warning "Missing required inline policies: ${missing_policies[*]}"
-fi
-
-# check if the policy name
-#!/bin/bash
 
 # Set the AWS user name and policy name
 DY_POLICY_NAME="daylily-omics-analysis"
@@ -194,7 +190,7 @@ DY_POLICY_NAME="daylily-omics-analysis"
 # Check if the policy is attached to the user
 POLICY_CHECK=$(aws iam list-attached-user-policies --user-name "$AWS_CLI_USER" --query "AttachedPolicies[?PolicyName=='$DY_POLICY_NAME']" --output text)
 
-# If the policy is not attached, print a warning and prompt the user
+## If the policy is not attached, print a warning and prompt the user
 if [ -z "$POLICY_CHECK" ]; then
     echo "WARNING: The policy '$DY_POLICY_NAME' is not attached to the user '$AWS_CLI_USER'."
     echo "Please see the README 'Inline Policies' section for instructions on attaching the policy."
@@ -202,20 +198,24 @@ if [ -z "$POLICY_CHECK" ]; then
     echo "Do you want to proceed without attaching the policy (maybe you rolled your own)?"
     echo "1) Proceed anyway"
     echo "2) Exit"
-    read -p "Enter your choice (1 or 2): " CHOICE
-    
+
+    # Print the prompt and then read the input
+    echo -n "Enter your choice (1 or 2): "
+    read CHOICE
+
     if [ "$CHOICE" -eq 1 ]; then
         echo "Proceeding anyway..."
     elif [ "$CHOICE" -eq 2 ]; then
         echo "Exiting."
-        exit 1
+        return 3 2>/dev/null || exit 3
     else
         echo "Invalid choice. Exiting."
-        exit 1
+        return 3 2>/dev/null || exit 3
     fi
 else
     echo "The policy '$DY_POLICY_NAME' is attached to the user '$AWS_CLI_USER'. Proceeding..."
 fi
+
 
 
 # AWS Quota Check Function
@@ -237,6 +237,10 @@ check_quota() {
 
     if (( $(echo "$quota_value < $recommended_count" | bc -l) )); then
         handle_warning "Warning: $resource_name quota is below the recommended $recommended_count. Current quota: $quota_value."
+        if [[ $? -ne 0 ]]; then
+            echo "quota check failed"
+            return 3
+        fi
     else
         echo "$resource_name quota is sufficient: $quota_value."
     fi
@@ -248,28 +252,45 @@ echo "Performing AWS quota checks..."
 
 # Dedicated Instances
 check_quota "Spot vCPU Max" "L-1216C47A" 20 ec2
+if [[ $? -ne 0 ]]; then
+    return 3
+fi
 echo ""
 
 # Spot vCPU Max Quota 
-check_quota "Spot vCPU Max" "L-34B43A08" 310 ec2
+check_quota "Spot vCPU Max" "L-34B43A08" 208 ec2
+if [[ $? -ne 0 ]]; then
+    return 3
+fi
 echo ""
 
 # VPC Quota (Default: 5 per region)
 check_quota "VPCs" "L-F678F1CE" 4 vpc
+if [[ $? -ne 0 ]]; then
+    return 3
+fi
 echo ""
 
 # Elastic IP Quota (Default: 5 per region)
 check_quota "Elastic IPs" "L-0263D0A3" 4 ec2
-echo ""
+if [[ $? -ne 0 ]]; then
+    return 3
+fiecho ""
 
 # NAT Gateway Quota (Default: 5 per AZ)
 check_quota "NAT Gateways" "L-FE5A380F" 4 vpc
+if [[ $? -ne 0 ]]; then
+    return 3
+fi
 echo ""
 
 # Internet Gateway Quota (Default: 5 per region)
 check_quota "Internet Gateways" "L-A4707A72" 4 vpc
-
+if [[ $? -ne 0 ]]; then
+    return 3
+fi
 echo ""
+
 
 AWS_CLI_USER=$(aws sts get-caller-identity --region $region --profile $AWS_PROFILE --query "Arn" --output text | awk -F '/' '{print $2}')
 
