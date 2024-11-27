@@ -3,11 +3,11 @@
 bucket=$1
 # Define the source and destination paths
 REF_PATH="daylily2:daylily-references-public/cluster_boot_config/"
-ACTIVE_PATH="daylily2:daylily4-omics-analysis-us-west-2/cluster_boot_config/"
+ACTIVE_PATH="daylily2:daylily5-omics-analysis-us-west-2/cluster_boot_config/"
 
 # List of files to copy
 FILES=(
-    "sbatch"
+    "xxx"
 )
 
 # Iterate over the files and copy each one using rclone
