@@ -61,7 +61,7 @@ echo "SMK> D:$cmddt / U:$USER / PWD:$PWD / CMD: (${snakecmd[*]})" >> "$cmd_log"
 
 # Run snakemake command
 colr "Executing: ${snakecmd[*]}"  "$DY_IT0" "$DY_IB0" "$DY_IS1"  1>&2
-"${snakecmd[@]}"
+$snakecmd
 ret_code=$?
 
 colr "RETURN CODE: $ret_code" "$DY_IB0" "$DY_IT0" "$DY_IS0" 1>&2
