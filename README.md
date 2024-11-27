@@ -39,16 +39,20 @@ _this is a title rough idea! - not likely final, but is the gist of it_
 > - The (_onetime_) cost of staging data is ~$20, analysis will be ` ~$3.00 to $5.00 ` (pricing is established dynamically at cluster creation, and you can inspect the max bound on spot prices which are possible, this sets your upper bound... as does complexity of pipeline, but more on that latter).
 
 **Time to result, Cost of analysis, Accuracy && Integrated Concordance/Comparison**: These are key elements required in making solid analysis decisions, and in setting the stage for analysis decisions which can improve in tandem as the field advances. 
+
 **Cost Optimization & Predictability**:  With benchmarked, reproducible analysis on stable and reproducible computing platforms, it is possible to optimze for the most beneficial compute locale && to predict expected (and bound highest) per-sample cost to analyze.
+
 **Cost Transparency & Management**:  IRT views into what is being spent, and where.  Not just compute, but data transfer, sroage, and other _ALL_ other costs. No specialized hardware investment needed, no contracts, pay for what you use. 
+
 **Pro Open Source**: All out of the box functionality here is open source, and does not require any investment in software liscneces, etc. This is important for both future proof reproducibility and ongoing cost management. This said, daylily is not hostile to s/w that requires liscences (if selection of closed s/w is made understanding tradeoffs, if any, in long term reproducibility), but you will need to purchase those separately.
+
 - https://github.com/aws/aws-parallelcluster makes the cluster creation/management possible.
 - snakemake
 - all the tools!
 
-  <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff00ff><img src="docs/images/000000.png" valign="bottom" ></a></p>
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff00ff><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
-  <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 # Installation -- PREREQUISITES
 
