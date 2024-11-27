@@ -50,9 +50,9 @@ _this is a title rough idea! - not likely final, but is the gist of it_
 - snakemake
 - all the tools!
 
-  <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff00ff><img src="docs/images/000000.png" valign="bottom" ></a></p>
+<p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff00ff><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
-  <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 # Installation -- PREREQUISITES
 
