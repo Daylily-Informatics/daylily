@@ -69,25 +69,26 @@ LOFREQ_CHRMS = config["lofreq2"][f"{config['genome_build']}_lofreq_chrms"].split
 # presently, 1+ aligners may run, but all must use the same deduper
 
 
+# Handle aligners
 ALIGNERS = []
 if 'aligners' not in config:
     print("WARNING: No aligners set in the config.", file=sys.stderr)
 else:
-
-    ALIGNERS = sorted(set([] if 'aligners' not in config or config['aligners'] == None else config["aligners"]))
-    ## PRINT INFO
+    ALIGNERS = sorted(set([] if config.get('aligners') is None else config["aligners"]))
+    # PRINT INFO
     os.system(
-        f"""colr 'aligners:{ALIGNERS}  "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2;"""
+        f"""colr 'aligners: {ALIGNERS}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2"""
     )
 
+# Handle dedupers
 DDUP = []
 if 'dedupers' not in config:
     print("WARNING: No dedupers set in the config.", file=sys.stderr)
 else:
-    DDUP = sorted(set([] if 'dedupers' not in config or config['dedupers'] == None else config["dedupers"]))
-    ## PRINT INFO
+    DDUP = sorted(set([] if config.get('dedupers') is None else config["dedupers"]))
+    # PRINT INFO
     os.system(
-        f"""colr  deduper:{DDUP}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2;"""
+        f"""colr 'deduper: {DDUP}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2"""
     )
 
 snv_CALLERS = []
