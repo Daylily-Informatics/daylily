@@ -34,7 +34,7 @@ if [[ ! -f "$DAY_PROFILE_DIR/rule_config.yaml" && ! -f "$DAY_PROFILE_DIR/config.
     hn="$HOSTNAME"
     sed -i "s/HOSTNAME/$hn/g" "$profile_dir/"*yaml
 
-elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -nt  "config/day_profiles/$DAY_PROFILE/rule_config_lowcov.yaml" || "config/day_profiles/$DAY_PROFILE/templates/cluster.yaml" -nt "config/day_profiles/$DAY_PROFILE/cluster.yaml" || "config/day_profiles/$DAY_PROFILE/templates/config.yaml" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/rule_config.yaml" -nt "config/day_profiles/$DAY_PROFILE/rule_config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/profile.info" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" ]]; then
+elif [[  "config/day_profiles/$DAY_PROFILE/templates/profile_env.bash" -nt  "config/day_profiles/$DAY_PROFILE/profile_env.bash" || "config/day_profiles/$DAY_PROFILE/templates/cluster.yaml" -nt "config/day_profiles/$DAY_PROFILE/cluster.yaml" || "config/day_profiles/$DAY_PROFILE/templates/config.yaml" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/rule_config.yaml" -nt "config/day_profiles/$DAY_PROFILE/rule_config.yaml" || "config/day_profiles/$DAY_PROFILE/templates/profile.info" -nt "config/day_profiles/$DAY_PROFILE/config.yaml" ]]; then
 
 
     echo " "
@@ -72,10 +72,35 @@ elif [[  "config/day_profiles/$DAY_PROFILE/templates/rule_config_lowcov.yaml" -n
     colr "    so the new template files can be copied there. Or  " "$DY_ET2" "$DY_EB1" "$DY_ES2"
     colr "    2) Keep the active local copies.  You may touch    " "$DY_ET2" "$DY_EB1" "$DY_ES2"
     colr "    them to avoid this error:                          " "$DY_ET2" "$DY_EB1" "$DY_ES2"
-    colr "touch $profile_dir/*.yaml " "$DY_IT0" "$DY_IB1" "$DY_IS2"
+    colr "touch $profile_dir/* " "$DY_IT0" "$DY_IB1" "$DY_IS2"
     colr "     will keep the files and avoid this warning/block. " "$DY_ET2" "$DY_EB1" "$DY_ES2"
     echo " "
     echo " "
+    
+    echo "Please select:"
+
+    echo "1) Remove the active config files."
+    echo "2) touch the active config files"."
+    echo "3) Exit."
+
+    read -p "Enter your choice (1 , 2 or 3): " choice
+
+    case $choice in
+        1)
+            rm $profile_dir/* 
+            echo "Active config files have been removed."
+            ;;
+        2)
+            touch $profile_dir/*
+            echo "Active config files have been touched."
+            ;;
+        3)
+            echo "Exiting."
+            ;;
+        *)
+            echo "Invalid choice. Please choose 1 , 2 , 3"
+            ;;
+    esac
     return 3
 
 
