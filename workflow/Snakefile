@@ -46,9 +46,6 @@ try:
     print(f"loading global: {wd}/config/global_{mg_biome}.yaml", file=sys.stderr)
     configfile: f"config/global_{mg_biome}.yaml"
 
-    print(f"loading profile config: {wd}/config/global_{mg_biome}.yaml", file=sys.stderr)
-    configfile: f"config/day_profiles/{mg_profile}/config.yaml"
-
     
     print(f"loading profile rule_config: {wd}/config/day_profiles/{mg_profile}/rule_config.yaml", file=sys.stderr)
     configfile: f"config/day_profiles/{mg_profile}/rule_config.yaml"

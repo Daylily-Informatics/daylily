@@ -70,6 +70,9 @@ LOFREQ_CHRMS = config["lofreq2"][f"{config['genome_build']}_lofreq_chrms"].split
 
 
 # Handle aligners
+
+from IPython import embed
+embed()
 ALIGNERS = []
 if 'aligners' not in config:
     print("WARNING: No aligners set in the config.", file=sys.stderr)
