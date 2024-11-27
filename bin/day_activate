@@ -3,7 +3,7 @@
 
 
 dayp="$1"
-echo "Requesting profile: $DAY_PROFILE"
+echo "Requesting profile: $dayp"
 DP=$DAY_PROJECT
 
 # Attempt to deactivate any existing environment
