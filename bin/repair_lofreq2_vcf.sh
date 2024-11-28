@@ -13,10 +13,10 @@ prefix=$3
 sample=$4
 
 # Temporary files
-temp_full="temp_full.vcf"
-temp_header="temp_header.vcf"
-temp_body="temp_body.vcf"
-temp_vcf="$prefix.vcf"
+temp_full="${prefix}_temp_full.vcf"
+temp_header="${prefix}_temp_header.vcf"
+temp_body="${prefix}_temp_body.vcf"
+temp_vcf="${prefix}.vcf"
 
 # Step 1: Decompress VCF if needed and split into header and body
 if [[ $calls_vcf == *.gz ]]; then
