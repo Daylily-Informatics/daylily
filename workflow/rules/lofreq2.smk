@@ -154,7 +154,7 @@ rule lofreq2_sort_index_chunk_vcf:
         """
         tdir=$(dirname {input.vcf})/_fixvcf/;
         mkdir -p $tdir;
-        bash bin/repair_lofreq2_vcf.sh {input.vcf}  {output.tmpvcf}  $(dirname $tdir {params.cluster_sample} >> {log} 2>&1;
+        bash bin/repair_lofreq2_vcf.sh {input.vcf}  {output.tmpvcf}   $tdir {params.cluster_sample} >> {log} 2>&1;
         (bedtools sort -header -i {output.tmpvcf} > {output.vcfsort}) >> {log} 2>&1;
 
         bgzip {output.vcfsort} >> {log} 2>&1;        
