@@ -41,6 +41,14 @@ if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
     return 3
 fi
 
+
+conda activate DAY
+conda_ret_code=$?
+if [[ "$conda_ret_code" != "0" ]]; then
+    colr "ERROR: conda activate DAY failed with return code $conda_ret_code."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+    return 4
+fi
+
 source bin/util/profile_freshness_warn.bash
 if [[ "$?" == "3" ]]; then
     colr "ERROR: source bin/util/profile_freshness_warn.bash"  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
@@ -83,8 +91,7 @@ if [[ "$pe_ret_code" != "0" ]]; then
     colr  "Have you run 'day-build'? If so, try 'bin/day_deactivate reset; source dyinit; day-activate local;'"  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
     return $pe_ret_code
 else
-    conda activate DAY
-    conda_ret_code=$?
+
 
     gbuild_ret_code=0
     if [[ "$gbuild" != "" ]]; then
@@ -94,8 +101,8 @@ else
         colr "Skipping genome build activation."  "$DY_WI1" "$DY_IB2" "$DY_IS1" 1>&2
     fi
 
-    if [[ "$gbuild_ret_code" != "0" || "$conda_ret_code" != "0" ]]; then
-        colr  "ERROR: conda activate ($conda_ret_code) DAY -or- dy-g $gbuild ($gbuild_ret_code) have failed." "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+    if [[ "$gbuild_ret_code" != "0" ]]; then
+        colr  "ERROR:  dy-g $gbuild ($gbuild_ret_code)  failed." "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
         return 5
     fi
     colr "       _______ GREAT SUCCESS _______       " "$DY_IT0" "$DY_IB0" "$DY_IS1"
