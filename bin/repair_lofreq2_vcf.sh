@@ -66,12 +66,12 @@ cat temp_corrected_header.vcf temp_corrected_body.vcf > $temp_vcf
 
 perl -pi -e 's/^\n//g;' $temp_vcf
 
-mv $temp_vcf $output_vcf
+cp $temp_vcf $output_vcf
 
 #bgzip $output_vcf
 #tabix $output_vcf.gz
 
 # Cleanup
-rm -f $temp_full $temp_header $temp_body chrom_header.tmp metadata_header.tmp temp_corrected_header.vcf temp_corrected_body.vcf
+#rm -f $temp_full $temp_header $temp_body chrom_header.tmp metadata_header.tmp temp_corrected_header.vcf temp_corrected_body.vcf
 
 echo "Fixed VCF written to: $output_vcf"
