@@ -16,28 +16,38 @@ if [[ -z "$AWS_PROFILE" ]]; then
 fi
 
 if [[ -z "$EXPORT_PATH" ]]; then
-    echo "Error: <export_pathh> is not set."
+    echo "Error: <export_path> is not set."
     exit 1
 fi
 
 # FSx File System ID
-FSX_ID=$(./bin/daylily-return-fsx-filesystem-for-cluster  $cluster_name $region)
+#FSX_ID=$(./bin/daylily-return-fsx-filesystem-for-cluster  $cluster_name $region)
+read FSX_ID IMPORT_S3 EXPORT_S3 <<<$(./bin/daylily-return-fsx-filesystem-for-cluster $cluster_name $region)
 
+echo "FSX_ID: $FSX_ID"
+echo "IMPORT_PATH: $IMPORT_S3"
+echo "EXPORT_PATH: $EXPORT_S3"
+if [[ -z "$FSX_ID" || -z "$IMPORT_S3" || -z "$EXPORT_S3" ]]; then
+    echo "Error: Failed to retrieve FSx details. Check the cluster name and region."
+    exit 1
+fi
 
 # Polling interval (seconds)
-POLL_INTERVAL=30
+POLL_INTERVAL=15
 
 # Start the export task
 echo "Starting FSx export task for directory: ${EXPORT_PATH}"
-aws fsx create-data-repository-task \
+
+TASK_ID=$(aws fsx create-data-repository-task \
     --profile "$AWS_PROFILE" \
     --region "$region" \
     --file-system-id "${FSX_ID}" \
     --type EXPORT_TO_REPOSITORY \
     --paths "${EXPORT_PATH}" \
+    --report "Enabled=true,Path=${EXPORT_S3}/export-report,Format=REPORT_CSV_20191124,Scope=FAILED_FILES_ONLY" \
     --query "DataRepositoryTask.TaskId" \
-    --report Enabled=true,Path=/$EXPORT_PATH,Format=REPORT_CSV_20191124,Scope=FAILED_FILES \
-    --output text
+    --output text)
+    
 
 if [[ -z "${TASK_ID}" ]]; then
     echo "Error: Failed to create data repository task."
@@ -54,11 +64,17 @@ while true; do
         --profile "$AWS_PROFILE" \
         --region "$region" \
         --query "DataRepositoryTasks[0].Lifecycle" \
-        --output text)
+        --output text 2>/dev/null)
+
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to describe task status. Retrying..."
+        sleep "${POLL_INTERVAL}"
+        continue
+    fi
 
     echo "Task ${TASK_ID} is currently in state: ${TASK_STATUS}"
 
-    if [[ "${TASK_STATUS}" == "COMPLETED" ]]; then
+    if [[ "${TASK_STATUS}" == "SUCCEEDED" ]]; then
         echo "Task ${TASK_ID} completed successfully."
         exit 0
     elif [[ "${TASK_STATUS}" == "FAILED" || "${TASK_STATUS}" == "CANCELED" ]]; then
@@ -69,3 +85,5 @@ while true; do
     echo "Waiting ${POLL_INTERVAL} seconds before checking again..."
     sleep "${POLL_INTERVAL}"
 done
+
+echo "...fin"

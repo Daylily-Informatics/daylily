@@ -18,7 +18,16 @@ FSX_IDS=$(aws fsx describe-file-systems \
     --region "$REGION" \
     --query "FileSystems[?contains(Tags[?Key=='parallelcluster:cluster-name'].Value | [0], '$CLUSTER_NAME')].FileSystemId" \
     --output text)
+ 
+
+IMPORT_EXPORT=$(aws fsx describe-file-systems \
+    --profile "$AWS_PROFILE" \
+    --region "$REGION" \
+    --query "FileSystems[].LustreConfiguration.DataRepositoryConfiguration.[ImportPath, ExportPath]" \
+    --output text )
+
+
 
 # Output the FSx IDs
 echo "FSx IDs associated with cluster '$CLUSTER_NAME':" >&2
-echo "$FSX_IDS"
+echo -e "$FSX_IDS\t"$IMPORT_EXPORT
