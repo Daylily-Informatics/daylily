@@ -3,6 +3,8 @@
 
 dayp="$1"  # Profile code [loal|slurm]
 gbuild="$2" # genome build code [hg38|b37]
+remote_call="$3" # remote call flag
+
 echo "Requesting profile: $dayp"
 DP=$DAY_PROJECT
 
@@ -16,8 +18,6 @@ source bin/day_deactivate &> /dev/null
 echo "Attempting to deactivate existing environments & re-init with --project $DP ."
 . dyinit --project $DP --deactivate &> /dev/null
 export DAY_PROFILE=$dayp
-
-source ~/.bashrc
 
 
 # Check if DAY_ROOT is set
@@ -41,9 +41,11 @@ if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
     echo "Have you run 'day-activate'?"
     return 3
 fi
- 
- . "/home/ubuntu/miniconda3/etc/profile.d/conda.sh"
 
+if [[ "$remote_call" == "remote" ]]; then
+    echo "Remote call detected. Activating conda hack"
+     . "/home/ubuntu/miniconda3/etc/profile.d/conda.sh"
+fi
 
 conda activate DAY
 conda_ret_code=$?
