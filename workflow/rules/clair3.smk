@@ -223,6 +223,7 @@ rule clair3_concat_index_chunks:
         touch {log};
         mkdir -p $(dirname {log});
 
+        # This is acceptable bc I am concatenating from the same tools output, not across tools
         bcftools concat -n --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
 
