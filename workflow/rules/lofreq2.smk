@@ -92,11 +92,11 @@ rule lofreq2:
             else config["lofreq2"]["bench_repeat"],
         )
     params:
-        dchrm=get_lofreq_chrm,
         cluster_sample=ret_sample,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
         mem_mb=config['lofreq2']['mem_mb'],
+        dchrm=get_lofreq_chrm,
         cpre="" if "b37" == config['genome_build'] else "chr",
     shell:
         """
@@ -147,11 +147,14 @@ rule lofreq2_sort_index_chunk_vcf:
         partition=config['lofreq2']['partition'],
     params:
         cluster_sample=ret_sample,
+        dchrm=get_lofreq_chrm,
+        cpre="" if "b37" == config['genome_build'] else "chr",
     threads: config['lofreq2']['threads']
     shell:
         """
-
-        bash bin/repair_lofreq2_vcf.sh {input.vcf}  {output.tmpvcf}  $(dirname {input.vcf})/_fixvcf {params.cluster_sample} >> {log} 2>&1;
+        tdir=$(dirname {input.vcf})/_fixvcf/;
+        mkdir -p $tdir;
+        bash bin/repair_lofreq2_vcf.sh {input.vcf}  {output.tmpvcf}  $(dirname $tdir {params.cluster_sample} >> {log} 2>&1;
         (bedtools sort -header -i {output.tmpvcf} > {output.vcfsort}) >> {log} 2>&1;
 
         bgzip {output.vcfsort} >> {log} 2>&1;        
