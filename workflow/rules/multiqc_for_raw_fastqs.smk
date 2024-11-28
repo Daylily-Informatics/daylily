@@ -13,14 +13,11 @@ ss_ex = EX[0]
 ss_ru = RU[0]
 
 
-rule multiqc_for_raw_fastqs:
+rule multiqc_for_raw_fastqs: 
     """https://github.com/ewels/MultiQC"""
     input:
-        #MDIR+"logs/seqfu.done",
-	#        expand(MDIR + "{sample}/seqqc/fastv/{sample}.fastv.html", sample=SAMPS),
         expand(MDIR + "{sample}/seqqc/fastqc/{sample}.fastqc.done", sample=SAMPS),
-        #expand(MDIR + "{sample}/seqqc/kat/{sample}.kat.done", sample=SAMPS),
-        #expand(MDIR + "{sample}/seqqc/fastp/{sample}.fastp.done", sample=SAMPS),
+	    f"{MDIR}other_reports/rules_benchmark_data_mqc.tsv",
     output:
         MDIRreportsd + "SEQQC_multiqc.html",
     benchmark:
