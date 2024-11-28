@@ -180,13 +180,8 @@ if len(samples) > 0:
 
 # Strip out Unclassified unless directed not to
 if "keep_undetermined" in config:
-    os.system(
-        f'(colr " --config keep_undetermined=1 is set. Undetermined reads will be included." "$DY_IT2" "$DY_IB2" "$DY_IS2" 1>&2; sleep {config["warn_err_sleep"]})'
-    )
+    pass
 else:
-    os.system(
-        f'(colr "NOTE! NOTE !! NOTE !!! ---- The Undetermined Sample Is Excluded. Set --config keep_undetermined=1 to process it." "$DY_IT1" "$DY_IB1" "$DY_IS1" 1>&2; sleep {config["warn_err_sleep"]})'
-    )
     new_samples = samples.query("SQ != 'Undetermined'")
     samples = new_samples
 

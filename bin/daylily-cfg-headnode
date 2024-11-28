@@ -144,18 +144,19 @@ echo " "
 echo "Setup complete. "
 
 echo " "
-echo "Would you like to remotely launch the cluster test analysis (in a detached tmux session you can access latter)? [y/n]"
-read -r -p "Your response: " REPLY
+echo "Would you like to remotely launch the cluster test analysis vs (in a detached tmux session you can access later)? [y/n]"
+read REPLY
 if [[ "$REPLY" == "y" ]]; then
     echo "Launching the cluster test analysis in a tmux session..."
-    session_name="cluster_test_$(date +%s)"  # Unique tmux session name
+    session_name="cluster_test_$(date +%s)" 
     ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-        "tmux new-session -d -s $session_name \
-        '(source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_activate local hg38 remote && ./bin/day_run produce_snv_concordances -p -k -j 2 --config aligners=['strobe','bwa2a'] dedupers=['dppl'] snv_callers=['deep'] ) && echo \"Session completed.\"'" && \
+        "tmux new-session -d -s \"$session_name\" \
+        'bash -c \"source ~/.bashrc && cd ~/projects/daylily && source dyinit --project daylily-global && source bin/day_activate local hg38 remote && ./bin/day_run produce_snv_concordances -p -k -j 2 --config aligners=[strobe,bwa2a] dedupers=[dppl] snv_callers=[deep]\"'" && \
     echo "Tmux session '$session_name' started on the remote server."
     echo "You can monitor the session using the following command:"
     echo "ssh -i \"$pem_file\" ubuntu@\"$cluster_ip_address\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 'tmux attach-session -t $session_name'"
 fi
+
 
 echo " "
 
