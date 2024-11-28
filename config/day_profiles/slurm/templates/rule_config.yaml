@@ -13,34 +13,30 @@ valid_biome: AWSPC
 
 # ###### Tool Selection CONFIG ----------------------------------------
 
-
-
-# ###### Tool Selection CONFIG ----------------------------------------
-
-
 # these may be set on the command line as --config aligners=['bwa2a','sent','strobe']  dedupers=['dppl']  snv_callers=['oct','clair3','deep','sentd','lfq2'] sv_callers=['manta','tiddit','dysgu']
+
 # and will override these defaults
 
-# #### Select one to all of the available SNV callers
-aligners:
-    - bwa2a
+# Or set these here
+#aligners:
+#    - bwa2a
 #    - sent 
 #    - strobe
 
-dedupers:
-    - dppl
+#dedupers:
+#    - dppl
 
-snv_callers:
-    - deep
+#snv_callers:
+#    - deep
 #    - oct
 #    - clair3
 #    - sentd
 #    - lfq2
 
-sv_callers:
-    - tiddit
-    - manta
-    - dysgu
+#sv_callers:
+#    - tiddit
+#    - manta
+#    - dysgu
 #    - svaba
 
 
