@@ -45,7 +45,8 @@ fi
 conda_wcmd=$(which conda 2>/dev/null)  # Attempt to find 'conda' in PATH
 conda_cmd=${conda_wcmd:-~/miniconda3/condabin/conda}  # Use 'conda_wcmd' if not empty, otherwise default
 
-echo $(which conda)
+echo "conda where" $(which conda)
+echo "SHELL: $SHELL"
 $conda_cmd activate DAY
 conda_ret_code=$?
 if [[ "$conda_ret_code" != "0" ]]; then
