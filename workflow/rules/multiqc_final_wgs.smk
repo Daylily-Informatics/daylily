@@ -85,6 +85,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         gbranch=config["gitbranch"],
         gtag=config["gittag"],
         cluster_sample=f"multiqc_final",
+        cemail=config["day_contact_email"],
     log:
         f"{MDIR}reports/logs/all__mqc_fin_a.log",
     conda:
@@ -98,8 +99,6 @@ rule multiqc_final_wgs:  # TARGET: the big report
 
         size=$(du -hs results | cut -f1) >> {log} 2>&1;
         perl -pi -e "s/REGSUB_TOTALSIZE/$size/g;" $(dirname {output})/multiqc_header.yaml >> {log} 2>&1;
-
-        sed -i "s/REGSUB_EMAIL/${{DAY_CONTACT_EMAIL//@/\\\\@}}/g" $(dirname {output})/multiqc_header.yaml >> {log} 2>&1;
 
         source bin/proc_spot_price_logs.sh >> {log} 2>&1;
         perl -pi -e "s/REGSUB_SPOTCOST/median: \\\$dbill$MEDIAN_SPOT_PRICE  mean: \\\$dbill$AVERAGE_SPOT_PRICE ( avg cost per vcpu,per min: \\\$dbill$VCPU_COST_PER_MIN ) /g;" $(dirname {output})/multiqc_header.yaml >> {log} 2>&1;
