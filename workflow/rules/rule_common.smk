@@ -204,20 +204,7 @@ for s in samples["sample"]:
             except Exception as e:
                 print(e, file=sys.stderr)
 
-
-# Set some informational items in the config dict
-config["gittag"] = os.popen("git tag | tail -n 1 2>&1").readline().rstrip()
-config["githash"] = (
-    os.popen("git  --git-dir .git rev-parse --short HEAD").readline().rstrip()
-)
-config["gitbranch"] = os.popen("git branch | grep '*'").readline().rstrip()
-cwd = os.path.abspath(".")
-config["cwd"] = os.path.abspath(".")
-config["sub_user"] = (
-    "n/a"
-    if str(os.environ.get("USER")) in ["", None, "None"]
-    else str(os.environ.get("USER"))
-)
+ 
 
 # added to cluster name to uniquely identify sets of jobs from the same snakemake execution
 ri2 = random.randint(0, 999)
