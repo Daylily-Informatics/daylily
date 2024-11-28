@@ -15,7 +15,7 @@ config['tmpsub'] = random.randint(1,10000000)
 
 # #### MIN VERSION CHECK Snakemake
 # --------------------------------
-min_version("6.0.0")
+min_version("6.0.0") # I started this A LONG time ago!
 
 
 ## DEPRECATE BIOME STUFF
@@ -31,18 +31,23 @@ else:
     )
 
 
-# Colr, if missing... add it
-try:
-    if int(os.popen("colr --version | wc -l").readline().rstrip()) != 1:
-        os.system("pip install colr docopt")
-except Exception as e:
-    raise (
-        str(e)
-        + "\n\nERROR ERROR.  \n\t\tCan Not Proceed: packages colr and docopt are missing.  Please install with 'pip install colr docopt.'"
-    )
+# Set some informational items in the config dict
+config["gittag"] = os.popen("git describe --tags --abbrev=0").readline().rstrip()
+config["githash"] = (
+    os.popen("git  --git-dir .git rev-parse --short HEAD").readline().rstrip()
+)
+config["gitbranch"] = os.popen("git branch | grep '*'").readline().rstrip()
+cwd = os.path.abspath(".")
+config["cwd"] = os.path.abspath(".")
+config["sub_user"] = (
+    "n/a"
+    if str(os.environ.get("USER")) in ["", None, "None"]
+    else str(os.environ.get("USER"))
+)
+
+config["day_contact_email"] = os.environ.get("DAY_CONTACT_EMAIL", "no-email-set-in-dyinit")
 
 # Get the genome build from the env
-
 config['genome_build'] = os.environ.get("DAY_GENOME_BUILD", "error")
 if config['genome_build'] == "error":
     print(        "The genome build is not set.  Please run 'dy-g [b37|hg38]' ", file=sys.stdout)

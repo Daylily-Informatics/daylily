@@ -118,7 +118,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         --template default \
         --filename {output} \
         -i 'Final Multiqc Report' \
-        -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH):{params.ghash}) ' \
+        -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH:{params.ghash}) ' \
         $(dirname {input} )/../ >> {log} 2>&1;
         ls -lt {output}  >> {log} 2>&1;
         """
