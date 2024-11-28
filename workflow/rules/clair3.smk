@@ -111,7 +111,7 @@ rule clair3_sort_index_chunk_vcf:
         vcf=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf.gz"
     priority: 46
     output:
-        vcfsort=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf",
+        vcfsort=temp(MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf"),
         vcfgz=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf.gz",
         vcftbi=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf.gz.tbi",
     conda:
@@ -127,13 +127,11 @@ rule clair3_sort_index_chunk_vcf:
     threads: 4
     shell:
         """
-        (rm  {output} 1>  /dev/null  2> /dev/null )  || echo rmfailed > {log};
         (bcftools sort -O v -o {output.vcfsort} {input.vcf} 2>> {log}) || exit 1233;
         (
         bgzip {output.vcfsort};        
         touch {output.vcfsort};
         tabix -f -p vcf {output.vcfgz};
-        touch {output.vcftbi};
         ) >> {log} 2>&1;
         
         ls {output} >> {log} 2>&1 ;

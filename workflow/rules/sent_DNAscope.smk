@@ -116,7 +116,7 @@ rule sentD_sort_index_chunk_vcf:
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.vcf",
     priority: 46
     output:
-        vcfsort=touch(MDIR
+        vcfsort=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf"),
         vcfgz=touch(MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz"),
@@ -140,7 +140,8 @@ rule sentD_sort_index_chunk_vcf:
         bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
         
         bgzip {output.vcfsort} >> {log} 2>&1;
-        
+        touch {output.vcsort};
+
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
         
         """

@@ -133,8 +133,8 @@ rule oct_sort_index_chunk_vcf:
         + "{sample}/align/{alnr}/snv/oct/vcfs/{ochrm}/{sample}.{alnr}.oct.{ochrm}.snv.vcf",
     priority: 46
     output:
-        vcfsort=MDIR
-        + "{sample}/align/{alnr}/snv/oct/vcfs/{ochrm}/{sample}.{alnr}.oct.{ochrm}.snv.sort.vcf",
+        vcfsort=temp(MDIR
+        + "{sample}/align/{alnr}/snv/oct/vcfs/{ochrm}/{sample}.{alnr}.oct.{ochrm}.snv.sort.vcf"),
         vcfgz=MDIR
         + "{sample}/align/{alnr}/snv/oct/vcfs/{ochrm}/{sample}.{alnr}.oct.{ochrm}.snv.sort.vcf.gz",
         vcftbi=MDIR
@@ -156,7 +156,8 @@ rule oct_sort_index_chunk_vcf:
         bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
         
         bgzip {output.vcfsort} >> {log} 2>&1;
-        
+        touch {output.vcsort};
+
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
         
         """
