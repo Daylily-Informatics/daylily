@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+cluster_name=$1
+region=$2
+EXPORT_PATH=$3
+EXPORT_PATH=$(echo "$EXPORT_PATH" | sed 's|^/*\(.*\)/*$|\1|')
+
+if [[ -z "$cluster_name" || -z "$region" ]]; then
+    echo "Usage: $0 <cluster_name> <region> <export_path:analysis_results>"
+    exit 1
+fi
+
+if [[ -z "$AWS_PROFILE" ]]; then
+    echo "Error: AWS_PROFILE is not set."
+    exit 1
+fi
+
+if [[ -z "$EXPORT_PATH" ]]; then
+    echo "Error: <export_pathh> is not set."
+    exit 1
+fi
+
+# FSx File System ID
+FSX_ID=$(./bin/daylily-return-fsx-filesystem-for-cluster  $cluster_name $region)
+
+
+# Polling interval (seconds)
+POLL_INTERVAL=30
+
+# Start the export task
+echo "Starting FSx export task for directory: ${EXPORT_PATH}"
+aws fsx create-data-repository-task \
+    --profile "$AWS_PROFILE" \
+    --region "$region" \
+    --file-system-id "${FSX_ID}" \
+    --type EXPORT_TO_REPOSITORY \
+    --paths "${EXPORT_PATH}" \
+    --query "DataRepositoryTask.TaskId" \
+    --report Enabled=true,Path=/$EXPORT_PATH,Format=REPORT_CSV_20191124,Scope=FAILED_FILES \
+    --output text
+
+if [[ -z "${TASK_ID}" ]]; then
+    echo "Error: Failed to create data repository task."
+    exit 1
+fi
+
+echo "Export task started with Task ID: ${TASK_ID}"
+
+
+# Monitor the task status
+while true; do
+    TASK_STATUS=$(aws fsx describe-data-repository-tasks \
+        --task-ids "${TASK_ID}" \
+        --profile "$AWS_PROFILE" \
+        --region "$region" \
+        --query "DataRepositoryTasks[0].Lifecycle" \
+        --output text)
+
+    echo "Task ${TASK_ID} is currently in state: ${TASK_STATUS}"
+
+    if [[ "${TASK_STATUS}" == "COMPLETED" ]]; then
+        echo "Task ${TASK_ID} completed successfully."
+        exit 0
+    elif [[ "${TASK_STATUS}" == "FAILED" || "${TASK_STATUS}" == "CANCELED" ]]; then
+        echo "Task ${TASK_ID} failed or was canceled."
+        exit 1
+    fi
+
+    echo "Waiting ${POLL_INTERVAL} seconds before checking again..."
+    sleep "${POLL_INTERVAL}"
+done

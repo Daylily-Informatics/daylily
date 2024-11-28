@@ -75,28 +75,35 @@ LOFREQ_CHRMS = config["lofreq2"][f"{config['genome_build']}_lofreq_chrms"].split
 
 ALIGNERS = []
 if 'aligners' not in config:
-    print("WARNING: No aligners set in the config.", file=sys.stderr)
+    
+    os.system(
+        f'''colr "WARNING: No aligners set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
+    )
 else:
     ALIGNERS = sorted(set([] if config.get('aligners') is None else config["aligners"]))
     # PRINT INFO
     os.system(
-        f"""colr 'aligners: {ALIGNERS}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2"""
+        f"""colr 'aligners: {ALIGNERS}' "$DY_WT1" "$DY_B1" "$DY_WS1" 1>&2;"""
     )
 
 # Handle dedupers
 DDUP = []
 if 'dedupers' not in config:
-    print("WARNING: No dedupers set in the config.", file=sys.stderr)
+    os.system(
+        f'''colr "WARNING: No dedupers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
+    )
 else:
     DDUP = sorted(set([] if config.get('dedupers') is None else config["dedupers"]))
     # PRINT INFO
     os.system(
-        f"""colr 'deduper: {DDUP}' "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2"""
+        f"""colr 'deduper: {DDUP}' "$DY_WT1" "$DY_B1" "$DY_WS1" 1>&2;"""
     )
 
 snv_CALLERS = []
 if 'snv_callers' not in config:
-    print("WARNING: No snv_callers set in the config.", file=sys.stderr)
+     os.system(
+        f'''colr "WARNING: No snv_callers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
+     )
 else:
     snv_CALLERS = sorted(set([] if 'snv_callers' not in config or config['snv_callers'] == None else config["snv_callers"]))
     ## PRINT INFO
@@ -106,7 +113,9 @@ else:
 
 sv_CALLERS = []
 if 'sv_callers' not in config:
-    print("WARNING: No sv_callers set in the config.", file=sys.stderr)
+     os.system(
+        f'''colr "WARNING: No sv_callers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
+     )
 else:
     sv_CALLERS = sorted(set([] if 'sv_callers' not in config or config['sv_callers'] == None else config["sv_callers"]))
     ## PRINT INFO
