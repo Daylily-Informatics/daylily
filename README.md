@@ -542,8 +542,8 @@ dy-g hg38
 
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
 
-dy-r produce_deduplicated_bams -p -j 2 -n # dry run
-dy-r produce_deduplicated_bams -p -j 2 
+dy-r produce_deduplicated_bams -p -j 2 --config aligners=['bwa2a','sent'] dedupers=['dppl'] -n # dry run
+dy-r produce_deduplicated_bams -p -j 2 --config aligners=['bwa2a','sent'] dedupers=['dppl'] 
 ```
 
 ###### More On The `-j` Flag
@@ -603,7 +603,7 @@ dy-g hg38
 head -n 2 .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv > config/analysis_manifest.csv
 
 # run the test, which will auto detect the analysis_manifest.csv file & will run this all via slurm
-dy-r produce_snv_concordances -p -k -j 3 -n
+dy-r produce_snv_concordances -p -k -j 2 --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n
 ```
 
 Which will produce a plan that looks like
@@ -630,7 +630,7 @@ total                            59              1            192
 
 Run the test with
 ```bash
-dy-r produce_snv_concordances -p -k -j 6  #  -j 6 will run 6 jobs in parallel max, which is done here b/c the test data runs so quickly we do not need to spin up one spor instance per deepvariant job & since 3 dv jobs can run on a 192 instance, this flag will limit creating only  2 instances at a time.
+dy-r produce_snv_concordances -p -k -j 6  --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] #  -j 6 will run 6 jobs in parallel max, which is done here b/c the test data runs so quickly we do not need to spin up one spor instance per deepvariant job & since 3 dv jobs can run on a 192 instance, this flag will limit creating only  2 instances at a time.
 ```
 
 note1: the first time you run a pipeline, if the docker images are not cached, there can be a delay in starting jobs as the docker images are cached. They are only pulled 1x per cluster lifetime, so subsequent runs will be faster.
@@ -659,13 +659,13 @@ dy-g hg38
 # TO create a single sample manifest
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv > config/analysis_manifest.csv
 
-dy-r produce_snv_concordances -p -k -j 10 -n  # dry run
+dy-r produce_snv_concordances -p -k -j 10 --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n  # dry run
 
-dy-r produce_snv_concordances -p -k -j 10 # run jobs, and wait for completion
+dy-r produce_snv_concordances -p -k -j 10  --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] # run jobs, and wait for completion
 ```
 
 
-##### Specify A Multi-Sample Manifest (in this case, all 7 GIAB samples)
+##### Specify A Multi-Sample Manifest (in this case, all 7 GIAB samples) - 2 aligners, 1 deduper, 2 snv callers
 ```bash
 
 tmux new -s slurm_test_30x_multi
@@ -683,9 +683,16 @@ dy-g hg38
 # copy full 30x giab sample template to config/analysis_manifest.csv
 cp .test_data/data/giab_30x_hg38_analysis_manifest.csv  config/analysis_manifest.csv
 
-dy-r produce_snv_concordances -p -k -j 10 -n  # dry run
+dy-r produce_snv_concordances -p -k -j 10 --config aligners=['strobe,'bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep'] -n  # dry run
 
-dy-r produce_snv_concordances -p -k -j 10 # run jobs, and wait for completion
+dy-r produce_snv_concordances -p -k -j 10 --config aligners=['strobe','bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep'] 
+
+```
+
+###### The Whole Magilla (3 aligners, 1 deduper, 5 snv callers, 3 sv callers)
+
+```bash
+dy-r produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce_kat produce_multiqc_final_wgs -p -k -j 2 --config aligners=['strobe','bwa2a','sent'] dedupers=['dppl'] snv_callers=['oct','sentd','deep','clair3','lfq2'] sv_callers=['tiddit','manta','dysgu'] -n
 ```
 
 #### Monitor Slurm Submitted Jobs
