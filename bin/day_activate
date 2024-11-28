@@ -17,7 +17,7 @@ echo "Attempting to deactivate existing environments & re-init with --project $D
 . dyinit --project $DP --deactivate &> /dev/null
 export DAY_PROFILE=$dayp
 
-. ~/.bashrc
+source ~/.bashrc
 
 
 # Check if DAY_ROOT is set
@@ -42,8 +42,11 @@ if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
     return 3
 fi
 
+conda_wcmd=$(which conda 2>/dev/null)  # Attempt to find 'conda' in PATH
+conda_cmd=${conda_wcmd:-~/miniconda3/condabin/conda}  # Use 'conda_wcmd' if not empty, otherwise default
+
 echo $(which conda)
-$(which conda) activate DAY
+$conda_cmd activate DAY
 conda_ret_code=$?
 if [[ "$conda_ret_code" != "0" ]]; then
     colr "ERROR: conda activate DAY failed with return code $conda_ret_code."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
