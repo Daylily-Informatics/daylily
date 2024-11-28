@@ -44,7 +44,7 @@ fi
 
 if [[ "$remote_call" == "remote" ]]; then
     echo "Remote call detected. Activating conda hack"
-    . "~/miniconda3/etc/profile.d/conda.sh"
+    . "$HOME/miniconda3/etc/profile.d/conda.sh"
     export DAY_REMOTE_EXE="remote"
 else
     unset DAY_REMOTE_EXE

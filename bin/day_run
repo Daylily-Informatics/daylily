@@ -12,7 +12,7 @@ export TEMP=$TMPDIR
 
 if [[ "$DAY_REMOTE_EXE" == "remote" ]]; then
     echo "Remote call detected. Activating conda hack"
-    . "~/miniconda3/etc/profile.d/conda.sh"
+    . "$HOME/miniconda3/etc/profile.d/conda.sh"
 fi
 
 if [[ -z "$DAY_ROOT" || -z "$DAY_PROFILE" || -z "$DAY_PROFILE_DIR" ]]; then
