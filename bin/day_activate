@@ -41,13 +41,11 @@ if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
     echo "Have you run 'day-activate'?"
     return 3
 fi
+ 
+ . "/home/ubuntu/miniconda3/etc/profile.d/conda.sh"
 
-conda_wcmd=$(which conda 2>/dev/null)  # Attempt to find 'conda' in PATH
-conda_cmd=${conda_wcmd:-~/miniconda3/condabin/conda}  # Use 'conda_wcmd' if not empty, otherwise default
-$conda_cmd init
-echo "conda where" $(which conda)
-echo "SHELL: $SHELL"
-$conda_cmd activate DAY
+
+conda activate DAY
 conda_ret_code=$?
 if [[ "$conda_ret_code" != "0" ]]; then
     colr "ERROR: conda activate DAY failed with return code $conda_ret_code."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
