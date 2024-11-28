@@ -1,0 +1,128 @@
+#!/bin/zsh
+
+# Daylily Headnode Configuration Script
+
+# Ensure the script is sourced, not executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "This script should be sourced, not executed directly. Please use 'source THISSCRIPT' to run."
+    exit 1
+fi
+
+# Capture arguments for PEM file and region
+pem_file=$1
+region=$2
+aws_profile=$3
+duser="ubuntu"
+
+# Ensure both PEM file and region are provided
+if [[ -z "$pem_file" || -z "$region" || -z "$aws_profile" ]]; then
+    echo "Error: You must provide both the PEM file path and the AWS region."
+    echo "Usage: source $0 /path/to/pem_file region profile"
+    return 1
+fi
+ 
+AWS_PROFILE=$aws_profile
+
+# List available clusters in the specified region
+echo "Clusters detected in region $region:"
+cluster_names=$(pcluster list-clusters --region $region | grep clusterName | awk '{print $2}' | cut -d '"' -f 2)
+
+# Check if there are any clusters detected
+if [[ -z "$cluster_names" ]]; then
+    echo "Error: No clusters found in region $region."
+    return 1
+fi
+# Convert detected cluster names into an array
+cluster_array=()
+while IFS= read -r cluster_name; do
+    cluster_array+=("$cluster_name")
+done <<< "$cluster_names"
+
+# Auto-select if there is only one cluster, otherwise prompt for selection
+if [[ ${#cluster_array[@]} -eq 1 ]]; then
+    selected_cluster=$cluster_array
+    echo "Only one cluster found: $selected_cluster. Auto-selecting it."
+else
+    echo "Select a cluster name:"
+    select selected_cluster in "${cluster_array[@]}"; do
+        if [[ -n "$selected_cluster" ]]; then
+            echo "You selected: $selected_cluster"
+            break
+        else
+            echo "Invalid selection, please try again."
+        fi
+    done
+fi
+cluster_name=$selected_cluster
+
+
+# Get the public IP address of the cluster's head node
+cluster_ip_address=$(pcluster describe-cluster-instances -n "$cluster_name" --region "$region" \
+    | grep publicIpAddress | perl -p -e 's/[ |"|,]//g;' | cut -d ':' -f 2)
+
+if [[ -z "$cluster_ip_address" ]]; then
+    echo "Error: Could not retrieve the public IP address of the cluster."
+    return 1
+fi
+
+echo "Cluster $cluster_name's public IP is $cluster_ip_address."
+echo " "
+
+# List available PEM files in the .ssh directory
+echo "Detected PEM files in ~/.ssh:"
+ls -1 ~/.ssh/*.pem
+
+# If PEM file is not provided as an argument, prompt the user
+if [[ -z "$pem_file" ]]; then
+    echo "Enter the full absolute path to your PEM file:"
+    read pem_file
+fi
+
+# Ensure the PEM file exists
+if [[ ! -f "$pem_file" ]]; then
+    echo "Error: PEM file '$pem_file' does not exist."
+    return 1
+fi
+
+
+
+
+# a quick test to confirm things are running as expected locally on the headnode
+echo "Run a quick test to ensure things are working as expected... [local run]"
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
+    "source ~/.bashrc && cd ~/projects/daylily && source dyinit --project daylily-global && source bin/day_activate local hg38 remote && ./bin/day_run  produce_deduplicated_bams -p -k -j 2 --config aligners=['strobe'] dedupers=['dppl']  "
+
+
+# Provide final instructions for SSH access to the head node
+echo "Reminder::: You can now SSH into the head node with the following command:"
+echo "        ssh -i $pem_file ubuntu@$cluster_ip_address"
+echo " "
+
+echo "Would you like to remotely launch a workflow w/in a tmux session on the headnode? [y/n]"
+
+read REPLY
+if [[ "$REPLY" == "y" ]]; then
+
+    session_name="cluster_test_$(date +%s)"  
+    ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+        "tmux new-session -d -s \"$session_name\" \
+        \"bash -c 'source ~/.bashrc && cd ~/projects/daylily && source dyinit --project daylily-global && source bin/day_activate slurm hg38 remote && ./bin/day_run produce_snv_concordances -p -k -j 2 --config aligners=[\\\"strobe\\\",\\\"bwa2a\\\"] dedupers=[\\\"dppl\\\"] snv_callers=[\\\"deep\\\"]; bash'\"" && \
+    echo "Tmux session >>> '$session_name' <<< started on the remote server."
+    echo "You can monitor the session using the following command:"
+    echo "ssh -i \"$pem_file\" ubuntu@\"$cluster_ip_address\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 'tmux attach-session -t $session_name'"
+    echo "... or alternatively, you can SSH into the head node ( ssh -i $pem_file ubuntu@$cluster_ip_address )a, nd run ( tmux attach-session -t $session_name ) to monitor the session."
+fi
+
+
+echo " "
+echo "PLACEHOLDER -- EXAMPLE OF REMOTE SUBMITTING A WORFLOW FROM A LOCAL SAMPLE SHEET"
+echo " "
+
+echo ""
+echo "again, you may now access the headnode via the PCUI, via 'source bin/daylily-ssh-into-headnode', or SSH into the head node with the following command:"
+echo "        ssh -i $pem_file ubuntu@$cluster_ip_address"
+echo " "
+echo "ALERT! - REMEMBER TO EXPORT YOUR FSX LUSTRE FILESYSTEM analysis_results BACK TO S3 BEFORE DELETING THE CLUSTER - "
+echo "to help w/this, you can run ( bin/daylily-export-fsx-to-s3 ) "
+echo " "
+echo "...fin"
