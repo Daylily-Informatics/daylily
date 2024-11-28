@@ -63,7 +63,7 @@ rule aggregate_report_components:
     output:
         f"{MDIR}logs/report_components_aggregated.done",
     shell:
-        "touch {output};"
+        "touch {output};" 
 
 
 rule multiqc_final_wgs:  # TARGET: the big report
@@ -83,6 +83,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         fnamef=f"DAY_final_multiqc.html",
         ghash=config["githash"],
         gbranch=config["gitbranch"],
+        gtag=config["gittag"],
         cluster_sample=f"multiqc_final",
     log:
         f"{MDIR}reports/logs/all__mqc_fin_a.log",
