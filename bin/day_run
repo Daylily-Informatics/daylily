@@ -13,6 +13,7 @@ export TEMP=$TMPDIR
 if [[ "$DAY_REMOTE_EXE" == "remote" ]]; then
     echo "Remote call detected. Activating conda hack"
     . "$HOME/miniconda3/etc/profile.d/conda.sh"
+    export PATH="/home/ubuntu/miniconda3/bin:$PATH"
     conda activate DAY
 fi
 
