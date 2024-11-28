@@ -42,8 +42,8 @@ if [[ ! -d "$DAY_PROFILE_DIR" ]]; then
     return 3
 fi
 
-
-conda activate DAY
+echo $(which conda)
+$(which conda) activate DAY
 conda_ret_code=$?
 if [[ "$conda_ret_code" != "0" ]]; then
     colr "ERROR: conda activate DAY failed with return code $conda_ret_code."  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
