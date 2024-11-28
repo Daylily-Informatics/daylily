@@ -112,13 +112,13 @@ ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no 
 # Run a simple help test for Daylily remotely
 echo "Running a simple help test on the head node..."
 ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local && source bin/day_run help'"
+    "sudo su - $duser -c '. ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local hg38 && ./bin/day_run  help -p'"
 
 
 # start building the minimal cached envs
 echo "Building the minimal cached environments ..."
 ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local && source bin/day_run --conda-create-envs-only produce_snv_concordances produce_tiddit  '"
+    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local hg38 &&  bash bin/day_run produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce_kat produce_multiqc_final_wgs -p -k -j 2 --config aligners=[\'strobe\',\'bwa2a\',\'sent\'] dedupers=[\'dppl\'] snv_callers=[\'oct\',\'sentd\',\'deep\',\'clair3\',\'lfq2\'] sv_callers=[\'tiddit\',\'manta\',\'dysgu\']  --conda-create-envs-only '"
 
 
 
