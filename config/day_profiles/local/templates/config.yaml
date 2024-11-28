@@ -1,5 +1,5 @@
 ---
-latency-wait: 77
+latency-wait: 5
 keep-remote: true
 use-conda: true
 conda-frontend: conda
