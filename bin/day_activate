@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # This script is intended to be sourced, not executed directly.
-. ~/.bashrc
 
 dayp="$1"  # Profile code [loal|slurm]
 gbuild="$2" # genome build code [hg38|b37]
@@ -17,6 +16,8 @@ source bin/day_deactivate &> /dev/null
 echo "Attempting to deactivate existing environments & re-init with --project $DP ."
 . dyinit --project $DP --deactivate &> /dev/null
 export DAY_PROFILE=$dayp
+
+. ~/.bashrc
 
 
 # Check if DAY_ROOT is set
