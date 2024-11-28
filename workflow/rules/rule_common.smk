@@ -123,7 +123,6 @@ else:
 
 
 
-
 if "analysis_manifest" in config:
     os.system(
         """colr  '     _____ COMMAND LINE ANALYSIS MANIFEST SET. This will be copied to config/analysis_manifest.csv, and this copy used' "$DY_WT0" "$DY_WB0" "$DY_WS1"  """
@@ -143,7 +142,12 @@ if "analysis_manifest" in config:
             )
 else:
     default_analysis_manifest = config[f"{config['genome_build']}_analysis_manifest"]
-    if os.path.exists(default_analysis_manifest):
+    if os.path.exists("config/analysis_manifest.csv"):
+        os.system(
+            f"""colr '     _____ EXISTING ANALYSIS MANIFEST FILE DETECTED: config/analysis_manifest.csv --  this will be used' "$DY_WT0" "$DY_WB0" "$DY_WS1"  """
+        )
+        os.system('sleep 1')
+    elif os.path.exists(default_analysis_manifest):
         os.system(f"cp {default_analysis_manifest} config/analysis_manifest.csv")
         os.system(f"echo '{str(dtm.datetime.now())}\t{default_analysis_manifest}' >> config/analysis_manifest.log")
 

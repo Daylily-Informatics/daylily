@@ -692,7 +692,8 @@ dy-r produce_snv_concordances -p -k -j 10 --config aligners=['strobe','bwa2a'] d
 ###### The Whole Magilla (3 aligners, 1 deduper, 5 snv callers, 3 sv callers)
 
 ```bash
-dy-r produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce_kat produce_multiqc_final_wgs -p -k -j 2 --config aligners=['strobe','bwa2a','sent'] dedupers=['dppl'] snv_callers=['oct','sentd','deep','clair3','lfq2'] sv_callers=['tiddit','manta','dysgu'] -n
+max_snakemake_tasks_active_at_a_time=2 # for local headnode, maybe 400 for a full cluster
+dy-r produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce_kat produce_multiqc_final_wgs -p -k -j $max_snakemake_tasks_active_at_a_time --config aligners=['strobe','bwa2a','sent'] dedupers=['dppl'] snv_callers=['oct','sentd','deep','clair3','lfq2'] sv_callers=['tiddit','manta','dysgu'] -n
 ```
 
 #### Monitor Slurm Submitted Jobs
