@@ -111,8 +111,8 @@ rule dv_sort_index_chunk_vcf:
         + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.vcf",
     priority: 46
     output:
-        vcfsort=temp(MDIR
-        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf"),
+        vcfsort=MDIR
+        + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf",
         vcfgz=MDIR
         + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.{alnr}.deep.{dvchrm}.snv.sort.vcf.gz",
         vcftbi=MDIR

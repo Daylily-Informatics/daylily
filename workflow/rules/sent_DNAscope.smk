@@ -116,7 +116,7 @@ rule sentD_sort_index_chunk_vcf:
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.vcf",
     priority: 46
     output:
-        vcfsort=temp(MDIR
+        vcfsort=touch(MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf"),
         vcfgz=touch(MDIR
         + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.{alnr}.sentd.{dchrm}.snv.sort.vcf.gz"),

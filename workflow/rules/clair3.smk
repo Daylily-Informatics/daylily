@@ -111,7 +111,7 @@ rule clair3_sort_index_chunk_vcf:
         vcf=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.vcf.gz"
     priority: 46
     output:
-        vcfsort=temp(MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf"),
+        vcfsort=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf",
         vcfgz=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf.gz",
         vcftbi=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.{alnr}.clair3.{clairchrm}.snv.sort.vcf.gz.tbi",
     conda:

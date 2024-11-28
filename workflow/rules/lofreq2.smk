@@ -133,8 +133,8 @@ rule lofreq2_sort_index_chunk_vcf:
         vcf=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.{alnr}.lfq2.{lfqchrm}.snv.vcf",
     priority: 46
     output:
-        tmpvcf=temp(MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.{alnr}.lfq2.{lfqchrm}.snv.tmp.vcf"),
-        vcfsort=temp(MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.{alnr}.lfq2.{lfqchrm}.snv.sort.vcf"),
+        tmpvcf=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.{alnr}.lfq2.{lfqchrm}.snv.tmp.vcf",
+        vcfsort=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.{alnr}.lfq2.{lfqchrm}.snv.sort.vcf",
         vcfgz=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.{alnr}.lfq2.{lfqchrm}.snv.sort.vcf.gz",
         vcftbi=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.{alnr}.lfq2.{lfqchrm}.snv.sort.vcf.gz.tbi",
     conda:
