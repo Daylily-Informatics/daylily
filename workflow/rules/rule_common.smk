@@ -77,7 +77,7 @@ ALIGNERS = []
 if 'aligners' not in config:
     
     os.system(
-        f'''colr "WARNING: No aligners set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
+        f'''colr "...WARNING: No aligners set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
     )
 else:
     ALIGNERS = sorted(set([] if config.get('aligners') is None else config["aligners"]))
@@ -90,7 +90,7 @@ else:
 DDUP = []
 if 'dedupers' not in config:
     os.system(
-        f'''colr "WARNING: No dedupers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
+        f'''colr "...WARNING: No dedupers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
     )
 else:
     DDUP = sorted(set([] if config.get('dedupers') is None else config["dedupers"]))
@@ -102,7 +102,7 @@ else:
 snv_CALLERS = []
 if 'snv_callers' not in config:
      os.system(
-        f'''colr "WARNING: No snv_callers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
+        f'''colr "...WARNING: No snv_callers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
      )
 else:
     snv_CALLERS = sorted(set([] if 'snv_callers' not in config or config['snv_callers'] == None else config["snv_callers"]))
@@ -113,8 +113,9 @@ else:
 
 sv_CALLERS = []
 if 'sv_callers' not in config:
+
      os.system(
-        f'''(echo -n "...") && (colr "WARNING: No sv_callers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2)'''
+        f'''colr "... WARNING: No sv_callers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
      )
 else:
     sv_CALLERS = sorted(set([] if 'sv_callers' not in config or config['sv_callers'] == None else config["sv_callers"]))
