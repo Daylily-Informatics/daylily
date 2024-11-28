@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # This script is intended to be sourced, not executed directly.
 
-
+return 3
+# fix file check
 dayp="$1"  # Profile code [loal|slurm]
 gbuild="$2" # genome build code [hg38|b37]
 echo "Requesting profile: $dayp"

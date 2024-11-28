@@ -66,7 +66,7 @@ rule multiqc_for_raw_fastqs:
         --custom-css-file config/external_tools/multiqc.css \
         --template default \
         --filename {output} \
-        -i 'Final Multiqc Report' \
+        -i 'FASTQ Multiqc Report' \
         -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH):{params.ghash}) ' \
         $(dirname {input} )/../ > {log} 2>&1;
         ls -lt {output};

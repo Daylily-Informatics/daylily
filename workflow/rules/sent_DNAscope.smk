@@ -137,18 +137,12 @@ rule sentD_sort_index_chunk_vcf:
     threads: 1 #config["config"]["sort_index_sentDna_chunk_vcf"]['threads']
     shell:
         """
-        (rm {output} 1>  /dev/null  2> /dev/null )  || echo rmfailed > {log};
-        (bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log}) || exit 1233;
-        (
-        bgzip {output.vcfsort};
+        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
         
-        touch {output.vcfsort};
-        tabix -f -p vcf {output.vcfgz};
-        touch {output.vcftbi};
-        {latency_wait};
-        ls {output}; ) > {log} 2>&1 ;
+        bgzip {output.vcfsort} >> {log} 2>&1;
         
-        {latency_wait};
+        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
+        
         """
 
 
@@ -182,8 +176,7 @@ rule sentD_concat_fofn:
         MDIR + "{sample}/align/{alnr}/snv/sentd/log/{sample}.{alnr}.sentd.cocncat.fofn.log",
     shell:
         """
-        (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFailOK >> {log} && ls ./ >> {log};
-        ### export LD_LIBRARY_PATH=$PWD/resources/libs/;
+
         for i in {input.chunk_tbi}; do
             ii=$(echo $i | perl -pe 's/\.tbi$//g'; );
             echo $ii >> {output.tmp_fofn};
@@ -228,14 +221,14 @@ rule sentD_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/sentd/log/{sample}.{alnr}.sentd.snv.merge.sort.gatherered.log",
     shell:
         """
-        (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFAIL;
-        touch {output.vcf};
+
+        touch {log};
         mkdir -p $(dirname {log});
-        ### export LD_LIBRARY_PATH=$PWD/resources/libs/;
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
-        bcftools view -O z -o {output.vcfgz} {output.vcf};
+
+        bcftools concat -n --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
-        rm -rf  $(dirname {output.vcf})/vcfs || echo 'rm failed!'; 
+
+        rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
 
         """
 

@@ -131,18 +131,12 @@ rule dv_sort_index_chunk_vcf:
     threads: 4 #config["config"]["sort_index_deepDna_chunk_vcf"]['threads']
     shell:
         """
-        (rm  {output} 1>  /dev/null  2> /dev/null )  || echo rmfailed > {log};
-        (bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log}) || exit 1233;
-        (
-        bgzip {output.vcfsort};        
-        touch {output.vcfsort};
-        tabix -f -p vcf {output.vcfgz};
-        touch {output.vcftbi};
-        ) >> {log} 2>&1;
-
-        ls {output} >> {log} 2>&1 ;
+        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
         
-        {latency_wait};
+        bgzip {output.vcfsort} >> {log} 2>&1;     
+        
+        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
+
         """
 
 
@@ -176,7 +170,6 @@ rule deep_concat_fofn:
         MDIR + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.deep.cocncat.fofn.log",
     shell:
         """
-        (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFailOK >> {log} && ls ./ >> {log};
 
         for i in {input.chunk_tbi}; do
             ii=$(echo $i | perl -pe 's/\.tbi$//g'; );
@@ -226,13 +219,13 @@ rule deep_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.deep.snv.merge.sort.gatherered.log",
     shell:
         """
-        (rm {output} 1> /dev/null  2> /dev/null ) || echo rmFAIL;
+        touch {log};
         mkdir -p $(dirname {log});
-        
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
-        bcftools view -O z -o {output.vcfgz} {output.vcf};
+
+        bcftools concat -n --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
-        {latency_wait}; > {log}
+
+        rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
         """
 
 

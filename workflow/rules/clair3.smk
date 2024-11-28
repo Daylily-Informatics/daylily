@@ -194,9 +194,6 @@ rule clair3_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.concat.vcf.gz.fofn",
         tmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.concat.vcf.gz.fofn.tmp",
     output:
-        vcf=temp(
-            MDIR + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.sort.vcf"
-        ),
         vcfgz=touch(
             MDIR + "{sample}/align/{alnr}/snv/clair3/{sample}.{alnr}.clair3.snv.sort.vcf.gz"
         ),
@@ -225,16 +222,13 @@ rule clair3_concat_index_chunks:
     shell:
         """
 
+        touch {log};
         mkdir -p $(dirname {log});
 
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O v -o {output.vcf};
-        bcftools view -O z -o {output.vcfgz} {output.vcf};
+        bcftools concat -n --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
 
-
-        rm -rf $(dirname {output.vcf})/vcfs >> {log} 2>&1;  # clean up all the crap
-        {latency_wait};
-        touch {log};
+        rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
         """
 
 localrules:
