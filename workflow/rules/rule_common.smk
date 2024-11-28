@@ -114,7 +114,7 @@ else:
 sv_CALLERS = []
 if 'sv_callers' not in config:
      os.system(
-        f'''echo -n '"..." && colr "WARNING: No sv_callers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
+        f'''echo -n "..." && colr "WARNING: No sv_callers set in the config." "$DY_WT1" "$DY_WB1" "$DY_WS1" 1>&2'''
      )
 else:
     sv_CALLERS = sorted(set([] if 'sv_callers' not in config or config['sv_callers'] == None else config["sv_callers"]))
