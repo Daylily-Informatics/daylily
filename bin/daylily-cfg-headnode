@@ -144,23 +144,21 @@ echo " "
 echo "Setup complete. "
 
 echo " "
-echo "Would you like to remotely launch the cluster test analysis vs (in a detached tmux session you can access later)? [y/n]"
+echo "___bonus round___"
+echo "Would you like to remotely launch a test using the slurm executor (this will be in a tmux session you can attach to on the headnode)? [y/n]"
 read REPLY
 if [[ "$REPLY" == "y" ]]; then
-    echo "Launching the cluster test analysis in a tmux session..."
-    session_name="cluster_test_$(date +%s)" 
+
+    session_name="cluster_test_$(date +%s)"  
     ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
         "tmux new-session -d -s \"$session_name\" \
-        'bash -c \"source ~/.bashrc && cd ~/projects/daylily && source dyinit --project daylily-global && source bin/day_activate local hg38 remote && ./bin/day_run produce_snv_concordances -p -k -j 2 --config aligners=[strobe,bwa2a] dedupers=[dppl] snv_callers=[deep]\"'" && \
-    echo "Tmux session '$session_name' started on the remote server."
+        \"bash -c 'source ~/.bashrc && cd ~/projects/daylily && source dyinit --project daylily-global && source bin/day_activate slurm hg38 remote && ./bin/day_run produce_snv_concordances -p -k -j 2 --config aligners=[\\\"strobe\\\",\\\"bwa2a\\\"] dedupers=[\\\"dppl\\\"] snv_callers=[\\\"deep\\\"]; bash'\"" && \
+    echo "Tmux session >>> '$session_name' <<< started on the remote server."
     echo "You can monitor the session using the following command:"
     echo "ssh -i \"$pem_file\" ubuntu@\"$cluster_ip_address\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 'tmux attach-session -t $session_name'"
 fi
-
-
-echo " "
-
-echo "You can now access the headnode via the PCUI, via 'source bin/daylily-ssh-into-headnode', or SSH into the head node with the following command:"
+echo ""
+echo "And, you may now access the headnode via the PCUI, via 'source bin/daylily-ssh-into-headnode', or SSH into the head node with the following command:"
 echo "        ssh -i $pem_file ubuntu@$cluster_ip_address"
 echo " "
 echo "fin"
