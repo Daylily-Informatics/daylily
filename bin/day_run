@@ -24,6 +24,12 @@ if [[ -z "$DAY_GENOME_BUILD" ]]; then
     exit 3
 fi
 
+source bin/util/profile_freshness_warn.bash
+if [[ "$?" == "3" ]]; then
+    colr "ERROR: source bin/util/profile_freshness_warn.bash"  "$DY_WT0" "$DY_WB0" "$DY_WS1" 1>&2
+    return 4
+fi
+
 # Check if we're in the correct root
 if [[ "$(pwd)" != "$DAY_ROOT"* ]]; then
     colr "|||<<<
