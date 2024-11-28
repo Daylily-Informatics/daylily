@@ -209,9 +209,6 @@ rule oct_concat_index_chunks:
         fofn=MDIR
         + "{sample}/align/{alnr}/snv/oct/{sample}.{alnr}.oct.snv.concat.vcf.gz.fofn",
     output:
-        vcf=temp(
-            MDIR + "{sample}/align/{alnr}/snv/oct/{sample}.{alnr}.oct.snv.sort.vcf"
-        ),
         vcfgz=touch(
             MDIR + "{sample}/align/{alnr}/snv/oct/{sample}.{alnr}.oct.snv.sort.vcf.gz"
         ),
