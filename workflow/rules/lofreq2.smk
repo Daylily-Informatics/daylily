@@ -153,8 +153,8 @@ rule lofreq2_sort_index_chunk_vcf:
 
         bash bin/repair_lofreq2_vcf.sh {input.vcf}  {output.tmpvcf}  $(dirname {input.vcf})/_fixvcf {params.cluster_sample} >> {log} 2>&1;
         (bedtools sort -header -i {output.tmpvcf} > {output.vcfsort}) >> {log} 2>&1;
-        touch {output.vcsort};
-                
+        touch {output.vcfsort};
+
         bgzip {output.vcfsort} >> {log} 2>&1;        
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
 
