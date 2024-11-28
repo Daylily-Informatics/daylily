@@ -106,25 +106,32 @@ ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -
 
 # Initialize and configure the Daylily environment on the head node
 echo "Configuring Daylily environment on the head node..."
-ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_build'"
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    "source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_build"
 
 # Run a simple help test for Daylily remotely
 echo "Running a simple help test on the head node..."
-ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c '. ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local hg38 && ./bin/day_run  help -p'"
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    "source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_activate local hg38 remote && ./bin/day_run help"
 
 
 # start building the minimal cached envs
-echo "Building the minimal cached environments ..."
+echo "Building some cached analysis environments to save a little time ... this can take a little time"
 ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c 'cd ~/projects/daylily && source dyinit --skip-project-check  && source bin/day_activate local hg38 &&  bash bin/day_run produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce_kat produce_multiqc_final_wgs -p -k -j 2 --config aligners=[\'strobe\',\'bwa2a\',\'sent\'] dedupers=[\'dppl\'] snv_callers=[\'oct\',\'sentd\',\'deep\',\'clair3\',\'lfq2\'] sv_callers=[\'tiddit\',\'manta\',\'dysgu\']  --conda-create-envs-only '"
+    "source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_activate local hg38 remote && ./bin/day_run  produce_snv_concordances -p -k -j 2 --config aligners=['strobe','bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep']  --conda-create-envs-only  "
+
+
+# Finally, a quick test to confirm things are running as expected locally on the headnode
+echo "Run a quick test to ensure things are working as expected... [local run]"
+ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
+    "source ~/.bashrc && cd ~/projects/daylily && source dyinit --project daylily-global && source bin/day_activate local hg38 remote && ./bin/day_run  produce_deduplicated_bams -p -k -j 2 --config aligners=['strobe'] dedupers=['dppl']  "
 
 
 
 # Provide final instructions for SSH access to the head node
 echo "You can now SSH into the head node with the following command:"
-echo "ssh -i $pem_file ubuntu@$cluster_ip_address"
+echo "        ssh -i $pem_file ubuntu@$cluster_ip_address"
+echo " "
 echo "Once logged in, as the 'ubuntu' user, run the following commands:"
 echo "  cd ~/projects/daylily"
 echo "  source dyinit " 
@@ -132,7 +139,27 @@ echo "  dy-a local"
 echo "  dy-g hg38"
 echo "  dy-r help"
 echo " "
-echo "\t... and remember to re-clone the repo for each new analysis in the /fsx/analysis_results directory for non-test uses."
+echo ".... and remember to re-clone the repo for each new analysis in the /fsx/analysis_results directory for non-test uses."
 echo " "
-echo "\nSetup complete. You can now start working with Daylily on the head node.\n"
+echo "Setup complete. "
 
+echo " "
+echo "Would you like to remotely launch the cluster test analysis (in a detached tmux session you can access latter)? [y/n]"
+read -r -p "Your response: " REPLY
+if [[ "$REPLY" == "y" ]]; then
+    echo "Launching the cluster test analysis in a tmux session..."
+    session_name="cluster_test_$(date +%s)"  # Unique tmux session name
+    ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+        "tmux new-session -d -s $session_name \
+        '(source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_activate local hg38 remote && ./bin/day_run produce_snv_concordances -p -k -j 2 --config aligners=['strobe','bwa2a'] dedupers=['dppl'] snv_callers=['deep'] ) && echo \"Session completed.\"'" && \
+    echo "Tmux session '$session_name' started on the remote server."
+    echo "You can monitor the session using the following command:"
+    echo "ssh -i \"$pem_file\" ubuntu@\"$cluster_ip_address\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 'tmux attach-session -t $session_name'"
+fi
+
+echo " "
+
+echo "You can now access the headnode via the PCUI, via 'source bin/daylily-ssh-into-headnode', or SSH into the head node with the following command:"
+echo "        ssh -i $pem_file ubuntu@$cluster_ip_address"
+echo " "
+echo "fin"
