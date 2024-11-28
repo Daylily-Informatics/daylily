@@ -152,7 +152,7 @@ rule lofreq2_sort_index_chunk_vcf:
     threads: config['lofreq2']['threads']
     shell:
         """
-        tdir=$(dirname {input.vcf})/_fixvcf/;
+        tdir=$(dirname {input.vcf})/_fixvcf_{params.cpre}_{params.dchrm}/;
         mkdir -p $tdir;
         bash bin/repair_lofreq2_vcf.sh {input.vcf}  {output.tmpvcf}   $tdir {params.cluster_sample} >> {log} 2>&1;
         (bedtools sort -header -i {output.tmpvcf} > {output.vcfsort}) >> {log} 2>&1;
