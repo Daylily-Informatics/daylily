@@ -11,16 +11,16 @@ properties:
         description: RU#_EX_SQ#_LANE with no lane substitution. Identifes the sub patterns to merge to create sample if merging is enabled.  if merge_single=single then sample==sample_lane. if merge, then sample_lane is unique, sample is the aggregation pattern, which may be 1 to 1, but if set to merge should be 1(sample) pattern to >1(sample_lane) patterns.<--- this was implemented, then scaled back, and now is largely only really working for merging.
     SQ:
         type: string
-        description: SQ# is the unique ID of the sequencing barcode index.
+        description: Sample Type
     RU:
         type: string
         description: RUNID
     EX:
         type: string
-        description: Experiment ID.
+        description: SAMPLE_ID
     LANE:
-        type: number
-        description: Sequencing lane for the run as an integer. 1,2,3,4 for raw data, if set to 0, implies pre-concatendated fastqs
+        type: string
+        description: Lane-SeqBarcodeID
     r1_path:
         type: string
     r2_path:
@@ -32,9 +32,9 @@ properties:
     concordance_control_path:
         type: string
     is_positive_control:
-        type: boolean
+        type: string
     is_negative_control:
-        type: boolean
+        type: string
     sample_type:
         type: string
     merge_single:
