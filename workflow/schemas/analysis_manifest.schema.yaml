@@ -32,9 +32,9 @@ properties:
     concordance_control_path:
         type: string
     is_positive_control:
-        type: string
+        type: boolean
     is_negative_control:
-        type: string
+        type: boolean
     sample_type:
         type: string
     merge_single:
