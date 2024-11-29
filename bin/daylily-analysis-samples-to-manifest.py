@@ -156,8 +156,8 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
 
 
             # Validate and stage files
-            check_file_exists(R1_FQ, mode, STAGE_DIRECTIVE)
-            check_file_exists(R2_FQ, mode, STAGE_DIRECTIVE)
+            check_file_exists(R1_FQ)
+            check_file_exists(R2_FQ)
             
             # Ensure the directory exists
             if mode == "remote":
