@@ -1,0 +1,202 @@
+#!/usr/bin/env bash
+
+# Neon color scheme
+INFO="\033[1;36m"
+WARN="\033[1;33m"
+ERROR="\033[1;31m"
+SUCCESS="\033[1;32m"
+RESET="\033[0m"
+
+info() { echo -e "${INFO}[INFO]${RESET} $1"; }
+warn() { echo -e "${WARN}[WARN]${RESET} $1"; }
+error() { echo -e "${ERROR}[ERROR]${RESET} $1"; exit 1; }
+success() { echo -e "${SUCCESS}[SUCCESS] $1"; }
+
+AM_OUT_FILE="na"
+
+check_dependencies() {
+  for cmd in ssh; do
+    if ! command -v $cmd &>/dev/null; then
+      error "Required command '$cmd' is not installed."
+    fi
+  done
+}
+
+validate_args() {
+  if [[ "$1" != "local" && "$1" != "remote" ]]; then
+    error "First argument must be 'local' or 'remote'."
+  fi
+  if [[ ! -f "$2" ]]; then
+    error "Sample sheet '$2' does not exist."
+  fi
+}
+
+determine_sex() {
+  local n_x=$1
+  local n_y=$2
+  if [[ "$n_x" -eq 2 && "$n_y" -eq 0 ]]; then
+    echo "female"
+  elif [[ "$n_x" -eq 1 && "$n_y" -eq 1 ]]; then
+    echo "male"
+  else
+    echo "na"
+  fi
+}
+
+validate_stage_target() {
+  local stage_target="$1"
+  local mode="$2"
+  local cluster_ip="$3"
+  local pem_file="$4"
+  local cluster_user="$5"
+
+  info "Validating STAGE_TARGET: $mode  $stage_target "
+  if [[ ! "$stage_target" =~ ^/fsx ]]; then
+    error "STAGE_TARGET '$stage_target' must begin with '/fsx'."
+  fi
+
+  if [[ "$mode" == "remote" ]]; then
+    info "Validating STAGE_TARGET on remote cluster: $stage_target"
+    ssh -i "$pem_file" "$cluster_user@$cluster_ip" "if [[ ! -d \"$stage_target\" ]]; then mkdir -p  \"$stage_target\"; fi" \
+      || error "Failed to create STAGE_TARGET directory on remote: $stage_target"
+  else
+    if [[ ! -d "$stage_target" ]]; then
+      info "Creating STAGE_TARGET directory locally: $stage_target"
+      mkdir -p "$stage_target" || error "Failed to create STAGE_TARGET directory: $stage_target"
+    fi
+  fi
+}
+
+stage_data_files() {
+  local r1_src="$1"
+  local r2_src="$2"
+  local stage_target="$3"
+  local sample_prefix="$4"
+  local mode="$5"
+  local cluster_ip="$6"
+  local pem_file="$7"
+  local cluster_user="$8"
+
+  local r1_dest="${stage_target}/${sample_prefix}.R1.fastq.gz"
+  local r2_dest="${stage_target}/${sample_prefix}.R2.fastq.gz"
+
+  if [[ "$mode" == "remote" ]]; then
+    info "Staging R1 to remote: $r1_dest"
+
+    ssh -i "$pem_file" "$cluster_user@$cluster_ip"  "if [[ -f '$r1_dest' ]]; then exit 1; fi" && \
+    echo "File does not exist on remote" || \
+    { echo "Error: File '$r1_dest' already exists on remote."; exit 1; }
+
+    scp -i "$pem_file" "$r1_src" "${cluster_user}@${cluster_ip}:${r1_dest}" || error "Failed to stage R1 to remote."
+    success "R1 staged to remote: $r1_dest"
+
+    ssh -i "$pem_file" "$cluster_user@$cluster_ip"  "if [[ -f '$r2_dest' ]]; then exit 1; fi" && \
+    echo "File does not exist on remote" || \
+    { echo "Error: File '$r2_dest' already exists on remote."; exit 1; }
+    info "Staging R2 to remote: $r2_dest"
+    scp -i "$pem_file" "$r2_src" "${cluster_user}@${cluster_ip}:${r2_dest}" || error "Failed to stage R2 to remote."
+    success "R2 staged to remote: $r2_dest"
+  else
+    [[ ! -e "$r1_src" ]] && error "R1 file '$r1_src' does not exist."
+    [[ ! -e "$r2_src" ]] && error "R2 file '$r2_src' does not exist."
+
+    cp "$r1_src" "$r1_dest" || error "Failed to copy R1: $r1_src to $r1_dest"
+    success "R1 staged locally: $r1_dest"
+
+    cp "$r2_src" "$r2_dest" || error "Failed to copy R2: $r2_src to $r2_dest"
+    success "R2 staged locally: $r2_dest"
+  fi
+}
+
+parse_and_validate_tsv() {
+  local input_file="$1"
+  local mode="$2"
+  local cluster_ip="$3"
+  local pem_file="$4"
+  local cluster_user="$5"
+
+
+  while IFS=$'\t' read -r RUN_ID SAMPLE_ID SAMPLE_TYPE LIB_PREP SEQ_PLATFORM LANE SEQBC_ID PATH_TO_CONCORDANCE_DATA_DIR R1_FQ R2_FQ STAGE_DIRECTIVE STAGE_TARGET SUBSAMPLE_PCT IS_POS_CTRL IS_NEG_CTRL N_X N_Y; do
+    [[ "$LANE" != "0" ]] && error "Invalid LANE value '$LANE'. Only '0' is allowed."
+    [[ "$IS_POS_CTRL" != "na" || "$IS_NEG_CTRL" != "na" ]] && error "Positive or Negative Control columns are not enabled yet."
+
+    echo "Processing: $RUN_ID $SAMPLE_ID $SAMPLE_TYPE $LIB_PREP $SEQ_PLATFORM $LANE $SEQBC_ID $PATH_TO_CONCORDANCE_DATA_DIR $R1_FQ $R2_FQ $STAGE_DIRECTIVE $STAGE_TARGET $SUBSAMPLE_PCT $IS_POS_CTRL $IS_NEG_CTRL $N_X $N_Y"
+
+    AS_IN_FILE="${STAGE_TARGET}/${RUN_ID}.analysis_samples.tsv"
+    tmp_am_out_file="./${RUN_ID}.analysis_manifest.csv.tmp"
+    touch "$tmp_am_out_file"
+    AM_OUT_FILE="${STAGE_TARGET}/${RUN_ID}.analysis_manifest.csv"
+  done < <(tail -n +2 "$input_file")
+
+  echo "ASIO $AS_IN_FILE ... $AM_OUT_FILE ... $tmp_am_out_file"
+
+  echo "samp,sample,sample_lane,SQ,RU,EX,LANE,r1_path,r2_path,biological_sex,iddna_uid,concordance_control_path,is_positive_control,is_negative_control,sample_type,merge_single,external_sample_id,instrument,lib_prep,bwa_kmer,subsample_pct" >"$tmp_am_out_file"
+
+  while IFS=$'\t' read -r RUN_ID SAMPLE_ID SAMPLE_TYPE LIB_PREP SEQ_PLATFORM LANE SEQBC_ID PATH_TO_CONCORDANCE_DATA_DIR R1_FQ R2_FQ STAGE_DIRECTIVE STAGE_TARGET SUBSAMPLE_PCT IS_POS_CTRL IS_NEG_CTRL N_X N_Y; do
+    [[ "$LANE" != "0" ]] && error "Invalid LANE value '$LANE'. Only '0' is allowed."
+    [[ "$IS_POS_CTRL" != "na" || "$IS_NEG_CTRL" != "na" ]] && error "Positive or Negative Control columns are not enabled yet."
+
+    echo "Processing: $RUN_ID $SAMPLE_ID $SAMPLE_TYPE $LIB_PREP $SEQ_PLATFORM $LANE $SEQBC_ID $PATH_TO_CONCORDANCE_DATA_DIR $R1_FQ $R2_FQ $STAGE_DIRECTIVE $STAGE_TARGET $SUBSAMPLE_PCT $IS_POS_CTRL $IS_NEG_CTRL $N_X $N_Y"
+    local biological_sex=$(determine_sex "$N_X" "$N_Y")
+    local sample_prefix="${RUN_ID}_${SAMPLE_ID}_${SAMPLE_TYPE}_${LANE}-${SEQBC_ID}"
+
+    echo "----SD $STAGE_DIRECTIVE"
+    validate_stage_target "$STAGE_TARGET" "$mode" "$cluster_ip" "$pem_file" "$cluster_user"
+
+    if [[ "$STAGE_DIRECTIVE" == "stage_data" ]]; then
+      stage_data_files "$R1_FQ" "$R2_FQ" "$STAGE_TARGET" "$sample_prefix" "$mode" "$cluster_ip" "$pem_file" "$cluster_user"
+    fi
+
+    local staged_r1="${STAGE_TARGET}/${sample_prefix}.R1.fastq.gz"
+    local staged_r2="${STAGE_TARGET}/${sample_prefix}.R2.fastq.gz"
+    echo "${sample_prefix},${sample_prefix},${sample_prefix},${SAMPLE_TYPE},${RUN_ID},${SAMPLE_ID},${LANE}-${SEQBC_ID},${staged_r1},${staged_r2},${biological_sex},na,${PATH_TO_CONCORDANCE_DATA_DIR},na,na,${SAMPLE_TYPE},merge,${SAMPLE_ID},${SEQ_PLATFORM},${LIB_PREP},19,${SUBSAMPLE_PCT}" >>"$tmp_am_out_file"
+  done < <(tail -n +2 "$input_file")
+
+
+  if [[ "$mode" == "remote" ]]; then
+
+    ssh -i "$pem_file" "$cluster_user@$cluster_ip"  "if [[ -f '$AS_IN_FILE' ]]; then exit 1; fi" && \
+    echo "File does not exist on remote" || \
+      { echo "Error: File '$AS_IN_FILE' already exists on remote."; exit 1; }
+
+    scp -i "$pem_file" "$input_file" "${cluster_user}@${cluster_ip}:${AS_IN_FILE}" || error "Failed to stage R1 to remote."
+    success "Analysis samples $input_file moved to remote: scp -i $pem_file $input_file ${cluster_user}@${cluster_ip}:$AS_IN_FILE"
+
+
+    ssh -i "$pem_file" "$cluster_user@$cluster_ip"  "if [[ -f '$AM_OUT_FILE' ]]; then exit 1; fi" && \
+    echo "File does not exist on remote" || \
+      { echo "Error: File '$AM_OUT_FILE' already exists on remote."; exit 1; }
+
+    scp -i "$pem_file" "$tmp_am_out_file" "${cluster_user}@${cluster_ip}:${AM_OUT_FILE}" || error "Failed to stage R1 to remote."
+    success "$tmp_am_out_file  moved to remote: scp -i $pem_file $input_file ${cluster_user}@${cluster_ip}:$AM_OUT_FILE"
+
+
+
+  else
+    echo "pass on copy $AS_IN_FILE"
+  fi
+}
+
+main() {
+  local mode="$1"
+  local input_file="$2"
+  local cluster_ip="$3"
+  local pem_file="$4"
+  local cluster_user="$5"
+
+  check_dependencies
+  validate_args "$@"
+
+  #if [[ "$mode" == "remote" ]]; then
+  #  ssh -i "$pem_file" "$cluster_user@$cluster_ip" \
+  #    "if [[ ! -d '/fsx/staged_sample_data' ]]; then mkdir '/fsx/staged_sample_data'; fi" \
+  #    || error "Failed to create '/fsx/staged_sample_data' directory on remote cluster."
+  #else
+  #  mkdir  "/fsx/staged_sample_data" || error "Failed to create local '/fsx/staged_sample_data'."
+  #fi
+
+  parse_and_validate_tsv "$input_file" "$mode" "$cluster_ip" "$pem_file" "$cluster_user"
+  success "Manifest generated: $AM_OUT_FILE"
+}
+
+main "$@"
