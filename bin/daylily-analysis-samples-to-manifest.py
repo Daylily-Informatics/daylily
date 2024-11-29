@@ -43,7 +43,7 @@ def determine_sex(n_x, n_y):
     return "na"
 
 def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_prefix):
-    if concordance_dir == "na" or concordance_dir.startswith("/fsx"):
+    if concordance_dir == "na" or concordance_dir.startswith("/fsx/data"):
         return concordance_dir
     stage_path = os.path.join(stage_target, f"{sample_prefix}")
     os.makedirs(stage_path, exist_ok=True)
@@ -112,6 +112,7 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
     stage_target = "na"
     runn = "na"
     rows = []
+    stage_directive = ""
     for line in linesf[1:]:
         cols = line.strip().split("\t")
         if len(cols) < 17:
@@ -121,18 +122,27 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
          SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:17]
         runn = RUN_ID
         stage_target = STAGE_TARGET
+        stage_directive = STAGE_DIRECTIVE
 
     # Ensure stage_target exists
-    try:
+    if stage_target == "is_staged":
         if mode == "remote":
-            create_remote_directory(cluster_ip, pem_file, cluster_user, stage_target)
+            raise Exception("mode==REMOTE is not supported with 'is_staged' data") #could be however
         else:
-            os.makedirs(stage_target, exist_ok=True)
-    except Exception as e:
-        error_file = os.path.join(stage_target, f"{runn}_error.txt")
-        with open(error_file, "w") as ef:
-            ef.write(f"Error creating stage target: {e}\n")
-        log_error(f"Error creating stage target directory: {e}")
+            if not os.path.exists(stage_target):
+                log_error(f"Stage target directory does not exist: {stage_target}")
+                raise Exception("Stage target directory does not exist")
+    else:
+        try:
+            if mode == "remote":
+                create_remote_directory(cluster_ip, pem_file, cluster_user, stage_target)
+            else:
+                os.makedirs(stage_target, exist_ok=True)
+        except Exception as e:
+            error_file = os.path.join(stage_target, f"{runn}_error.txt")
+            with open(error_file, "w") as ef:
+                ef.write(f"Error creating stage target: {e}\n")
+            log_error(f"Error creating stage target directory: {e}")
 
     try:
         for line in linesf[1:]:
@@ -144,6 +154,11 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
             sample_prefix = f"{RUN_ID}_{SAMPLE_ID}_{SAMPLE_TYPE}_{LANE}-{SEQBC_ID}"
             staged_sample_path = os.path.join(stage_target, sample_prefix)
 
+
+            # Validate and stage files
+            check_file_exists(R1_FQ, mode, STAGE_DIRECTIVE)
+            check_file_exists(R2_FQ, mode, STAGE_DIRECTIVE)
+            
             # Ensure the directory exists
             if mode == "remote":
                 create_remote_directory(cluster_ip, pem_file, cluster_user, staged_sample_path)
@@ -153,16 +168,27 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
             # Copy FASTQ files
             staged_r1 = os.path.join(staged_sample_path, os.path.basename(R1_FQ))
             staged_r2 = os.path.join(staged_sample_path, os.path.basename(R2_FQ))
-            copy_files_to_target(R1_FQ, staged_r1, mode, cluster_ip, pem_file, cluster_user)
-            copy_files_to_target(R2_FQ, staged_r2, mode, cluster_ip, pem_file, cluster_user)
+            if STAGE_DIRECTIVE == "stage_data":
+                copy_files_to_target(R1_FQ, staged_r1, mode, cluster_ip, pem_file, cluster_user)
+                copy_files_to_target(R2_FQ, staged_r2, mode, cluster_ip, pem_file, cluster_user)
+            
+                # Copy analysis_samples.tsv to stage_target
+                analysis_samples_target = os.path.join(stage_target, f"{runn}_analysis_samples.tsv")
+                copy_files_to_target(input_file, analysis_samples_target, mode, cluster_ip, pem_file, cluster_user)
 
-            # Copy analysis_samples.tsv to stage_target
-            analysis_samples_target = os.path.join(stage_target, f"{runn}_analysis_samples.tsv")
-            copy_files_to_target(input_file, analysis_samples_target, mode, cluster_ip, pem_file, cluster_user)
+            else:
+                fileex=True
+                if not os.path.exists(R1_FQ):
+                    log_error(f"FASTQ file not found: {R1_FQ}")
+                    fileex=False
+                if not os.path.exists(R2_FQ):
+                    log_error(f"FASTQ file not found: {R2_FQ}")
+                    fileex=False    
+                if not fileex:
+                    log_error(f"FASTQ file not found")
+                    raise Exception("One of fastqs not found", R1_FQ, R2_FQ)
 
-            # Validate and stage files
-            check_file_exists(R1_FQ)
-            check_file_exists(R2_FQ)
+
             concordance_dir = validate_and_stage_concordance_dir(PATH_TO_CONCORDANCE_DATA_DIR, staged_sample_path, sample_prefix)
             subsample_pct = validate_subsample_pct(SUBSAMPLE_PCT)
             biological_sex = determine_sex(int(N_X), int(N_Y))
@@ -179,8 +205,10 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         manifest_file_tmp = os.path.join('./', f"{runn}_analysis_manifest.csv")
         manifest_file = os.path.join(stage_target, f"{runn}_analysis_manifest.csv")
         generate_analysis_manifest(manifest_file_tmp, rows)
-        
-        copy_files_to_target(manifest_file_tmp, manifest_file, mode, cluster_ip, pem_file, cluster_user)
+
+        if STAGE_DIRECTIVE == "stage_data":
+            copy_files_to_target(manifest_file_tmp, manifest_file, mode, cluster_ip, pem_file, cluster_user)
+            
 
         # Create success sentinel
         success_file = os.path.join(stage_target, f"{runn}_success.txt")
@@ -190,7 +218,7 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         else:
             with open(success_file, "w") as sf:
                 sf.write("Process completed successfully\n")
-        log_info(f"Manifest generated: {manifest_file_tmp}")
+        log_info(f"Manifest generated: {manifest_file_tmp} & {manifest_file}")
         log_info(f"Success file created: {success_file}")
 
     except Exception as e:
