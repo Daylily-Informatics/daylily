@@ -27,7 +27,7 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
 # What's It All About?
 
-## BFAIR: Bioinformatics FAIR Principles 
+## BFAIR: Bioinformatics [https://www.go-fair.org/fair-principles/[(FAIR) Principles 
 _this is a title rough idea! - not likely final, but is the gist of it_
 
 ## Comprehensive Cost Transparency & Predictability
@@ -57,6 +57,9 @@ _this is a title rough idea! - not likely final, but is the gist of it_
 # Installation -- PREREQUISITES
 
 ## AWS 
+
+### Create an IAM User
+- The following insstructions are tested with **IAM User** accounts, the instructions may not translate to the _IAM Identity Center_ users.
 
 ### Quotas
 There are a handful of quotas which will greatly limit (or block) your ability to create and run an ephemeral cluster.  These quotas are set by AWS and you must request increases. The `daylily-cfg=ephemeral-cluster` script will check these quotas for you, and warn if it appears they are too low,  but you should be aware of them and [request increases proactively // these requests have no cost](https://console.aws.amazon.com/servicequotas/home).
