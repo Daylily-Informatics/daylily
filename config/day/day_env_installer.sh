@@ -3,7 +3,7 @@
 ################################################################################
 # Script Name: day_env_installer.sh
 # Description: Sets up Miniconda and installs the DAY conda environment.
-# Usage:       ./day_env_installer.sh DAY
+# Usage:       source ./day_env_installer.sh DAY
 #              Provide 'DAY' as the argument to start the installation.
 #              If the 'DAY' environment already exists, the script will prompt accordingly.
 ################################################################################
@@ -11,7 +11,7 @@
 
 # Function to display usage information
 usage() {
-    echo "Usage: $0 DAY"
+    echo "Usage: source $0 DAY"
     echo "This script installs Miniconda and sets up the DAY conda environment."
     echo "Provide 'DAY' as the argument to start the installation."
     exit 2
