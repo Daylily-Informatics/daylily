@@ -4,7 +4,9 @@
 		{
 			"Effect": "Allow",
 			"Action": [
-				"ec2:*"
+				"ec2:*",
+				"autoscaling:*",
+				"elasticloadbalancing:*"
 			],
 			"Resource": "*"
 		},
@@ -95,14 +97,10 @@
 		{
 			"Effect": "Allow",
 			"Action": [
-				"s3:*"
+				"s3:*",
+				"s3:ListAllMyBuckets"
 			],
-			"Resource": [
-				"arn:aws:s3:::parallelcluster-*",
-				"arn:aws:s3:::aws-parallelcluster-*",
-				"arn:aws:s3:::*-aws-parallelcluster*",
-				"arn:aws:s3:::parallelcluster-*/*"
-			]
+			"Resource": "*"
 		},
 		{
 			"Effect": "Allow",

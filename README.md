@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.143)
+# Daylily AWS Ephemeral Cluster Setup (0.7.144)
 
 
 **beta release**
@@ -54,6 +54,8 @@ _this is a title rough idea! - not likely final, but is the gist of it_
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
+
+
 # Installation -- PREREQUISITES
 
 ## AWS 
@@ -71,214 +73,30 @@ From the `Iam -> Users` console, create a new user.
 - Review the confiirmation page, and click `Create user`.
 - On the next page, capture the `Console sign-in URL`, `username`, and `password`. You will need these to log in as the `daylily-service` user.
 
-### Attach Policies To The `daylily-service` User
+### Attach Permissiong & Policies To The `daylily-service` User
 _still as the admin user_
+
+#### Permissions
+
+- Navigate to the `IAM -> Users` console, click on the `daylily-service` user.
+- Click on the `Add permissions` button, then select `Add permission`.
+- Search for `AmazonQDeveloperAccess`, select and add it.
+
+#### Inline Policy
+__**note:**__ [please consult the parallel cluster docs for fine grained permissions control, the below is a broad approach](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam-roles-in-parallelcluster-v3.html).
 - Navigate to the `IAM -> Users` console, click on the `daylily-service` user.
 - Click on the `Add permissions` button, then select `create inline policy`.
 - Click on the `JSON` bubble button.
-- Delete the auto-populated json in the editor window, and paste this json into the editor (replace 1 instance of <AWS_USERNAME> with your new username, ie: `daylily-service`):
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:CreateAccessKey",
-                "iam:ListAccessKeys",
-                "iam:DeleteAccessKey",
-                "iam:UpdateAccessKey",
-                "iam:ListMFADevices",
-                "iam:ListSigningCertificates",
-                "iam:CreateServiceSpecificCredential",
-                "iam:UpdateServiceSpecificCredential",
-                "iam:DeleteServiceSpecificCredential",
-                "iam:ListServiceSpecificCredentials",
-                "ec2:CreateTags",
-                "ec2:DeleteTags",
-                "rds:AddTagsToResource",
-                "rds:RemoveTagsFromResource",
-                "s3:PutBucketTagging",
-                "lambda:TagResource",
-                "lambda:UntagResource",
-                "dynamodb:TagResource",
-                "dynamodb:UntagResource",
-                "iam:TagUser",
-                "iam:UntagUser",
-                "iam:ListUserTags",
-                "iam:TagRole",
-                "iam:UntagRole",
-                "iam:ListRoleTags"
-            ],
-            "Resource": "arn:aws:iam::*:user/<AWS_USERNAME>"
-        }
-    ]
-}
-```
+- Delete the auto-populated json in the editor window, and paste this json into the editor (replace 3 instances of  <AWS_ACCOUNT_ID> with your new account number, an integer found in the upper right dropdown).
+
+> [The policy template json can be found here](config/aws/daylily-service-cluster-policy.json)
 
 - `click next`
-- Give the policy a name, like `daylily-service-init-policy`, and click `Create policy`.
-
-### Attach Remaining Policies To The `daylily-service` User
-The following inline policy enables all of the other actions the daylily ephemeral cluster needs to be able to execute.
+- Name the policy `daylily-service-cluster-policy` (not formally mandatory, but advised to bypass various warnings in future steps), then click `Create policy`.
 
 
-_still as the admin user_
-- Navigate to the `IAM -> Users` console, click on the `daylily-service` user.
-- Click on the `Add permissions` button, then select `create inline policy`.
-- Click on the `JSON` bubble button.
-- Delete the auto-populated json in the editor window, and paste this json into the editor (replace 2 instances of  <AWS_ACCOUNT_ID> with your new account number, an integer found in the upper right dropdown):
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:List*",
-                "iam:Get*",
-                "iam:SimulatePrincipalPolicy",
-                "iam:Create*",
-                "iam:DeleteInstanceProfile",
-                "iam:AddRoleToInstanceProfile",
-                "iam:RemoveRoleFromInstanceProfile",
-                "iam:PassRole",
-				        "iam:AttachRolePolicy",
-                "iam:DetachRolePolicy",
-                "iam:TagRole",
-                "iam:PutRolePolicy"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "cognito-idp:*",
-                "servicequotas:GetServiceQuota"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "iam:CreateServiceLinkedRole",
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "iam:AWSServiceName": [
-                        "spot.amazonaws.com",
-                        "fsx.amazonaws.com",
-                        "s3.data-source.lustre.fsx.amazonaws.com",
-                        "imagebuilder.amazonaws.com",
-						            "ec2.amazonaws.com",
-                        "lambda.amazonaws.com"
-                    ]
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "lambda:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "cloudformation:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "fsx:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "dynamodb:*"
-            ],
-            "Resource": "arn:aws:dynamodb:*:AWS_ACCOUNT_ID:table/parallelcluster-*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "route53:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:*"
-            ],
-            "Resource": [
-                "arn:aws:s3:::parallelcluster-*",
-                "arn:aws:s3:::aws-parallelcluster-*",
-                "arn:aws:s3:::*-aws-parallelcluster*",
-                "arn:aws:s3:::parallelcluster-*/*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "budgets:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "cloudwatch:*",
-                "logs:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "imagebuilder:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "sns:*"
-            ],
-            "Resource": [
-                "arn:aws:sns:*:<AWS_ACCOUNT_ID>:ParallelClusterImage-*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "tag:*"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
-
-- `click next`
-- Give the policy a name, like `daylily-service-init-policy`, and click `Create policy`.
-
-
-
-#### Allow User To Create CLI Credentials
-- [Attach the following inline policy to the new user](etc/init_aws_user_policy.json), name it 'daylily-omics-init-user'
-  
-
-### Quotas
+### Additional AWS Considerations (also will need _admin_ intervention)
+#### Quotas
 There are a handful of quotas which will greatly limit (or block) your ability to create and run an ephemeral cluster.  These quotas are set by AWS and you must request increases. The `daylily-cfg=ephemeral-cluster` script will check these quotas for you, and warn if it appears they are too low,  but you should be aware of them and [request increases proactively // these requests have no cost](https://console.aws.amazon.com/servicequotas/home).
 
 **dedicated instances**
@@ -298,7 +116,7 @@ _per region quotas_
 May limit you as well, keep an eye on `VPC` & `networking` specifically.
 
 
-### Activate Cost Allocation Tags (optional, but strongly suggested)
+#### Activate Cost Allocation Tags (optional, but strongly suggested)
 The cost management built into daylily requires use of budgets and cost allocation tags. Someone with permissions to do so will need to activate these tags in the billing console. *note: if no clusters have yet been created, these tags may not exist to be activeted until the first cluster is running. Activating these tags can happen at any time, it will not block progress on the installation of daylily if this is skipped for now*. See [AWS cost allocation tags](https://us-east-1.console.aws.amazon.com/billing/home#/tags)
 
 The tags to activate are:
@@ -311,80 +129,74 @@ The tags to activate are:
   ```
 
 
-### CLI User Account
-#### CLI Credentials
-- Whoever will be creating and managing the daylily ephemeral clusters will need to have aws cli credentials saved in their ~/.aws directory. Please ensure these are saved before proceeding.
-
-#### Inline Policies
-AWS Parellel Cluster requires a number of permissions and policies be attached to the user who will be creating and managing the clusters. 
-[Their documentation is here](https://docs.aws.amazon.com/parallelcluster/v2/ug/iam.html). 
-[I compiled the inline policies and permissions necessary to proceed here](config/aws/daylily-omics-analysis.json), this daylily policy `json` includes a few other policies needed for advanced cost management and to build a PCUI.
-
-- As an admin, you can apply these to the user with the following:
-
-```bash
-
-AWS_PROFILE=<your_profile>
-AWS_USERNAME=<cli_username>
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text  --profile $AWS_PROFILE )
-
-cp config/aws/daylily-omics-analysis.json ./daylily-omics-analysis.tmp.json
-
-perl -pi -e "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g" ./daylily-omics-analysis.tmp.json
-
-aws iam put-user-policy --user-name "$AWS_USERNAME" --policy-name daylily-omics-analysis --policy-document file://./daylily-omics-analysis.tmp.json
-
-rm -f ./daylily-omics-analysis.tmp.json
-```
-  - Or, copy the policy from `./daylily-omics-analysis.tmp.json` and apply it to the user via the AWS IAM console.
-
-##### A Note On Budgets
+#### A Note On Budgets
 - The access necesary to *view* budgets is beyond the scope of this config, please work with your admin to set that up. If you are able to create clusters and whatnot, then the budgeting infrastructure should be working.
 
-#### SSH Key Pair(s)
-You will need one keypair per region you intend to run in.
-- via the EC2 Networking Dashboard
-- The key name must include `-omics-analysis` in the name.
-- The key must be of type: **ed25519**)
--  Downloaded `.pem` locally & be sure to have a copy on the local machine you intend to manage things from, you can't download it again!
 
-##### Place .pem File & Set Permissions
+### AWS `daylily-service` User Account
+- Login to the AWS console as the `daylily-service` user using the console URL captured above.
+
+#### CLI Credentials
+_as the `daylily-service` user_
+- Click your username in the upper right, select `Security credentials`, scroll down to `Access keys`, and click `Create access key` (many services will be displaying that they are not available, this is ok).
+- Choose 'Command Line Interface (CLI)', check `I understand` and click `Next`.
+- Do not tag the key, click `Next`.
+**IMPORTANT**: Download the `.csv` file, and store it in a safe place. You will not be able to download it again. This contains your `aws_access_key_id` and `aws_secret_access_key` which you will need to configure the AWS CLI. You may also copy this info from the confirmation page.
+
+> You will use the `aws_access_key_id` and `aws_secret_access_key` to configure the AWS CLI on your local machine in a future step.
+
+
+##### SSH Key Pair(s)
+_as the `daylily-service` user_
+
+_key pairs are region specific, be sure you create a key pair in the region you intend to create an ephemeral cluster in_
+
+- Navigate to the `EC2 dashboard`, in the left hand menu under `Network & Security`, click on `Key Pairs`. 
+- CLick `Create Key Pair`.
+- Give it a name, which must include the string `-omics-analysis`. So, _ie:_ `username-omics-analysis-region`. 
+- Choose `Key pair type` of `ed25519`.
+- Choose `.pem` as the file format.
+- Click `Create key pair`.
+- The `.pem` file will download, and please move it into your `~/.ssh` dir and give it appropriate permissions. _you may not download this file again, so be sure to store it in a safe place_.
+
+###### Place .pem File & Set Permissions
 
 ```bash
+mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 
 mv ~/Downloads/<yourkey>.pem  ~/.ssh/<yourkey>.pem 
 chmod 400 ~/.ssh/<yourkey>.pem`
 ```
 
+## Default Region `us-west-2`
+You may run in any region or AZ you wish to try. This said, the majority of testing has been done in AZ's `us-west-2c` & `us-west-2d` (which have consistently been among the most cost effective & available spot markets for the instance types used in the daylily workflows).
+
+
 ---
 
 
 ## Prerequisites (On Your Local Machine) 
-Local machine development has been exclusively on a mac, using the `zsh` shell (I am moving everything to bash slowly, so there is a mix of bash and zsh at the moment). _suggestion: run things in tmux or screen_
+Local machine development has been exclusively on a mac, using the `zsh` shell (I am moving everything to bash, so there is a mix of bash and zsh at the moment. All `.` and `sourcing` that happens on your local machine expects `zsh`).
+ 
+_suggestion: run things in tmux or screen_
 
-Very good odds this will work on any mac and most Linux distros (ubuntu 22.04 are what the cluster nodes run). Windows, I would not hazard a guess.
+Very good odds this will work on any mac and most Linux distros (ubuntu 22.04 are what the cluster nodes run). Windows, I can't say.
 
 ### System Packages
-Install with `brew` or `apt-get` or ... :
+Install with `brew`, `conda` or `apt-get`:
 - `python3`
 - `git`
 - `jq`
 - `wget`
+- `awscli` [AWS CLI docs](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 - `tmux` (optional, but suggested)
 - `emacs` (optional, I guess, but I'm not sure how you live without it)
 
 
-
-### AWS CLI
-#### Install
-Use `brew install awscli` or `sudo apt-get install awscli` or see [Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
-
-#### AWS CLI Configure - Opt 1
-Run `aws configure` and enter your credentials and region.
-
-#### AWS CLI Configure - Opt 2
-Create the files and directories manually:
+### AWS CLI Configuration
+#### Opt 2
+Create the aws cli files and directories manually.
 
 ```bash
 mkdir ~/.aws
@@ -403,42 +215,72 @@ Edit `~/.aws/config`, which should look like:
 [default]
 region = us-west-2
 output = json
+
+[daylily-service]
+region = us-west-2
+output = json
+
 ```
 
 Edit `~/.aws/credentials`, and add your deets, which should look like:
 ```yaml
 [default]
-aws_access_key_id = <ACCESS_KEY>
-aws_secret_access_key = <SECRET_ACCESS_KEY>
+aws_access_key_id = <default-ACCESS_KEY>
+aws_secret_access_key = <default-SECRET_ACCESS_KEY>
+region = <REGION>
+
+
+[daylily-service]
+aws_access_key_id = <daylily-service-ACCESS_KEY>
+aws_secret_access_key = <daylily-service-SECRET_ACCESS_KEY>
 region = <REGION>
 ```
 
-### `daylily` Repository
-Clone the `daylily` repository to your local machine.
+- The `default` profile is used for general AWS CLI commands, `daylily-service` can be the same as default, best practice to not lean on default, but be explicit with the intended AWS_PROFILE used.
+
+> To automatically use a profile other than `default`, set the `AWS_PROFILE` environment variable to the profile name you wish to use. _ie:_ `export AWS_PROFILE=daylily-service`
+
+
+
+### Clone `daylily` Git Repository
 
 ```bash
 git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
 cd daylily
 ```
 
-
 ### Miniconda
+_from `daylily` root dir_
+
+```bash
 Install with:
 ```bash
-source bin/install_miniconda.sh
+#!/bin/zsh
+source bin/install_miniconda
 ```
+- This will leave you in a terminal with conda activated, indicated by `(base)` in the terminal prompt.
 
 ### DAYCLI Environment
+_from `daylily` root dir_
+
 ```bash
+#!/bin/zsh
+
 source bin/init_daycli 
 
 # DAYCLI should now be active... did it work?
 colr  'did it work?' 0,100,255 255,100,0
 
 ```
+- This will leave you in a terminal with the conda DAYCLI activated, indicated by `(DAYCLI)` in the terminal prompt.
 
 
-## [daylily-references-public](#daylily-references-public-bucket-contents) Reference Bucket(s)
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
+
+# Ephemeral Cluster Creation
+
+## [daylily-references-public](#daylily-references-public-bucket-contents) Reference Bucket
+
 - The `daylily-references-public` bucket is preconfigured with all the necessary reference data to run the various pipelines, as well as including GIAB reads for automated concordance. 
 - This bucket will need to be cloned to a new bucket with the name `<YOURPREFIX>-omics-analysis-<REGION>`, one for each region you intend to run in.
 - These S3 buckets are tightly coupled to the `Fsx lustre` filesystems (which allows 1000s of concurrnet spot instances to read/write to the shared filesystem, making reference and data management both easier and highly performant). 
@@ -447,11 +289,15 @@ colr  'did it work?' 0,100,255 255,100,0
 - The bust will cost ~$14.50/mo to keep hot in `us-west-2`. It is not advised, but you may opt to remove unused reference data to reduce the monthly cost footprint by up to 65%. _(monthly ongoing cost)_
 
 ### Clone `daylily-references-public` to YOURPREFIX-omics-analysis-REGION
+
+_from your local machine, in the daylily git repo root_
+
 - `YOURPREFIX` will be used as the bucket name prefix. Please keep it short. The new bucket name will be `YOURPREFIX-omics-analysis-REGION` and created in the region you specify. You may name the buckets in other ways, but this will block you from using the `daylily-cfg-ephemeral-cluster` script, which is largely why you're here.
 - Cloning it will take 1 to many hours.
   
 **Use the following script**
-_from a tmux or screen session, as the copy will take 1 to many hours_
+
+_running in a tmux/screen session is advised as the copy may take 1-many hours_
 
 ```bash
 conda activate DAYCLI
@@ -460,56 +306,129 @@ bash ./bin/create_daylily_omics_analysis_s3.sh -h
 
 AWS_PROFILE=<your_profile>
 BUCKET_PREFIX=<your_prefix>
+REGION=us-west-2
 
 # dryrun
-bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region us-west-2 --profile daylily --bucket-prefix $BUCKET_PREFIX
+bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region $REGION --profile $AWS_PROFILE --bucket-prefix $BUCKET_PREFIX
 
 # run for real
-bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region us-west-2 --profile daylily --bucket-prefix $BUCKET_PREFIX --disable-dryrun
+bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region $REGION --profile $AWS_PROFILE --bucket-prefix $BUCKET_PREFIX --disable-dryrun
 
 ```
+
+> You may visit the `S3` console to confirm the bucket is being cloned as expected. The copy (if w/in `us-west-2` should take ~1hr, much longer across AZs.  
 
 ---
 
-# Installation -- Daylily Ephemeral Cluster Creation 
-You'll need to have an S3 bucket and a keypair available in any region you choose. You may run concurrently in multiple AZs w/in the same region, however, you are likely to hit quota restrictions if you are not proactive in requesting increases. For any cluster crashes (after creating one successfully, see the cloud monitoring dashboard in the region for the clusters, or stack formation logs- these often have clues re: quota issues).
+## Generate Analysis Cost Estimates per Availability Zone 
 
-## Select The Most Cost Effective AZ (based on current pricing, not guaruntees... though, daylily does bound the max cost possible)
-```text
-| Zone       | Total Instances Considered | Instances with Pricing | Median Spot Price | Mean Spot Price | Min Spot Price | Max Spot Price | Avg of Lowest 3 Prices | Harmonic Mean Price | Estimated EC2 Cost / Genome (no FSX or S3 costs included here) | Stability (Max-Min Spread) |
-|------------|----------------------------|------------------------|-------------------|----------------|---------------|---------------|------------------------|--------------------|-----------------------------|----------------------------|
-| us-east-1d | 6                          | 6                      | **2.2443**         | **2.6635**      | **1.2944**    | 6.0426        | **1.5202**              | **2.0483**         | **4.5605**                  | 4.7482                     |
-| us-east-1b | 6                          | 6                      | 2.5682             | 3.1314         | 1.8549         | 6.8788        | 1.9998                 | 2.5703              | 5.9994                      | 5.0239                     |
-| us-west-2c | 6                          | 6                      | 3.2456             | 3.4618         | 1.3648         | **5.6738**    | 2.2753                 | 2.8179              | 6.8259                      | **4.3090**                 |
-| us-west-2d | 6                          | 6                      | 3.0717             | 3.3662         | 1.7559         | 5.8005        | 2.2841                 | 2.8928              | 6.8523                      | 4.0446                     |
-| us-east-1c | 6                          | 6                      | 3.9424             | 3.8837         | 2.1061         | 5.4064        | 3.1122                 | 3.5621              | 9.3365                      | **3.3003**                 |
-| us-west-2b | 6                          | 6                      | 3.9970             | 4.4728         | 2.3100         | 9.1402        | 2.8915                 | 3.6808              | 8.6745                      | 6.8302                     |
-| us-east-1a | 6                          | 6                      | 3.5854             | 4.0252         | 2.9681         | 6.8254        | 3.2490                 | 3.7470              | 9.7470                      | 3.8573                     |
-| us-west-2a | 6                          | 6                      | 3.9594             | 4.8392         | 3.4149         | 8.8822        | 3.4376                 | 4.2998              | 10.3128                     | 5.4673                     |
-```
+_from your local machine, in the daylily git repo root_
 
+You may choose any AZ to build and run an ephemeral cluster in (assuming resources both exist and can be requisitioned in the AZ). Run the following command to scan the spot markets in the AZ's you are interested in assessing (reference buckets do not need to exist in the regions you scan, but to ultimately run there, a reference bucket is required):
 
-## Create An Ephemeral Cluster In The AZ You Select
-This script is doing quite a lot. Please check it out to understand it.  It will be confirming that as many pre-requisites that have been anicipated are met, and creating some resources where needed (VPCs, subnets, budgets).
+_this command will take ~5min to complete, and much longer if you expand to all possible AZs, run with `--help` for all flags_
 
 ```bash
-AWS_PROFILE=<your_profile>
-region_az=<region-az>
-source bin/daylily-cfg-ephemeral-cluster --region-az $region_az --profile <your_profile>
+
+conda activate DAYCLI
+AWS_PROFILE=daylily-service
+REGION=us-west-2          
+OUT_TSV=./init_daylily_cluster.tsv
+
+./bin/check_current_spot_market_by_zones.py -o $OUT_TSV --profile $AWS_PROFILE   
+
+```ansi
+30.0-cov genome @ vCPU-min per x align: 307.2 vCPU-min per x snvcall: 684.0 vCPU-min per x other: 0.021 vCPU-min per x svcall: 19.0
+╒═══════════════════╤════════════╤═══════════╤═══════════╤═══════════╤════════════╤═══════════╤═══════════╤═══════════╤═══════════╤═══════════╤═══════════╤═══════════╤═══════════╤════════════╤════════════╕
+│ Region AZ         │   #        │    Median │      Min  │      Max  │   Harmonic │     Spot  │     FASTQ │      BAM  │      CRAM │      snv  │      snv  │      sv   │     Other │      $ per │   ~ EC2 $  │
+│                   │   Instance │    Spot $ │      Spot │      Spot │   Mean     │     Stab- │     (GB)  │      (GB) │      (GB) │      VCF  │      gVCF │      VCF  │     (GB)  │   vCPU min │            │
+│                   │   Types    │           │      $    │      $    │   Spot $   │     ility │           │           │           │      (GB) │      (GB) │      (GB) │           │   harmonic │   harmonic │
+╞═══════════════════╪════════════╪═══════════╪═══════════╪═══════════╪════════════╪═══════════╪═══════════╪═══════════╪═══════════╪═══════════╪═══════════╪═══════════╪═══════════╪════════════╪════════════╡
+│ 1. us-west-2a     │          6 │   3.55125 │   2.53540 │   9.03330 │    3.63529 │   6.49790 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00032 │    9.56365 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 2. us-west-2b     │          6 │   2.69000 │   0.93270 │   7.96830 │    2.06066 │   7.03560 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00018 │    5.42115 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 3. us-west-2c     │          6 │   2.45480 │   0.92230 │   5.14490 │    1.80816 │   4.22260 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00016 │    4.75687 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 4. us-west-2d     │          6 │   1.74175 │   0.92420 │   4.54950 │    1.71232 │   3.62530 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00015 │    4.50474 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 5. us-east-1a     │          6 │   3.21395 │   1.39280 │   4.56180 │    2.37483 │   3.16900 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00021 │    6.24766 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 6. us-east-1b     │          6 │   3.06900 │   1.01450 │   6.97430 │    2.48956 │   5.95980 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00022 │    6.54950 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 7. us-east-1c     │          6 │   3.53250 │   1.11530 │   4.86300 │    2.69623 │   3.74770 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00023 │    7.09320 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 8. us-east-1d     │          6 │   2.07570 │   0.92950 │   6.82380 │    1.79351 │   5.89430 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00016 │    4.71835 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 9. ap-south-1a    │          6 │   1.78610 │   1.01810 │   3.51470 │    1.63147 │   2.49660 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00014 │    4.29204 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 10. ap-south-1b   │          6 │   1.29050 │   1.00490 │   2.24560 │    1.37190 │   1.24070 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00012 │    3.60917 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 11. ap-south-1c   │          6 │   1.26325 │   0.86570 │   1.42990 │    1.18553 │   0.56420 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00010 │    3.11886 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 12. ap-south-1d   │          0 │ nan       │ nan       │ nan       │  nan       │ nan       │ nan       │ nan       │ nan       │ nan       │ nan       │ nan       │ nan       │  nan       │  nan       │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 13. eu-central-1a │          6 │   5.88980 │   2.02420 │  15.25590 │    4.32093 │  13.23170 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00038 │   11.36744 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 14. eu-central-1b │          6 │   2.00245 │   1.11620 │   2.97580 │    1.72476 │   1.85960 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00015 │    4.53746 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 15. eu-central-1c │          6 │   1.90570 │   1.15920 │   3.36620 │    1.71591 │   2.20700 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00015 │    4.51419 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 16. ca-central-1a │          6 │   3.89545 │   3.42250 │   5.23380 │    4.04001 │   1.81130 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00035 │   10.62839 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 17. ca-central-1b │          6 │   3.81865 │   3.18960 │   4.92650 │    3.86332 │   1.73690 │  49.50000 │  39.00000 │  13.20000 │   0.12000 │   1.20000 │   0.12000 │   0.00300 │    0.00034 │   10.16355 │
+├───────────────────┼────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼────────────┼────────────┤
+│ 18. ca-central-1c │          0 │ nan       │ nan       │ nan       │  nan       │ nan       │ nan       │ nan       │ nan       │ nan       │ nan       │ nan       │ nan       │  nan       │  nan       │
+╘═══════════════════╧════════════╧═══════════╧═══════════╧═══════════╧════════════╧═══════════╧═══════════╧═══════════╧═══════════╧═══════════╧═══════════╧═══════════╧═══════════╧════════════╧════════════╛
+
+Select the availability zone by number: 
+```
+> The script will go on to approximate the entire cost of analysis: EC2 costs, data transfer costs and storage cost.  Both the active analysis cost, and also the approximate costs of storing analysis results per month.
+
+
+---
+
+## Create An Ephemeral Cluster
+_from your local machine, in the daylily git repo root_
+
+Once you have selected an AZ && have a reference bucket ready in the region this AZ exists in, you are ready to proceed to creating an ephemeral cluster.
+
+The following script will check a variety of required resources, attempt to create some if missing and then prompt you to select various options which will all be used to create a new parallel cluster yaml config, which in turn is used to create the cluster via `StackFormation`. [The template yaml file can be checked out here](config/day_cluster/prod_cluster.yaml).
+
+```zsh
+#!/bin/zsh
+AWS_PROFILE=daylily-service
+REGION_AZ=us-west-2c
+source bin/daylily-cfg-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE
+
+# And to bypass the non-critical warnings (which is fine, not all can be resolved )
+source bin/daylily-cfg-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE --pass-on-warn # If you created an inline policy with a name other than daylily-service-cluster-policy, you will need to acknowledge the warning to proceed (assuming the policy permissions were granted other ways)
 
 ```    
+
+**The gist of the flow of the script is as follows:**
+
 - Your aws credentials will be auto-detected and used to query appropriate resources to select from to proceed. You will be prompted to:
-      - select the full path to your $HOME/.ssh/<mykey>.pem (from detected .pem files)
-      - select the `s3` bucket you created and seeded, options presented will be any with names ending in `-omics-analysis`. Or you may select `1` and manually enter a s3 url.
-      - select the `Public Subnet ID` created when the cloudstack formation script was run earlier.
-      - select the `Private Subnet ID` created when the cloudstack formation script was run earlier.from the cloudformation stack output.
-      - select the `Policy ARN` created when the cloudstack formation script was run earlier.
-      - enter a name to asisgn your new ephemeral cluster (ie: `<myorg>-omics-analysis`)
-      - enter the path to a pcluser config file (ie: `config/day_cluster/pcluster_config.yaml`), enter selects the default.
-  
-  - A script will be run to check the current spot pricing for all instance types defined in the clusder config yaml which was composed for you, and will put `max-spot-price` values for each group of instances, which limits the max price you will pay for spot instances. This is a hard limit, and if the spot price exceeds this, the instance will be terminated. This is a safety measure to prevent runaway costs.
-  - The configuration script will then create  `CLUSTERNAME_cluster.yaml` and `CLUSTERNAME_cluster_init_vals.txt` files in `~/.config/daylily/` and these will be used to create the new ephemeral cluster.
-  - First, a dryrun `pcluster create-cluster` command will be run to ensure the configuration is correct. You will be informed of success/fail for this step, and asked if you wish to proceed in actual creation of the cluster, enter `y`.
+      - (_one per-region_) select the full path to your $HOME/.ssh/<mykey>.pem (from detected .pem files)
+      - (_one per-region_) select the `s3` bucket you created and seeded, options presented will be any with names ending in `-omics-analysis`. Or you may select `1` and manually enter a s3 url.
+      - (_one per-region-az_) select the `Public Subnet ID` created when the cloudstack formation script was run earlier. **if none are detected, this will be auto-created for you via stack formation**
+      - (_one per-region-az_) select the `Private Subnet ID` created when the cloudstack formation script was run earlier.from the cloudformation stack output. **if none are detected, this will be auto-created for you via stack formation**
+      - (_one per-aws-account_) select the `Policy ARN` created when the cloudstack formation script was run earlier. **if none are detected, this will be auto-created for you via stack formation**
+      - (_one unique name per region_)enter a name to asisgn your new ephemeral cluster (ie: `<myorg>-omics-analysis`)
+      - (_one per-aws account_) You will be prompted to enter info to create a `daylily-global` budget (allowed user-strings: `daylily-service`, alert email: `your@email`, budget amount: `100`)
+      - (_one per unique cluster name_) You will be prompted to enter info to create a `daylily-ephemeral-cluster` budget (allowed user-strings: `daylily-service`, alert email: `your@email`, budget amount: `100`)
+      - Enforce budgets? (default is no, _yes is not fully tested_)
+      - Choose the cloudstack formation `yaml` template  (default is `prod_cluster.yaml`)
+      - Choose the FSx size (default is 4.8TB)
+      - Opt to store detailed logs or not (default is no)
+      - Choose if you wish to AUTO-DELETE the root EBS volumes on cluster termination (default is NO *be sure to clean these up if you keep this as no*)
+      - Choose if you wish to RETAIN the FSx filesystem on cluster termination (default is YES *be sure to clean these up if you keep this as yes*)
+
+> ...and then the script will run for a bit ~20-60(max)min
+
+  - A process will run to poll and populate maximum spot prices for the instance types used in the cluster.
+  - A `CLUSTERNAME_cluster.yaml` and `CLUSTERNAME_cluster_init_vals.txt` file are created in `~/.config/daylily/`,
+  - First, a dryrun cluster creation is attempted.  If successful, creation proceeds.  If unsuccessful, the process will terminate.
   - The ephemeral cluster creation will begin and a monitoring script will watch for its completion. **this can take from 20m to an hour to complete**, depending on the region, size of Fsx requested, S3 size, etc.  There is a max timeout set in the cluster config yaml of 1hr, which will cause a failure if the cluster is not up in that time. 
 
 The terminal will block, and if all is well, you will see the following message:
@@ -528,11 +447,20 @@ Once logged in, as the 'ubuntu' user, run the following commands:
  
 Setup complete. You can now start working with Daylily on the head node.
 ```
+
+  - (optional), you may select `y` or `n` to begin building the cached environments on the cluster.
   - You are ready to roll.
 
+### (untested) Remote Test New Cluster
+
+```bash
+#!/bin/zsh
+source ./bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $AWS_PROFILE
+
+```
 
 ### Review Clusters
-You can confirm the cluster creation was successful with the following command (alternatively, use the PCUI console).
+You may confirm the cluster creation was successful with the following command (alternatively, use the PCUI console).
 
 ```bash
 pcluster list-clusters --region $REGION
@@ -542,9 +470,11 @@ pcluster list-clusters --region $REGION
 [See the instructions here](#first-time-logging-into-head-node) to confirm the headnode is configured and ready to run the daylily pipeline.
 
 
----
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 # Costs
+
 ## Monitoring (tags and budgets)
 - Every resource created by daylily is tagged to allow in real time monitoring of costs, to whatever level of granularity you desire. This is intended as a tool for not only managing costs, but as a very important metric to track in assessing various tools utility moving ahead (are the costs of a tool worth the value of the data produced by it, and how does this tool compare with others in the same class?)
 
@@ -597,8 +527,8 @@ I suggest:
 
 
 
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
----
 
 # PCUI (technically optional, but you will be missing out)
 [Install instructions here](https://docs.aws.amazon.com/parallelcluster/latest/ug/install-pcui-v3.html#install-pcui-steps-v3), launch it using the public subnet created in your cluster, and the vpcID this public net belongs to. These go in the `ImageBuilderVpcId` and `ImageBuilderSubnetId` respectively.
@@ -610,7 +540,8 @@ I suggest:
 - *[< $1/month>](https://docs.aws.amazon.com/parallelcluster/latest/ug/install-pcui-costs-v3.html)*
 
 
----
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 # Working With The Ephemeral Clusters
 
@@ -710,27 +641,34 @@ AWS_PROFILE=<profile_name>
 bin/daylily-ssh-into-headnode 
 ```
 
-##### Confirm Headnode Configuration Is Complete
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
+
+# From The Epheemeral Cluster Headnode
+
+## Confirm Headnode Configuration Is Complete
 
 **Is `daylily` CLI Available & Working**
+
 ```bash
 cd ~/projects/daylily
 . dyinit # inisitalizes the daylily cli
 dy-a local # activates the local config
 dy-g hg38 # sets the genome to hg38
 ```
-# if . dyinit works, but dy-a local fails, try 'dy-b BUILD'
+> if `. dyinit` works, but `dy-a local` fails, try `dy-b BUILD`
 
-```
+
 
 This should produce a magenta `WORKFLOW SUCCESS` message and `RETURN CODE: 0` at the end of the output.  If so, you are set. If not, see the next section.
 
-###### Headnode Confiugration Incomplete
+### Headnode Confiugration Incomplete
 
 If there is no `~/projects/daylily` directory, or the `dyinit` command is not found, the headnode configuration is incomplete. 
 
 **Attempt To Complete Headnode Configuration**
 From your remote terminal that you created the cluster with, run the following commands to complete the headnode configuration.
+
 ```bash
 conda activate DAYCLI
 
@@ -739,7 +677,7 @@ source ./bin/daylily-cfg-headnode $PATH_TO_PEM $CLUSTER_AWS_REGION $AWS_PROFILE
 
 > If the problem persists, ssh into the headnode, and attempt to run the commands as the ubuntu user which are being attempted by the `daylily-cfg-headnode` script.
 
-##### Confirm Headnode /fsx/ Directory Structure
+### Confirm Headnode /fsx/ Directory Structure
 
 **Confirm `/fsx/` directories are present**
 ```bash
@@ -752,7 +690,7 @@ drwxrwxrwx 5 root root 33K Sep 26 08:35 analysis_results
 drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 ```
 
-##### Run A Local Test Workflow
+### Run A Local Test Workflow
 > init daylily, activate an analysis profile, set genome, stage an analysis_manigest.csv and run a test workflow.
 ```bash
 . dyinit  --project PROJECT
@@ -766,13 +704,13 @@ dy-r produce_deduplicated_bams -p -j 2 --config aligners=['bwa2a','sent'] dedupe
 dy-r produce_deduplicated_bams -p -j 2 --config aligners=['bwa2a','sent'] dedupers=['dppl'] 
 ```
 
-###### More On The `-j` Flag
+#### More On The `-j` Flag
+
 The `-j` flag specified in `dy-r` limits the number of jobs submitted to slurm. For out of the box settings, the advised range for `-j` is 1 to 10. You may omit this flag, and allow submitting all potnetial jobs to slurm, which slurm, /fsx, and the instances can handle growing to the 10s or even 100 thousands of instances... however, various quotas will begin causing problems before then.  The `local` defauly is set to `-j 1` and `slurm` is set to `-j 10`, `-j` may be set to any int > 0.
 
 This will produce a job plan, and then begin executing. The sample manifest can be found in `.test_data/data/0.01x_3_wgs_HG002.samplesheet.csv` (i am aware this is not a `.tsv` :-P ). Runtime on the default small test data runnin locally on the default headnode instance type should be ~5min.
 
 ```text
-
 NOTE! NOTE !! NOTE !!! ---- The Undetermined Sample Is Excluded. Set --config keep_undetermined=1 to process it.
 Building DAG of jobs...
 Creating conda environment workflow/envs/vanilla_v0.1.yaml...
@@ -797,15 +735,17 @@ strobe_align_sort                1             16             16
 workflow_staging                 1              1              1
 total                            7              1             16
 ```
-This should exit with a magenta success message and `RETURN CODE: 0`. Results can be found in `results/day/{hg38,b37}`.
+
+> This should exit with a magenta success message and `RETURN CODE: 0`. Results can be found in `results/day/{hg38,b37}`.
 
 
-##### Run A Slurm Test Workflow
+### Run A Slurm Test Workflow
 The following will submit jobs to the slurm scheduler on the headnode, and spot instances will be spun up to run the jobs (modulo limits imposed by config and quotas).
 
 First, create a working directory on the `/fsx/` filesystem.
 
 > init daylily, activate an analysis profile, set genome, stage an analysis_manigest.csv and run a test workflow.
+
 ```bash
 # create a working analysis directory
 mkdir -p /fsx/analysis_results/ubuntu/init_test
@@ -826,7 +766,8 @@ head -n 2 .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv > config/analysis_
 dy-r produce_snv_concordances -p -k -j 2 --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n
 ```
 
-Which will produce a plan that looks like
+Which will produce a plan that looks like.
+
 ```text
 
 Job stats:
@@ -848,14 +789,15 @@ workflow_staging                  1              1              1
 total                            59              1            192
 ```
 
-Run the test with
+Run the test with:
+
 ```bash
 dy-r produce_snv_concordances -p -k -j 6  --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] #  -j 6 will run 6 jobs in parallel max, which is done here b/c the test data runs so quickly we do not need to spin up one spor instance per deepvariant job & since 3 dv jobs can run on a 192 instance, this flag will limit creating only  2 instances at a time.
 ```
 
-note1: the first time you run a pipeline, if the docker images are not cached, there can be a delay in starting jobs as the docker images are cached. They are only pulled 1x per cluster lifetime, so subsequent runs will be faster.
+_note1:_ the first time you run a pipeline, if the docker images are not cached, there can be a delay in starting jobs as the docker images are cached. They are only pulled 1x per cluster lifetime, so subsequent runs will be faster.
 
-note2: The first time a cold cluster requests spot instances, can take some time (~10min) to begin winning spot bids and running jobs. Hang tighe, and see below for monitoring tips.
+_note2:_ The first time a cold cluster requests spot instances, can take some time (~10min) to begin winning spot bids and running jobs. Hang tighe, and see below for monitoring tips.
 
 #### (RUN ON A FULL 30x WGS DATA SET)
 **ALERT** The `analysis_manifest.csv` is being re-worked to be more user friendly. The following will continue to work, but will be repleaced with a less touchy method soon.
@@ -909,14 +851,22 @@ dy-r produce_snv_concordances -p -k -j 10 --config aligners=['strobe','bwa2a'] d
 
 ```
 
-###### The Whole Magilla (3 aligners, 1 deduper, 5 snv callers, 3 sv callers)
+##### The Whole Magilla (3 aligners, 1 deduper, 5 snv callers, 3 sv callers)
 
 ```bash
 max_snakemake_tasks_active_at_a_time=2 # for local headnode, maybe 400 for a full cluster
 dy-r produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce_kat produce_multiqc_final_wgs -p -k -j $max_snakemake_tasks_active_at_a_time --config aligners=['strobe','bwa2a','sent'] dedupers=['dppl'] snv_callers=['oct','sentd','deep','clair3','lfq2'] sv_callers=['tiddit','manta','dysgu'] -n
 ```
+## To Create Your Own `config/analysis_manifest.csv` File From Your Own `analysis_samples.tsv` File
+The `analysis_manifest.csv` file is required to run the daylily pipeline. It should only be created via the helper script `./bin/daylily-analysis-samples-to-manifest`.
 
-#### Monitor Slurm Submitted Jobs
+**this script is still in development, more docs to come**, run with `-h` for now and see the example [etc/analysis_samples.tsv template](etc/analysis_samples.tsv) file for the format of the `analysis_samples.tsv` file. You also need to have a valid ephemeral cluster available.
+
+---
+
+## Slurm Monitoring
+
+### Monitor Slurm Submitted Jobs
 
 Once jobs begin to be submitted, you can monitor from another shell on the headnode(or any compute node) with:
 ```bash
@@ -953,7 +903,7 @@ glances
 ```
 
 
-#### SSH Into Compute Nodes
+### SSH Into Compute Nodes
 You can not access compute nodes directly, but can access them via the head node. From the head node, you can determine if there are running compute nodes with `squeue`, and use the node names to ssh into them.
 
 ```bash
@@ -961,27 +911,47 @@ ssh i192-dy-gb384-1
 ```
 
 
-#### Delete Cluster
+### Delete Cluster
 **warning**: this will delete all resources created for the ephemeral cluster, importantly, including the fsx filesystem. You must export any analysis results created in `/fsx/analysis_results` from the `fsx` filesystem  back to `s3` before deleting the cluster. 
 - During cluster config, you will choose if Fsx and the EBS volumes auto-delete with cluster deletion. If you disable auto-deletion, these idle volumes can begin to cost a lot, so keep an eye on this if you opt for retaining on deletion.
 
-##### Export `fsx` Analysis Results Back To S3
+### Export `fsx` Analysis Results Back To S3
+
+#### Facilitated
+Run:
+```bash
+./bin/daylily-export-fsx-to-s3 <cluster_name> <region> <export_path:analysis_results>
+```
+- export_path should be `analysis_results` or a subdirectory of `analysis_results/*` to export successfully. 
+- The script will run, and report status until complete. If interrupted, the export will not be halted. 
+- You can visit the FSX console, and go to the Fsx filesystem details page to monitor the export status in the data repository tab.
+
+
+#### Via `FSX` Console
 - Go to the 'fsx' AWS console and select the filesystem for your cluster.
 - Under the `Data Repositories` tab, select the `fsx` filesystem and click `Export to S3`. Export can only currently be carried out back to the same s3 which was mounted to the fsx filesystem. 
 - Specify the export path as `analysis_results` (or be more specific to an `analysis_results/subdir`), the path you enter is named relative to the mountpoint of the fsx filesystem on the cluster head and compute nodes, which is `/fsx/`. Start the export. This can take 10+ min.  When complete, confirm the data is now visible in the s3 bucket which was exported to. Once you confirm the export was successful, you can delete the cluster (which will delete the fsx filesystem).
 
-##### Delete The Cluster, For Real
+#### Delete The Cluster, For Real
+
 _note: this will not modify/delete the s3 bucket mounted to the fsx filesystem, nor will it delete the policyARN, or private/public subnets used to config the ephemeral cluster._
+
+**the headnode `/root` volume and the fsx filesystem will be deleted if not explicitly flagged to be saved -- be sure you have exported Fsx->S3 before deleting the cluster**
+
 ```bash
 pcluster delete-cluster-instances -n <cluster-name> --region us-west-2
 pcluster delete-cluster -n <cluster-name> --region us-west-2
 ``` 
 - You can monitor the status of the cluster deletion using `pcluster list-clusters --region us-west-2` and/or `pcluster describe-cluster -n <cluster-name> --region us-west-2`. Deletion can take ~10min depending on the complexity of resources created and fsx filesystem size.
 
+
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
+
 # Other Monitoring Tools
 
-## PCUI
-... Let me plug it again!
+## PCUI (Parallel Cluster User Interface)
+... For real, use it!
 
 ## Quick SSH Into Headnode
 (also, can be done via pcui)
@@ -991,6 +961,8 @@ pcluster delete-cluster -n <cluster-name> --region us-west-2
 _alias it for your shell:_ `alias goday="source ~/git_repos/daylily/bin/daylily-ssh-into-headnode"`
 
 
+---
+
 ## AWS Cloudwatch
 - The AWS Cloudwatch console can be used to monitor the cluster, and the resources it is using.  This is a good place to monitor the health of the cluster, and in particular the slurm and pcluster logs for the headnode and compute fleet.
 - Navigate to your `cloudwatch` console, then select `dashboards` and there will be a dashboard named for the name you used for the cluster. Follow this link (be sure you are in the `us-west-2` region) to see the logs and metrics for the cluster.
@@ -998,6 +970,7 @@ _alias it for your shell:_ `alias goday="source ~/git_repos/daylily/bin/daylily-
 
 
 
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
  
 # And There Is More
 
@@ -1102,6 +1075,9 @@ The following directories are created and accessible via `/fsx` on the headnode 
 ```
 
 
+
+
+<p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 
 # In Progress // Future Development
