@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.144)
+# Daylily AWS Ephemeral Cluster Setup (0.7.147)
 
 
 **beta release**
@@ -431,7 +431,10 @@ The script will take all of this info, and proceed to:
   - First, a dryrun cluster creation is attempted.  If successful, creation proceeds.  If unsuccessful, the process will terminate.
   - The ephemeral cluster creation will begin and a monitoring script will watch for its completion. **this can take from 20m to an hour to complete**, depending on the region, size of Fsx requested, S3 size, etc.  There is a max timeout set in the cluster config yaml of 1hr, which will cause a failure if the cluster is not up in that time. 
 
-The terminal will block, and if all is well, you will see the following message:
+The terminal will block, a status message will slowly scroll by, and after ~20m, if successful, the headnode config will begin (you may be prompted to select the cluster to config if there are multiple in the AZ.  The headnode confiig will setup a few final bits, and then run a few tests (you should see a few magenta success bars during this process).
+
+
+If all is well, you will see the following message:
 
 ```text
 You can now SSH into the head node with the following command:
@@ -445,22 +448,25 @@ Once logged in, as the 'ubuntu' user, run the following commands:
 
   dy-r help
  
-Setup complete. You can now start working with Daylily on the head node.
-```
+"Would you like to start building various caches needed to run jobs? [y/n]"
 
-  - (optional), you may select `y` or `n` to begin building the cached environments on the cluster.
+```
+  - (optional), you may select `y` or `n` to begin building the cached environments on the cluster. The caches will be automatically created if missing whenever a job is submitted. They should only need to be created _once_ per ephemeral cluster (the compute nodes all share the caches w/the headnode). The build can take 15-30m the first time.
   - You are ready to roll.
 
 
 > During cluster creation, and especially if you need to debug a failure, please go to the `CloudFormation` console and look at the `CLUSTER-NAME` stack.  The `Events` tab will give you a good idea of what is happening, and the `Outputs` tab will give you the IP of the headnode, and the `Resources` tab will give you the ARN of the FSx filesystem, which you can use to look at the FSx console to see the status of the filesystem creation.
 
-### (untested) Remote Test New Cluster
+### Run Remote Slurm Tests On Headnode
 
 ```bash
 #!/bin/zsh
 source ./bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $AWS_PROFILE
-
 ```
+A successful test will look like this:
+  
+  > ![](docs/images/daylily_remote_test_success.png)
+
 
 ### Review Clusters
 You may confirm the cluster creation was successful with the following command (alternatively, use the PCUI console).
@@ -547,7 +553,9 @@ You will need to enter the following (all other params may be left as default):
 - `ImageBuilderSubnetId`: the *subnetID of the public subnet* created in your cluster creation, visit the VPC console to find this (possibly navigate from the EC2 headnode to this).
 - Check the 2 acknowledgement boxes, and click `Create Stack`.
 
-This will boot you to cloudformation, and will take ~10m to complete.  Once complete, you will receive an email with the password to the PCUI console. To find the PCUI url, visit the `Outputs` tab of the `parallelcluster-ui` stack in the cloudformation console and look for the https:// link (which will work once the stack completes). You use the entered email and the password emailed to it to login the first time.
+This will boot you to cloudformation, and will take ~10m to complete.  Once complete, you will receive an email with the password to the PCUI console. 
+
+To find the PCUI url, visit the `Outputs` tab of the `parallelcluster-ui` stack in the cloudformation console, the url for `ParallelClusterUIUrl` is the one you should use. You use the entered email and the password emailed to login the first time.
 
 > The PCUI stuff is not required, but very VERY awesome.
 

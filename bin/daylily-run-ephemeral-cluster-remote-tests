@@ -85,19 +85,6 @@ if [[ ! -f "$pem_file" ]]; then
 fi
 
 
-
-
-# a quick test to confirm things are running as expected locally on the headnode
-echo "Run a quick test to ensure things are working as expected... [local run]"
-ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "source ~/.bashrc && cd ~/projects/daylily && source dyinit --project daylily-global && source bin/day_activate local hg38 remote && ./bin/day_run  produce_deduplicated_bams -p -k -j 2 --config aligners=['strobe'] dedupers=['dppl']  "
-
-
-# Provide final instructions for SSH access to the head node
-echo "Reminder::: You can now SSH into the head node with the following command:"
-echo "        ssh -i $pem_file ubuntu@$cluster_ip_address"
-echo " "
-
 echo "Would you like to remotely launch a workflow w/in a tmux session on the headnode? [y/n]"
 
 read REPLY
@@ -114,15 +101,12 @@ if [[ "$REPLY" == "y" ]]; then
 fi
 
 
-echo " "
-echo "PLACEHOLDER -- EXAMPLE OF REMOTE SUBMITTING A WORFLOW FROM A LOCAL SAMPLE SHEET"
-echo " "
 
 echo ""
-echo "again, you may now access the headnode via the PCUI, via 'source bin/daylily-ssh-into-headnode', or SSH into the head node with the following command:"
+echo " >>>>>> you may now access the headnode via the PCUI, via 'source bin/daylily-ssh-into-headnode', or SSH into the head node with the following command:"
 echo "        ssh -i $pem_file ubuntu@$cluster_ip_address"
+echo "        tmux ls"
+echo "        tmux a -t c"
 echo " "
-echo "ALERT! - REMEMBER TO EXPORT YOUR FSX LUSTRE FILESYSTEM analysis_results BACK TO S3 BEFORE DELETING THE CLUSTER - "
-echo "to help w/this, you can run ( bin/daylily-export-fsx-to-s3 ) "
 echo " "
 echo "...fin"
