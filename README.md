@@ -336,6 +336,7 @@ REGION=us-west-2
 OUT_TSV=./init_daylily_cluster.tsv
 
 ./bin/check_current_spot_market_by_zones.py -o $OUT_TSV --profile $AWS_PROFILE   
+```
 
 ```ansi
 30.0-cov genome @ vCPU-min per x align: 307.2 vCPU-min per x snvcall: 684.0 vCPU-min per x other: 0.021 vCPU-min per x svcall: 19.0
