@@ -107,7 +107,7 @@ ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -
 # Initialize and configure the Daylily environment on the head node
 echo "Configuring Daylily environment on the head node..."
 ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-    "source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_build"
+    "source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_build BUILD"
 
 # Run a simple help test for Daylily remotely
 echo "Running a simple help test on the head node..."

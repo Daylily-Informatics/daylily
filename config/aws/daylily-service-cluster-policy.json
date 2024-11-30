@@ -6,7 +6,8 @@
 			"Action": [
 				"ec2:*",
 				"autoscaling:*",
-				"elasticloadbalancing:*"
+				"elasticloadbalancing:*",
+				"elasticfilesystem:*"
 			],
 			"Resource": "*"
 		},
@@ -32,7 +33,8 @@
                 "iam:PassRole"
             ],
             "Resource": [
-                "arn:aws:iam::<AWS_ACCOUNT_ID>:role/parallelcluster/*"
+                "arn:aws:iam::<AWS_ACCOUNT_ID>:role/parallelcluster/*",
+				"arn:aws:iam::<AWS_ACCOUNT_ID>:role/ApiGatewayLogRole-2c4ca6e0/*"
             ],
             "Effect": "Allow"
         },
@@ -90,7 +92,9 @@
 		{
 			"Effect": "Allow",
 			"Action": [
-				"route53:*"
+				"route53:*",
+				"apigateway:*",
+				"secretsmanager:*"
 			],
 			"Resource": "*"
 		},

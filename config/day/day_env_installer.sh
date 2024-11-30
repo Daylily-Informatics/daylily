@@ -8,11 +8,6 @@
 #              If the 'DAY' environment already exists, the script will prompt accordingly.
 ################################################################################
 
-# Ensure the script is being run, not sourced
-if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
-    echo "Error: This script should be executed, not sourced."
-    return 1
-fi
 
 # Function to display usage information
 usage() {

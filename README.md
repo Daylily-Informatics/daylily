@@ -529,7 +529,6 @@ I suggest:
 
 
 
-
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
 
@@ -537,6 +536,22 @@ I suggest:
 [Install instructions here](https://docs.aws.amazon.com/parallelcluster/latest/ug/install-pcui-v3.html#install-pcui-steps-v3), launch it using the public subnet created in your cluster, and the vpcID this public net belongs to. These go in the `ImageBuilderVpcId` and `ImageBuilderSubnetId` respectively.
 
 - You should be sure to enable SSM which allows remote access to the nodes from the PCUI console. https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-ssm-user-permissions.html
+
+## Install Steps
+Use a preconfigured template in the region you have built a cluster in, [they can be found here](https://docs.aws.amazon.com/parallelcluster/latest/ug/install-pcui-v3.html#install-pcui-steps-v3).
+  
+You will need to enter the following (all other params may be left as default):
+- `Stack name`: parallelcluster-ui
+- `Admin's Email`: your email ( a confirmation email will be sent to this address with the p/w for the UI, and can not be re-set if lost ).
+- `ImageBuilderVpcId`: the *vpcID of the public subnet* created in your cluster creation, visit the VPC console and look for a name like `daylily-cs-<REGION-AZ>` #AZ is digested to text, us-west-2d becomes us-west-twod
+- `ImageBuilderSubnetId`: the *subnetID of the public subnet* created in your cluster creation, visit the VPC console to find this (possibly navigate from the EC2 headnode to this).
+- Check the 2 acknowledgement boxes, and click `Create Stack`.
+
+This will boot you to cloudformation, and will take ~10m to complete.  Once complete, you will receive an email with the password to the PCUI console. To find the PCUI url, visit the `Outputs` tab of the `parallelcluster-ui` stack in the cloudformation console and look for the https:// link (which will work once the stack completes). You use the entered email and the password emailed to it to login the first time.
+
+> The PCUI stuff is not required, but very VERY awesome.
+
+> AND, it seems there is a permissions problem with the `daylily-service` user, as it is setup right now... the stack is failing.  Permissions are likely missing...
 
 
 ## PCUI Costs ( ~ $1.00 / month )
