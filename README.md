@@ -58,8 +58,221 @@ _this is a title rough idea! - not likely final, but is the gist of it_
 
 ## AWS 
 
-### Create an IAM User
-- The following insstructions are tested with **IAM User** accounts, the instructions may not translate to the _IAM Identity Center_ users.
+### Create a `daylily-service`  IAM User
+_as the admin user_
+
+From the `Iam -> Users` console, create a new user.
+
+- Allow the user to access the AWS Management Console.
+- Select `I want to create an IAM user` _note: the insstructions which follow will probably not work if you create a user with the `Identity Center` option_.
+- Specify or autogenerate a p/w, note it down.
+- `click next`
+- Skip (for now) attaching a group / copying permissions / attaching policies, and `click next`.
+- Review the confiirmation page, and click `Create user`.
+- On the next page, capture the `Console sign-in URL`, `username`, and `password`. You will need these to log in as the `daylily-service` user.
+
+### Attach Policies To The `daylily-service` User
+_still as the admin user_
+- Navigate to the `IAM -> Users` console, click on the `daylily-service` user.
+- Click on the `Add permissions` button, then select `create inline policy`.
+- Click on the `JSON` bubble button.
+- Delete the auto-populated json in the editor window, and paste this json into the editor (replace 1 instance of <AWS_USERNAME> with your new username, ie: `daylily-service`):
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateAccessKey",
+                "iam:ListAccessKeys",
+                "iam:DeleteAccessKey",
+                "iam:UpdateAccessKey",
+                "iam:ListMFADevices",
+                "iam:ListSigningCertificates",
+                "iam:CreateServiceSpecificCredential",
+                "iam:UpdateServiceSpecificCredential",
+                "iam:DeleteServiceSpecificCredential",
+                "iam:ListServiceSpecificCredentials",
+                "ec2:CreateTags",
+                "ec2:DeleteTags",
+                "rds:AddTagsToResource",
+                "rds:RemoveTagsFromResource",
+                "s3:PutBucketTagging",
+                "lambda:TagResource",
+                "lambda:UntagResource",
+                "dynamodb:TagResource",
+                "dynamodb:UntagResource",
+                "iam:TagUser",
+                "iam:UntagUser",
+                "iam:ListUserTags",
+                "iam:TagRole",
+                "iam:UntagRole",
+                "iam:ListRoleTags"
+            ],
+            "Resource": "arn:aws:iam::*:user/<AWS_USERNAME>"
+        }
+    ]
+}
+```
+
+- `click next`
+- Give the policy a name, like `daylily-service-init-policy`, and click `Create policy`.
+
+### Attach Remaining Policies To The `daylily-service` User
+The following inline policy enables all of the other actions the daylily ephemeral cluster needs to be able to execute.
+
+
+_still as the admin user_
+- Navigate to the `IAM -> Users` console, click on the `daylily-service` user.
+- Click on the `Add permissions` button, then select `create inline policy`.
+- Click on the `JSON` bubble button.
+- Delete the auto-populated json in the editor window, and paste this json into the editor (replace 2 instances of  <AWS_ACCOUNT_ID> with your new account number, an integer found in the upper right dropdown):
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:List*",
+                "iam:Get*",
+                "iam:SimulatePrincipalPolicy",
+                "iam:Create*",
+                "iam:DeleteInstanceProfile",
+                "iam:AddRoleToInstanceProfile",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:PassRole",
+				        "iam:AttachRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:TagRole",
+                "iam:PutRolePolicy"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cognito-idp:*",
+                "servicequotas:GetServiceQuota"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "iam:AWSServiceName": [
+                        "spot.amazonaws.com",
+                        "fsx.amazonaws.com",
+                        "s3.data-source.lustre.fsx.amazonaws.com",
+                        "imagebuilder.amazonaws.com",
+						            "ec2.amazonaws.com",
+                        "lambda.amazonaws.com"
+                    ]
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "lambda:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "cloudformation:*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "fsx:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:*"
+            ],
+            "Resource": "arn:aws:dynamodb:*:AWS_ACCOUNT_ID:table/parallelcluster-*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::parallelcluster-*",
+                "arn:aws:s3:::aws-parallelcluster-*",
+                "arn:aws:s3:::*-aws-parallelcluster*",
+                "arn:aws:s3:::parallelcluster-*/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "budgets:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:*",
+                "logs:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "imagebuilder:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "sns:*"
+            ],
+            "Resource": [
+                "arn:aws:sns:*:<AWS_ACCOUNT_ID>:ParallelClusterImage-*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "tag:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+- `click next`
+- Give the policy a name, like `daylily-service-init-policy`, and click `Create policy`.
+
+
 
 #### Allow User To Create CLI Credentials
 - [Attach the following inline policy to the new user](etc/init_aws_user_policy.json), name it 'daylily-omics-init-user'

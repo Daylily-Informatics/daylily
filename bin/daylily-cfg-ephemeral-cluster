@@ -185,7 +185,7 @@ caller_identity_arn=$(aws sts get-caller-identity --query 'Arn' --output text --
 
 
 # Set the AWS user name and policy name
-DY_POLICY_NAME="daylily-omics-analysis"
+DY_POLICY_NAME="daylily-service-cluster-policy"
 
 # Check if the policy is attached to the user
 POLICY_CHECK=$(aws iam list-attached-user-policies --user-name "$AWS_CLI_USER" --query "AttachedPolicies[?PolicyName=='$DY_POLICY_NAME']" --output text)
