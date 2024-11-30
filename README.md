@@ -424,9 +424,9 @@ source bin/daylily-cfg-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_P
       - Choose if you wish to AUTO-DELETE the root EBS volumes on cluster termination (default is NO *be sure to clean these up if you keep this as no*)
       - Choose if you wish to RETAIN the FSx filesystem on cluster termination (default is YES *be sure to clean these up if you keep this as yes*)
 
-> ...and then the script will run for a bit ~20-60(max)min
+The script will take all of this info, and proceed to:
 
-  - A process will run to poll and populate maximum spot prices for the instance types used in the cluster.
+  - Run a process will run to poll and populate maximum spot prices for the instance types used in the cluster.
   - A `CLUSTERNAME_cluster.yaml` and `CLUSTERNAME_cluster_init_vals.txt` file are created in `~/.config/daylily/`,
   - First, a dryrun cluster creation is attempted.  If successful, creation proceeds.  If unsuccessful, the process will terminate.
   - The ephemeral cluster creation will begin and a monitoring script will watch for its completion. **this can take from 20m to an hour to complete**, depending on the region, size of Fsx requested, S3 size, etc.  There is a max timeout set in the cluster config yaml of 1hr, which will cause a failure if the cluster is not up in that time. 
@@ -450,6 +450,9 @@ Setup complete. You can now start working with Daylily on the head node.
 
   - (optional), you may select `y` or `n` to begin building the cached environments on the cluster.
   - You are ready to roll.
+
+
+> During cluster creation, and especially if you need to debug a failure, please go to the `CloudFormation` console and look at the `CLUSTER-NAME` stack.  The `Events` tab will give you a good idea of what is happening, and the `Outputs` tab will give you the IP of the headnode, and the `Resources` tab will give you the ARN of the FSx filesystem, which you can use to look at the FSx console to see the status of the filesystem creation.
 
 ### (untested) Remote Test New Cluster
 
