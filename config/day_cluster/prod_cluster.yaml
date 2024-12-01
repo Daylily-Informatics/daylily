@@ -14,7 +14,7 @@ HeadNode:
     Enabled: false
   LocalStorage:
     RootVolume:
-      Size: 775
+      Size: 421
       VolumeType: gp3
       DeleteOnTermination: REGSUB_DELETE_LOCAL_ROOT
     EphemeralVolume:
