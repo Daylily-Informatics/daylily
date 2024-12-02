@@ -244,8 +244,3 @@ sudo -u ubuntu tmux send-keys -t b "source /home/ubuntu/miniconda3/bin/activate 
 sudo chmod +x /etc/letsencrypt/renewal-hooks/post/fix-permissions.sh
 sudo certbot renew --dry-run
 
-
-#TODO THIS PART
-in post hook thinng above
-pkill -f "uvicorn main:app"  # Replace with the process you need to stop
-bash /path/to/run_bloomui.sh --mode prod
