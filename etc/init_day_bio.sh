@@ -130,3 +130,88 @@ sudo systemctl reload apache2
 
 
 # wait and curl to test
+
+
+sudo apt update
+sudo apt install certbot
+sudo apt install certbot python3-certbot-dns-route53
+
+
+# ADD .aws credentials to root ~/.aws/credentials and config
+
+sudo certbot certonly --dns-route53 -d "*.dyly.bio" -d "dyly.bio" -v
+
+sudo groupadd ssl-users
+sudo usermod -aG ssl-users ubuntu
+
+#logout of shell, relogin
+
+sudo chown root:ssl-users /etc/letsencrypt/live/dyly.bio/privkey.pem
+sudo chown root:ssl-users /etc/letsencrypt/live/dyly.bio/fullchain.pem
+
+
+sudo chmod 640 /etc/letsencrypt/live/dyly.bio/privkey.pem
+sudo chmod 640 /etc/letsencrypt/live/dyly.bio/fullchain.pem
+sudo chmod 750 /etc/letsencrypt/live/dyly.bio
+sudo chmod 750 /etc/letsencrypt/live
+sudo chmod 710 /etc/letsencrypt
+sudo chmod 750 /etc/letsencrypt/live
+sudo chmod 750 /etc/letsencrypt/live/dyly.bio
+sudo chown -R root:ssl-users /etc/letsencrypt
+
+sudo chmod 640 /etc/letsencrypt/archive/dyly.bio/cert1.pem
+sudo chmod 640 /etc/letsencrypt/archive/dyly.bio/chain1.pem
+sudo chmod 640 /etc/letsencrypt/archive/dyly.bio/fullchain1.pem
+sudo chmod 640 /etc/letsencrypt/archive/dyly.bio/privkey1.pem
+sudo chmod 750 /etc/letsencrypt
+sudo chmod 710 /etc/letsencrypt
+sudo chmod 750 /etc/letsencrypt/archive
+sudo chmod 750 /etc/letsencrypt/live
+sudo chmod 750 /etc/letsencrypt/renewal
+sudo chmod 750 /etc/letsencrypt/renewal-hooks
+sudo chmod 750 /etc/letsencrypt/accounts
+
+
+sudo chown -h root:ssl-users /etc/letsencrypt/live/dyly.bio/*
+sudo chmod 750 /etc/letsencrypt/live/dyly.bio/
+sudo chmod 640 /etc/letsencrypt/live/dyly.bio/*
+sudo chown root:ssl-users /etc/letsencrypt/archive/dyly.bio/*
+
+sudo chmod 640 /etc/letsencrypt/archive/dyly.bio/*
+
+
+
+#    --ssl-certfile  /etc/letsencrypt/live/dyly.bio/fullchain.pem \
+#    --ssl-keyfile /etc/letsencrypt/live/dyly.bio/privkey.pem
+
+
+# confirm certbot renewal
+sudo systemctl list-timers | grep certbot
+
+
+sudo nano /etc/letsencrypt/renewal-hooks/post/fix-permissions.sh
+#!/bin/bash
+
+# Fix permissions for archive files
+chmod 640 /etc/letsencrypt/archive/dyly.bio/*
+chown root:ssl-users /etc/letsencrypt/archive/dyly.bio/*
+
+# Fix permissions for live files
+chmod 750 /etc/letsencrypt/live/dyly.bio/
+chmod 640 /etc/letsencrypt/live/dyly.bio/*
+
+# Restart the server to apply the new certificate
+# assuming a running tmux serssion bloom_server
+sudo -u ubuntu tmux send-keys -t bloom_server C-c
+sleep 10
+sudo -u ubuntu tmux send-keys -t b "source /home/ubuntu/miniconda3/bin/activate BLOOM && /home/ubuntu/projects/bloom/run_bloomui.sh --host 0.0.0.0 --port 8912 --mode dev" Enter
+
+
+sudo chmod +x /etc/letsencrypt/renewal-hooks/post/fix-permissions.sh
+sudo certbot renew --dry-run
+
+
+#TODO THIS PART
+in post hook thinng above
+pkill -f "uvicorn main:app"  # Replace with the process you need to stop
+bash /path/to/run_bloomui.sh --mode prod
