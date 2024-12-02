@@ -130,6 +130,31 @@ sudo a2enmod proxy proxy_http headers ssl
 
 
 sudo emacs /etc/apache2/sites-available/gtc.conf
+<VirtualHost *:443>
+    ServerName gtc.dyly.bio
+    ServerAlias www.gtc.dyly.bio
+
+    # Enable SSL
+    SSLEngine On
+    SSLCertificateFile /etc/letsencrypt/live/dyly.bio/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/dyly.bio/privkey.pem
+
+    # Proxy Configuration
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8911/
+    ProxyPassReverse / http://127.0.0.1:8911/
+
+    # Enforce Strong SSL Settings
+    SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
+    SSLCipherSuite HIGH:!aNULL:!MD5:!3DES
+    SSLHonorCipherOrder On
+
+    # HSTS Header
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    ErrorLog ${APACHE_LOG_DIR}/gtc-https-error.log
+    CustomLog ${APACHE_LOG_DIR}/gtc-https-access.log combined
+</VirtualHost>
 <VirtualHost *:80>
     ServerName gtc.dyly.bio
     ServerAlias www.gtc.dyly.bio
@@ -142,6 +167,48 @@ sudo emacs /etc/apache2/sites-available/gtc.conf
     CustomLog ${APACHE_LOG_DIR}/gtc-access.log combined
 </VirtualHost>
 
+
+
+
+
+
+sudo emacs /etc/apache2/sites-available/day.conf
+<VirtualHost *:443>
+    ServerName day.dyly.bio
+    ServerAlias www.day.dyly.bio
+
+    # Enable SSL
+    SSLEngine On
+    SSLCertificateFile /etc/letsencrypt/live/dyly.bio/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/dyly.bio/privkey.pem
+
+    # Proxy Configuration
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8914/
+    ProxyPassReverse / http://127.0.0.1:8914/
+
+    # Enforce Strong SSL Settings
+    SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
+    SSLCipherSuite HIGH:!aNULL:!MD5:!3DES
+    SSLHonorCipherOrder On
+
+    # HSTS Header
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    ErrorLog ${APACHE_LOG_DIR}/day-https-error.log
+    CustomLog ${APACHE_LOG_DIR}/day-https-access.log combined
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName day.dyly.bio
+    ServerAlias www.day.dyly.bio
+
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8914/
+    ProxyPassReverse / http://127.0.0.1:8914/
+
+    ErrorLog ${APACHE_LOG_DIR}/gtc-error.log
+    CustomLog ${APACHE_LOG_DIR}/gtc-access.log combined
+</VirtualHost>
 
 
 sudo a2ensite bloom.conf
