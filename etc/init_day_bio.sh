@@ -69,3 +69,64 @@ git clone git@github.com:Daylily-Informatics/daylily-web.git
 git clone git@github.com:Daylily-Informatics/daylily-web-mobile.git
 
 
+sudo apt update
+sudo apt install -y  apache2
+
+sudo a2enmod proxy proxy_http
+sudo systemctl restart apache2
+
+
+sudo emacs  /etc/apache2/sites-available/bloom.conf
+
+<VirtualHost *:80>
+    ServerName bloom.dyly.bio
+    ServerAlias www.bloom.dyly.bio
+
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8912/
+    ProxyPassReverse / http://127.0.0.1:8912/
+
+    ErrorLog ${APACHE_LOG_DIR}/bloom-error.log
+    CustomLog ${APACHE_LOG_DIR}/bloom-access.log combined
+</VirtualHost>
+
+
+sudo emacs /etc/apache2/sites-available/gtc.conf
+
+<VirtualHost *:80>
+    ServerName gtc.dyly.bio
+    ServerAlias www.gtc.dyly.bio
+
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8911/
+    ProxyPassReverse / http://127.0.0.1:8911/
+
+    ErrorLog ${APACHE_LOG_DIR}/gtc-error.log
+    CustomLog ${APACHE_LOG_DIR}/gtc-access.log combined
+</VirtualHost>
+
+
+sudo emacs /etc/apache2/sites-available/day.conf
+
+<VirtualHost *:80>
+    ServerName day.dyly.bio
+    ServerAlias www.gtc.dyly.bio
+
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8914/
+    ProxyPassReverse / http://127.0.0.1:8914/
+
+    ErrorLog ${APACHE_LOG_DIR}/gtc-error.log
+    CustomLog ${APACHE_LOG_DIR}/gtc-access.log combined
+</VirtualHost>
+
+
+
+
+sudo a2ensite bloom.conf
+sudo a2ensite gtc.conf
+sudo a2ensite day.conf
+sudo systemctl reload apache2
+
+
+# wait and curl to test
