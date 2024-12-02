@@ -292,7 +292,7 @@ colr  'did it work?' 0,100,255 255,100,0
 
 _from your local machine, in the daylily git repo root_
 
-- `YOURPREFIX` will be used as the bucket name prefix. Please keep it short. The new bucket name will be `YOURPREFIX-omics-analysis-REGION` and created in the region you specify. You may name the buckets in other ways, but this will block you from using the `daylily-cfg-ephemeral-cluster` script, which is largely why you're here.
+- `YOURPREFIX` will be used as the bucket name prefix. Please keep it short. The new bucket name will be `YOURPREFIX-omics-analysis-REGION` and created in the region you specify. You may name the buckets in other ways, but this will block you from using the `daylily-create-ephemeral-cluster` script, which is largely why you're here.
 - Cloning it will take 1 to many hours.
   
 **Use the following script**
@@ -400,10 +400,10 @@ The following script will check a variety of required resources, attempt to crea
 #!/bin/zsh
 AWS_PROFILE=daylily-service
 REGION_AZ=us-west-2c
-source bin/daylily-cfg-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE
+source bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE
 
 # And to bypass the non-critical warnings (which is fine, not all can be resolved )
-source bin/daylily-cfg-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE --pass-on-warn # If you created an inline policy with a name other than daylily-service-cluster-policy, you will need to acknowledge the warning to proceed (assuming the policy permissions were granted other ways)
+source bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE --pass-on-warn # If you created an inline policy with a name other than daylily-service-cluster-policy, you will need to acknowledge the warning to proceed (assuming the policy permissions were granted other ways)
 
 ```    
 

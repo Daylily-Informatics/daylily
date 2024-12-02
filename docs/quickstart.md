@@ -34,7 +34,7 @@ bash bin/create_daylily_omics_analysis_s3.sh --bucket-prefix <SHORTPREFIX> --reg
 
 
 # Create a new ephemeral cluster
-source bin/daylily-cfg-ephemeral-cluster --region-az us-west-2c --pass-on-warn --profile default # you will be prompted for a variety of things, or asked to create them if missing.
+source bin/daylily-create-ephemeral-cluster --region-az us-west-2c --pass-on-warn --profile default # you will be prompted for a variety of things, or asked to create them if missing.
 
 
 # And that should be it.
@@ -96,7 +96,7 @@ Select the availability zone by number:
 ## AWS Account
 - Create a user with CLI credentials.
   - Store them in `~/.aws/credentials` & verify they work with `aws s3 ls s3://a-bucket`.
-- Add the required permissions to your user (see README.md, and/or run the `bin/daylily-cfg-ephemeral-cluster` to check on your user permissions.
+- Add the required permissions to your user (see README.md, and/or run the `bin/daylily-create-ephemeral-cluster` to check on your user permissions.
 - Clone the `daylily-references-public` s3 bucket to a bucket in your account & in the AZ you wish to operate in (the source bucket is in `us-west-2`, it will be faster and cheaper to replicate this in the same region.  However, this bucket only needs to be present 1x/AZ, and does not need to be cloned again in the same region).  Run this command: 
 ```bash
 bash bin/create_daylily_omics_analysis_s3.sh --bucket-prefix <SHORTPREFIX> --region <REGION> 
