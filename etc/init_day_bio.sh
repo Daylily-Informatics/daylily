@@ -77,22 +77,59 @@ sudo systemctl restart apache2
 
 
 sudo emacs  /etc/apache2/sites-available/bloom.conf
-
+# Redirect HTTP to HTTPS
 <VirtualHost *:80>
     ServerName bloom.dyly.bio
     ServerAlias www.bloom.dyly.bio
 
-    ProxyPreserveHost On
-    ProxyPass / http://127.0.0.1:8912/
-    ProxyPassReverse / http://127.0.0.1:8912/
+    Redirect permanent / https://bloom.dyly.bio/
 
-    ErrorLog ${APACHE_LOG_DIR}/bloom-error.log
-    CustomLog ${APACHE_LOG_DIR}/bloom-access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/bloom-http-error.log
+    CustomLog ${APACHE_LOG_DIR}/bloom-http-access.log combined
+</VirtualHost>
+
+# HTTPS Configuration: Proxy to Port 8912
+<VirtualHost *:443>
+    ServerName bloom.dyly.bio
+    ServerAlias www.bloom.dyly.bio
+
+    # Enable SSL
+    SSLEngine On
+    SSLCertificateFile /etc/letsencrypt/live/dyly.bio/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/dyly.bio/privkey.pem
+
+    # Enable SSL Proxy Engine
+    SSLProxyEngine On
+
+    # Proxy Configuration to Backend via HTTPS
+    ProxyPreserveHost On
+    ProxyPass / https://127.0.0.1:8912/
+    ProxyPassReverse / https://127.0.0.1:8912/
+
+    # Enforce Strong SSL Settings
+    SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
+    SSLCipherSuite HIGH:!aNULL:!MD5:!3DES
+    SSLHonorCipherOrder On
+
+    # HSTS Header
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    ErrorLog ${APACHE_LOG_DIR}/bloom-https-error.log
+    CustomLog ${APACHE_LOG_DIR}/bloom-https-access.log combined
 </VirtualHost>
 
 
-sudo emacs /etc/apache2/sites-available/gtc.conf
 
+sudo a2enmod proxy proxy_http headers ssl
+
+
+
+
+
+
+
+
+sudo emacs /etc/apache2/sites-available/gtc.conf
 <VirtualHost *:80>
     ServerName gtc.dyly.bio
     ServerAlias www.gtc.dyly.bio
@@ -106,27 +143,24 @@ sudo emacs /etc/apache2/sites-available/gtc.conf
 </VirtualHost>
 
 
-sudo emacs /etc/apache2/sites-available/day.conf
-
-<VirtualHost *:80>
-    ServerName day.dyly.bio
-    ServerAlias www.gtc.dyly.bio
-
-    ProxyPreserveHost On
-    ProxyPass / http://127.0.0.1:8914/
-    ProxyPassReverse / http://127.0.0.1:8914/
-
-    ErrorLog ${APACHE_LOG_DIR}/gtc-error.log
-    CustomLog ${APACHE_LOG_DIR}/gtc-access.log combined
-</VirtualHost>
-
-
-
 
 sudo a2ensite bloom.conf
 sudo a2ensite gtc.conf
 sudo a2ensite day.conf
+
+sudo a2enmod ssl
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod headers
+
+sudo ln -s /etc/apache2/sites-available/bloom.conf /etc/apache2/sites-enabled/
+#above might fail, ok
+
+sudo apachectl configtest
+ #if ok
 sudo systemctl reload apache2
+sudo systemctl restart apache2
+
 
 
 # wait and curl to test
