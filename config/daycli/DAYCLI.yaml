@@ -1,0 +1,12 @@
+---
+channels:
+  - conda-forge
+dependencies:
+  - python 
+  - ipython
+  - parallel 
+  - jq 
+  - nodejs==18.15.0 
+  - aws-parallelcluster==3.11.1 
+  - flask=2.2.5 
+  - pyyaml
