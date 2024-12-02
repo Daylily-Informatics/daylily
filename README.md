@@ -27,7 +27,7 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
 # What's It All About?
 
-## BFAIR: Bioinformatics [https://www.go-fair.org/fair-principles/[(FAIR) Principles 
+## BFAIR: Bioinformatics [https://www.go-fair.org/fair-principles/](FAIR) Principles 
 _this is a title rough idea! - not likely final, but is the gist of it_
 
 ## Comprehensive Cost Transparency & Predictability
