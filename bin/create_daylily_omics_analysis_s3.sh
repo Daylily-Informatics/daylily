@@ -16,6 +16,7 @@ exclude_hg38_refs=false
 exclude_b37_refs=false
 exclude_giab_reads=false
 profile="setme"
+LOGFILE=""
 
 # Usage function
 usage() {
@@ -31,6 +32,7 @@ usage() {
     echo "  --exclude-b37-refs                   Skip copying b37 references and annotations ( default: false )"
     echo "  --exclude-giab-reads                 Skip copying GIAB reads ( default: false )"
     echo "  --profile                             AWS profile to use, must match AWS_PROFILE ( required )"
+    echo "  --log-file                            Log file to write to ( default: ./create_daylily_s3_REGION.log )"
     echo "  --help                               Show this help message"
     exit 1
 }
@@ -47,10 +49,15 @@ while [[ "$#" -gt 0 ]]; do
         --exclude-b37-refs) exclude_b37_refs=true; shift 1;;
         --exclude-giab-reads) exclude_giab_reads=true; shift 1;;
         --profile) profile="$2"; shift 2;;
+        --log-file) LOGFILE="$2"; shift 2;;
         --help) usage;;
         *) echo "Unknown parameter: $1"; usage;;
     esac
 done
+
+if [ "$LOGFILE" == "" ]; then
+    LOGFILE="./create_daylily_s3_${region}.log"
+fi
 
 if [ "$disable_warn" != true ]; then
     echo ""
@@ -127,15 +134,15 @@ create_bucket() {
         aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled
 
         # Add tags to the bucket
-        echo "Adding tags to bucket '$new_bucket'..."
-        aws s3api put-bucket-tagging --bucket "$new_bucket" --region "$region" --tagging 'TagSet=[
-            {Key=aws-parallelcluster-username,Value=NA},
-            {Key=aws-parallelcluster-jobid,Value=NA},
-            {Key=aws-parallelcluster-project,Value=daylily-global},
-            {Key=aws-parallelcluster-clustername,Value=NA},
-            {Key=aws-parallelcluster-enforce-budget,Value=daylily-global}
-        ]'
-        echo "Tags added to bucket '$new_bucket'."
+        #echo "Adding tags to bucket '$new_bucket'..."
+        #aws s3api put-bucket-tagging --bucket "$new_bucket" --region "$region" --tagging 'TagSet=[
+        #    {Key=aws-parallelcluster-username,Value=NA},
+        #    {Key=aws-parallelcluster-jobid,Value=NA},
+        #    {Key=aws-parallelcluster-project,Value=daylily-global},
+        #    {Key=aws-parallelcluster-clustername,Value=NA},
+        #    {Key=aws-parallelcluster-enforce-budget,Value=daylily-global}
+        #]'
+        #echo "Tags added to bucket '$new_bucket'."
         
     fi
 }
@@ -153,32 +160,25 @@ create_bucket
 # Core dirs to copy
 echo "$s3_reference_data_version" > daylily_reference_version_$s3_reference_data_version.info
 cmd_version="aws s3 cp daylily_reference_version_$s3_reference_data_version.info  s3://${new_bucket}/s3_reference_data_version.info"
-cmd_cluster_boot_config="aws s3 cp s3://${source_bucket}/cluster_boot_config s3://${new_bucket}/cluster_boot_config --recursive  --request-payer requester"
-cmd_cached_envs="aws s3 cp s3://${source_bucket}/data/cached_envs s3://${new_bucket}/data/cached_envs --recursive --request-payer requester "
-cmd_libs="aws s3 cp s3://${source_bucket}/data/lib s3://${new_bucket}/data/lib --recursive --request-payer requester  "
-cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_resources s3://${new_bucket}/data/tool_specific_resources --recursive --request-payer requester "
-cmd_budget="aws s3 cp s3://${source_bucket}/data/budget_tags s3://${new_bucket}/data/budget_tags --recursive --request-payer requester "
+cmd_cluster_boot_config="aws s3 cp s3://${source_bucket}/cluster_boot_config s3://${new_bucket}/cluster_boot_config --recursive  --request-payer requester --metadata-directive REPLACE "
+cmd_cached_envs="aws s3 cp s3://${source_bucket}/data/cached_envs s3://${new_bucket}/data/cached_envs --recursive --request-payer requester --metadata-directive REPLACE "
+cmd_libs="aws s3 cp s3://${source_bucket}/data/lib s3://${new_bucket}/data/lib --recursive --request-payer requester  --metadata-directive REPLACE "
+cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_resources s3://${new_bucket}/data/tool_specific_resources --recursive --request-payer requester --metadata-directive REPLACE "
+cmd_budget="aws s3 cp s3://${source_bucket}/data/budget_tags s3://${new_bucket}/data/budget_tags --recursive --request-payer requester --metadata-directive REPLACE "
 
 # b37 references
-cmd_b37_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
-cmd_b37_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+cmd_b37_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
+cmd_b37_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
 
 # hg38 references
-cmd_hg38_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
-cmd_hg38_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+cmd_hg38_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
+cmd_hg38_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
 
 # Concordance Reads
-cmd_giab_reads="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_reads s3://${new_bucket}/data/genomic_data/organism_reads --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com "
+cmd_giab_reads="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_reads s3://${new_bucket}/data/genomic_data/organism_reads --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
 
-check_for_errors() {
-    local status=$1
-    local cmd=$2
-    if [ $status -ne 0 ]; then
-        echo "Error: Command failed - \"$cmd\" with status $status. Exiting."
-        exit 3
-    fi
-}
 
+overall_status='success'
 
 if [ "$disable_dryrun" = false ]; then
     echo "[Dry-run] Skipping S3 COPY commands, which would be:"
@@ -223,35 +223,32 @@ else
 
     echo ""
     echo "NOW RUNNING"
-    echo "$cmd_version"
-    eval "$cmd_version"
-    check_for_errors $? "$cmd_version"
+    echo "...$cmd_version"
+    $cmd_version >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
 
     echo " "
     echo "NOW RUNNING"
-    echo "$cmd_cluster_boot_config"
-    eval "$cmd_cluster_boot_config" 
-    check_for_errors $? "$cmd_cluster_boot_config"
+    echo "...$cmd_cluster_boot_config"
+    $cmd_cluster_boot_config  >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
+    
 
     echo "NOW RUNNING"
-    echo "$cmd_cached_envs"
-    eval "$cmd_cached_envs"
-    check_for_errors $? "$cmd_cached_envs"
+    echo "... $cmd_cached_envs"
+    $cmd_cached_envs >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< prob ok, but unexpected" && overall_status='FAILED'
+  
+    echo "NOW RUNNING"
+    echo "...$cmd_libs"
+    $cmd_libs >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
+
 
     echo "NOW RUNNING"
-    echo "$cmd_libs"
-    eval "$cmd_libs"
-    check_for_errors $? "$cmd_libs"
+    echo "...$cmd_tool_specific_resources"
+    $cmd_tool_specific_resources  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
 
     echo "NOW RUNNING"
-    echo "$cmd_tool_specific_resources"
-    eval "$cmd_tool_specific_resources"
-    check_for_errors $? "$cmd_tool_specific_resources"
-
-    echo "NOW RUNNING"
-    echo "$cmd_budget"
-    eval "$cmd_budget"
-    check_for_errors $? "$cmd_budget"
+    echo "...$cmd_budget"
+    $cmd_budget  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
+    
 
     # Execute commands based on flags
     if [ "$exclude_hg38_refs" = true ]; then
@@ -259,11 +256,14 @@ else
         echo "$cmd_hg38_ref"
         echo "$cmd_hg38_annotations"
     else
-        eval "$cmd_hg38_ref"
-        check_for_errors $? "$cmd_hg38_ref"
+        echo "NOW RUNNING"
+        echo "...$cmd_hg38_ref"
+        $cmd_hg38_ref  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal if hg38 is needed" && overall_status='FAILED'
 
-        eval "$cmd_hg38_annotations"
-        check_for_errors $? "$cmd_hg38_annotations"
+        echo "NOW RUNNING"
+        echo "...$cmd_hg38_annotations"
+        $cmd_hg38_annotations >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal if hg38 is needed" && overall_status='FAILED'
+
     fi
 
     if [ "$exclude_b37_refs" = true ]; then
@@ -271,19 +271,24 @@ else
         echo "$cmd_b37_ref"
         echo "$cmd_b37_annotations"
     else
-        eval "$cmd_b37_ref"
-        check_for_errors $? "$cmd_b37_ref"
+        echo "NOW RUNNING"
+        echo "...$cmd_b37_ref"
+        $cmd_b37_ref  >> $LOGFILE 2>&1   && echo "success" || echo ">>>FAILED<<< will be fatal if b37 is needed" && overall_status='FAILED'
 
-        eval "$cmd_b37_annotations"
-        check_for_errors $? "$cmd_b37_annotations"
+        echo "NOW RUNNING"
+        echo "...$cmd_b37_annotations"
+        $cmd_b37_annotations >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal if b37 is needed" && overall_status='FAILED'
+
     fi
 
     if [ "$exclude_giab_reads" = true ]; then
         echo "Skipping GIAB reads copy:"
         echo "$cmd_giab_reads"
     else
-        eval "$cmd_giab_reads"
-        check_for_errors $? "$cmd_giab_reads"
+        echo "NOW RUNNING"
+        echo "...$cmd_giab_reads"
+        $cmd_giab_reads >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal if GIAB reads are needed" && overall_status='FAILED'
+    
     fi
 
 
@@ -296,3 +301,7 @@ else
     echo "Bucket setup for '$new_bucket' completed successfully."
 fi
 
+
+echo ""
+echo "Cloning of daylily-references-public to '$new_bucket' :: $overall_status"
+echo "... see $LOGFILE for details"
