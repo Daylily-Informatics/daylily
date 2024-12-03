@@ -119,7 +119,11 @@ sudo emacs  /etc/apache2/sites-available/bloom.conf
 </VirtualHost>
 
 
+uvicorn main:app --reload --log-level trace --port 8915 --timeout-keep-alive 303 --host 0.0.0.0 \ --ssl-certfile /etc/letsencrypt/live/dyly.bio/fullchain.pem --ssl-keyfile /etc/letsencrypt/live/dyly.bio/privkey.pem
+Usage: uvicorn [OPTIONS] APP
+Try 'uvicorn --help' for help.
 
+Error: Got unexpected extra arguments ( --ssl-certfile /etc/letsencrypt/live/dyly.bio/fullchain.pem)
 sudo a2enmod proxy proxy_http headers ssl
 
 
@@ -162,6 +166,14 @@ sudo emacs /etc/apache2/sites-available/gtc.conf
 
 
 sudo emacs /etc/apache2/sites-available/day-www.conf
+<VirtualHost *:80>
+    ServerName dyly.bio
+    ServerAlias dyly.bio www.dyly.bio daylilyinformatics.com www.daylilyinformatics.com daylily.bio www.daylily.bio daylilyinformatics.bio www.daylillyinformatics.bio  www.daylily.cloud daylily.cloud
+    Redirect permanent / https://dyly.bio/
+    ErrorLog ${APACHE_LOG_DIR}/dyly-www-http-error.log
+    CustomLog ${APACHE_LOG_DIR}/dyly-www-http-access.log combined
+</VirtualHost>
+
 <VirtualHost *:443>
     ServerName dyly.bio
     ServerAlias dyly.bio www.dyly.bio daylilyinformatics.com www.daylilyinformatics.com daylily.bio www.daylily.bio daylilyinformatics.bio www.daylillyinformatics.bio www.daylily.cloud daylily.cloud
@@ -171,7 +183,10 @@ sudo emacs /etc/apache2/sites-available/day-www.conf
     SSLCertificateFile /etc/letsencrypt/live/dyly.bio/fullchain.pem
     SSLCertificateKeyFile /etc/letsencrypt/live/dyly.bio/privkey.pem
 
-    # Proxy Configuration
+    # Enable SSL Proxy Engine
+    SSLProxyEngine On
+
+    # Proxy Configuration to Backend via HTTPS
     ProxyPreserveHost On
     ProxyPass / https://127.0.0.1:8915/
     ProxyPassReverse / https://127.0.0.1:8915/
@@ -184,19 +199,10 @@ sudo emacs /etc/apache2/sites-available/day-www.conf
     # HSTS Header
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 
-    ErrorLog ${APACHE_LOG_DIR}/day-www-https-error.log
-    CustomLog ${APACHE_LOG_DIR}/day-www-https-access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/dyly-www-https-error.log
+    CustomLog ${APACHE_LOG_DIR}/dyly-www-https-access.log combined
 </VirtualHost>
-<VirtualHost *:80>
-    ServerName dyly.bio
-    ServerAlias dyly.bio www.dyly.bio daylilyinformatics.com www.daylilyinformatics.com daylily.bio www.daylily.bio daylilyinformatics.bio www.daylillyinformatics.bio  www.daylily.cloud daylily.cloud
 
-    Redirect permanent / https://dyly.bio/
-
-
-    ErrorLog ${APACHE_LOG_DIR}/day-wwww-error.log
-    CustomLog ${APACHE_LOG_DIR}/day-www-access.log combined
-</VirtualHost>
 
 
 
@@ -232,7 +238,7 @@ sudo emacs /etc/apache2/sites-available/day.conf
     ServerName day.dyly.bio
     ServerAlias www.day.dyly.bio day.dyly.bio www.day.daylilyinformatics.com day.daylilyinformatics.com www.day.daylily.bio day.daylily.bio day.daylilyinformatics.bio www.day.daylillyinformatics.bio
 
-    Redirect permanent / https://dyly.bio/
+    Redirect permanent / https://day.dyly.bio/
 
     ErrorLog ${APACHE_LOG_DIR}/day-error.log
     CustomLog ${APACHE_LOG_DIR}/day-access.log combined
@@ -337,10 +343,55 @@ chmod 640 /etc/letsencrypt/live/dyly.bio/*
 
 # Restart the server to apply the new certificate
 # assuming a running tmux serssion bloom_server
-sudo -u ubuntu tmux send-keys -t bloom_server C-c
-sleep 10
-sudo -u ubuntu tmux send-keys -t b "source /home/ubuntu/miniconda3/bin/activate BLOOM && /home/ubuntu/projects/bloom/run_bloomui.sh --host 0.0.0.0 --port 8912 --mode dev" Enter
+sudo -u ubuntu tmux send-keys -t dyly_bloom C-c
+sudo -u ubuntu tmux send-keys -t dyly_gtmc C-c
+sudo -u ubuntu tmux send-keys -t dyly_web C-c
+sudo -u ubuntu tmux send-keys -t dyly_dewey C-c
+sudo -u ubuntu tmux send-keys -t dyly_day C-c
 
+sleep 1
+
+
+sudo lsof -i :8911 | grep python | awk '{print $2}' | xargs -r sudo kill -9 > /dev/null 2>&1 || echo "kill failed"
+sleep 1
+sudo lsof -i :8912 | grep gunicorn | awk '{print $2}' | xargs -r sudo kill -9 > /dev/null 2>&1 || echo "kill failed"
+sleep 11
+sudo lsof -i :8913 | grep gunicorn | awk '{print $2}' | xargs -r sudo kill -9 > /dev/null 2>&1 || echo "kill failed"
+sleep 11
+sudo lsof -i :8914 | grep python | awk '{print $2}' | xargs -r sudo kill -9 > /dev/null 2>&1 || echo "kill failed"
+sleep 1
+sudo lsof -i :8915 | grep gunicorn | awk '{print $2}' | xargs -r sudo kill -9 > /dev/null 2>&1 || echo "kill failed"
+sleep 1
+
+ sudo systemctl daemon-reload
+
+sudo systemctl reload apache2
+sudo systemctl restart apache2
+
+sudo systemctl status apache2
+
+# GTMC
+sudo -u ubuntu tmux send-keys -t dyly_gtmc "source /home/ubuntu/miniconda3/bin/activate GMTC && python /home/ubuntu/projects/github_markdown_text_colorizer/github_markdown_text_colorizer/bin/gitmdtxtclr3.py 0.0.0.0 8911 http://54.190.46.215" Enter
+sleep 1
+
+# BLOOM
+sudo -u ubuntu tmux send-keys -t dyly_bloom "source /home/ubuntu/miniconda3/bin/activate BLOOM && /home/ubuntu/projects/bloom/run_bloomui.sh --host 0.0.0.0 --port 8912 --mode prod" Enter
+sleep 1
+
+# DAY- 8913- daylilyUI
+#sudo -u ubuntu tmux send-keys -t dyly_day "source /home/ubuntu/miniconda3/bin/activate DYLYD && /home/ubuntu/projects/dyly-day/run_dyly_day.sh --host 0.0.0.0 --port 8914 --mode prod" Enter
+#sleep 1
+
+# dyly-web
+sudo -u ubuntu tmux send-keys -t dyly_web "source /home/ubuntu/miniconda3/bin/activate DYLY && /home/ubuntu/projects/dyly-bio/run_dyly_web.sh --host 0.0.0.0 --port 8915 --mode prod" Enter
+sleep 1
+
+
+tmux new -s dyly_bloom
+tmux new -s dyly_day
+tmux new -s dyly_gtmc
+tmux new -s dyly_web
+tmux new -s dyly_dewey
 
 sudo chmod +x /etc/letsencrypt/renewal-hooks/post/fix-permissions.sh
 sudo certbot renew --dry-run
