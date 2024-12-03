@@ -261,13 +261,13 @@ sudo ln -s /etc/apache2/sites-available/bloom.conf /etc/apache2/sites-enabled/
 
 sudo apachectl configtest
  #if ok
- sudo systemctl daemon-reload
+sudo systemctl daemon-reload
 
 sudo systemctl reload apache2
 sudo systemctl restart apache2
 
 sudo systemctl status apache2
-
+sudo apachectl configtest
 
 
 # wait and curl to test
@@ -405,3 +405,51 @@ sudo certbot certonly --dns-route53 \
     -d "*.daylily.cloud" -d "daylily.cloud" \
     -v
 
+
+
+<VirtualHost *:443>
+    ServerName day.dyly.bio
+    ServerAlias www.day.dyly.bio day.dyly.bio www.day.daylilyinformatics.com day.daylilyinformatics.com www.day.daylily.bio day.daylily.bio day.daylilyinformatics.bio www.day.daylillyinformatic\
+s.bio
+
+    # Enable SSL
+    SSLEngine On
+    SSLCertificateFile /etc/letsencrypt/live/dyly.bio/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/dyly.bio/privkey.pem
+
+    # Proxy Configuration
+    ProxyPreserveHost On
+    ProxyPass / https://127.0.0.1:8914/
+    ProxyPassReverse / https://127.0.0.1:8914/
+
+    # Enforce Strong SSL Settings
+    SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
+    SSLCipherSuite HIGH:!aNULL:!MD5:!3DES
+    SSLHonorCipherOrder On
+
+    # HSTS Header
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    ErrorLog ${APACHE_LOG_DIR}/day-https-443-error.log
+    CustomLog ${APACHE_LOG_DIR}/day-https-443-access.log combined
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName day.dyly.bio
+    ServerAlias www.day.dyly.bio day.dyly.bio www.day.daylilyinformatics.com day.daylilyinformatics.com www.day.daylily.bio day.daylily.bio day.daylilyinformatics.bio www.day.daylillyinformatic\
+s.bio
+
+    Redirect permanent / https://day.dyly.bio/
+
+    ErrorLog ${APACHE_LOG_DIR}/day-error.log
+    CustomLog ${APACHE_LOG_DIR}/day-access.log combined
+    </VirtualHost>
+
+
+    
+sudo systemctl daemon-reload
+
+sudo systemctl reload apache2
+sudo systemctl restart apache2
+
+sudo systemctl status apache2
+sudo apachectl configtest
