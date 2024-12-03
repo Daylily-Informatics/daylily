@@ -80,7 +80,7 @@ sudo emacs  /etc/apache2/sites-available/bloom.conf
 # Redirect HTTP to HTTPS
 <VirtualHost *:80>
     ServerName bloom.dyly.bio
-    ServerAlias www.bloom.dyly.bio
+    ServerAlias www.bloom.dyly.bio www.bloom.daylilyinformatics.com bloom.daylilyinformatics.com www.bloom.daylily.bio bloom.daylily.bio www.bloom.daylilyinformatics.bio bloom.daylilyinformatics.bio 
 
     Redirect permanent / https://bloom.dyly.bio/
 
@@ -91,7 +91,7 @@ sudo emacs  /etc/apache2/sites-available/bloom.conf
 # HTTPS Configuration: Proxy to Port 8912
 <VirtualHost *:443>
     ServerName bloom.dyly.bio
-    ServerAlias www.bloom.dyly.bio
+    ServerAlias www.bloom.dyly.bio www.bloom.daylilyinformatics.com bloom.daylilyinformatics.com www.bloom.daylily.bio bloom.daylily.bio www.bloom.daylilyinformatics.bio bloom.daylilyinformatics.bio 
 
     # Enable SSL
     SSLEngine On
@@ -123,16 +123,10 @@ sudo emacs  /etc/apache2/sites-available/bloom.conf
 sudo a2enmod proxy proxy_http headers ssl
 
 
-
-
-
-
-
-
 sudo emacs /etc/apache2/sites-available/gtc.conf
 <VirtualHost *:443>
     ServerName gtc.dyly.bio
-    ServerAlias www.gtc.dyly.bio
+    ServerAlias www.gtc.dyly.bio gtc.dyly.bio www.gtc.daylily.bio gtc.daylily.bio www.gtc.daylilyinformatics.com gtc.daylilyinformatics.com www.daylilyinformatics.bio gtc.daylilyinformatics.bio
 
     # Enable SSL
     SSLEngine On
@@ -141,8 +135,8 @@ sudo emacs /etc/apache2/sites-available/gtc.conf
 
     # Proxy Configuration
     ProxyPreserveHost On
-    ProxyPass / http://127.0.0.1:8911/
-    ProxyPassReverse / http://127.0.0.1:8911/
+    ProxyPass / https://127.0.0.1:8911/
+    ProxyPassReverse / https://127.0.0.1:8911/
 
     # Enforce Strong SSL Settings
     SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
@@ -157,25 +151,20 @@ sudo emacs /etc/apache2/sites-available/gtc.conf
 </VirtualHost>
 <VirtualHost *:80>
     ServerName gtc.dyly.bio
-    ServerAlias www.gtc.dyly.bio
+    ServerAlias www.gtc.dyly.bio gtc.dyly.bio www.gtc.daylily.bio gtc.daylily.bio www.gtc.daylilyinformatics.com gtc.daylilyinformatics.com www.daylilyinformatics.bio gtc.daylilyinformatics.bio
 
-    ProxyPreserveHost On
-    ProxyPass / http://127.0.0.1:8911/
-    ProxyPassReverse / http://127.0.0.1:8911/
+    Redirect permanent / https://gtc.dyly.bio/
 
-    ErrorLog ${APACHE_LOG_DIR}/gtc-error.log
-    CustomLog ${APACHE_LOG_DIR}/gtc-access.log combined
+
+    ErrorLog ${APACHE_LOG_DIR}/gtc-80-error.log
+    CustomLog ${APACHE_LOG_DIR}/gtc-80-access.log combined
 </VirtualHost>
 
 
-
-
-
-
-sudo emacs /etc/apache2/sites-available/day.conf
+sudo emacs /etc/apache2/sites-available/day-www.conf
 <VirtualHost *:443>
-    ServerName day.dyly.bio
-    ServerAlias www.day.dyly.bio
+    ServerName dyly.bio
+    ServerAlias dyly.bio www.dyly.bio daylilyinformatics.com www.daylilyinformatics.com daylily.bio www.daylily.bio daylilyinformatics.bio www.daylillyinformatics.bio www.daylily.cloud daylily.cloud
 
     # Enable SSL
     SSLEngine On
@@ -184,8 +173,8 @@ sudo emacs /etc/apache2/sites-available/day.conf
 
     # Proxy Configuration
     ProxyPreserveHost On
-    ProxyPass / http://127.0.0.1:8914/
-    ProxyPassReverse / http://127.0.0.1:8914/
+    ProxyPass / https://127.0.0.1:8915/
+    ProxyPassReverse / https://127.0.0.1:8915/
 
     # Enforce Strong SSL Settings
     SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
@@ -195,25 +184,66 @@ sudo emacs /etc/apache2/sites-available/day.conf
     # HSTS Header
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 
-    ErrorLog ${APACHE_LOG_DIR}/day-https-error.log
-    CustomLog ${APACHE_LOG_DIR}/day-https-access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/day-www-https-error.log
+    CustomLog ${APACHE_LOG_DIR}/day-www-https-access.log combined
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName dyly.bio
+    ServerAlias dyly.bio www.dyly.bio daylilyinformatics.com www.daylilyinformatics.com daylily.bio www.daylily.bio daylilyinformatics.bio www.daylillyinformatics.bio  www.daylily.cloud daylily.cloud
+
+    Redirect permanent / https://dyly.bio/
+
+
+    ErrorLog ${APACHE_LOG_DIR}/day-wwww-error.log
+    CustomLog ${APACHE_LOG_DIR}/day-www-access.log combined
+</VirtualHost>
+
+
+
+
+
+sudo emacs /etc/apache2/sites-available/day.conf
+<VirtualHost *:443>
+    ServerName day.dyly.bio
+    ServerAlias www.day.dyly.bio day.dyly.bio www.day.daylilyinformatics.com day.daylilyinformatics.com www.day.daylily.bio day.daylily.bio day.daylilyinformatics.bio www.day.daylillyinformatics.bio
+
+    # Enable SSL
+    SSLEngine On
+    SSLCertificateFile /etc/letsencrypt/live/dyly.bio/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/dyly.bio/privkey.pem
+
+    # Proxy Configuration
+    ProxyPreserveHost On
+    ProxyPass / https://127.0.0.1:8914/
+    ProxyPassReverse / https://127.0.0.1:8914/
+
+    # Enforce Strong SSL Settings
+    SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
+    SSLCipherSuite HIGH:!aNULL:!MD5:!3DES
+    SSLHonorCipherOrder On
+
+    # HSTS Header
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    ErrorLog ${APACHE_LOG_DIR}/day-https-443-error.log
+    CustomLog ${APACHE_LOG_DIR}/day-https-443-access.log combined
 </VirtualHost>
 <VirtualHost *:80>
     ServerName day.dyly.bio
-    ServerAlias www.day.dyly.bio
+    ServerAlias www.day.dyly.bio day.dyly.bio www.day.daylilyinformatics.com day.daylilyinformatics.com www.day.daylily.bio day.daylily.bio day.daylilyinformatics.bio www.day.daylillyinformatics.bio
 
-    ProxyPreserveHost On
-    ProxyPass / http://127.0.0.1:8914/
-    ProxyPassReverse / http://127.0.0.1:8914/
+    Redirect permanent / https://dyly.bio/
 
-    ErrorLog ${APACHE_LOG_DIR}/gtc-error.log
-    CustomLog ${APACHE_LOG_DIR}/gtc-access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/day-error.log
+    CustomLog ${APACHE_LOG_DIR}/day-access.log combined
 </VirtualHost>
 
 
 sudo a2ensite bloom.conf
 sudo a2ensite gtc.conf
 sudo a2ensite day.conf
+sudo a2ensite day-www.conf
+
 
 sudo a2enmod ssl
 sudo a2enmod proxy
@@ -225,8 +255,12 @@ sudo ln -s /etc/apache2/sites-available/bloom.conf /etc/apache2/sites-enabled/
 
 sudo apachectl configtest
  #if ok
+ sudo systemctl daemon-reload
+
 sudo systemctl reload apache2
 sudo systemctl restart apache2
+
+sudo systemctl status apache2
 
 
 
@@ -310,4 +344,13 @@ sudo -u ubuntu tmux send-keys -t b "source /home/ubuntu/miniconda3/bin/activate 
 
 sudo chmod +x /etc/letsencrypt/renewal-hooks/post/fix-permissions.sh
 sudo certbot renew --dry-run
+
+
+sudo certbot certonly --dns-route53 \
+    -d "*.dyly.bio" -d "dyly.bio" \
+    -d "*.daylily.bio" -d "daylily.bio" \
+    -d "*.daylilyinformatics.com" -d "daylilyinformatics.com" \
+    -d "*.daylilyinformatics.bio" -d "daylilyinformatics.bio" \
+    -d "*.daylily.cloud" -d "daylily.cloud" \
+    -v
 
