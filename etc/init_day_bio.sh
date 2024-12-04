@@ -453,3 +453,21 @@ sudo systemctl restart apache2
 
 sudo systemctl status apache2
 sudo apachectl configtest
+
+
+
+
+
+
+# Add to
+sudo emacs /etc/apache2/apache2.conf
+<Location "/wordpress">
+    Require all denied
+</Location>
+
+<Files "setup-config.php">
+    Require all denied
+</Files>
+
+
+sudo systemctl restart apache2   # Debian/Ubuntu
