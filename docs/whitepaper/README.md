@@ -1,4 +1,4 @@
-# Daylily Whitepaper
+# [Daylily](https://github.com/Daylily-Informatics/daylily) Whitepaper
 
 Intended to be published in f1000-research.
 
