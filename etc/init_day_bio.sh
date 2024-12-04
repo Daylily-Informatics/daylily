@@ -168,7 +168,7 @@ sudo emacs /etc/apache2/sites-available/gtc.conf
 sudo emacs /etc/apache2/sites-available/day-www.conf
 <VirtualHost *:80>
     ServerName dyly.bio
-    ServerAlias dyly.bio www.dyly.bio daylilyinformatics.com www.daylilyinformatics.com daylily.bio www.daylily.bio daylilyinformatics.bio www.daylillyinformatics.bio  www.daylily.cloud daylily.cloud
+    ServerAlias dyly.bio
     Redirect permanent / https://dyly.bio/
     ErrorLog ${APACHE_LOG_DIR}/dyly-www-http-error.log
     CustomLog ${APACHE_LOG_DIR}/dyly-www-http-access.log combined
@@ -176,7 +176,7 @@ sudo emacs /etc/apache2/sites-available/day-www.conf
 
 <VirtualHost *:443>
     ServerName dyly.bio
-    ServerAlias dyly.bio www.dyly.bio daylilyinformatics.com www.daylilyinformatics.com daylily.bio www.daylily.bio daylilyinformatics.bio www.daylillyinformatics.bio www.daylily.cloud daylily.cloud
+    ServerAlias dyly.bio
 
     # Enable SSL
     SSLEngine On
