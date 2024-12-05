@@ -1,4 +1,4 @@
-# Daylily Omics: Infra as Code & Analysis Pipelines
+# Daylily Omics: Infrastructure as Code & Analysis Pipelines
 _(0.7.147e)_
 
 
