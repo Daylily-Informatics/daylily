@@ -383,7 +383,9 @@ sleep 1
 #sleep 1
 
 # dyly-web
-sudo -u ubuntu tmux send-keys -t dyly_web "source /home/ubuntu/miniconda3/bin/activate DYLY && /home/ubuntu/projects/dyly-bio/run_dyly_web.sh --host 0.0.0.0 --port 8915 --mode prod" Enter
+
+sudo -u ubuntu tmux send-keys -t dyly_web "source /home/ubuntu/miniconda3/bin/activate DYLY && ./run_dyly_www.sh --mode dev --ssl-certfile /etc/letsencrypt/\
+live/dyly.bio/fullchain.pem --ssl-keyfile /etc/letsencrypt/live/dyly.bio/privkey.pem 2>&1 | tee logs/dyly_www.log" Enter
 sleep 1
 
 
