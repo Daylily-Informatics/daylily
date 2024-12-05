@@ -1,4 +1,5 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.147e)
+# Daylily Omics: Infra as Code & Analysis Pipelines
+_(0.7.147e)_
 
 
 **beta release**
