@@ -43,7 +43,8 @@ if conda env list | grep -q "^DAYCLI "; then
     echo "Conda environment 'DAYCLI' already exists."
 else
     echo "Creating 'DAYCLI' environment."
-    conda create -y -n DAYCLI -c conda-forge python parallel jq nodejs==18.15.0 aws-parallelcluster==3.11.1 flask=2.2.5 pyyaml
+    conda create -y -n DAYCLI -f config/daycli/DAYCLI.yaml
+    #conda create -y -n DAYCLI -c conda-forge python parallel jq nodejs==18.15.0 aws-parallelcluster==3.11.1 flask=2.2.5 pyyaml
 fi
 echo "Activating 'DAYCLI' environment."
 conda activate DAYCLI

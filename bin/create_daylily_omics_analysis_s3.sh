@@ -61,7 +61,7 @@ fi
 
 if [ "$disable_warn" != true ]; then
     echo ""
-    echo "Usage: $0 [--bucket-prefix <prefix> --daylily-s3-version <version> (default 0.7.131c)] [--region <region> (default us-west-2)] [--disable-dryrun] [--help] --disable-warn"
+    echo "Usage: $0 [--bucket-prefix <prefix> [ --daylily-s3-version <version> (default 0.7.131c) ] [ --region <region> (default us-west-2) ] [ --disable-dryrun ] [ --help ] [ --disable-warn ]"
     echo ""
     echo "Warning: This script will create a new S3 bucket and copy data from the Daylily reference data bucket."
     echo "The new bucket will be created with the prefix specified by the --bucket-prefix argument."
@@ -222,30 +222,30 @@ else
     echo "Running the following commands serially"
 
     echo ""
-    echo "NOW RUNNING"
+    echo "NOW RUNNING 1 of 11"
     echo "...$cmd_version"
     $cmd_version >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
 
     echo " "
-    echo "NOW RUNNING"
+    echo "NOW RUNNING 2 of 11"
     echo "...$cmd_cluster_boot_config"
     $cmd_cluster_boot_config  >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
     
 
-    echo "NOW RUNNING"
+    echo "NOW RUNNING 3 of 11"
     echo "... $cmd_cached_envs"
     $cmd_cached_envs >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< prob ok, but unexpected" && overall_status='FAILED'
   
-    echo "NOW RUNNING"
+    echo "NOW RUNNING 4 of 11"
     echo "...$cmd_libs"
     $cmd_libs >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
 
 
-    echo "NOW RUNNING"
+    echo "NOW RUNNING 5 of 11"
     echo "...$cmd_tool_specific_resources"
     $cmd_tool_specific_resources  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
 
-    echo "NOW RUNNING"
+    echo "NOW RUNNING 6 of 11"
     echo "...$cmd_budget"
     $cmd_budget  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
     
@@ -256,11 +256,11 @@ else
         echo "$cmd_hg38_ref"
         echo "$cmd_hg38_annotations"
     else
-        echo "NOW RUNNING"
+        echo "NOW RUNNING 7 of 11"
         echo "...$cmd_hg38_ref"
         $cmd_hg38_ref  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal if hg38 is needed" && overall_status='FAILED'
 
-        echo "NOW RUNNING"
+        echo "NOW RUNNING 8 of 11"
         echo "...$cmd_hg38_annotations"
         $cmd_hg38_annotations >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal if hg38 is needed" && overall_status='FAILED'
 
@@ -271,11 +271,11 @@ else
         echo "$cmd_b37_ref"
         echo "$cmd_b37_annotations"
     else
-        echo "NOW RUNNING"
+        echo "NOW RUNNING 9 of 11"
         echo "...$cmd_b37_ref"
         $cmd_b37_ref  >> $LOGFILE 2>&1   && echo "success" || echo ">>>FAILED<<< will be fatal if b37 is needed" && overall_status='FAILED'
 
-        echo "NOW RUNNING"
+        echo "NOW RUNNING 10 of 11"
         echo "...$cmd_b37_annotations"
         $cmd_b37_annotations >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal if b37 is needed" && overall_status='FAILED'
 
@@ -285,7 +285,7 @@ else
         echo "Skipping GIAB reads copy:"
         echo "$cmd_giab_reads"
     else
-        echo "NOW RUNNING"
+        echo "NOW RUNNING 11 of 11"
         echo "...$cmd_giab_reads"
         $cmd_giab_reads >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal if GIAB reads are needed" && overall_status='FAILED'
     

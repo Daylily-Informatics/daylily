@@ -1,5 +1,6 @@
-# Daylily Omics: Infrastructure as Code & Analysis Pipelines
-_(0.7.147e)_
+# Daylily AWS Ephemeral Cluster Setup (0.7.150)
+_(0.7.150)_
+
 
 
 **beta release**
@@ -405,6 +406,9 @@ OUT_TSV=./init_daylily_cluster.tsv
 
 ./bin/check_current_spot_market_by_zones.py -o $OUT_TSV --profile $AWS_PROFILE   
 ```
+
+  > ![](docs/images/cost_est_table.png)
+
 
 ```ansi
 30.0-cov genome @ vCPU-min per x align: 307.2 vCPU-min per x snvcall: 684.0 vCPU-min per x other: 0.021 vCPU-min per x svcall: 19.0
@@ -1433,6 +1437,12 @@ The command `bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.y
 
 Is largely in your hands. AWS Parallel Cluster is as secure or insecure as you set it up to be. https://docs.aws.amazon.com/parallelcluster/v2/ug/security-compliance-validation.html
 
+
+# Detailed Docs
+
+> **[daylib](docs/daylib/README.md)**: python library code.
+> **and**: ...
+
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/000000.png" valign="bottom" ></a></p>
 
 <p valign="middle"><a href=http://www.workwithcolor.com/color-converter-01.htm?cp=ff8c00><img src="docs/images/0000002.png" valign="bottom" ></a></p>
@@ -1440,6 +1450,7 @@ Is largely in your hands. AWS Parallel Cluster is as secure or insecure as you s
 # [DAY](https://en.wikipedia.org/wiki/Margaret_Oakley_Dayhoff)![](https://placehold.co/60x35/ff03f3/fcf2fb?text=LILLY)
 
 _named in honor of Margaret Oakley Dahoff_ 
+ 
  
  
  
