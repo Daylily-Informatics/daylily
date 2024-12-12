@@ -418,7 +418,12 @@ def display_statistics(zone_stats, args):
             apply_color(z.median_price, *best_worst['Median\nSpot $'], mode=args.mode),
             apply_color(z.min_price, *best_worst['Min \nSpot\n$   '], mode=args.mode),
             apply_color(z.max_price, *best_worst['Max \nSpot\n$   '], mode=args.mode),
-            apply_color(z.harmonic_price, *best_worst['Harmonic\nMean    \nSpot $  '], highlight=True, mode=args.mode),
+            apply_color(
+            z.harmonic_price,
+                *best_worst['Harmonic\nMean    \nSpot $  '],
+                highlight=(z.harmonic_price == best_worst['Harmonic\nMean    \nSpot $  '][0]),
+                mode=args.mode
+            ),
             apply_color(z.stability, *reversed(best_worst['Spot \nStab-\nility']), mode=args.mode),
             z.fastq_size, z.bam_size, z.cram_size, z.snv_vcf_size, z.snv_gvcf_size, z.sv_vcf_size, z.other_size,
             apply_color(z.cost_per_vcpu_min, *best_worst[f'$ per\nvCPU min\n{args.ec2_cost_model}'], mode=args.mode),
