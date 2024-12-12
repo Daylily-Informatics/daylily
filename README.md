@@ -1,4 +1,6 @@
 # Daylily AWS Ephemeral Cluster Setup (0.7.150)
+_(0.7.150)_
+
 
 
 **beta release**
@@ -10,29 +12,92 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
 
 ## Table of Contents
-- [Before Beginning](#before-beginning)
-- [Strongly Suggested: AWS Parallel Cluster UI](#strongly-suggested--pcui)
-- [Installation Steps](#installation-steps)
-  - [Prepare Your Local Shell](#prepare-your-local-shell)
-  - [Clone The `daylily` Repository](#clone-the-daylily-repository)
-  - [Install Conda](#install-conda-if-not-already-installed)
-- [AWS Setup](#aws-setup)
-- [Cluster Initialization](#cluster-initialization)
-- [Working with the Ephemeral Cluster](#working-with-the-ephemeral-cluster)
+
+- [Introduction](#introduction)
+  - [What’s It All About?](#whats-it-all-about)
+  - [Key Features](#key-features)
+  - [Metrics Required to Make Informed Decisions](#metrics-required-to-make-informed-decisions)
+- [Installation](#installation)
+  - [Before Beginning](#before-beginning)
+  - [AWS Setup](#aws-setup)
+    - [IAM User Creation](#iam-user-creation)
+    - [Permissions and Policies](#permissions-and-policies)
+    - [Quota Considerations](#quota-considerations)
+    - [Cost Allocation Tags](#cost-allocation-tags)
+    - [Budgets](#budgets)
+    - [CLI Credentials](#cli-credentials)
+    - [SSH Key Pair](#ssh-key-pair)
+  - [Local Setup](#local-setup)
+    - [Prepare Your Local Shell](#prepare-your-local-shell)
+    - [Install System Packages](#install-system-packages)
+    - [AWS CLI Configuration](#aws-cli-configuration)
+    - [Clone the Daylily Repository](#clone-the-daylily-repository)
+    - [Miniconda Installation](#miniconda-installation)
+    - [Initialize the DayCLI Environment](#initialize-the-daycli-environment)
+- [Cluster Setup](#cluster-setup)
+  - [Reference Data Setup](#reference-data-setup)
+  - [Generate Cost Estimates](#generate-cost-estimates)
+  - [Create an Ephemeral Cluster](#create-an-ephemeral-cluster)
+- [Working with the Cluster](#working-with-the-cluster)
+  - [Headnode Configuration](#headnode-configuration)
+  - [Running Local Tests](#running-local-tests)
+  - [Running Slurm Tests](#running-slurm-tests)
+  - [Monitoring](#monitoring)
+    - [Slurm Monitoring](#slurm-monitoring)
+    - [Accessing Compute Nodes](#accessing-compute-nodes)
+- [Costs and Management](#costs-and-management)
+  - [Idle Cluster Costs](#idle-cluster-costs)
+  - [Running Cluster Costs](#running-cluster-costs)
+  - [Post-Deletion Costs](#post-deletion-costs)
+  - [Data Management Costs](#data-management-costs)
+- [Exporting Data](#exporting-data)
+  - [Exporting to S3](#exporting-to-s3)
+  - [Deleting a Cluster](#deleting-a-cluster)
 - [Monitoring Tools](#monitoring-tools)
+  - [AWS CloudWatch](#aws-cloudwatch)
+  - [PCUI](#pcui)
 - [Known Issues](#known-issues)
 - [Future Development](#future-development)
+  - [Sentieon Integration](#sentieon-integration)
+  - [Snakemake v8 Migration](#snakemake-v8-migration)
+  - [Cromwell and WDL Integration](#cromwell-and-wdl-integration)
+- [Contributing](#contributing)
+- [Versioning](#versioning)
 
 ---
 
+# [Whitepaper In Progress](docs/whitepaper/README.md)
+
+Drafting in progress, with the intention of publishing the results in [f1000-research](https://f1000research.com/).
+
+In order to demonstrate the capabilities of daylily, I am processing the 7 GIAB datasets vs: 3 aligners, 1 deduper, 5 SNV callers and 3 SV callers (plus generating concordance results and a variety of qc data), for both `b37` and `hg38`, which yields:
+> - 41 BAMs
+> -  210 SNV vcfs
+> - 129 SV vcfs
+> -  2 multiqc reports (per reference)
+> -   many qc data files
+> -   COST reporting for every task
+
+I will be assessing:
+> - Infrastructure management aspects of daylily.
+> - Impact on accuracy and cost of all the combinations of above tools.
+>   - costs (spoiler:  best performance  is in the $3-4/sample is reasonably to assume) of compute, data transfer, data storage & long term data storage.
+>   - fscore (spoiler: as expected performance acheivable of 0.998+)
+> - Globally, raising questions about bfx analysis reproducibility, best practices vs. best performance/accuracy, ...
+
+
+> Would you like to lend a hand?  [contact me](mailto:john@daylilyinformatics.com)
+
+
+
 # What's It All About?
 
-## BFAIR: Bioinformatics [https://www.go-fair.org/fair-principles/](FAIR) Principles 
+## BFAIR: Bioinformatics [FAIR](https://www.go-fair.org/fair-principles/) Principles 
 _this is a title rough idea! - not likely final, but is the gist of it_
 
-## Comprehensive Cost Transparency & Predictability
+## Comprehensive Cost Transparency & Predictability [(wip: interactive cost calculator is available here)](https://day.dyly.bio)
 
-> 30x FASTQ->VCF, in 1hr, for <img src="docs/images/000000.png" valign="bottom" width=2 >~$3.00<img src="docs/images/000000.png" valign="bottom" width=2 > @ F-score 0.99xx
+> 30x FASTQ->VCF, in 1hr, for <img src="docs/images/000000.png" valign="bottom" width=2 >~$3 - $4<img src="docs/images/000000.png" valign="bottom" width=2 > @ F-score 0.99xx
 
 > Be up and running in a few hours from reading this sentence. 
 > - Have your first GIAB 30x Fastq->VCF (both snv and sv) ~60min later. 
@@ -54,6 +119,10 @@ _this is a title rough idea! - not likely final, but is the gist of it_
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
 
+# Self Funded Science
+
+> Daylily development has been under development for a number of years & is self-funded work (both time, and AWS costs).
+> - [I am available for consulting](https://www.dyly.bio) engagements if you are interested in extending the work here. My areas of expertise also include cllical diagnostics operations, regulatory and compliance.
 
 
 # Installation -- PREREQUISITES
