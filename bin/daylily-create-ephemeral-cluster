@@ -325,6 +325,9 @@ echo ""
 # Fetch all key pairs in the given region
 key_data=$(aws ec2 describe-key-pairs --region "$region" --query 'KeyPairs[*].[KeyName, KeyType]' --output text  --profile $AWS_PROFILE | grep omics)
 
+echo "KEYs in region $region:"
+echo "$key_data"
+
 # Filter for keys with the required suffix
 filtered_keys=()
 while IFS=$'\t' read -r key_name key_type; do
@@ -353,6 +356,7 @@ echo ""
 # Check if no valid keys were found
 if [[ ${#valid_keys[@]} -eq 0 ]]; then
     echo "No valid ED25519 keys with matching PEM files were found."
+    echo "Please ensure the required keys are available in the $HOME/.ssh directory AND that the keypair name includes 'omics' in the name."
     return 3
 fi
 # Present valid keys to the user using 'select'

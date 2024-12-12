@@ -1,6 +1,8 @@
 zones:
-  - us-east-1a
-aws_profile: "default"
+  - eu-central-1a
+  - eu-central-1b
+  - eu-central-1c
+aws_profile: "daylily"
 vcpu_cost_per_min: 0.05
 storage_rate: 0.023
 transfer_rate: 0.01
