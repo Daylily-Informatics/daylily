@@ -361,6 +361,8 @@ colr  'did it work?' 0,100,255 255,100,0
 
 _from your local machine, in the daylily git repo root_
 
+> You may add/remove/update your copy of the refernces bucket as you find necessary.
+
 - `YOURPREFIX` will be used as the bucket name prefix. Please keep it short. The new bucket name will be `YOURPREFIX-omics-analysis-REGION` and created in the region you specify. You may name the buckets in other ways, but this will block you from using the `daylily-create-ephemeral-cluster` script, which is largely why you're here.
 - Cloning it will take 1 to many hours.
   
@@ -834,7 +836,7 @@ drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 . dyinit  --project PROJECT
 
 dy-a local
-dy-g hg38 # or set via config command line below
+dy-g hg38 # the other option: b37 ( or set via config command line below)
 
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
 
@@ -902,7 +904,7 @@ dy-g hg38
 head -n 2 .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv > config/analysis_manifest.csv
 
 # run the test, which will auto detect the analysis_manifest.csv file & will run this all via slurm
-dy-r produce_snv_concordances -p -k -j 2 --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n
+dy-r produce_snv_concordances -p -k -j 2 --config genome_build=hg38 aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n
 ```
 
 Which will produce a plan that looks like.
@@ -931,7 +933,7 @@ total                            59              1            192
 Run the test with:
 
 ```bash
-dy-r produce_snv_concordances -p -k -j 6  --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] #  -j 6 will run 6 jobs in parallel max, which is done here b/c the test data runs so quickly we do not need to spin up one spor instance per deepvariant job & since 3 dv jobs can run on a 192 instance, this flag will limit creating only  2 instances at a time.
+dy-r produce_snv_concordances -p -k -j 6  --config genome_build=hg38 aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] #  -j 6 will run 6 jobs in parallel max, which is done here b/c the test data runs so quickly we do not need to spin up one spor instance per deepvariant job & since 3 dv jobs can run on a 192 instance, this flag will limit creating only  2 instances at a time.
 ```
 
 _note1:_ the first time you run a pipeline, if the docker images are not cached, there can be a delay in starting jobs as the docker images are cached. They are only pulled 1x per cluster lifetime, so subsequent runs will be faster.
@@ -962,9 +964,9 @@ dy-g hg38
 # TO create a single sample manifest
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv > config/analysis_manifest.csv
 
-dy-r produce_snv_concordances -p -k -j 10 --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n  # dry run
+dy-r produce_snv_concordances -p -k -j 10 --config genome_build=hg38 aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n  # dry run
 
-dy-r produce_snv_concordances -p -k -j 10  --config aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] # run jobs, and wait for completion
+dy-r produce_snv_concordances -p -k -j 10  --config genome_build=hg38 aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] # run jobs, and wait for completion
 ```
 
 
@@ -987,9 +989,9 @@ dy-g hg38
 # copy full 30x giab sample template to config/analysis_manifest.csv
 cp .test_data/data/giab_30x_hg38_analysis_manifest.csv  config/analysis_manifest.csv
 
-dy-r produce_snv_concordances -p -k -j 10 --config aligners=['strobe,'bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep'] -n  # dry run
+dy-r produce_snv_concordances -p -k -j 10 --config genome_build=hg38 aligners=['strobe,'bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep'] -n  # dry run
 
-dy-r produce_snv_concordances -p -k -j 10 --config aligners=['strobe','bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep'] 
+dy-r produce_snv_concordances -p -k -j 10 --config genome_build=hg38 aligners=['strobe','bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep'] 
 
 ```
 
@@ -997,7 +999,7 @@ dy-r produce_snv_concordances -p -k -j 10 --config aligners=['strobe','bwa2a'] d
 
 ```bash
 max_snakemake_tasks_active_at_a_time=2 # for local headnode, maybe 400 for a full cluster
-dy-r produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce_kat produce_multiqc_final_wgs -p -k -j $max_snakemake_tasks_active_at_a_time --config aligners=['strobe','bwa2a','sent'] dedupers=['dppl'] snv_callers=['oct','sentd','deep','clair3','lfq2'] sv_callers=['tiddit','manta','dysgu'] -n
+dy-r produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce_kat produce_multiqc_final_wgs -p -k -j $max_snakemake_tasks_active_at_a_time --config genome_build=hg38 aligners=['strobe','bwa2a','sent'] dedupers=['dppl'] snv_callers=['oct','sentd','deep','clair3','lfq2'] sv_callers=['tiddit','manta','dysgu'] -n
 ```
 
 ## To Create Your Own `config/analysis_manifest.csv` File From Your Own `analysis_samples.tsv` File
