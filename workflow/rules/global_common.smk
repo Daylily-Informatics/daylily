@@ -48,8 +48,13 @@ config["sub_user"] = (
 config["day_contact_email"] = os.environ.get("DAY_CONTACT_EMAIL", "no-email-set-in-dyinit")
 
 # Get the genome build from the env
-config['genome_build'] = os.environ.get("DAY_GENOME_BUILD", "error")
-if config['genome_build'] == "error":
+genome_build="na"
+if "genome_build" in config:
+    genome_build = config["genome_build"]
+else:
+    config['genome_build'] = os.environ.get("DAY_GENOME_BUILD", "na")
+
+if config['genome_build'] == "na" or len(config['genome_build']) < 1:
     print(        "The genome build is not set.  Please run 'dy-g [b37|hg38]' ", file=sys.stdout)
     raise Exception(        "The genome build is not set.  Please run 'day-activate' and 'day-build' from the intended analysis deployment directory.")
 config["ref_code"] = config["genome_build"]

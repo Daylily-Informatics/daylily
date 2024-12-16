@@ -17,8 +17,6 @@ dependencies:
   - pip
   - rclone
   - parallel
-  - seqfu
-  - seqkit
   - pygraphviz
   - glances
   - tabix
