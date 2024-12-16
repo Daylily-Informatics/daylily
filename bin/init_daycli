@@ -43,7 +43,7 @@ if conda env list | grep -q "^DAYCLI "; then
     echo "Conda environment 'DAYCLI' already exists."
 else
     echo "Creating 'DAYCLI' environment."
-    conda create -y -n DAYCLI -f config/daycli/DAYCLI.yaml
+    conda env create -y -n DAYCLI -f config/day/daycli.yaml
     #conda create -y -n DAYCLI -c conda-forge python parallel jq nodejs==18.15.0 aws-parallelcluster==3.11.1 flask=2.2.5 pyyaml
 fi
 echo "Activating 'DAYCLI' environment."
@@ -61,11 +61,11 @@ check_and_install() {
 
 
 # Check and install the required packages
-check_and_install "colr" "0.9.1"
-check_and_install "yaml" "6.0.2"   # pyyaml is imported as 'yaml'
-check_and_install "tabulate" "0.9.0"
-check_and_install "docopt" "0.6.2"
-check_and_install "ruamel.yaml" "0.18.6"
+#check_and_install "colr" "0.9.1"
+#check_and_install "yaml" "6.0.2"   # pyyaml is imported as 'yaml'
+#check_and_install "tabulate" "0.9.0"
+#check_and_install "docopt" "0.6.2"
+#check_and_install "ruamel.yaml" "0.18.6"
 
 
 echo "Daylily CLI environment is ready."
