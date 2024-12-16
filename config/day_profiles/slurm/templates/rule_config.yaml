@@ -13,7 +13,7 @@ valid_biome: AWSPC
 
 # ###### Tool Selection CONFIG ----------------------------------------
 
-# these may be set on the command line as --config aligners=['bwa2a','sent','strobe']  dedupers=['dppl']  snv_callers=['oct','clair3','deep','sentd','lfq2'] sv_callers=['manta','tiddit','dysgu']
+# these may be set on the command line as --config genome_build=hg38 aligners=['bwa2a','sent','strobe']  dedupers=['dppl']  snv_callers=['oct','clair3','deep','sentd','lfq2'] sv_callers=['manta','tiddit','dysgu']
 
 # and will override these defaults
 

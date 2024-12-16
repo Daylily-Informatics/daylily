@@ -834,12 +834,12 @@ drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 . dyinit  --project PROJECT
 
 dy-a local
-dy-g hg38
+dy-g hg38 # or set via config command line below
 
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
 
-dy-r produce_deduplicated_bams -p -j 2 --config aligners=['bwa2a','sent'] dedupers=['dppl'] -n # dry run
-dy-r produce_deduplicated_bams -p -j 2 --config aligners=['bwa2a','sent'] dedupers=['dppl'] 
+dy-r produce_deduplicated_bams -p -j 2 --config genome_build=hg38 aligners=['bwa2a','sent'] dedupers=['dppl'] -n # dry run
+dy-r produce_deduplicated_bams -p -j 2 --config genome_build=hg38 aligners=['bwa2a','sent'] dedupers=['dppl'] 
 ```
 
 #### More On The `-j` Flag
