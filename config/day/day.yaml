@@ -5,10 +5,12 @@ channels:
   - defaults
 dependencies:
   - pandas==1.5.3
-  - python==3.11.11
+  - python
   - ipython
   - perl
   - yappi
+  - snakedeploy
+  - snakefmt
   - networkx
   - yamllint
   - pip
@@ -20,10 +22,12 @@ dependencies:
   - fd-find
   - graphviz
   - pip:
-    - docopt==0.6.2
-    - colr==0.9.1
+    - git+https://github.com/Daylily-Informatics/snakemake.git@7.25.0a112
+    - drmaa
+    - docopt
+    - colr
     - xmltodict
     - wrapt
-    - tabulate
-    - ruamel.yaml
-    - aws-parallelcluster==3.11.1
+    - chromedriver-binary-auto
+    - rgbw-colorspace-converter
+
