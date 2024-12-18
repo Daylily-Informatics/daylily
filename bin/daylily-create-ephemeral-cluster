@@ -118,13 +118,15 @@ echo "Please ensure your ~/.aws/config file matches this region."
 ### Conda Environment Setup
 
 # Ensure Conda exists
-if ! command -v conda &> /dev/null; then
+conda --version &> /dev/null
+if [[ $? -ne 0 ]]; then
     echo "Error: Conda is not available in this shell. Attempting to determine if autoinstall is possible."
     
     source bin/install_miniconda
 fi
 
-if ! command -v conda &> /dev/null; then
+conda --version &> /dev/null
+if [[ $? -ne 0 ]]; then
     echo "Error: Conda is not available in this shell despite attempting an autoinstall. Exiting."
     return 3
 fi

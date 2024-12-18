@@ -20,7 +20,8 @@ else
 fi
 
 # Check if Miniconda is already installed
-if ! command -v conda &>/dev/null; then
+conda --version &> /dev/null
+if [[ $? -ne 0 ]]; then
     echo "Miniconda is not installed. Proceeding with installation..."
 else
     echo "Miniconda is already installed. Please uninstall it before proceeding."
