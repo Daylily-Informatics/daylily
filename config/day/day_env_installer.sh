@@ -98,7 +98,7 @@ if conda env list | grep -q "^$DY_ENVNAME\s"; then
 else
     echo "Installing DAY environment..."
     # Create the DAY environment
-    if conda env create -n "$DY_ENVNAME" -f "$SCRIPT_DIR/DAY.yaml"; then
+    if conda env create -n "$DY_ENVNAME" -f "$SCRIPT_DIR/day.yaml"; then
         echo "DAY environment created successfully."
         echo ""
         echo "Try the following commands to get started:"

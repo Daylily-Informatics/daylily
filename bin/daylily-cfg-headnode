@@ -161,6 +161,6 @@ echo "And, you may now access the headnode via the PCUI, via 'source bin/daylily
 echo -e "       ssh -i $pem_file ubuntu@$cluster_ip_address\n"
 echo " "
 echo "If you wish to run some remote tests, you can do so with the following command:"
-echo -e "       . bin/daylily-run-remote-tests $pem_file $region $cluster_name $aws_profile\n"
+echo -e "      . bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $cluster_name $aws_profile\n"
 echo " "
 echo "...fin"
