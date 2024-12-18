@@ -56,7 +56,7 @@ else:
 
 if config['genome_build'] == "na" or len(config['genome_build']) < 1:
     print(        "The genome build is not set.  Please run 'dy-g [b37|hg38]' ", file=sys.stdout)
-    raise Exception(        "The genome build is not set.  Please run 'day-activate' and 'day-build' from the intended analysis deployment directory.")
+    raise Exception(        "The genome build is not set.  Please run 'day-activate [profilename]' and 'dy-g [buildcode]'  from the intended analysis deployment directory.")
 config["ref_code"] = config["genome_build"]
 os.environ["DY_REF_CODE"] = config["ref_code"]
 
