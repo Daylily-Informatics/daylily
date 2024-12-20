@@ -13,13 +13,6 @@ usage() {
     echo "       --profile  aws profile to use"
 }
 
-# Check if the script is sourced or executed
-if [ -n "$ZSH_EVAL_CONTEXT" ] && [[ "$ZSH_EVAL_CONTEXT" =~ :file$ ]]; then
-    echo "This script is sourced."
-else
-    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-    exit 3
-fi
 
 # Check if script is sourced with no arguments
 if [[ $# -eq 0 ]]; then
@@ -151,7 +144,7 @@ aws_version=$(aws --version --profile $AWS_PROFILE 2>&1 | cut -d ' ' -f 1 | sed 
 if [[ "$aws_version" != "$aver" ]]; then
     handle_warning "Warning: Expected AWS CLI version $aver, but found version $aws_version."
     if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to install the AWS CLI. Exiting."
+        echo "Error:  the AWS CLI version does not match expected. Exiting. use --pass-on-warn to ignore this warning."
         return 3
     fi
 fi

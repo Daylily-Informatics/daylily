@@ -1,9 +1,13 @@
 #!/bin/bash
 
-
+unset region
+unset regions
+unset cluster_name
 
 # Source Conda's base environment setup
 source $(conda info --base)/etc/profile.d/conda.sh
+conda activate DAYCLI
+
 if [ $? -ne 0 ]; then
     echo "Error: Conda environment 'DAYCLI' not found. Please create it before running this script."
     exit 1
@@ -18,29 +22,6 @@ fi
 
 
 
-
-# Prompt user to select an AWS region
-function select_region() {
-    echo "Fetching available regions for your AWS_PROFILE..."
-    regions=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text)
-    if [ -z "$regions" ]; then
-        echo "No regions found or AWS_PROFILE is not set correctly."
-        exit 1
-    fi
-
-    echo "Available Regions:"
-    select region in $regions; do
-        if [ -n "$region" ]; then
-            echo "You selected region: $region"
-            break
-        else
-            echo "Invalid selection. Please try again."
-        fi
-    done
-
-    echo $region
-}
-
 # Prompt user for AWS ParallelCluster name
 function get_cluster_name() {
     read -p "Enter the AWS ParallelCluster cluster name: " cluster_name
@@ -51,6 +32,7 @@ function get_cluster_name() {
 
     echo $cluster_name
 }
+
 
 # Check if the cluster exists
 function check_cluster_exists() {
@@ -66,21 +48,6 @@ function check_cluster_exists() {
     echo "$cluster_info"
 }
 
-# Check if FSx is associated with the cluster
-function check_fsx_association() {
-    local cluster_info=$1
-
-    if echo "$cluster_info" | grep -q "fsx"; then
-        echo "Error: The cluster has an FSx filesystem associated with it."
-        echo "Please export any data you need to save, then delete the FSx filesystem, or type 'permanently delete fsx' to proceed."
-
-        read -p "Type 'permanently delete fsx' to proceed with cluster deletion: " confirmation
-        if [[ "$confirmation" != "permanently delete fsx" ]]; then
-            echo "Aborting cluster deletion."
-            exit 1
-        fi
-    fi
-}
 
 # Delete the cluster and monitor the status
 function delete_cluster() {
@@ -88,11 +55,11 @@ function delete_cluster() {
     local region=$2
 
     echo "Deleting cluster '$cluster_name' in region '$region'..."
-   pcluster delete-cluster -n "$cluster_name" --region "$region"
+    pcluster delete-cluster -n "$cluster_name" --region "$region"
 
     echo "Monitoring cluster deletion status..."
     while true; do
-        status="na" #$(aws parallelcluster describe-cluster --cluster-name "$cluster_name" --region "$region" 2>/dev/null | jq -r '.clusterStatus')
+        status=$(pcluster describe-cluster -n $cluster_name --region $region | grep clusterStatus | awk -F ': ' '{print $2}' | tr -d '",')
         if [[ -z "$status" ]]; then
             echo "Cluster deletion completed successfully."
             break
@@ -107,12 +74,52 @@ function delete_cluster() {
 }
 
 # Main script execution
-selected_region=$(select_region)
-export AWS_REGION=$selected_region  # Set the selected region for AWS CLI
+
+read -p "type the AWS region where the cluster is located: " region
+
 
 cluster_name=$(get_cluster_name)
 
-cluster_info=$(check_cluster_exists "$cluster_name" "$selected_region")
-check_fsx_association "$cluster_info"
 
-delete_cluster "$cluster_name" "$selected_region"
+if [[ $(pcluster list-clusters --region us-west-2 | grep clusterName | grep $cluster_name | wc -l | perl -pe 's/ +//g;') == "1" ]]; then
+    echo "Cluster $cluster_name  exists"
+else
+    echo "ERROR: Cluster ($cluster_name) does not exist in region ($region)"
+    exit 1
+fi
+
+
+echo "$AWS_PROFILE"
+echo "$region"
+echo "$cluster_name"
+fsx_associations=$(aws fsx describe-file-systems \
+    --profile "$AWS_PROFILE" \
+    --region "$region" \
+    --query "FileSystems[?contains(Tags[?Key=='parallelcluster:cluster-name'].Value | [0], '$cluster_name')].FileSystemId" \
+    --output text)
+echo "HH $fsx_associations"
+
+if [[ "$fsx_associations" == "" ]]; then
+    echo "No FSx filesystems associated with the cluster."
+else
+    echo "~~WARNING~~ "
+    echo "   FSx filesystems are still associated with the cluster:"
+    echo "$fsx_associations"
+    echo ""
+    echo "If you wish to export FSX data back to S3, please do so via the FSX console, or you may run the following command:"
+    echo "  bin/daylily-export-fsx-to-s3"
+    echo ""
+    sleep 2
+    echo "If you wish to proceed with deleting this cluster, the FSX filesystem will be deleted or preserved given the parameters set during creation."
+    echo ""
+    read -p "Type 'please delete' to proceed with cluster deletion: " confirmation
+    if [[ "$confirmation" != "please delete" ]]; then
+        echo "Aborting cluster deletion."
+        exit 1
+    fi
+fi
+
+
+delete_cluster "$cluster_name" "$region"
+
+echo "deletion of $cluster_name is complete ($delete_cluster)"
