@@ -1,9 +1,118 @@
+#!/bin/bash
 
-echo "NOT IMPLEMENTED YET"
 
-echo "... however!"
 
-echo "You may use pcluster delete-cluster or the PCUI to delete specific clusters."
-echo "WARNING: This will delete the cluster and all data on the cluster."
-echo "Be sure to migrate any data on FSX back to S3 before deleting the cluster and the FSX filesystem."
-echo "If you chose to not have the FSX filesystem delete whern the cluster is deleted, you will need to manually delete the FSX filesystem! (same with the EC2 headnode root volume)"
+# Source Conda's base environment setup
+source $(conda info --base)/etc/profile.d/conda.sh
+if [ $? -ne 0 ]; then
+    echo "Error: Conda environment 'DAYCLI' not found. Please create it before running this script."
+    exit 1
+fi
+
+# Ensure AWS CLI is installed
+if ! command -v aws &> /dev/null
+then
+    echo "AWS CLI is not installed. Please install it before running this script."
+    exit 1
+fi
+
+
+
+
+# Prompt user to select an AWS region
+function select_region() {
+    echo "Fetching available regions for your AWS_PROFILE..."
+    regions=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text)
+    if [ -z "$regions" ]; then
+        echo "No regions found or AWS_PROFILE is not set correctly."
+        exit 1
+    fi
+
+    echo "Available Regions:"
+    select region in $regions; do
+        if [ -n "$region" ]; then
+            echo "You selected region: $region"
+            break
+        else
+            echo "Invalid selection. Please try again."
+        fi
+    done
+
+    echo $region
+}
+
+# Prompt user for AWS ParallelCluster name
+function get_cluster_name() {
+    read -p "Enter the AWS ParallelCluster cluster name: " cluster_name
+    if [ -z "$cluster_name" ]; then
+        echo "Cluster name cannot be empty."
+        exit 1
+    fi
+
+    echo $cluster_name
+}
+
+# Check if the cluster exists
+function check_cluster_exists() {
+    local cluster_name=$1
+    local region=$2
+
+    cluster_info=$(pcluster describe-cluster -n "$cluster_name" --region "$region" 2>/dev/null)
+    if [ $? -ne 0 ]; then
+        echo "Cluster '$cluster_name' does not exist in region '$region'."
+        exit 1
+    fi
+
+    echo "$cluster_info"
+}
+
+# Check if FSx is associated with the cluster
+function check_fsx_association() {
+    local cluster_info=$1
+
+    if echo "$cluster_info" | grep -q "fsx"; then
+        echo "Error: The cluster has an FSx filesystem associated with it."
+        echo "Please export any data you need to save, then delete the FSx filesystem, or type 'permanently delete fsx' to proceed."
+
+        read -p "Type 'permanently delete fsx' to proceed with cluster deletion: " confirmation
+        if [[ "$confirmation" != "permanently delete fsx" ]]; then
+            echo "Aborting cluster deletion."
+            exit 1
+        fi
+    fi
+}
+
+# Delete the cluster and monitor the status
+function delete_cluster() {
+    local cluster_name=$1
+    local region=$2
+
+    echo "Deleting cluster '$cluster_name' in region '$region'..."
+   pcluster delete-cluster -n "$cluster_name" --region "$region"
+
+    echo "Monitoring cluster deletion status..."
+    while true; do
+        status="na" #$(aws parallelcluster describe-cluster --cluster-name "$cluster_name" --region "$region" 2>/dev/null | jq -r '.clusterStatus')
+        if [[ -z "$status" ]]; then
+            echo "Cluster deletion completed successfully."
+            break
+        elif [[ "$status" == "DELETE_FAILED" ]]; then
+            echo "Error: Cluster deletion failed."
+            exit 1
+        else
+            echo "Current status: $status"
+            sleep 15
+        fi
+    done
+}
+
+# Main script execution
+selected_region=$(select_region)
+export AWS_REGION=$selected_region  # Set the selected region for AWS CLI
+
+cluster_name=$(get_cluster_name)
+
+cluster_info=$(check_cluster_exists "$cluster_name" "$selected_region")
+check_fsx_association "$cluster_info"
+
+delete_cluster "$cluster_name" "$selected_region"
