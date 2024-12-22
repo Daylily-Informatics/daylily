@@ -17,7 +17,7 @@ print_help() {
   echo "  -h    Display this help message"
   echo ""
   echo "Example:"
-  echo "  $0 -p my-project -a 5000 -r us-west-2 -e user@example.com -t 50,80,100"
+  echo "  $0 -p my-project -a 300 -r us-west-2 -e user@example.com -t 25,50,75,100"
 }
 
 
