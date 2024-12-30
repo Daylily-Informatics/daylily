@@ -13,13 +13,6 @@ usage() {
     echo "       --profile  aws profile to use"
 }
 
-# Check if the script is sourced or executed
-if [ -n "$ZSH_EVAL_CONTEXT" ] && [[ "$ZSH_EVAL_CONTEXT" =~ :file$ ]]; then
-    echo "This script is sourced."
-else
-    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-    exit 3
-fi
 
 # Check if script is sourced with no arguments
 if [[ $# -eq 0 ]]; then
@@ -151,7 +144,7 @@ aws_version=$(aws --version --profile $AWS_PROFILE 2>&1 | cut -d ' ' -f 1 | sed 
 if [[ "$aws_version" != "$aver" ]]; then
     handle_warning "Warning: Expected AWS CLI version $aver, but found version $aws_version."
     if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to install the AWS CLI. Exiting."
+        echo "Error:  the AWS CLI version does not match expected. Exiting. use --pass-on-warn to ignore this warning."
         return 3
     fi
 fi
@@ -573,13 +566,13 @@ if [[ -z "$global_budget_exists" || "$global_budget_exists" == "None" ]]; then
     read gallowed_users
     echo -n "Enter an email address to receive alerts: "
     read guser_email
-    echo -n "Enter a budget amount (default: 500): "
+    echo -n "Enter a budget amount (default: 300): "
     read gamount
-    gamount=${gamount:-500}
+    gamount=${gamount:-300}
 
     echo "Creating the budget..."
-    echo "bin/create_budget.sh -p $global_budget_name -r $region -t 75 -e $guser_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users "
-    bin/create_budget.sh -p $global_budget_name -r $region -t 75 -e "$guser_email" -a "$gamount" -c $cluster_name -z $region_az -b $bucket_url  -u "$gallowed_users "
+    echo "bin/create_budget.sh -p $global_budget_name -r $region -t 25,50,75,99 -e $guser_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users "
+    bin/create_budget.sh -p $global_budget_name -r $region -t 25,50,75,99 -e "$guser_email" -a "$gamount" -c $cluster_name -z $region_az -b $bucket_url  -u "$gallowed_users "
 
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the budget. Exiting."
