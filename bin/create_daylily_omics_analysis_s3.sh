@@ -106,8 +106,38 @@ echo " >  >>   >>> AWS_PROFILE: $AWS_PROFILE is being used."
 echo ""
 sleep 2
 
+# Function to check if S3 acceleration is supported in the region
+check_acceleration_support() {
+    local bucket_name="$1"
+    local accel_endpoint="https://s3-accelerate.amazonaws.com"
+    
+    # Use curl to test the acceleration endpoint
+    local response
+    response=$(curl -s -o /dev/null -w "%{http_code}" -X HEAD -H "Host: ${bucket_name}.s3-accelerate.amazonaws.com" "$accel_endpoint")
+
+    if [[ "$response" -eq 200 || "$response" -eq 403 ]]; then
+        # Acceleration is supported if we get HTTP 200 or 403
+        echo "true"
+    else
+        echo "false"
+    fi
+}
+
 new_bucket="${bucket_prefix}-omics-analysis-${region}"
 echo "Creating bucket: $new_bucket"
+
+accel_endpoint=""
+
+# Determine if acceleration can be used
+accel_enabled=$(check_acceleration_support "$new_bucket")
+
+if [[ "$accel_enabled" == "true" ]]; then
+    accel_endpoint="--endpoint-url https://s3-accelerate.amazonaws.com"
+    echo "S3 acceleration is enabled for the bucket. Using accelerated endpoint."
+else
+    accel_endpoint=""
+    echo "S3 acceleration is NOT enabled for the bucket. Using standard endpoint."
+fi
 
 # Check if the bucket with the specified prefix already exists
 check_bucket_exists() {
@@ -131,19 +161,8 @@ create_bucket() {
             aws s3api create-bucket --bucket "$new_bucket" --region "$region" --create-bucket-configuration LocationConstraint="$region"
         fi
         echo "Bucket '$new_bucket' created successfully."
-        aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled
+        aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled || echo "Failed to enable acceleration for bucket $new_bucket"
 
-        # Add tags to the bucket
-        #echo "Adding tags to bucket '$new_bucket'..."
-        #aws s3api put-bucket-tagging --bucket "$new_bucket" --region "$region" --tagging 'TagSet=[
-        #    {Key=aws-parallelcluster-username,Value=NA},
-        #    {Key=aws-parallelcluster-jobid,Value=NA},
-        #    {Key=aws-parallelcluster-project,Value=daylily-global},
-        #    {Key=aws-parallelcluster-clustername,Value=NA},
-        #    {Key=aws-parallelcluster-enforce-budget,Value=daylily-global}
-        #]'
-        #echo "Tags added to bucket '$new_bucket'."
-        
     fi
 }
 
@@ -167,15 +186,15 @@ cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_
 cmd_budget="aws s3 cp s3://${source_bucket}/data/budget_tags s3://${new_bucket}/data/budget_tags --recursive --request-payer requester --metadata-directive REPLACE "
 
 # b37 references
-cmd_b37_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
-cmd_b37_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
+cmd_b37_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/b37 --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
+cmd_b37_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/b37 --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
 
 # hg38 references
-cmd_hg38_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
-cmd_hg38_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
+cmd_hg38_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/hg38 --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
+cmd_hg38_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 s3://${new_bucket}/data/genomic_data/organism_annotations/H_sapiens/hg38 --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
 
 # Concordance Reads
-cmd_giab_reads="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_reads s3://${new_bucket}/data/genomic_data/organism_reads --recursive --request-payer requester --endpoint-url https://s3-accelerate.amazonaws.com --metadata-directive REPLACE "
+cmd_giab_reads="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_reads s3://${new_bucket}/data/genomic_data/organism_reads --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
 
 
 overall_status='success'
