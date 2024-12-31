@@ -106,38 +106,14 @@ echo " >  >>   >>> AWS_PROFILE: $AWS_PROFILE is being used."
 echo ""
 sleep 2
 
-# Function to check if S3 acceleration is supported in the region
-check_acceleration_support() {
-    local bucket_name="$1"
-    local accel_endpoint="https://s3-accelerate.amazonaws.com"
-    
-    # Use curl to test the acceleration endpoint
-    local response
-    response=$(curl -s -o /dev/null -w "%{http_code}" -X HEAD -H "Host: ${bucket_name}.s3-accelerate.amazonaws.com" "$accel_endpoint")
-
-    if [[ "$response" -eq 200 || "$response" -eq 403 ]]; then
-        # Acceleration is supported if we get HTTP 200 or 403
-        echo "true"
-    else
-        echo "false"
-    fi
-}
-
 new_bucket="${bucket_prefix}-omics-analysis-${region}"
 echo "Creating bucket: $new_bucket"
 
 accel_endpoint=""
 
 # Determine if acceleration can be used
-accel_enabled=$(check_acceleration_support "$new_bucket")
+accel_enabled="--endpoint-url https://s3-accelerate.amazonaws.com"
 
-if [[ "$accel_enabled" == "true" ]]; then
-    accel_endpoint="--endpoint-url https://s3-accelerate.amazonaws.com"
-    echo "S3 acceleration is enabled for the bucket. Using accelerated endpoint."
-else
-    accel_endpoint=""
-    echo "S3 acceleration is NOT enabled for the bucket. Using standard endpoint."
-fi
 
 # Check if the bucket with the specified prefix already exists
 check_bucket_exists() {
@@ -161,7 +137,7 @@ create_bucket() {
             aws s3api create-bucket --bucket "$new_bucket" --region "$region" --create-bucket-configuration LocationConstraint="$region"
         fi
         echo "Bucket '$new_bucket' created successfully."
-        aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled || echo "Failed to enable acceleration for bucket $new_bucket"
+        aws s3api put-bucket-accelerate-configuration --bucket ${new_bucket} --accelerate-configuration Status=Enabled 
 
     fi
 }
