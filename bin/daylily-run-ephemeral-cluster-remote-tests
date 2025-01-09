@@ -21,10 +21,10 @@ if [[ -z "$pem_file" || -z "$region" || -z "$aws_profile" ]]; then
     return 1
 fi
  
-AWS_PROFILE=$aws_profile
+export AWS_PROFILE=$aws_profile
 
 # List available clusters in the specified region
-echo "Clusters detected in region $region:"
+echo "Clusters detected in region $region using profile $AWS_PROFILE:"
 cluster_names=$(pcluster list-clusters --region $region | grep clusterName | awk '{print $2}' | cut -d '"' -f 2)
 
 # Check if there are any clusters detected
@@ -90,10 +90,14 @@ echo "Would you like to remotely launch a workflow w/in a tmux session on the he
 read REPLY
 if [[ "$REPLY" == "y" ]]; then
 
+    ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
+        "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects &&  git clone https://github.com/Daylily-Informatics/daylily.git daylily_remote_test'"
+
     session_name="cluster_test_$(date +%s)"  
     ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
         "tmux new-session -d -s \"$session_name\" \
-        \"bash -c 'source ~/.bashrc && cd ~/projects/daylily && source dyinit --project daylily-global && source bin/day_activate slurm hg38 remote && ./bin/day_run produce_snv_concordances -p -k -j 2 --config aligners=[\\\"strobe\\\",\\\"bwa2a\\\"] dedupers=[\\\"dppl\\\"] genome_build=\\\"hg38\\\" snv_callers=[\\\"deep\\\"]; bash'\"" && \
+        \"bash -c 'source ~/.bashrc && cd ~/projects/daylily_remote_test && source dyinit && source bin/day_activate slurm hg38 remote && ./bin/day_run produce_snv_concordances -p -k -j 2 --config aligners=[\\\"strobe\\\",\\\"bwa2a\\\"] dedupers=[\\\"dppl\\\"] genome_build=\\\"hg38\\\" snv_callers=[\\\"deep\\\"]; bash'\"" && \
+
     echo "Tmux session >>> '$session_name' <<< started on the remote server."
     echo "You can monitor the session using the following command:"
     echo "ssh -i \"$pem_file\" ubuntu@\"$cluster_ip_address\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 'tmux attach-session -t $session_name'"
