@@ -42,7 +42,7 @@ def determine_sex(n_x, n_y):
         return "male"
     return "na"
 
-def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_prefix):
+def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_prefix, aws_profile=None):
     if concordance_dir == "na" or concordance_dir.startswith("/fsx/data"):
         return concordance_dir
     stage_path = os.path.join(stage_target, f"{sample_prefix}")
@@ -54,7 +54,7 @@ def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_pre
         subprocess.run(["wget", "-q", "-P", target_concordance_dir, concordance_dir], check=True)
     elif concordance_dir.startswith("s3://"):
         log_info(f"Downloading concordance data from S3: {concordance_dir}")
-        subprocess.run(["aws", "s3", "cp", concordance_dir, target_concordance_dir, "--recursive"], check=True)
+        subprocess.run(["aws", "s3", "cp", concordance_dir, target_concordance_dir, "--profile", aws_profile, "--recursive"], check=True)
     return target_concordance_dir
 
 def validate_subsample_pct(subsample_pct):
@@ -105,7 +105,7 @@ def copy_files_to_target(file_path, target_path, mode, cluster_ip=None, pem_file
     except Exception as e:
         log_error(f"Error copying file {file_path} to {target_path}: {e}")
 
-def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, cluster_user=None):
+def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, cluster_user=None, aws_profile=None):
     with open(input_file, "r") as ff:
         linesf = ff.readlines()
 
@@ -244,7 +244,7 @@ def main():
     pem_file = sys.argv[5] if mode == "remote" else None
     cluster_user = sys.argv[6] if mode == "remote" else None
 
-    parse_and_validate_tsv(input_file, mode, cluster_ip, pem_file, cluster_user)
+    parse_and_validate_tsv(input_file, mode, cluster_ip, pem_file, cluster_user, aws_profile)
 
 
 if __name__ == "__main__":
