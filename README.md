@@ -149,7 +149,7 @@ _still as the admin user_
 
 - Navigate to the `IAM -> Users` console, click on the `daylily-service` user.
 - Click on the `Add permissions` button, then select `Add permission`.
-- Search for `AmazonQDeveloperAccess`, select and add it.
+- Search for `AmazonQDeveloperAccess` , select and add.
 
 #### Inline Policy
 __**note:**__ [please consult the parallel cluster docs for fine grained permissions control, the below is a broad approach](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam-roles-in-parallelcluster-v3.html).
