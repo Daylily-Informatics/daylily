@@ -100,7 +100,16 @@ def copy_files_to_target(file_path, target_path, mode, cluster_ip=None, pem_file
             subprocess.run(remote_command, shell=True, check=True)
         else:
             os.makedirs(os.path.dirname(target_path), exist_ok=True)
-            subprocess.run(["cp", file_path, target_path], check=True)
+            if file_path.startswith("http://") or file_path.startswith("https://"):
+                subprocess.run(["wget", "-q", "-O", target_path, file_path], check=True)
+                log_info(f"Downloaded file {file_path} to {target_path}")
+            elif file_path.startswith("s3://"):
+                bucket, key = file_path[5:].split("/", 1)
+                s3 = boto3.client("s3")
+                s3.download_file(bucket, key, target_path)
+                log_info(f"Downloaded file {file_path} to {target_path}")
+            else:
+                subprocess.run(["cp", file_path, target_path], check=True)
         log_info(f"Copied file {file_path} to {target_path}")
     except Exception as e:
         log_error(f"Error copying file {file_path} to {target_path}: {e}")
