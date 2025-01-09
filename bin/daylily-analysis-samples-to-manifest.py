@@ -239,6 +239,7 @@ def main():
     mode = sys.argv[1]
     input_file = sys.argv[2]
     aws_profile = sys.argv[3] 
+    os.environ["AWS_PROFILE"] = aws_profile  # Set AWS profile
     cluster_ip = sys.argv[4] if mode == "remote" else None
     pem_file = sys.argv[5] if mode == "remote" else None
     cluster_user = sys.argv[6] if mode == "remote" else None
