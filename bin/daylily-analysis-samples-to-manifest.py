@@ -117,9 +117,9 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         cols = line.strip().split("\t")
         if len(cols) < 17:
             log_error(f"Invalid line in TSV: {line}")
-        (RUN_ID, SAMPLE_ID, SAMPLE_TYPE, LIB_PREP, SEQ_PLATFORM, LANE, SEQBC_ID,
+        (RUN_ID, SAMPLE_ID, SAMPLE_ANNO, SAMPLE_TYPE, LIB_PREP, SEQ_PLATFORM, LANE, SEQBC_ID,
          PATH_TO_CONCORDANCE_DATA_DIR, R1_FQ, R2_FQ, STAGE_DIRECTIVE, STAGE_TARGET,
-         SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:17]
+         SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:18]
         runn = RUN_ID
         stage_target = STAGE_TARGET
         stage_directive = STAGE_DIRECTIVE
@@ -147,11 +147,11 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
     try:
         for line in linesf[1:]:
             cols = line.strip().split("\t")
-            (RUN_ID, SAMPLE_ID, SAMPLE_TYPE, LIB_PREP, SEQ_PLATFORM, LANE, SEQBC_ID,
+            (RUN_ID, SAMPLE_ID, SAMPLE_ANNO, SAMPLE_TYPE, LIB_PREP, SEQ_PLATFORM, LANE, SEQBC_ID,
             PATH_TO_CONCORDANCE_DATA_DIR, R1_FQ, R2_FQ, STAGE_DIRECTIVE, STAGE_TARGET,
-            SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:17]
+            SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:18]
 
-            sample_prefix = f"{RUN_ID}_{SAMPLE_ID}_{SAMPLE_TYPE}_{LANE}-{SEQBC_ID}"
+            sample_prefix = f"{RUN_ID}_{SAMPLE_ID}-{SAMPLE_ANNO}_{SAMPLE_TYPE}_{LANE}-{SEQBC_ID}"
             staged_sample_path = os.path.join(stage_target, sample_prefix)
 
 
@@ -235,12 +235,13 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
 def main():
     import sys
     if len(sys.argv) < 3:
-        log_error("Usage: python3 script.py [local|remote] input_file [cluster_ip] [pem_file] [cluster_user]")
+        log_error("Usage: python3 script.py local|remote input_file aws_profile [cluster_ip] [pem_file] [cluster_user]")
     mode = sys.argv[1]
     input_file = sys.argv[2]
-    cluster_ip = sys.argv[3] if mode == "remote" else None
-    pem_file = sys.argv[4] if mode == "remote" else None
-    cluster_user = sys.argv[5] if mode == "remote" else None
+    aws_profile = sys.argv[3] 
+    cluster_ip = sys.argv[4] if mode == "remote" else None
+    pem_file = sys.argv[5] if mode == "remote" else None
+    cluster_user = sys.argv[6] if mode == "remote" else None
 
     parse_and_validate_tsv(input_file, mode, cluster_ip, pem_file, cluster_user)
 
