@@ -87,7 +87,7 @@ else
 fi
 
 AWS_PROFILE=$AWS_PROFILE
-echo "YOOUR AWS_PROFILE IS NOW SET TO: $AWS_PROFILE"
+echo "YOUR AWS_PROFILE IS NOW SET TO: $AWS_PROFILE"
 
 # Function to handle warnings
 handle_warning() {
@@ -148,6 +148,7 @@ if [[ "$aws_version" != "$aver" ]]; then
         return 3
     fi
 fi
+AWS_CLI_USER=$(aws sts get-caller-identity --region $region --profile $AWS_PROFILE --query "Arn" --output text | awk -F '/' '{print $2}')
 
 # Ensure pcluster is installed
 echo "Checking pcluster version..."
@@ -179,14 +180,12 @@ AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text  --pr
 caller_identity_arn=$(aws sts get-caller-identity --query 'Arn' --output text --region "$region"  --profile $AWS_PROFILE )
 
 
-# Set the AWS user name and policy name
+# Check if the policy is attached to the user
 DY_POLICY_NAME="daylily-service-cluster-policy"
 
-# Check if the policy is attached to the user
-POLICY_CHECK=$(aws iam list-attached-user-policies --user-name "$AWS_CLI_USER" --query "AttachedPolicies[?PolicyName=='$DY_POLICY_NAME']" --output text)
-
-## If the policy is not attached, print a warning and prompt the user
-if [ -z "$POLICY_CHECK" ]; then
+if aws iam list-user-policies --user-name "$AWS_CLI_USER" | jq -e --arg policy "$DY_POLICY_NAME" '.PolicyNames[] | select(. == $policy)' > /dev/null; then
+    echo "Policy $DY_POLICY_NAME is attached to the user. Proceeding..."
+else
     echo "WARNING: The policy '$DY_POLICY_NAME' is not attached to the user '$AWS_CLI_USER'."
     echo "Please see the README 'Inline Policies' section for instructions on attaching the policy."
     echo ""
@@ -207,8 +206,6 @@ if [ -z "$POLICY_CHECK" ]; then
         echo "Invalid choice. Exiting."
         return 3 2>/dev/null || exit 3
     fi
-else
-    echo "The policy '$DY_POLICY_NAME' is attached to the user '$AWS_CLI_USER'. Proceeding..."
 fi
 
 
@@ -288,7 +285,6 @@ fi
 echo ""
 
 
-AWS_CLI_USER=$(aws sts get-caller-identity --region $region --profile $AWS_PROFILE --query "Arn" --output text | awk -F '/' '{print $2}')
 
 # Check for 'pcluster-omics-analysis' policy and create if necessary
 echo "Checking for required IAM policy 'pcluster-omics-analysis'..."
@@ -483,7 +479,7 @@ echo ""
 
 # Select public and private subnets
 public_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text  --profile $AWS_PROFILE | grep "Public Subnet" | grep $region_az)
-echo "Select a Public Subnet:"
+echo "Select a Public Subnet (todo: move to selecting VPC first, then filtering options w/in VPC for pub/priv subs):"
 public_subnet_choices=()
 while read -r subnet_id subnet_name; do
     public_subnet_choices+=("$subnet_name ($subnet_id)")
@@ -497,8 +493,8 @@ select public_subnet_choice in "${public_subnet_choices[@]}"; do
 done
 echo ""
 
-echo "Select a Private Subnet:"
-private_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text  --profile $AWS_PROFILE | grep "Public Subnet" | grep $region_az)
+echo "Select a Private Subnet (in same vpc as public):"
+private_subnets_new=$(aws ec2 describe-subnets --query "Subnets[*].[SubnetId, Tags[?Key=='Name'].Value | [0], AvailabilityZone]" --region "$region" --output text  --profile $AWS_PROFILE | grep "Private Subnet" | grep $region_az)
 private_subnet_choices=()
 while read -r subnet_id subnet_name; do
     private_subnet_choices+=("$subnet_name ($subnet_id)")

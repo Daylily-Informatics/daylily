@@ -148,7 +148,7 @@ if [[ "$REPLY" == "y" ]]; then
     # start building the minimal cached envs
     echo "Building some cached analysis environments to save a little time ... this can take a little time"
     ssh -t -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-        "source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_activate local hg38 remote &&  ./bin/day_run  produce_snv_concordances -p -k -j 2 --config aligners=['strobe','bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep']  --conda-create-envs-only    "
+        "source ~/.bashrc && cd ~/projects/daylily && source dyinit --skip-project-check && source bin/day_activate local hg38 remote &&  ./bin/day_run  produce_snv_concordances -p -k -j 2 --config aligners=['strobe','bwa2a'] dedupers=['dppl'] snv_callers=['deep']  --conda-create-envs-only    "
     echo " "
     echo "Caches have built for the following tools: strobe, bwa2a, dppl, oct, deep"
     echo " "
@@ -161,6 +161,6 @@ echo "And, you may now access the headnode via the PCUI, via 'source bin/daylily
 echo -e "       ssh -i $pem_file ubuntu@$cluster_ip_address\n"
 echo " "
 echo "If you wish to run some remote tests, you can do so with the following command:"
-echo -e "      . bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $cluster_name $aws_profile\n"
+echo -e "      . bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $aws_profile\n"
 echo " "
 echo "...fin"
