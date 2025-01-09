@@ -1,7 +1,5 @@
 # Daylily AWS Ephemeral Cluster Setup (0.7.153)
-_(0.7.150)_
-
-
+_(0.7.154)_
 
 **beta release**
 
@@ -124,8 +122,15 @@ _this is a title rough idea! - not likely final, but is the gist of it_
 > Daylily development has been under development for a number of years & is self-funded work (both time, and AWS costs).
 > - [I am available for consulting](https://www.dyly.bio) engagements if you are interested in extending the work here. My areas of expertise also include cllical diagnostics operations, regulatory and compliance.
 
+<hr>
 
-# Installation -- PREREQUISITES
+# Installation -- Quickest Start
+_most useful if you have already installed daylily previously_
+
+- [Can be found here](docs/quickest_start.md).
+
+
+# Installation -- Detailed
 
 ## AWS 
 

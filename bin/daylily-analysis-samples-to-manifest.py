@@ -43,7 +43,7 @@ def determine_sex(n_x, n_y):
     return "na"
 
 def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_prefix):
-    if concordance_dir == "na" or concordance_dir.startswith("/fsx/data"):
+    if concordance_dir == "na" or concordance_dir.startswith("/fsx/data") or concordance_dir == "":
         return concordance_dir
     stage_path = os.path.join(stage_target, f"{sample_prefix}")
     os.makedirs(stage_path, exist_ok=True)
@@ -117,9 +117,9 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         cols = line.strip().split("\t")
         if len(cols) < 17:
             log_error(f"Invalid line in TSV: {line}")
-        (RUN_ID, SAMPLE_ID, SAMPLE_TYPE, LIB_PREP, SEQ_PLATFORM, LANE, SEQBC_ID,
+        (RUN_ID, SAMPLE_ID, SAMPLE_ANNO, SAMPLE_TYPE, LIB_PREP, SEQ_PLATFORM, LANE, SEQBC_ID,
          PATH_TO_CONCORDANCE_DATA_DIR, R1_FQ, R2_FQ, STAGE_DIRECTIVE, STAGE_TARGET,
-         SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:17]
+         SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:18]
         runn = RUN_ID
         stage_target = STAGE_TARGET
         stage_directive = STAGE_DIRECTIVE
@@ -147,11 +147,11 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
     try:
         for line in linesf[1:]:
             cols = line.strip().split("\t")
-            (RUN_ID, SAMPLE_ID, SAMPLE_TYPE, LIB_PREP, SEQ_PLATFORM, LANE, SEQBC_ID,
+            (RUN_ID, SAMPLE_ID, SAMPLE_ANNO, SAMPLE_TYPE, LIB_PREP, SEQ_PLATFORM, LANE, SEQBC_ID,
             PATH_TO_CONCORDANCE_DATA_DIR, R1_FQ, R2_FQ, STAGE_DIRECTIVE, STAGE_TARGET,
-            SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:17]
+            SUBSAMPLE_PCT, IS_POS_CTRL, IS_NEG_CTRL, N_X, N_Y) = cols[:18]
 
-            sample_prefix = f"{RUN_ID}_{SAMPLE_ID}_{SAMPLE_TYPE}_{LANE}-{SEQBC_ID}"
+            sample_prefix = f"{RUN_ID}_{SAMPLE_ID}-{SAMPLE_ANNO}_{SAMPLE_TYPE}_{LANE}-{SEQBC_ID}"
             staged_sample_path = os.path.join(stage_target, sample_prefix)
 
 
