@@ -233,7 +233,7 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
                 sf.write("Process completed successfully\n")
         log_info(f"Success file created: {success_file}")
         log_info(f"Manifest generated: {manifest_file_tmp} & {manifest_file}")
-        log_info(f"\nTo use the manifest just created, copy it to config/analysis_manifest.csv\n")
+        log_info(f"\nTo use the manifest just created, copy it: cp  {manifest_file_tmp} config/analysis_manifest.csv\n")
 
     except Exception as e:
         # Create error sentinel
