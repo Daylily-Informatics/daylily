@@ -213,6 +213,9 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         # Generate analysis manifest
         manifest_file_tmp = os.path.join('./', f"{runn}_analysis_manifest.csv")
         manifest_file = os.path.join(stage_target, f"{runn}_analysis_manifest.csv")
+        if os.path.exists(manifest_file) or os.path.exists(manifest_file_tmp):
+            log_error(f"Manifest file already exists: {manifest_file}")
+            raise Exception("Manifest file already exists")
         generate_analysis_manifest(manifest_file_tmp, rows)
 
         if STAGE_DIRECTIVE == "stage_data":
@@ -227,8 +230,9 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         else:
             with open(success_file, "w") as sf:
                 sf.write("Process completed successfully\n")
-        log_info(f"Manifest generated: {manifest_file_tmp} & {manifest_file}")
         log_info(f"Success file created: {success_file}")
+        log_info(f"Manifest generated: {manifest_file_tmp} & {manifest_file}")
+        log_info(f"\nTo use the manifest just created, copy it to config/analysis_manifest.csv\n")
 
     except Exception as e:
         # Create error sentinel
