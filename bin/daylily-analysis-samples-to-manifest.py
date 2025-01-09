@@ -213,6 +213,8 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         # Generate analysis manifest
         manifest_file_tmp = os.path.join('./', f"{runn}_analysis_manifest.csv")
         manifest_file = os.path.join(stage_target, f"{runn}_analysis_manifest.csv")
+
+        from IPython import embed; embed()
         if os.path.exists(manifest_file) or os.path.exists(manifest_file_tmp):
             log_error(f"Manifest file already exists: {manifest_file}")
             raise Exception("Manifest file already exists")
