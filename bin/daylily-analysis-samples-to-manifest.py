@@ -42,6 +42,7 @@ def determine_sex(n_x, n_y):
         return "male"
     return "na"
 
+
 def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_prefix, aws_profile=None):
     if concordance_dir == "na" or concordance_dir.startswith("/fsx/data"):
         return concordance_dir
