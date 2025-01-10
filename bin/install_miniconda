@@ -89,6 +89,8 @@ fi
 if [[ -x ~/miniconda3/bin/conda ]]; then
     echo "Initializing Conda..."
     ~/miniconda3/bin/conda init "$(basename "$SHELL")"
+    ~/miniconda3/bin/conda init bash
+    ~/miniconda3/bin/conda init zsh
 
     echo "Reloading the shell..."
     if [[ $- == *i* ]]; then

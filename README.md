@@ -258,7 +258,7 @@ _suggestion: run things in tmux or screen_
 Very good odds this will work on any mac and most Linux distros (ubuntu 22.04 are what the cluster nodes run). Windows, I can't say.
 
 ### System Packages
-Install with `brew`, `conda` or `apt-get`:
+Install with `brew` or `apt-get` ('):
 - `python3`, tested with `3.12.8`
 - `git`, tested with `2.46.0`
 - `jq`, tested with `jq-1.7.1`

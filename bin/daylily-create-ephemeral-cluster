@@ -1,5 +1,30 @@
 #!/bin/zsh
 
+
+# Function to check if the script is sourced
+is_sourced() {
+    # If the script is sourced, BASH_SOURCE[0] != $0
+    [[ "${BASH_SOURCE[0]}" != "${0}" ]]
+}
+
+CURR_SHELL=$(ps -p $$ -o comm=)
+echo $CURR_SHELL
+
+if [[ "$CURR_SHELL" != "zsh" ]]; then
+    echo "ERROR: This script must be executed from a zsh shell. please run 'zsh' and re-run this."
+    ~/miniconda3/bin/conda init zsh || echo "conda init failed, possibly legit if conda is not installed yet."
+
+    if is_sourced; then
+        # If sourced, use 'return' to avoid exiting the shell
+        return 3
+    else
+        # If executed, use 'exit' to terminate the script
+        exit 3
+    fi
+fi
+
+echo "Now running in zsh. Continuing script execution..."
+# Your script logic here
 emulate -L bash
 
 # Default configuration
@@ -86,6 +111,11 @@ else
     return 3  # Exit the function with an error status
 fi
 
+if [[ "$AWS_PROFILEIN" != "$AWS_PROFILE" ]]; then
+    echo "Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
+    return 3  # Exit the function with an error status
+fi
+
 AWS_PROFILE=$AWS_PROFILE
 echo "YOUR AWS_PROFILE IS NOW SET TO: $AWS_PROFILE"
 
@@ -110,6 +140,7 @@ echo "Please ensure your ~/.aws/config file matches this region."
 
 ### Conda Environment Setup
 
+
 # Ensure Conda exists
 conda --version &> /dev/null
 if [[ $? -ne 0 ]]; then
@@ -124,6 +155,26 @@ if [[ $? -ne 0 ]]; then
     return 3
 fi
 
+# Required version
+required_version="24.11.1"
+
+# Check if conda is installed
+if ! command -v conda &> /dev/null; then
+    echo "Error: conda is not installed."
+    return 3
+fi
+
+# Get the current conda version
+current_version=$(conda --version | awk '{print $2}')
+
+# Compare versions
+if [[ "$(printf '%s\n' "$required_version" "$current_version" | sort -V | head -n1)" != "$required_version" ]]; then
+    echo "Error: Conda version $current_version is less than the required version $required_version."
+    return 3
+fi
+
+echo "Conda version $current_version meets the requirement of $required_version or higher."
+
 # Activate or create the Daylily CLI conda environment
 if conda env list | grep -q "^DAYCLI "; then
     echo "Conda environment 'DAYCLI' already exists. Activating it."
@@ -137,19 +188,6 @@ else
 fi
 conda activate DAYCLI
 
-# Ensure AWS CLI is installed
-echo "Checking AWS CLI version..."
-aver='2.22.4'
-aws_version=$(aws --version --profile "$AWS_PROFILE" 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
-
-# Compare versions
-if [[ "$(printf '%s\n' "$aver" "$aws_version" | sort -V | head -n1)" != "$aver" ]]; then
-    echo "Error: AWS CLI version $aws_version is below the required version $aver. Exiting."
-    exit 1
-fi
-
-echo "AWS CLI version $aws_version meets the requirement of $aver or higher."
-
 AWS_CLI_USER=$(aws sts get-caller-identity --region $region --profile $AWS_PROFILE --query "Arn" --output text | awk -F '/' '{print $2}')
 
 # Ensure pcluster is installed
@@ -159,7 +197,7 @@ pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
 if [[ "$pcluster_version" != "$expected_pcluster_version" ]]; then
     handle_warning "Warning: Expected pcluster version $expected_pcluster_version, but found version $pcluster_version."
     if [[ $? -ne 0 ]]; then
-        echo "Error: pcluster version mis-match:  expected:$expcted_pcluster_version , detected:$pcluster_version ."
+        echo "Error: pcluster version mis-match:  expected:$expected_pcluster_version , detected:$pcluster_version ."
         return 3
     fi
 fi
@@ -373,16 +411,29 @@ echo ""
 # Example: connect to an instance or perform other operations
 pem_file=$HOME/.ssh/"${selected_key}.pem"
 
-# Check if the file exists
-if [[ -e "$pem_file" ]]; then
-    echo "File $pem_file exists. Proceeding with further operations."
-else
-    echo "File $pem_file does not exist. Exiting."
-    return 3  # Use 'exit 1' if outside a function
+# Check if the PEM file exists
+if [[ ! -e "$pem_file" ]]; then
+    echo "Error: PEM file $pem_file does not exist. Exiting."
+    exit 1
 fi
-echo "Using key: $selected_key with PEM file $pem_file"
 
-echo ""
+# Determine file permissions in a portable way
+current_permissions=$(stat --format='%a' "$pem_file" 2>/dev/null || stat -f '%A' "$pem_file" 2>/dev/null)
+
+if [[ -z "$current_permissions" ]]; then
+    echo "Error: Unable to determine permissions for $pem_file. Ensure 'stat' is available."
+    exit 2
+fi
+
+# Check if the PEM file permissions are 400
+if [[ "$current_permissions" -ne 400 ]]; then
+    echo "Error: The PEM file $pem_file does not have the required permissions of 400."
+    echo "Please run: chmod 400 $pem_file"
+    exit 3
+fi
+
+echo "The PEM file $pem_file has the correct permissions (400)."
+echo "Using key: $selected_key with PEM file $pem_file"
 
 # Query available S3 buckets and present only those in the correct region
 echo "Fetching S3 buckets matching 'omics-analysis' in $region..."
@@ -563,8 +614,18 @@ if [[ -z "$global_budget_exists" || "$global_budget_exists" == "None" ]]; then
 
     echo -n "Enter csv string of allowed user names for budget (ubuntu is allowed for all budgets):"
     read gallowed_users
-    echo -n "Enter an email address to receive alerts: "
-    read guser_email
+    while [[ -z "$user_email" ]]; do
+        echo -n "Enter an email address to receive alerts (required): "
+        read user_email
+
+        # Basic validation to check if input contains "@" and "."
+        if [[ "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+            break
+        else
+            echo "Invalid email address. Please try again."
+            user_email=""
+        fi
+    done
     echo -n "Enter a budget amount (default: 300): "
     read gamount
     gamount=${gamount:-300}
@@ -600,11 +661,23 @@ if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
 
     echo -n "Enter csv string of allowed user names for budget (ubuntu is allowed for all budgets):"
     read allowed_users
-    echo -n "Enter an email address to receive alerts: "
-    read user_email
-    echo -n "Enter a budget amount (default: 500): "
+    # Loop to ensure a valid email address is entered
+    while [[ -z "$user_email" ]]; do
+        echo -n "Enter an email address to receive alerts (required): "
+        read user_email
+
+        # Basic validation to check if input contains "@" and "."
+        if [[ "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+            break
+        else
+            echo "Invalid email address. Please try again."
+            user_email=""
+        fi
+    done
+
+    echo -n "Enter a budget amount (default: 200): "
     read amount
-    amount=${amount:-500}
+    amount=${amount:-200}
 
     echo "Creating the budget..."
     echo "bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c $cluster_name -z $region_az -b $bucket_url  -u $allowed_users "

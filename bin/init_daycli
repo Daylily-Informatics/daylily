@@ -1,6 +1,7 @@
 #!/bin/bash
 
-
+skip_warn=$1
+warn_msg=""
 
 mkdir -p ~/.config/daylily
 
@@ -23,6 +24,17 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit 3
 fi
 
+# Check if system packages are installed
+bash bin/check_system_pkgs.sh
+if [ $? -ne 0 ]; then
+
+    if [ "$skip_warn" != "skip_warn" ]; then
+        warn_msg="There were problems detected with pre-requisites, and the warnings bypassed. Run 'bash bin/check_system_pkgs.sh' for more information." 
+    else
+        echo "Some system packages are missing or are the wrong version which may cause problems. Please review them by running: 'bash bin/check_system_pkgs.sh' for more information. You may proceed past this warning by passing the first argument as 'skip_warn'." 
+        return 1
+    fi
+fi
 
 # Ensure Conda exists
 if ! command -v conda &> /dev/null; then
@@ -33,8 +45,11 @@ if ! command -v conda &> /dev/null; then
     source ./bin/install_miniconda
 fi
 
+CURR_SHELL=$(ps -p $$ -o comm=)
+echo $CURR_SHELL
 if ! command -v conda &> /dev/null; then
     echo "Error: Conda is not available in this shell. Autoinstall failed, please see the miniconda docs."
+    echo "*** If your shell (login:$SHELL , current:$CURR_SHELL) is bash, please check if conda init correctly updated both your .bashrc and .bash_profile with the conda initialization block. If present in one but not the other, copy it, open a new bash shell and try again (most commonly a problem with MACs). ***"   
     return 1
 fi
 
@@ -59,13 +74,4 @@ check_and_install() {
 }
 
 
-
-# Check and install the required packages
-#check_and_install "colr" "0.9.1"
-#check_and_install "yaml" "6.0.2"   # pyyaml is imported as 'yaml'
-#check_and_install "tabulate" "0.9.0"
-#check_and_install "docopt" "0.6.2"
-#check_and_install "ruamel.yaml" "0.18.6"
-
-
-echo "Daylily CLI environment is ready."
+echo "Daylily CLI environment is ready ($warn_msg)."
