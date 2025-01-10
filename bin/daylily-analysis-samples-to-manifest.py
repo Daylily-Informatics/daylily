@@ -42,8 +42,9 @@ def determine_sex(n_x, n_y):
         return "male"
     return "na"
 
-def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_prefix):
-    if concordance_dir == "na" or concordance_dir.startswith("/fsx/data") or concordance_dir == "":
+
+def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_prefix, aws_profile=None):
+    if concordance_dir == "na" or concordance_dir.startswith("/fsx/data"):
         return concordance_dir
     stage_path = os.path.join(stage_target, f"{sample_prefix}")
     os.makedirs(stage_path, exist_ok=True)
@@ -54,7 +55,7 @@ def validate_and_stage_concordance_dir(concordance_dir, stage_target, sample_pre
         subprocess.run(["wget", "-q", "-P", target_concordance_dir, concordance_dir], check=True)
     elif concordance_dir.startswith("s3://"):
         log_info(f"Downloading concordance data from S3: {concordance_dir}")
-        subprocess.run(["aws", "s3", "cp", concordance_dir, target_concordance_dir, "--recursive"], check=True)
+        subprocess.run(["aws", "s3", "cp", concordance_dir, target_concordance_dir, "--profile", aws_profile, "--recursive"], check=True)
     return target_concordance_dir
 
 def validate_subsample_pct(subsample_pct):
@@ -100,12 +101,21 @@ def copy_files_to_target(file_path, target_path, mode, cluster_ip=None, pem_file
             subprocess.run(remote_command, shell=True, check=True)
         else:
             os.makedirs(os.path.dirname(target_path), exist_ok=True)
-            subprocess.run(["cp", file_path, target_path], check=True)
+            if file_path.startswith("http://") or file_path.startswith("https://"):
+                subprocess.run(["wget", "-q", "-O", target_path, file_path], check=True)
+                log_info(f"Downloaded file {file_path} to {target_path}")
+            elif file_path.startswith("s3://"):
+                bucket, key = file_path[5:].split("/", 1)
+                s3 = boto3.client("s3")
+                s3.download_file(bucket, key, target_path)
+                log_info(f"Downloaded file {file_path} to {target_path}")
+            else:
+                subprocess.run(["cp", file_path, target_path], check=True)
         log_info(f"Copied file {file_path} to {target_path}")
     except Exception as e:
         log_error(f"Error copying file {file_path} to {target_path}: {e}")
 
-def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, cluster_user=None):
+def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, cluster_user=None, aws_profile=None):
     with open(input_file, "r") as ff:
         linesf = ff.readlines()
 
@@ -204,6 +214,10 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         # Generate analysis manifest
         manifest_file_tmp = os.path.join('./', f"{runn}_analysis_manifest.csv")
         manifest_file = os.path.join(stage_target, f"{runn}_analysis_manifest.csv")
+
+        if os.path.exists(manifest_file) or os.path.exists(manifest_file_tmp):
+            log_error(f"Manifest file already exists: {manifest_file}")
+            raise Exception("Manifest file already exists")
         generate_analysis_manifest(manifest_file_tmp, rows)
 
         if STAGE_DIRECTIVE == "stage_data":
@@ -218,8 +232,9 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
         else:
             with open(success_file, "w") as sf:
                 sf.write("Process completed successfully\n")
-        log_info(f"Manifest generated: {manifest_file_tmp} & {manifest_file}")
         log_info(f"Success file created: {success_file}")
+        log_info(f"Manifest generated: {manifest_file_tmp} & {manifest_file}")
+        log_info(f"\nTo use the manifest just created, copy it: cp  {manifest_file_tmp} config/analysis_manifest.csv\n")
 
     except Exception as e:
         # Create error sentinel
@@ -235,14 +250,16 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
 def main():
     import sys
     if len(sys.argv) < 3:
-        log_error("Usage: python3 script.py [local|remote] input_file [cluster_ip] [pem_file] [cluster_user]")
+        log_error("Usage: python3 script.py local|remote input_file aws_profile [cluster_ip] [pem_file] [cluster_user]")
     mode = sys.argv[1]
     input_file = sys.argv[2]
-    cluster_ip = sys.argv[3] if mode == "remote" else None
-    pem_file = sys.argv[4] if mode == "remote" else None
-    cluster_user = sys.argv[5] if mode == "remote" else None
+    aws_profile = sys.argv[3] 
+    os.environ["AWS_PROFILE"] = aws_profile  # Set AWS profile
+    cluster_ip = sys.argv[4] if mode == "remote" else None
+    pem_file = sys.argv[5] if mode == "remote" else None
+    cluster_user = sys.argv[6] if mode == "remote" else None
 
-    parse_and_validate_tsv(input_file, mode, cluster_ip, pem_file, cluster_user)
+    parse_and_validate_tsv(input_file, mode, cluster_ip, pem_file, cluster_user, aws_profile)
 
 
 if __name__ == "__main__":

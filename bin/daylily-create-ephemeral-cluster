@@ -140,23 +140,26 @@ conda activate DAYCLI
 # Ensure AWS CLI is installed
 echo "Checking AWS CLI version..."
 aver='2.22.4'
-aws_version=$(aws --version --profile $AWS_PROFILE 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
-if [[ "$aws_version" != "$aver" ]]; then
-    handle_warning "Warning: Expected AWS CLI version $aver, but found version $aws_version."
-    if [[ $? -ne 0 ]]; then
-        echo "Error:  the AWS CLI version does not match expected. Exiting. use --pass-on-warn to ignore this warning."
-        return 3
-    fi
+aws_version=$(aws --version --profile "$AWS_PROFILE" 2>&1 | cut -d ' ' -f 1 | sed 's/aws\-cli\///g')
+
+# Compare versions
+if [[ "$(printf '%s\n' "$aver" "$aws_version" | sort -V | head -n1)" != "$aver" ]]; then
+    echo "Error: AWS CLI version $aws_version is below the required version $aver. Exiting."
+    exit 1
 fi
+
+echo "AWS CLI version $aws_version meets the requirement of $aver or higher."
+
 AWS_CLI_USER=$(aws sts get-caller-identity --region $region --profile $AWS_PROFILE --query "Arn" --output text | awk -F '/' '{print $2}')
 
 # Ensure pcluster is installed
 echo "Checking pcluster version..."
+expected_pcluster_version="3.11.1"
 pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
-if [[ "$pcluster_version" != "3.11.1" ]]; then
-    handle_warning "Warning: Expected pcluster version 3.11.1, but found version $pcluster_version."
+if [[ "$pcluster_version" != "$expected_pcluster_version" ]]; then
+    handle_warning "Warning: Expected pcluster version $expected_pcluster_version, but found version $pcluster_version."
     if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to install the AWS CLI. Exiting."
+        echo "Error: pcluster version mis-match:  expected:$expcted_pcluster_version , detected:$pcluster_version ."
         return 3
     fi
 fi

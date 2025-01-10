@@ -259,13 +259,13 @@ Very good odds this will work on any mac and most Linux distros (ubuntu 22.04 ar
 
 ### System Packages
 Install with `brew`, `conda` or `apt-get`:
-- `python3`
-- `git`
-- `jq`
-- `wget`
-- `awscli` [AWS CLI docs](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+- `python3`, tested with `3.12.8`
+- `git`, tested with `2.46.0`
+- `jq`, tested with `jq-1.7.1`
+- `wget`, tested with `1.25.0`
+- `awscli`, tested with `2.22.4` [AWS CLI docs](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 - `tmux` (optional, but suggested)
-- `emacs` (optional, I guess, but I'm not sure how you live without it)
+- `emacs` (optional, I guess, but I'm not sure how to live without it)
 
 
 ### AWS CLI Configuration
@@ -324,12 +324,11 @@ cd daylily
 ```
 
 ### Miniconda
-_from `daylily` root dir_
+_tested with conda version **`24.11.1`**_
 
 ```bash
 Install with:
 ```bash
-#!/bin/zsh
 source bin/install_miniconda
 ```
 - This will leave you in a terminal with conda activated, indicated by `(base)` in the terminal prompt.
