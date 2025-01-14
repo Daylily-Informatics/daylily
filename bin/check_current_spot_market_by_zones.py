@@ -466,6 +466,17 @@ def main():
     if args.profile == "SETME":
         print(f"\n\nERROR:: Your AWS_PROFILE is set to >{os.getenv('AWS_PROFILE')}<, Please set your AWS_PROFILE environment variable and specify the same string with --profile.\n")
         raise SystemExit
+    if os.environ.get('AWS_PROFILE','') == '':
+        os.environ['AWS_PROFILE'] = args.profile
+    elif args.profile != os.environ['AWS_PROFILE']:
+        print(f"\n\nERROR:: Your AWS_PROFILE is set to >{os.getenv('AWS_PROFILE')}<, Please set your AWS_PROFILE environment variable and specify the same string with --profile.\n")
+        raise SystemExit
+    elif args.profile == os.environ['AWS_PROFILE']:
+        print(f"\n\nAWS_PROFILE is set to >{os.getenv('AWS_PROFILE')}< and profile passed is >{args.profile}<, all good.\n")
+    else:
+        print(f"\n\nAWS_PROFILE is set to >{os.getenv('AWS_PROFILE')}< and profile passed is >{args.profile}<, there is a problem.\n")
+        raise SystemExit
+
     
     zones = args.zones.split(',')
     spot_data = collect_spot_prices(instance_types, zones, args.profile)

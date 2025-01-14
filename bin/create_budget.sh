@@ -78,9 +78,9 @@ write_or_append_tags_to_s3() {
 
   echo "Writing or appending tags to S3 file: $S3_BUCKET_PATH" url: $S3_BUCKET_URL
   # Check if the file exists in S3
-  if aws s3 ls "$S3_BUCKET_PATH" > /dev/null 2>&1; then
+  if aws s3 ls "$S3_BUCKET_PATH" --profile $AWS_PROFILE > /dev/null 2>&1; then
     echo "File exists. Downloading the existing file."
-    aws s3 cp "$S3_BUCKET_PATH" "$TEMP_LOCAL_FILE" --region "$REGION"
+    aws s3 cp "$S3_BUCKET_PATH" "$TEMP_LOCAL_FILE" --region "$REGION" --profile $AWS_PROFILE
 
     if [[ $? -ne 0 ]]; then
       echo "ERROR: Failed to download existing file from S3."
@@ -97,7 +97,7 @@ write_or_append_tags_to_s3() {
 
   # Upload the updated file back to S3
   echo "Uploading updated file to S3..."
-  aws s3 cp "$TEMP_LOCAL_FILE" "$S3_BUCKET_PATH" --region "$REGION"
+  aws s3 cp "$TEMP_LOCAL_FILE" "$S3_BUCKET_PATH" --region "$REGION" --profile $AWS_PROFILE
 
   if [[ $? -eq 0 ]]; then
     echo "Successfully updated S3 file: $S3_BUCKET_PATH"
@@ -153,12 +153,12 @@ BUDGET_JSON=$(echo "$BUDGET_TEMPLATE" | \
 TEMP_BUDGET_JSON=$(mktemp)
 echo "$BUDGET_JSON" > "$TEMP_BUDGET_JSON"
 
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --profile $AWS_PROFILE)
 
 # Create the budget using AWS CLI
 echo "Creating budget for project: $PROJECT_NAME with amount: $AMOUNT USD in region: $REGION"
 aws budgets create-budget --account-id "$ACCOUNT_ID" \
-    --budget file://"$TEMP_BUDGET_JSON" --region "$REGION"
+    --budget file://"$TEMP_BUDGET_JSON" --region "$REGION" --profile $AWS_PROFILE
 
 # Check if the budget creation succeeded
 if [[ $? -eq 0 ]]; then
@@ -169,7 +169,7 @@ if [[ $? -eq 0 ]]; then
   IFS=',' read -ra THRESHOLD_ARRAY <<< "$THRESHOLDS"
   for threshold in "${THRESHOLD_ARRAY[@]}"; do
     echo P:$PROJECT_NAME T:$threshold E:$EMAIL R:$REGION A:$AMOUNT AI:$ACCOUNT_ID 
-    aws budgets create-notification --account-id "$ACCOUNT_ID" \
+    aws budgets create-notification --account-id "$ACCOUNT_ID" --profile $AWS_PROFILE \
       --budget-name "$PROJECT_NAME" \
       --notification '{"ComparisonOperator":"GREATER_THAN","NotificationType":"ACTUAL","Threshold":'"$threshold"',"ThresholdType":"PERCENTAGE"}' \
       --region "$REGION"   --subscribers '[{"Address":"'"$EMAIL"'","SubscriptionType":"EMAIL"}]' 

@@ -33,4 +33,6 @@ while IFS='=' read -r key value; do
     sed -i "" "s/$key/$escaped_value/g" "$cluster_cfg_yaml"
 done < "$cluster_init_values"
 
-echo "\n\n\tSubstitutions completed in $cluster_cfg_yaml.\n"
+echo "" 
+echo "Substitutions completed in $cluster_cfg_yaml."
+echo ""

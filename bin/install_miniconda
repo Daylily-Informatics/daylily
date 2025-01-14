@@ -1,23 +1,5 @@
-# Ensure the script is sourced and not executed directly
-if [[ -n "$ZSH_VERSION" ]]; then
-    # Check if the script is being sourced in zsh
-    # Check if the script is sourced or executed
-    if [ -n "$ZSH_EVAL_CONTEXT" ] && [[ "$ZSH_EVAL_CONTEXT" =~ :file$ ]]; then
-        echo "This script is sourced, proceed"
-    else
-        echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-        exit 3
-    fi
-elif [[ -n "$BASH_VERSION" ]]; then
-    # Check if the script is being sourced in bash
-    if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
-        echo "This script must be sourced. Use: source $0 or . $0"
-        return 1
-    fi
-else
-    echo "Unsupported shell. Please use bash or zsh to run this script."
-    return 1
-fi
+
+
 
 # Check if Miniconda is already installed
 conda --version &> /dev/null
@@ -25,7 +7,7 @@ if [[ $? -ne 0 ]]; then
     echo "Miniconda is not installed. Proceeding with installation..."
 else
     echo "Miniconda is already installed. Please uninstall it before proceeding."
-    return 0
+    exit 0
 fi
 
 
@@ -49,7 +31,7 @@ if [[ -z "$MACHINE" ]]; then
             ;;
         *)
             echo "Unsupported architecture: $uname_output"
-            return 1
+            exit 1
             ;;
     esac
 fi
@@ -82,29 +64,68 @@ elif [[ "$MACHINE" == "linux_arm" ]]; then
 else
     echo "Unsupported machine type: $MACHINE"
     echo "Please visit https://docs.conda.io/en/latest/miniconda.html for manual installation instructions."
-    return 2
+    exit 2
 fi
 
 # Initialize Conda
 if [[ -x ~/miniconda3/bin/conda ]]; then
     echo "Initializing Conda..."
-    ~/miniconda3/bin/conda init "$(basename "$SHELL")"
     ~/miniconda3/bin/conda init bash
     ~/miniconda3/bin/conda init zsh
 
-    echo "Reloading the shell..."
-    if [[ $- == *i* ]]; then
-        source ~/.bashrc 2>/dev/null || source ~/.zshrc 2>/dev/null
-    else
-        echo "Please restart your terminal or run: source ~/.bashrc or source ~/.zshrc"
+    # Define file paths
+    BASHRC="$HOME/.bashrc"
+    BASH_PROFILE="$HOME/.bash_profile"
+
+    touch $BASHRC $BASH_PROFILE
+    
+    # Function to extract and copy the Conda block
+    copy_conda_block() {
+        local source_file=$1
+        local target_file=$2
+
+        # Extract the Conda block from the source file
+        CONDA_BLOCK=$(sed -n '/# >>> conda initialize >>>/,/# <<< conda initialize <<</p' "$source_file")
+
+        # Append the Conda block to the target file
+        echo "Adding Conda initialization block to $target_file."
+        echo ""
+        echo "$source_file // $target_file // $CONDA_BLOCK"
+        echo "" >> $target_file
+        echo  "$CONDA_BLOCK" >> "$target_file"
+        echo "Conda initialization block added to $target_file."
+    }
+
+    # Check for Conda block in both files
+    BASHRC_HAS_BLOCK=false
+    BASH_PROFILE_HAS_BLOCK=false
+
+    if grep -q "# >>> conda initialize >>>" "$BASHRC"; then
+        BASHRC_HAS_BLOCK=true
     fi
 
-    if command -v conda &>/dev/null; then
-        echo "Miniconda installed and initialized successfully!"
-    else
-        echo "Miniconda installation succeeded but initialization failed. Please check your shell configuration."
+    if grep -q "# >>> conda initialize >>>" "$BASH_PROFILE"; then
+        BASH_PROFILE_HAS_BLOCK=true
     fi
+
+    # Handle the cases
+    if $BASHRC_HAS_BLOCK && ! $BASH_PROFILE_HAS_BLOCK; then
+        echo "Conda initialization block found in .bashrc but missing in .bash_profile."
+        copy_conda_block "$BASHRC" "$BASH_PROFILE"
+    elif $BASH_PROFILE_HAS_BLOCK && ! $BASHRC_HAS_BLOCK; then
+        echo "Conda initialization block found in .bash_profile but missing in .bashrc."
+        copy_conda_block "$BASH_PROFILE" "$BASHRC"
+    elif $BASHRC_HAS_BLOCK && $BASH_PROFILE_HAS_BLOCK; then
+        echo "Conda initialization block already exists in both .bashrc and .bash_profile. No changes made."
+    else
+        echo "No Conda initialization block found in either .bashrc or .bash_profile."
+        echo "From a bash shell, please run 'conda init bash' to initialize Conda."
+        exit 1
+    fi
+
+    echo "Miniconda installation successful."
+    echo "Open a new shell, and conda should be available (try: 'conda -v')."
 else
-    echo "Miniconda installation failed. Please try again."
-    return 3
+    echo "Miniconda installation failed. Please try again and/or atttempt the commands in this script manually."
+    exit 3
 fi

@@ -1,4 +1,4 @@
-# Daylily AWS Ephemeral Cluster Setup (0.7.155)
+# Daylily AWS Ephemeral Cluster Setup (0.7.156)
 _(0.7.155)_
 
 **beta release**
@@ -85,7 +85,6 @@ I will be assessing:
 
 
 > Would you like to lend a hand?  [contact me](mailto:john@daylilyinformatics.com)
-
 
 
 # What's It All About?
@@ -251,22 +250,25 @@ You may run in any region or AZ you wish to try. This said, the majority of test
 
 
 ## Prerequisites (On Your Local Machine) 
-Local machine development has been exclusively on a mac, using the `zsh` shell (I am moving everything to bash, so there is a mix of bash and zsh at the moment. All `.` and `sourcing` that happens on your local machine expects `zsh`).
+Local machine development has been carried out exclusively on a mac using the `zsh` shell. `bash` should work as well (if you have issues with conda w/mac+bash, confirm that after miniconda install and conda init, the correct `.bashrc` and `.bash_profile` files were updated by `conda init`).
  
 _suggestion: run things in tmux or screen_
 
 Very good odds this will work on any mac and most Linux distros (ubuntu 22.04 are what the cluster nodes run). Windows, I can't say.
 
 ### System Packages
-Install with `brew` or `apt-get` ('):
-- `python3`, tested with `3.12.8`
+Install with `brew` or `apt-get`:
+- `python3`, tested with `3.11.0
 - `git`, tested with `2.46.0`
-- `jq`, tested with `jq-1.7.1`
 - `wget`, tested with `1.25.0`
 - `awscli`, tested with `2.22.4` [AWS CLI docs](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 - `tmux` (optional, but suggested)
 - `emacs` (optional, I guess, but I'm not sure how to live without it)
 
+#### Check if your prereq's meet the min versions required
+```bash
+./bin/check_prereq_sw.sh 
+```
 
 ### AWS CLI Configuration
 #### Opt 2
@@ -323,29 +325,32 @@ git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have 
 cd daylily
 ```
 
-### Miniconda
+### Install Miniconda (homebrew is not advised)
 _tested with conda version **`24.11.1`**_
 
-```bash
 Install with:
 ```bash
-source bin/install_miniconda
+./bin/install_miniconda
 ```
-- This will leave you in a terminal with conda activated, indicated by `(base)` in the terminal prompt.
+- open a new terminal/shell, and conda should be available: `conda -v`.
 
-### DAYCLI Environment
+### Install DAYCLI Environment
 _from `daylily` root dir_
 
 ```bash
-#!/bin/zsh
 
-source bin/init_daycli 
+./bin/init_daycli 
+
+conda activate DAYCLI
 
 # DAYCLI should now be active... did it work?
 colr  'did it work?' 0,100,255 255,100,0
 
 ```
-- This will leave you in a terminal with the conda DAYCLI activated, indicated by `(DAYCLI)` in the terminal prompt.
+
+- You should see:
+ 
+  > ![](docs/images/diw.png)
 
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
@@ -377,17 +382,17 @@ _running in a tmux/screen session is advised as the copy may take 1-many hours_
 ```bash
 conda activate DAYCLI
 # help
-bash ./bin/create_daylily_omics_analysis_s3.sh -h
+./bin/create_daylily_omics_analysis_s3.sh -h
 
-AWS_PROFILE=<your_profile>
+export AWS_PROFILE=<your_profile>
 BUCKET_PREFIX=<your_prefix>
 REGION=us-west-2
 
 # dryrun
-bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region $REGION --profile $AWS_PROFILE --bucket-prefix $BUCKET_PREFIX
+./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region $REGION --profile $AWS_PROFILE --bucket-prefix $BUCKET_PREFIX
 
 # run for real
-bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region $REGION --profile $AWS_PROFILE --bucket-prefix $BUCKET_PREFIX --disable-dryrun
+./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region $REGION --profile $AWS_PROFILE --bucket-prefix $BUCKET_PREFIX --disable-dryrun
 
 ```
 
@@ -406,7 +411,7 @@ _this command will take ~5min to complete, and much longer if you expand to all 
 ```bash
 
 conda activate DAYCLI
-AWS_PROFILE=daylily-service
+export AWS_PROFILE=daylily-service
 REGION=us-west-2          
 OUT_TSV=./init_daylily_cluster.tsv
 
@@ -474,14 +479,13 @@ Once you have selected an AZ && have a reference bucket ready in the region this
 
 The following script will check a variety of required resources, attempt to create some if missing and then prompt you to select various options which will all be used to create a new parallel cluster yaml config, which in turn is used to create the cluster via `StackFormation`. [The template yaml file can be checked out here](config/day_cluster/prod_cluster.yaml).
 
-```zsh
-#!/bin/zsh
-AWS_PROFILE=daylily-service
+```bash
+export AWS_PROFILE=daylily-service
 REGION_AZ=us-west-2c
-source bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE
+./bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE
 
 # And to bypass the non-critical warnings (which is fine, not all can be resolved )
-source bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE --pass-on-warn # If you created an inline policy with a name other than daylily-service-cluster-policy, you will need to acknowledge the warning to proceed (assuming the policy permissions were granted other ways)
+./bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE --pass-on-warn # If you created an inline policy with a name other than daylily-service-cluster-policy, you will need to acknowledge the warning to proceed (assuming the policy permissions were granted other ways)
 
 ```    
 
@@ -558,8 +562,7 @@ Once logged in, as the 'ubuntu' user, run the following commands:
 ### Run Remote Slurm Tests On Headnode
 
 ```bash
-#!/bin/zsh
-source ./bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $AWS_PROFILE
+./bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $AWS_PROFILE
 ```
 
 A successful test will look like this:
@@ -577,7 +580,6 @@ pcluster list-clusters --region $REGION
 ### Confirm The Headnode Is Configured
 
 [See the instructions here](#first-time-logging-into-head-node) to confirm the headnode is configured and ready to run the daylily pipeline.
-
 
 
 <p valign="middle"><img src="docs/images/000000.png" valign="bottom" ></p>
@@ -777,7 +779,7 @@ ssh -i $pem_file ubuntu@$cluster_ip_address
 ##### Facilitated
 
 ```bash
-AWS_PROFILE=<profile_name>
+export AWS_PROFILE=<profile_name>
 bin/daylily-ssh-into-headnode 
 ```
 
@@ -813,7 +815,7 @@ From your remote terminal that you created the cluster with, run the following c
 ```bash
 conda activate DAYCLI
 
-source ./bin/daylily-cfg-headnode $PATH_TO_PEM $CLUSTER_AWS_REGION $AWS_PROFILE
+./bin/daylily-cfg-headnode $PATH_TO_PEM $CLUSTER_AWS_REGION $AWS_PROFILE
 ```
 
 > If the problem persists, ssh into the headnode, and attempt to run the commands as the ubuntu user which are being attempted by the `daylily-cfg-headnode` script.

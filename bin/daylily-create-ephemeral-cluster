@@ -1,38 +1,15 @@
-#!/bin/zsh
+#!/bin/bash
 
 
-# Function to check if the script is sourced
-is_sourced() {
-    # If the script is sourced, BASH_SOURCE[0] != $0
-    [[ "${BASH_SOURCE[0]}" != "${0}" ]]
-}
-
-CURR_SHELL=$(ps -p $$ -o comm=)
-echo $CURR_SHELL
-
-if [[ "$CURR_SHELL" != "zsh" ]]; then
-    echo "ERROR: This script must be executed from a zsh shell. please run 'zsh' and re-run this."
-    ~/miniconda3/bin/conda init zsh || echo "conda init failed, possibly legit if conda is not installed yet."
-
-    if is_sourced; then
-        # If sourced, use 'return' to avoid exiting the shell
-        return 3
-    else
-        # If executed, use 'exit' to terminate the script
-        exit 3
-    fi
-fi
-
-echo "Now running in zsh. Continuing script execution..."
-# Your script logic here
-emulate -L bash
+CURR_SHELL=$(. bin/retshell)
+echo "$CURR_SHELL"
 
 # Default configuration
-pass_on_warn=''  # Default for warnings causing failures
+pass_on_warn=0  # Default for warnings causing failures
 
 # Function to display help
 usage() {
-    echo "Usage: source $0 [--region-az REGION-AZ] [--pass-on-warn]"
+    echo "Usage: $0 --profile AWS_PROFILE [--region-az REGION-AZ] [--pass-on-warn]"
     echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (tested w us-west-2c/d)"
     echo "       --pass-on-warn          Allow warnings to pass without failure (default: false)"
     echo "       --profile  aws profile to use"
@@ -42,12 +19,12 @@ usage() {
 # Check if script is sourced with no arguments
 if [[ $# -eq 0 ]]; then
     usage
-    return 0
+    exit 0
 fi
 
 if [ -z "$AWS_PROFILE" ]; then
     echo "Error: AWS_PROFILE is not set."
-    return 1  # Exit the function with an error status
+    exit 1  # Exit the function with an error status
 fi
 
 # Parse command-line arguments
@@ -55,16 +32,16 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --region-az)
             region_az="$2"
-            region="${region_az::-1}"  # Remove the last character from the AZ
+            region="${region_az:0:${#region_az}-1}"
             shift 2
             ;;
         --pass-on-warn)
-            pass_on_warn=true
+            pass_on_warn="1"
             shift
             ;;
         -h|--help)
             usage
-            return 0  # Use exit instead of return
+            exit 0
             ;;
         --profile)
             AWS_PROFILEIN="$2"
@@ -73,31 +50,24 @@ while [[ $# -gt 0 ]]; do
         *)
             echo "Error: Unknown option: $1"
             usage
-            return 3  # Use exit instead of return
+            exit 3
             ;;
     esac
 done
 
-
-# Ensure the script is sourced
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-    exit 3
-fi
-
 if [[ -z "$AWS_PROFILE" ]]; then
     echo "Error: --profile flag not set"
-    return 3  # Exit the function with an error status
+    exit 3  # Exit the function with an error status
 fi
 
 if [[ "$AWS_PROFILE" != "$AWS_PROFILEIN" ]]; then
     echo "Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
-    return 3  # Exit the function with an error status
+    exit 3  # Exit the function with an error status
 fi
 
 if [[ -z "$region_az" ]]; then
     echo "Error: --region-az flag not set"
-    return 3  # Exit the function with an error status
+    exit 3  # Exit the function with an error status
 fi
 
 # Extract the last character
@@ -108,12 +78,12 @@ if [[ "$az_char" =~ [a-zA-Z] ]]; then
     echo "The last character of --region-az ${region_az} '$az_char' is a letter."
 else
     echo "ERROR: The last character of --region-az ${region_az} '$az_char' is a NOT letter."
-    return 3  # Exit the function with an error status
+    exit 3  # Exit the function with an error status
 fi
 
 if [[ "$AWS_PROFILEIN" != "$AWS_PROFILE" ]]; then
     echo "Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
-    return 3  # Exit the function with an error status
+    exit 3  # Exit the function with an error status
 fi
 
 AWS_PROFILE=$AWS_PROFILE
@@ -123,57 +93,70 @@ echo "YOUR AWS_PROFILE IS NOW SET TO: $AWS_PROFILE"
 handle_warning() {
     local message="$1"
     echo -e "WARNING: $message"
-    echo "If appropriate, consider setting --pass-on-warn to continue without failure. -$pass_on_warn-"
-    if [[ "$pass_on_warn" == "" ]]; then
-        echo "exiting"
-        return 3
+    echo "If appropriate, consider setting --pass-on-warn to continue without failure. Current setting: $pass_on_warn"
+    if [[ "$pass_on_warn" != "1" ]]; then
+        echo "Exiting due to warning."
+        exit 3
     fi
 }
 
 validate_region() {
   echo "REGION:" $1 
 }
+echo "DEBUG: pass_on_warn after parsing: $pass_on_warn"
 
-echo "Welcome to the Daylily CLI Setup"
-echo "Daylily is tested to run in region $region (AZ: $region_az)."
-echo "Please ensure your ~/.aws/config file matches this region."
-
-### Conda Environment Setup
-
+# Check if system packages are installed
+./bin/check_prereq_sw.sh
+if [ $? -ne 0 ]; then
+    handle_warning "There were problems detected with pre-requisites, and the warnings bypassed. Run './bin/check_prereq_sw.sh' for more information ." 
+    if [[ $? -ne 0 ]]; then
+        echo "Error: System package check failed, investigate or run again with or use --pass-on-warn."
+        exit 3
+    fi
+fi
 
 # Ensure Conda exists
 conda --version &> /dev/null
 if [[ $? -ne 0 ]]; then
-    echo "Error: Conda is not available in this shell. Attempting to determine if autoinstall is possible."
-    
-    source bin/install_miniconda
+    echo ">  > Error <  <"
+    echo "Conda is not available in this shell (version >= 24.0.0)."
+    echo "Please run the following command to install miniconda. *warning*, if you are using homebrew conda, things might get wobbly."
+    echo ""
+    echo "To install miniconda, run:"
+    echo "    ./bin/install_miniconda # and once installed, open a new shell and run "
+    exit 1
 fi
 
-conda --version &> /dev/null
-if [[ $? -ne 0 ]]; then
-    echo "Error: Conda is not available in this shell despite attempting an autoinstall. Exiting."
-    return 3
-fi
-
+# Check conda version is sufficent
 # Required version
-required_version="24.11.1"
-
-# Check if conda is installed
-if ! command -v conda &> /dev/null; then
-    echo "Error: conda is not installed."
-    return 3
-fi
+required_version="24.0.0"
 
 # Get the current conda version
 current_version=$(conda --version | awk '{print $2}')
 
 # Compare versions
 if [[ "$(printf '%s\n' "$required_version" "$current_version" | sort -V | head -n1)" != "$required_version" ]]; then
-    echo "Error: Conda version $current_version is less than the required version $required_version."
-    return 3
+    echo "Error: Conda version $current_version is less than the required version $required_version ."
+    exit 3
 fi
 
 echo "Conda version $current_version meets the requirement of $required_version or higher."
+
+
+# Check if the Conda environment DAYCLI is active
+if [[ "$CONDA_DEFAULT_ENV" == "DAYCLI" ]]; then
+    echo "The Conda environment DAYCLI is active, proceeding."
+else
+    echo "The Conda environment DAYCLI is not active or missing."
+    echo ""
+    echo "Please activate the DAYCLI environment by running:"
+    echo "    conda activate DAYCLI"
+    echo ""
+    echo "If the environment does not exist, create it by running:"
+    echo "    ./bin/init_daycli"
+    exit 3
+fi
+
 
 # Activate or create the Daylily CLI conda environment
 if conda env list | grep -q "^DAYCLI "; then
@@ -183,7 +166,7 @@ else
     source bin/init_daycli
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the 'DAYCLI' environment. Exiting."
-        return 3
+        exit 3
     fi
 fi
 conda activate DAYCLI
@@ -198,7 +181,7 @@ if [[ "$pcluster_version" != "$expected_pcluster_version" ]]; then
     handle_warning "Warning: Expected pcluster version $expected_pcluster_version, but found version $pcluster_version."
     if [[ $? -ne 0 ]]; then
         echo "Error: pcluster version mis-match:  expected:$expected_pcluster_version , detected:$pcluster_version ."
-        return 3
+        exit 3
     fi
 fi
 
@@ -207,13 +190,13 @@ fi
 echo "Verifying AWS credentials..."
 if ! aws sts get-caller-identity --region "$region" --profile $AWS_PROFILE  &> /dev/null; then
     echo "Error: AWS credentials are invalid or do not have access to the AWS account in region $region."
-    return 3
+    exit 3
 else
     echo "AWS credentials verified successfully."
 fi
 
 # Call the region validation function
-validate_region "$region" || return 3
+validate_region "$region" || exit 3
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text  --profile $AWS_PROFILE )
 
@@ -242,10 +225,10 @@ else
         echo "Proceeding anyway..."
     elif [ "$CHOICE" -eq 2 ]; then
         echo "Exiting."
-        return 3 2>/dev/null || exit 3
+        exit 3 2>/dev/null || exit 3
     else
         echo "Invalid choice. Exiting."
-        return 3 2>/dev/null || exit 3
+        exit 3 2>/dev/null || exit 3
     fi
 fi
 
@@ -263,7 +246,7 @@ check_quota() {
 
     if [[ $? -ne 0 ]]; then
         handle_warning "Error: Unable to retrieve quota for $resource_name."
-        return 3
+        exit 3
     fi
 
     quota_value=$(echo "$quota" | jq -r '.Quota.Value')
@@ -272,7 +255,7 @@ check_quota() {
         handle_warning "Warning: $resource_name quota is below the recommended $recommended_count. Current quota: $quota_value."
         if [[ $? -ne 0 ]]; then
             echo "quota check failed"
-            return 3
+            exit 3
         fi
     else
         echo "$resource_name quota is sufficient: $quota_value."
@@ -286,42 +269,42 @@ echo "Performing AWS quota checks..."
 # Dedicated Instances
 check_quota "Spot vCPU Max" "L-1216C47A" 20 ec2
 if [[ $? -ne 0 ]]; then
-    return 3
+    exit 3
 fi
 echo ""
 
 # Spot vCPU Max Quota 
 check_quota "Spot vCPU Max" "L-34B43A08" 208 ec2
 if [[ $? -ne 0 ]]; then
-    return 3
+    exit 3
 fi
 echo ""
 
 # VPC Quota (Default: 5 per region)
 check_quota "VPCs" "L-F678F1CE" 4 vpc
 if [[ $? -ne 0 ]]; then
-    return 3
+    exit 3
 fi
 echo ""
 
 # Elastic IP Quota (Default: 5 per region)
 check_quota "Elastic IPs" "L-0263D0A3" 4 ec2
 if [[ $? -ne 0 ]]; then
-    return 3
+    exit 3
 fi
 echo ""
 
 # NAT Gateway Quota (Default: 5 per AZ)
 check_quota "NAT Gateways" "L-FE5A380F" 4 vpc
 if [[ $? -ne 0 ]]; then
-    return 3
+    exit 3
 fi
 echo ""
 
 # Internet Gateway Quota (Default: 5 per region)
 check_quota "Internet Gateways" "L-A4707A72" 4 vpc
 if [[ $? -ne 0 ]]; then
-    return 3
+    exit 3
 fi
 echo ""
 
@@ -389,7 +372,7 @@ echo ""
 if [[ ${#valid_keys[@]} -eq 0 ]]; then
     echo "No valid ED25519 keys with matching PEM files were found."
     echo "Please ensure the required keys are available in the $HOME/.ssh directory AND that the keypair name includes 'omics' in the name."
-    return 3
+    exit 3
 fi
 # Present valid keys to the user using 'select'
 echo "Select a valid ED25519 key with a matching PEM file:"
@@ -459,7 +442,7 @@ done <<< "$buckets"
 
 if [[ ${#matching_buckets[@]} -eq 0 ]]; then
     echo "No matching buckets found in region $region."
-    return 3
+    exit 3
 fi
 
 echo "Select a matching S3 bucket:"
@@ -481,13 +464,13 @@ check_s3_folder() {
         echo "Folder s3://$bucket/$folder/ exists."
     else
         echo "ERROR: Folder s3://$bucket/$folder/ does not exist."
-        return 1
+        exit 1
     fi
 }
 
 echo "Validating required folders in bucket: $selected_bucket"
-check_s3_folder "$bucket" "data" || return 3
-check_s3_folder "$bucket" "cluster_boot_config" || return 3 
+check_s3_folder "$bucket" "data" || exit 3
+check_s3_folder "$bucket" "cluster_boot_config" || exit 3 
 
 
 bucket_url="s3://$selected_bucket"
@@ -520,7 +503,7 @@ if [[ -z "$public_subnets" && -z "$private_subnets" ]]; then
     bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml "$res_prefix" "$region_az" "$region" $AWS_PROFILE
 elif [[ -z "$public_subnets" || -z "$private_subnets"  ]]; then
     echo "Error: Incomplete setup. Ensure public and private subnets and the required ARN are available.  You might try running : bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml $res_prefix $region_az $region $AWS_PROFILE"
-    return 1
+    exit 1
 else
     echo "All required resources are available."
 fi
@@ -577,7 +560,7 @@ echo ""
 # Function to validate cluster name
 validate_cluster_name() {
     if [[ ! "$1" =~ ^[a-zA-Z0-9\-]+$ ]] || [[ ${#1} -gt 25 ]]; then
-        return 1
+        exit 1
     else
         return 0
     fi
@@ -636,7 +619,7 @@ if [[ -z "$global_budget_exists" || "$global_budget_exists" == "None" ]]; then
 
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the budget. Exiting."
-        return 3
+        exit 3
     else
         echo "Budget '$global_budget_name' created successfully."
     fi
@@ -685,7 +668,7 @@ if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
 
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the budget. Exiting."
-        return 3
+        exit 3
     else
         echo "Budget '$budget_name' created successfully."
     fi
@@ -719,7 +702,7 @@ fi
 
 if [[ ! -f "$cluster_yaml" ]]; then
     echo "Error: YAML file '$cluster_yaml' does not exist."
-    return 3
+    exit 3
 fi 
 
 echo ""
@@ -852,7 +835,7 @@ if [[ $? -ne 0 ]]; then
     echo "Error: Failed to calculate spot bid prices."
     echo "This is likely due to a policy/permissions issue in AWS."
     echo "Please refer to the quickstart guide for more information on required policies."
-    return 3  # Use 'exit 3' if outside a function or script
+    exit 3  # Use 'exit 3' if outside a function or script
 fi
 echo ""
 
@@ -870,10 +853,10 @@ if [[ "$message" == "Request would have succeeded, but DryRun flag is set." ]]; 
     echo "Dry run successful. Proceeding with cluster creation."
 elif [[ "$DAY_BREAK" == "1" ]]; then
     echo "DAY_BREAK == '1'.  Exiting without creating the cluster."
-    return 0
+    exit 0
 else
     echo "Error: Dry run failed (  pcluster create-cluster -n $cluster_name -c $target_conf_fin --dryrun true --region $region   ). Exiting."
-    return 3
+    exit 3
 fi
 echo ""
 

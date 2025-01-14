@@ -1,12 +1,6 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Daylily Headnode Configuration Script
-
-# Ensure the script is sourced, not executed directly
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "This script should be sourced, not executed directly. Please use 'source THISSCRIPT' to run."
-    exit 1
-fi
 
 # Capture arguments for PEM file and region
 pem_file=$1
@@ -142,7 +136,7 @@ echo " "
 echo "___bonus round___"
 echo "Would you like to start building various caches needed to run jobs? [y/n]"
 
-timeout 120 bash -c 'read -p "Press y to start or n to skip: " REPLY && echo "$REPLY"' && export REPLY=$REPLY
+timeout 30 bash -c 'read -p "Press y to start or n to skip: " REPLY && echo "$REPLY"' && export REPLY=$REPLY
 
 if [[ "$REPLY" == "y" ]]; then
     # start building the minimal cached envs
@@ -161,6 +155,6 @@ echo "And, you may now access the headnode via the PCUI, via 'source bin/daylily
 echo -e "       ssh -i $pem_file ubuntu@$cluster_ip_address\n"
 echo " "
 echo "If you wish to run some remote tests, you can do so with the following command:"
-echo -e "      . bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $aws_profile\n"
+echo -e "   ./bin/daylily-run-ephemeral-cluster-remote-tests $pem_file $region $aws_profile\n"
 echo " "
 echo "...fin"

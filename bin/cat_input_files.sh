@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Ensure compatibility with zsh and bash
-if [ -n "$ZSH_VERSION" ]; then
-  emulate -LR bash  # Ensure bash-like behavior in zsh
-fi
-
 # Display usage information
 usage() {
   echo "Usage: $0 -s SAMPLENAME -p SAMPLE_MATCH_PATTERN -i INPUT_DIR -o OUTPUT_DIR"
@@ -42,7 +37,7 @@ if [[ ! -d "$OUTPUT_DIR" ]]; then
 fi
 
 echo ""
-echo ">>>  >> > THIS IS A SIMPLE UTILITY AND NOT PRODUCTION TESTED FOR YOUR USE CASE < <<  <<<"
+echo ">>>  >> > THIS IS A SIMPLE UTILITY AND NOT PRODUCTION TESTED < <<  <<<"
 echo ""
 sleep 2
 

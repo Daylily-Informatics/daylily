@@ -24,10 +24,10 @@ _on the laptop you'll create ephemeral cluster, where you have saved the daylily
 _One is needed per region you intend to run in._
 
 ```bash
-AWS_PROFILE=daylily-service
+export AWS_PROFILE=daylily-service
 BUCKET_PREFIX=yocorp
 REGION=us-west-2
-bash ./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region $REGION --profile $AWS_PROFILE --bucket-prefix $BUCKET_PREFIX --disable-dryrun
+./bin/create_daylily_omics_analysis_s3.sh  --disable-warn --region $REGION --profile $AWS_PROFILE --bucket-prefix $BUCKET_PREFIX --disable-dryrun
 ```
 
 - This will take ~20min if you remain in `us-west-2`, longer if cross region.
@@ -45,7 +45,7 @@ rclone copy $sentieon_lic yocorp_remote:yocorp-daylily-omics-analysis-us-west-2/
 ### Check Spot Market Pricing (optional, but suggested to get best pricing over time)
 
 ```bash
-AWS_PROFILE=daylily-service
+export AWS_PROFILE=daylily-service
 REGION=us-west-2          
 OUT_TSV=./init_daylily_cluster.tsv
 
@@ -57,11 +57,11 @@ OUT_TSV=./init_daylily_cluster.tsv
 ### Create Ephemeral Cluster
 _this script will check and install a number of prerequsites and attempt to install_
 
-```zsh
-AWS_PROFILE=daylily-service
+```bash
+export AWS_PROFILE=daylily-service
 REGION_AZ=us-west-2c
 
-source bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE
+./bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE
 ```
 
 You will be prompted for a variety of config settings. Some resources, if missing, will be created. Other resources if missing will trigger failures.  If all is well, you'll be left with a success message with a suggested command to start a remote test on the headnode.

@@ -2,9 +2,8 @@
 
 # Set required versions
 required_versions=(
-    "python3:3.12.8"
+    "python3:3.11.0"
     "git:2.46.0"
-    "jq:1.7.1"
     "wget:1.25.0"
     "aws:2.22.4"
 )
@@ -14,9 +13,8 @@ pass_on_warn=${pass_on_warn:-0}
 
 # Function to compare versions
 check_version() {
-    local tool=$1
-    local required=$2
-    local current=$3
+    local required=$1
+    local current=$2
 
     if [[ "$(printf '%s\n' "$required" "$current" | sort -V | head -n1)" != "$required" ]]; then
         return 1 # Current version is less than required
@@ -38,12 +36,13 @@ check_tool() {
     fi
 
     # Check version
-    if ! check_version "$tool" "$required_version" "$current_version"; then
+    if ! check_version "$required_version" "$current_version"; then
         echo "Error: $tool version $current_version does not meet the required version $required_version."
         [[ "$pass_on_warn" -eq 1 ]] && return 0 || exit 1
     fi
 
-    echo "$tool version $current_version meets the requirement of $required_version or higher."
+    # Print success message if version is sufficient
+    echo "$tool version $current_version meets the required version $required_version or higher."
 }
 
 # Loop through required tools and check
@@ -57,9 +56,6 @@ for entry in "${required_versions[@]}"; do
             ;;
         git)
             check_tool "git" "$required_version" "git --version | awk '{print \$3}'"
-            ;;
-        jq)
-            check_tool "jq" "$required_version" "jq --version | sed 's/jq-//g'"
             ;;
         wget)
             check_tool "wget" "$required_version" "wget --version | head -n1 | awk '{print \$3}'"

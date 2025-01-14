@@ -1,3 +1,5 @@
+#!/bin/env python
+
 from daylib.day_cost_ec2 import AWSGenomicsAnalyzer
 
 def main():

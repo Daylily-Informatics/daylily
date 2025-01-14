@@ -1,77 +1,39 @@
 #!/bin/bash
 
-skip_warn=$1
-warn_msg=""
-
 mkdir -p ~/.config/daylily
 
-# Check if the script is running in Zsh and emulate Zsh behavior
-if [ -n "$ZSH_VERSION" ]; then
-    emulate -L zsh  # Ensure Zsh behaves like Zsh (if required)
 
-    # Check if the script is sourced or executed
-    if [ -n "$ZSH_EVAL_CONTEXT" ] && [[ "$ZSH_EVAL_CONTEXT" =~ :file$ ]]; then
-        echo "This script is sourced."
-    else
-        echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-        exit 3
-    fi
-fi
-
-# Ensure the script is sourced
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "Error: This script must be sourced, not executed directly. Use 'source $0' to run."
-    exit 3
-fi
-
-# Check if system packages are installed
-bash bin/check_system_pkgs.sh
-if [ $? -ne 0 ]; then
-
-    if [ "$skip_warn" != "skip_warn" ]; then
-        warn_msg="There were problems detected with pre-requisites, and the warnings bypassed. Run 'bash bin/check_system_pkgs.sh' for more information." 
-    else
-        echo "Some system packages are missing or are the wrong version which may cause problems. Please review them by running: 'bash bin/check_system_pkgs.sh' for more information. You may proceed past this warning by passing the first argument as 'skip_warn'." 
-        return 1
-    fi
-fi
 
 # Ensure Conda exists
 if ! command -v conda &> /dev/null; then
-    echo "Error: Conda is not available in this shell. Attempting to install Miniconda..."
-    echo ""
+    echo "Error: Conda is not available in this shell. Please install Miniconda."
+    echo "Install with:"
 
-    echo "source ./bin/install_miniconda"
-    source ./bin/install_miniconda
+    echo "     ./bin/install_miniconda "
+    exit 3
 fi
 
-CURR_SHELL=$(ps -p $$ -o comm=)
-echo $CURR_SHELL
 if ! command -v conda &> /dev/null; then
-    echo "Error: Conda is not available in this shell. Autoinstall failed, please see the miniconda docs."
-    echo "*** If your shell (login:$SHELL , current:$CURR_SHELL) is bash, please check if conda init correctly updated both your .bashrc and .bash_profile with the conda initialization block. If present in one but not the other, copy it, open a new bash shell and try again (most commonly a problem with MACs). ***"   
-    return 1
+    echo "Error: Conda is not available in this shell. "
+    echo "Install with:"
+    echo "     ./bin/install_miniconda "
+    exit 1
 fi
 
 # Activate or create the Daylily CLI conda environment
 if conda env list | grep -q "^DAYCLI "; then
-    echo "Conda environment 'DAYCLI' already exists."
+    echo "Conda environment 'DAYCLI' already exists!"
+    echo "Activate with: "
+    echo "    conda activate DAYCLI"
+    exit 3
 else
     echo "Creating 'DAYCLI' environment."
     conda env create -y -n DAYCLI -f config/day/daycli.yaml
-    #conda create -y -n DAYCLI -c conda-forge python parallel jq nodejs==18.15.0 aws-parallelcluster==3.11.1 flask=2.2.5 pyyaml
-fi
-echo "Activating 'DAYCLI' environment."
-conda activate DAYCLI
-# Function to check if a Python package is installed
-check_and_install() {
-    PACKAGE=$1
-    VERSION=$2
-    if ! python -c "import $PACKAGE" &> /dev/null; then
-        echo "$PACKAGE not found. Installing $PACKAGE==$VERSION..."
-        pip install "$PACKAGE==$VERSION"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to create 'DAYCLI' environment."
+        exit 1
     fi
-}
+fi
 
-
-echo "Daylily CLI environment is ready ($warn_msg)."
+echo "Daylily CLI environment is ready!  Activate with: "
+echo "    conda activate DAYCLI"
