@@ -155,7 +155,7 @@ else:
     default_analysis_manifest = config[f"{config['genome_build']}_analysis_manifest"]
     if os.path.exists("config/analysis_manifest.csv"):
         os.system(
-            f"""colr '     _____ EXISTING ANALYSIS MANIFEST FILE DETECTED: config/analysis_manifest.csv --  this will be used' "$DY_WT0" "$DY_WB0" "$DY_WS1"  """
+            f"""colr '     _____ EXISTING ANALYSIS MANIFEST FILE DETECTED: config/analysis_manifest.csv --  this will be used' "$DY_WT0" "$DY_WB0" "$DY_WS1" >&2 """
         )
         os.system('sleep 1')
     elif os.path.exists(default_analysis_manifest):
