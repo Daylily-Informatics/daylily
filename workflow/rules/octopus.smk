@@ -107,6 +107,7 @@ rule octopus:
         skr=config['supporting_files']['files']['ucsc']['build_gaps']['name'],
         ld_pre=config['octopus']['ld_pre'],
         mdir=MDIR,
+        mito_code="MT" if "b37" == config['genome_build'] else "M",
     shell:
         """ 
         touch {output.vcf};
@@ -115,7 +116,7 @@ rule octopus:
         APPTAINER_HOME=$TMPDIR;
         trap "sleep 2 && rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         
-        oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ MT/g;');
+        oochrm_mod=$(echo '{params.ochrm_mod}' | sed 's/~/\:/g' | perl -pe 's/(^23| 23)/ X/g;' | perl -pe 's/(^24| 24)/ Y/g;' | perl -pe 's/(^25| 25)/ {params.mito_code}/g;');
 
         {params.ld_pre} /opt/octopus/bin/octopus -T $oochrm_mod --threads {threads}    \
         --reference {params.huref}  \

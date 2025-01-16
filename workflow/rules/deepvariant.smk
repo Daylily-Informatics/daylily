@@ -66,6 +66,7 @@ rule deepvariant:
         numa=config['deepvariant']['numa'],
         cpre="" if "b37" == config['genome_build'] else "chr",
         deep_threads=config['deepvariant']['deep_threads'],
+        mito_code="MT" if "b37" == config['genome_build'] else "M",
     shell:
         """
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
@@ -77,7 +78,7 @@ rule deepvariant:
         start_time=$(date +%s);
         echo "Start-Time-sec:$itype\t0" >> {log} 2>&1;
 
-        dchr=$(echo {params.cpre}{params.dchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/M\:/' | sed 's/MT/M/' );
+        dchr=$(echo {params.cpre}{params.dchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/{params.mito_code}\:/' );
 
         timestamp=$(date +%Y%m%d%H%M%S)_$(head /dev/urandom | tr -dc a-zA-Z0-9 | head -c 6)
 

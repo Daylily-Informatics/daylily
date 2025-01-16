@@ -22,7 +22,7 @@ def get_clair3_chrom(wildcards):
             start = start + 1
     else:
         raise Exception(
-            "Clair3 chunks can only be one contiguous range per chunk: e.g., 1-4 with non-numerical chromosomes assigned 23=X, 24=Y, 25=MT"
+            "Clair3 chunks can only be one contiguous range per chunk: e.g., 1-4 with non-numerical chromosomes assigned 23=X, 24=Y, 25=MT, or 25=M in hg38"
         )
 
     return ret_mod_chrm(ret_str)
@@ -62,6 +62,7 @@ rule clair3:
         numa=config['clair3']['numa'],
         clair3_threads=config['clair3']['clair3_threads'],  
         cpre="" if "b37" == config['genome_build'] else "chr",
+        mito_code="MT" if "b37" == config['genome_build'] else "M",
     shell:
         """
         touch {log};
@@ -82,7 +83,7 @@ rule clair3:
         start_time=$(date +%s);
         echo "Start-Time-sec:$itype\t0" >> {log} 2>&1;
 
-        cchr=$(echo {params.cpre}{params.cchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/MT\:/');
+        cchr=$(echo {params.cpre}{params.cchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/{params.mito_code}\:/');
 
         echo "CCHRM: $cchr" >> {log} 2>&1;
         {params.numa}   /opt/bin/run_clair3.sh \

@@ -98,11 +98,12 @@ rule lofreq2:
         mem_mb=config['lofreq2']['mem_mb'],
         dchrm=get_lofreq_chrm,
         cpre="" if "b37" == config['genome_build'] else "chr",
+        mito_code="MT" if "b37" == config['genome_build'] else "M",
     shell:
         """
         touch {log};
         start_time=$(date +%s);
-        dchr=$(echo {params.cpre}{params.dchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/MT\:/');
+        dchr=$(echo {params.cpre}{params.dchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/{params.mito_code}\:/');
 
         echo "DCHRM: $dchr" >> {log} 2>&1;
         
