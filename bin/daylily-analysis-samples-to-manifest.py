@@ -92,7 +92,7 @@ def generate_analysis_manifest(manifest_file, rows):
         writer.writerows(rows)
 
 
-def copy_files_to_target(file_path, target_path, mode, cluster_ip=None, pem_file=None, cluster_user=None):
+def copy_files_to_target(file_path, target_path, mode, cluster_ip=None, pem_file=None, cluster_user=None, link=None):
     """Copy a file to the target path, handling local and remote scenarios."""
 
     try:
@@ -110,7 +110,11 @@ def copy_files_to_target(file_path, target_path, mode, cluster_ip=None, pem_file
                 s3.download_file(bucket, key, target_path)
                 log_info(f"Downloaded file {file_path} to {target_path}")
             else:
-                subprocess.run(["cp", file_path, target_path], check=True)
+                if link == 'link':
+                    subprocess.run(["ln", "-s", file_path, target_path], check=True)
+                else:
+                    subprocess.run(["cp", file_path, target_path], check=True)
+                    
         log_info(f"Copied file {file_path} to {target_path}")
     except Exception as e:
         log_error(f"Error copying file {file_path} to {target_path}: {e}")
@@ -182,6 +186,13 @@ def parse_and_validate_tsv(input_file, mode, cluster_ip=None, pem_file=None, clu
                 copy_files_to_target(R1_FQ, staged_r1, mode, cluster_ip, pem_file, cluster_user)
                 copy_files_to_target(R2_FQ, staged_r2, mode, cluster_ip, pem_file, cluster_user)
             
+                # Copy analysis_samples.tsv to stage_target
+                analysis_samples_target = os.path.join(stage_target, f"{runn}_analysis_samples.tsv")
+                copy_files_to_target(input_file, analysis_samples_target, mode, cluster_ip, pem_file, cluster_user)
+            elif STAGE_DIRECTIVE == "link_data":
+                copy_files_to_target(R1_FQ, staged_r1, mode, cluster_ip, pem_file, cluster_user, 'link')
+                copy_files_to_target(R2_FQ, staged_r2, mode, cluster_ip, pem_file, cluster_user, 'link')
+
                 # Copy analysis_samples.tsv to stage_target
                 analysis_samples_target = os.path.join(stage_target, f"{runn}_analysis_samples.tsv")
                 copy_files_to_target(input_file, analysis_samples_target, mode, cluster_ip, pem_file, cluster_user)
