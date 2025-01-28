@@ -136,7 +136,7 @@ echo " "
 echo "___bonus round___"
 echo "Would you like to start building various caches needed to run jobs? [y/n]"
 
-timeout 30 bash -c 'read -p "Press y to start or n to skip: " REPLY && echo "$REPLY"' && export REPLY=$REPLY
+timeout 10 bash -c 'read -p "Press y to start or n to skip: " REPLY && echo "$REPLY"' && export REPLY=$REPLY
 
 if [[ "$REPLY" == "y" ]]; then
     # start building the minimal cached envs
