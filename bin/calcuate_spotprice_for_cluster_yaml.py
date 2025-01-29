@@ -13,7 +13,7 @@ def parse_arguments():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description="Insert spotprice max  into pcluster_config.yaml, with one of two strategies: median(spot)+BUMP_PRICE or median(dedicated)/2 .")
     parser.add_argument("-i", "--input", required=True, help="Input YAML configuration file path.")
-    parser.add_argument("-b", "--bump-price", type=float, required=False, default=1.81, help="Price bump to add to the median spot price. default=1.81")
+    parser.add_argument("-b", "--bump-price", type=float, required=False, default=2.34, help="Price bump to add to the median spot price. default=1.81")
     parser.add_argument("-o", "--output", required=True, help="Output YAML configuration file path.")
     parser.add_argument("--az", required=True, help="Availability zone.")
     parser.add_argument("--profile", help="AWS CLI profile to use.")
