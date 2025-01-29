@@ -10,7 +10,7 @@ pass_on_warn=0  # Default for warnings causing failures
 # Function to display help
 usage() {
     echo "Usage: $0 --profile AWS_PROFILE [--region-az REGION-AZ] [--pass-on-warn]"
-    echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (tested w us-west-2c/d)"
+    echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (ie: us-west-2b)"
     echo "       --pass-on-warn          Allow warnings to pass without failure (default: false)"
     echo "       --profile  aws profile to use"
 }

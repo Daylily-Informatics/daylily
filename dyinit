@@ -118,19 +118,6 @@ echo "Skip Project Check: $SKIP_PROJECT_CHECK"
 export DAY_PROJECT="$PROJECT"
 export DAY_AWS_REGION="$region"
 
-# Function to validate the region
-validate_region() {
-    local valid_region="$1"
-    if [[ "$valid_region" == "us-west-2" ]]; then
-        echo "Region '$valid_region' confirmed as valid."
-    else
-        echo "Warning: Region '$valid_region' is not 'us-west-2'."
-        echo "It is recommended to use 'us-west-2' for this operation."
-    fi
-}
-
-# Call the region validation function
-validate_region "$region"
 
 # Get AWS Account ID
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
