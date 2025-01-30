@@ -45,7 +45,7 @@ Scheduling:
   SlurmQueues:
     - Name: i8
       CapacityType: SPOT
-      AllocationStrategy: price-capacity-optimized
+      AllocationStrategy: REGSUB_ALLOCATION_STRATEGY
       ComputeResources:
         - Name: r7gb64
           Instances:
@@ -89,7 +89,7 @@ Scheduling:
           - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
     - Name: i128
       CapacityType: SPOT
-      AllocationStrategy: price-capacity-optimized
+      AllocationStrategy: REGSUB_ALLOCATION_STRATEGY
       ComputeResources:
         - Name: c6gb256
           Instances:
@@ -159,7 +159,7 @@ Scheduling:
           - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
     - Name: i192
       CapacityType: SPOT
-      AllocationStrategy: price-capacity-optimized
+      AllocationStrategy: REGSUB_ALLOCATION_STRATEGY
       ComputeResources:
         - Name: c7gb384
           Instances:

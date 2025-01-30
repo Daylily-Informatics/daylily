@@ -795,6 +795,41 @@ select save_fsx in "Retain" "Delete"; do
 done
 echo ""
 
+allocation_strategy=""
+
+# Loop until we get a valid selection or user presses Enter
+while true; do
+  echo "Select A Spot Instance Allocation Strategy:"
+  echo "1) price-capacity-optimized (default, balance of lowest-cost + capacity optimized placement)"
+  echo "2) capacity-optimized (more expensive, fewer disruptions)"
+  echo "3) lowest-price (potentially more disruptions)"
+  echo -n "Enter selection [1]: "
+  read user_choice
+
+  case "$user_choice" in
+    ""|1)
+      # Default or user entered 1
+      allocation_strategy="price-capacity-optimized"
+      break
+      ;;
+    2)
+      allocation_strategy="capacity-optimized"
+      break
+      ;;
+    3)
+      allocation_strategy="lowest-price"
+      break
+      ;;
+    *)
+      echo "Invalid selection. Please try again."
+      echo
+      ;;
+  esac
+done
+
+echo "You selected the allocation strategy: $allocation_strategy"
+echo ""
+
 # Write variables to config
 cat <<EOF > $regsub_vals
 REGSUB_REGION=$region
@@ -817,6 +852,7 @@ REGSUB_DELETE_LOCAL_ROOT=$delete_local_root
 REGSUB_SAVE_FSX=$save_fsx
 REGSUB_ENFORCE_BUDGET=$enforce_budget_bool
 REGSUB_AWS_ACCOUNT_ID=aws_profile-$AWS_PROFILE
+REGSUB_ALLOCATION_STRATEGY=$allocation_strategy
 EOF
 
 echo ""
