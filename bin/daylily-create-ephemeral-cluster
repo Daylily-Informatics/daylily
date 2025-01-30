@@ -863,7 +863,7 @@ echo ""
 echo "Calculating max spot bid prices per partition resource group..."
 echo ""
 
-python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE -b 1.01
+python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE -b 3.03
 echo ""
 
 # Check the exit status of the previous command
