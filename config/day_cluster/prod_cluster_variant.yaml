@@ -115,6 +115,18 @@ Scheduling:
               Enabled: false
           Efa:
             Enabled: false
+        - Name: r7gb1024
+          Instances:
+            - InstanceType: r7iz.32xlarge
+            - InstanceType: r7iz.metal-32xl
+          MinCount: 0
+          MaxCount: 20
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
         - Name: r6gb1024r6
           Instances:
             - InstanceType: r6i.metal 
