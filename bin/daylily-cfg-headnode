@@ -136,7 +136,8 @@ echo " "
 echo "___bonus round___"
 echo "Would you like to start building various caches needed to run jobs? [y/n]"
 
-timeout 10 bash -c 'read -p "Press y to start or n to skip: " REPLY && echo "$REPLY"' && export REPLY=$REPLY
+# Dont really need this if using the updated ref bucket
+timeout 1 bash -c 'read -p "Press y to start or n to skip: " REPLY && echo "$REPLY"' && export REPLY=$REPLY
 
 if [[ "$REPLY" == "y" ]]; then
     # start building the minimal cached envs
