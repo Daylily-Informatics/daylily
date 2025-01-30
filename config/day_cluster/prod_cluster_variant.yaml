@@ -51,7 +51,7 @@ Scheduling:
           Instances:
           - InstanceType: r7i.2xlarge
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 2
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -62,7 +62,7 @@ Scheduling:
           Instances:
           - InstanceType: r6i.2xlarge
           MinCount: 0
-          MaxCount: 10
+          MaxCount: 2
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -96,7 +96,7 @@ Scheduling:
             - InstanceType: c6i.metal
             - InstanceType: c6i.32xlarge 
           MinCount: 0
-          MaxCount: 20
+          MaxCount: 6
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -108,7 +108,7 @@ Scheduling:
             - InstanceType: m6i.32xlarge 
             - InstanceType: m6i.metal 
           MinCount: 0
-          MaxCount: 20
+          MaxCount: 9
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -120,7 +120,7 @@ Scheduling:
             - InstanceType: r7iz.32xlarge
             - InstanceType: r7iz.metal-32xl
           MinCount: 0
-          MaxCount: 20
+          MaxCount: 9
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -132,7 +132,7 @@ Scheduling:
             - InstanceType: r6i.metal 
             - InstanceType: r6i.32xlarge 
           MinCount: 0
-          MaxCount: 20
+          MaxCount: 9
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -166,7 +166,7 @@ Scheduling:
             - InstanceType: c7i.48xlarge 
             - InstanceType: c7i.metal-48xl 
           MinCount: 0
-          MaxCount: 30
+          MaxCount: 22
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -178,7 +178,7 @@ Scheduling:
             - InstanceType: m7i.metal-48xl 
             - InstanceType: m7i.48xlarge 
           MinCount: 0
-          MaxCount: 30
+          MaxCount: 24
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -190,7 +190,7 @@ Scheduling:
             - InstanceType: r7i.48xlarge 
             - InstanceType: r7i.metal-48xl 
           MinCount: 0
-          MaxCount: 30
+          MaxCount: 24
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
