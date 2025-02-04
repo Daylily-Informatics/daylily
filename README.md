@@ -79,20 +79,20 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
 
 # Intention
+  > The goal of daylily is to enable more rigorous comparisons of informatics tools by formalizing the compute environment these tools run in, and establishing hardware profiles for tools which will reproduce both accuracy and runtime/cost perofrmance of each tool. This is intended to be a general approach and is not married to any specific toolset (of course AWS is involved. I have not made any design choices which would prevent this work from running outside AWS. AWS does offer the signicant benefit of affording a standardized compute hardware environment anyone who sets up an account may access). I should stress, that by 'compute environment', I mean more than simply offering a container. Containers do not guaruntee hardware perofrmance, and as runtime/cost becomes a significant driver in choosing tooling, we need ways to assert reproducible s/w performance on given hardware. Containers are used throughout daylily, as is conda. I strive to not get too tied to specicif tools. I have three main aims:
 
-> The goal of daylily is to enable more rigorous comparisons of informatics tools by formalizing the compute environment these tools run in, and establishing hardware profiles for tools which will reproduce both accuracy and runtime/cost perofrmance of each tool. This is intended to be a general approach and is not married to any specific toolset (of course AWS is involved. I have not made any design choices which would prevent this work from running outside AWS. AWS does offer the signicant benefit of affording a standardized compute hardware environment anyone who sets up an account may access). I should stress, that by 'compute environment', I mean more than simply offering a container. Containers do not guaruntee hardware perofrmance, and as runtime/cost becomes a significant driver in choosing tooling, we need ways to assert reproducible s/w performance on given hardware. Containers are used throughout daylily, as is conda. I strive to not get too tied to specicif tools. I have three main aims:
+## Shift Focus
+  Move away from unhelpful debates over “the best” tool and toward evidence-based evaluations. Real use cases dictate tool choice, so let’s make sure relevant data and clear methodologies are accessible—or at least ensure enough detail is published to make meaningful comparisons. Specifically, I wish to move away from scant and overly reductive metrics which fail to describe our tools in as rich detail as they can be. ie:
 
-Shift Focus
-Move away from unhelpful debates over “the best” tool and toward evidence-based evaluations. Real use cases dictate tool choice, so let’s make sure relevant data and clear methodologies are accessible—or at least ensure enough detail is published to make meaningful comparisons. Specifically, I wish to move away from scant and overly reductive metrics which fail to describe our tools in as rich detail as they can be. ie:
-> If I am looking for the best possible `recall` in SNV calling, initial data suggestes I might look towards [`sentieon bwa`+`sentieon DNAscope`](https://www.sentieon.com/) ... and interestingly, if I wanted the best possible `precision`, it would be worth investigating [https://github.com/ksahlin/strobealign]`strobealigner`]() + `deepvariant` _[REF DATA](results/us_west_2d/all/concordance/pvr/hg38_usw2d-all__All_zoom.png). `Fscore` would not be as informative for these more sepcific cases.
+  > If I am looking for the best possible `recall` in SNV calling, initial data suggestes I might look towards [`sentieon bwa`+`sentieon DNAscope`](https://www.sentieon.com/) ... and interestingly, if I wanted the best possible `precision`, it would be worth investigating [https://github.com/ksahlin/strobealign]`strobealigner`]() + `deepvariant` _[REF DATA](results/us_west_2d/all/concordance/pvr/hg38_usw2d-all__All_zoom.png). `Fscore` would not be as informative for these more sepcific cases.
 
-Raise the Bar
-Demand better metrics and documentation in tool publications: thorough cost data, specific and reproducible hardware details, more nuanced concordance metrics, and expansive QC reporting. Half-measures shouldn’t pass as “sufficient.”
+## Raise the Bar 
+  Demand better metrics and documentation in tool publications: thorough cost data, specific and reproducible hardware details, more nuanced concordance metrics, and expansive QC reporting. Half-measures shouldn’t pass as “sufficient.”
 
-Escape Outdated ‘Best Practices’
-They were helpful at first, but our field is stuck in 2012. We need shareable frameworks that capture both accuracy and cost/runtime for truly reproducible pipeline performance—so we can finally move forward.
+## Escape Outdated ‘Best Practices’
+  They were helpful at first, but our field is stuck in 2012. We need shareable frameworks that capture both accuracy and cost/runtime for truly reproducible pipeline performance—so we can finally move forward.
 
-The daylily GIAB analyses repository contains (work in progress) results from the first stable daylily release, run on seven GIAB samples.
+  > [The daylily GIAB analyses repository contains (work in progress)](https://github.com/Daylily-Informatics/daylily_giab_analyses) results from the first stable daylily release, run on seven GIAB samples.
 
 
 
