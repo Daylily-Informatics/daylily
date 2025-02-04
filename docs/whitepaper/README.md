@@ -1,3 +1,13 @@
+
+
+
+---
+---
+---
+# OLD NOTES -- [SEE NEW WHITEPAPER DRAFT HERE](https://github.com/Daylily-Informatics/daylily_giab_analyses/blob/main/docs/whitepaper_draft.md)
+---
+---
+---
 # [Daylily](https://github.com/Daylily-Informatics/daylily) Whitepaper
 
 Intended to be published in f1000-research.
