@@ -39,7 +39,7 @@ Several tools run are redundant.  It is easy to switch them on or off.
 ### [bcftools](https://github.com/samtools/bcftools/releases/)
   > VCF stats producer.
     
-### [samtools]((https://github.com/samtools)
+### [samtools](https://github.com/samtools)
   > A bam file stats producer.
   
 ### Per-Rule Benchmark Runtime Stats
