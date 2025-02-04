@@ -118,7 +118,7 @@ I consider best practices to be a helpful starting point of investigation when m
 
 ---
 
-# [Whitepaper In Progress](docs/whitepaper/README.md)
+# [Whitepaper In Progress](https://github.com/Daylily-Informatics/daylily_giab_analyses/blob/main/docs/whitepaper_draft.md)
 
 Drafting in progress, with the intention of publishing the results in [f1000-research](https://f1000research.com/).
 
