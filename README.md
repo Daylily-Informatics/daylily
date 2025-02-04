@@ -10,57 +10,89 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
 
 
 ## Table of Contents
-
-- [Introduction](#introduction)
-  - [What’s It All About?](#whats-it-all-about)
-  - [Key Features](#key-features)
-  - [Metrics Required to Make Informed Decisions](#metrics-required-to-make-informed-decisions)
+## Table of Contents
+- [Intention](#intention)
+  - [Goal 1: Shift Conversation To Better Ways of Assessing Tools, Spend Less Time Finding Winners & Losers](#goal-1-shift-conversation-to-better-ways-of-assessing-tools-spend-less-time-finding-winners--losers)
+  - [Goal 2: Establish Higher Expectations re: What Is Considered Sufficient Supporting Data/Docs For Published Tools](#goal-2-establish-higher-expectations-re-what-is-considered-sufficient-supporting-datadocs-for-published-tools)
+  - [Goal 3: Move Beyond 'commonly accepted best practices'](#goal-3-move-beyond-commonly-accepted-best-practices)
+- [Whitepaper In Progress](#whitepaper-in-progress)
+- [What's It All About?](#whats-it-all-about)
+  - [BFAIR: Bioinformatics FAIR Principles](#bfair-bioinformatics-fair-principles)
+  - [Comprehensive Cost Transparency & Predictability](#comprehensive-cost-transparency--predictability)
+- [Self Funded Science](#self-funded-science)
 - [Installation](#installation)
-  - [Before Beginning](#before-beginning)
-  - [AWS Setup](#aws-setup)
-    - [IAM User Creation](#iam-user-creation)
-    - [Permissions and Policies](#permissions-and-policies)
-    - [Quota Considerations](#quota-considerations)
-    - [Cost Allocation Tags](#cost-allocation-tags)
-    - [Budgets](#budgets)
-    - [CLI Credentials](#cli-credentials)
-    - [SSH Key Pair](#ssh-key-pair)
-  - [Local Setup](#local-setup)
-    - [Prepare Your Local Shell](#prepare-your-local-shell)
-    - [Install System Packages](#install-system-packages)
+  - [Quickest Start](#installation----quickest-start)
+  - [Detailed Installation](#installation----detailed)
+    - [AWS](#aws)
+      - [Create a `daylily-service` IAM User](#create-a-daylily-service--iam-user)
+      - [Attach Permissions & Policies To The `daylily-service` User](#attach-permissiong--policies-to-the-daylily-service-user)
+      - [Additional AWS Considerations](#additional-aws-considerations-also-will-need-admin-intervention)
+      - [AWS `daylily-service` User Account](#aws-daylily-service-user-account)
+      - [CLI Credentials](#cli-credentials)
+      - [SSH Key Pair(s)](#ssh-key-pairs)
+    - [Default Region `us-west-2`](#default-region-us-west-2)
+    - [Prerequisites (On Your Local Machine)](#prerequisites-on-your-local-machine)
     - [AWS CLI Configuration](#aws-cli-configuration)
-    - [Clone the Daylily Repository](#clone-the-daylily-repository)
-    - [Miniconda Installation](#miniconda-installation)
-    - [Initialize the DayCLI Environment](#initialize-the-daycli-environment)
-- [Cluster Setup](#cluster-setup)
-  - [Reference Data Setup](#reference-data-setup)
-  - [Generate Cost Estimates](#generate-cost-estimates)
-  - [Create an Ephemeral Cluster](#create-an-ephemeral-cluster)
-- [Working with the Cluster](#working-with-the-cluster)
-  - [Headnode Configuration](#headnode-configuration)
-  - [Running Local Tests](#running-local-tests)
-  - [Running Slurm Tests](#running-slurm-tests)
-  - [Monitoring](#monitoring)
-    - [Slurm Monitoring](#slurm-monitoring)
-    - [Accessing Compute Nodes](#accessing-compute-nodes)
-- [Costs and Management](#costs-and-management)
-  - [Idle Cluster Costs](#idle-cluster-costs)
-  - [Running Cluster Costs](#running-cluster-costs)
-  - [Post-Deletion Costs](#post-deletion-costs)
-  - [Data Management Costs](#data-management-costs)
-- [Exporting Data](#exporting-data)
-  - [Exporting to S3](#exporting-to-s3)
-  - [Deleting a Cluster](#deleting-a-cluster)
-- [Monitoring Tools](#monitoring-tools)
-  - [AWS CloudWatch](#aws-cloudwatch)
+    - [Clone `daylily` Git Repository](#clone-daylily-git-repository)
+    - [Install Miniconda](#install-miniconda)
+    - [Install DAYCLI Environment](#install-daycli-environment)
+- [Ephemeral Cluster Creation](#ephemeral-cluster-creation)
+  - [Reference Bucket](#daylily-references-public-reference-bucket)
+  - [Generate Analysis Cost Estimates per Availability Zone](#generate-analysis-cost-estimates-per-availability-zone)
+  - [Create An Ephemeral Cluster](#create-an-ephemeral-cluster)
+- [Costs](#costs)
+  - [Monitoring (tags and budgets)](#monitoring-tags-and-budgets)
+  - [Regulating Usage via Budgets](#regulating-usage-via-budgets)
+  - [Cost Breakdown](#cost-breakdown)
+- [PCUI (ParallelCluster User Interface)](#pcui-technically-optional-but-you-will-be-missing-out)
+- [Working With The Ephemeral Clusters](#working-with-the-ephemeral-clusters)
+  - [DAYCLI & AWS Parallel Cluster CLI (pcluster)](#daycli--aws-parallel-cluster-cli-pcluster)
+  - [Running Workflows](#running-workflows)
+- [From The Ephemeral Cluster Headnode](#from-the-ephemeral-cluster-headnode)
+  - [Confirm Headnode Configuration](#confirm-headnode-configuration-is-complete)
+  - [Run A Local Test Workflow](#run-a-local-test-workflow)
+  - [Run A Slurm Test Workflow](#run-a-slurm-test-workflow)
+  - [Create Your Own `config/analysis_manifest.csv` File](#to-create-your-own-configanalysis_manifestcsv-file-from-your-own-analysis_samples.tsv-file)
+- [Slurm Monitoring](#slurm-monitoring)
+  - [Monitor Slurm Submitted Jobs](#monitor-slurm-submitted-jobs)
+  - [SSH Into Compute Nodes](#ssh-into-compute-nodes)
+- [Deleting A Cluster](#delete-cluster)
+  - [Export `fsx` Analysis Results Back To S3](#export-fsx-analysis-results-back-to-s3)
+  - [Delete The Cluster](#delete-the-cluster-for-real)
+- [Other Monitoring Tools](#other-monitoring-tools)
   - [PCUI](#pcui)
-- [Known Issues](#known-issues)
-- [Future Development](#future-development)
-  - [Sentieon Integration](#sentieon-integration)
-  - [Snakemake v8 Migration](#snakemake-v8-migration)
-  - [Cromwell and WDL Integration](#cromwell-and-wdl-integration)
+  - [AWS Cloudwatch](#aws-cloudwatch)
+- [S3 Reference Bucket & Fsx Filesystem](#s3-reference-bucket--fsx-filesystem)
+  - [`PREFIX-omics-analysis-REGION` Reference Bucket](#prefix-omics-analysis-region-reference-bucket)
+  - [Fsx Filesystem](#fsx-filesystem)
+- [In Progress // Future Development](#in-progress--future-development)
+- [General Components Overview](#general-components-overview)
+- [Managed Genomics Analysis Services](#managed-genomics-analysis-services)
+- [Bioinformatics Metrics](#metrics-required-to-make-informed-decisions-about-choosing-an-analysis-pipeline)
+- [Sentieon Tools & License](#sentieon-tools--license)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
+- [Known Issues](#known-issues)
+- [Compliance / Data Security](#compliance--data-security)
+- [Detailed Docs](#detailed-docs)
+
+
+
+
+# Intention
+
+> The intention of [**`daylily`**](https://github.com/Daylily-Informatics/daylily) is to provide a framework to better compare informatics tools, which I assert requires a great deal more control over compute hardware than is common presently.  Simply providing a container is insufficent in allowing for reproducible and meaningful comparisons b/c increasingly cost/runtime weigh as heavily as accuracy does in deciding between tools. Informatics tools must be presented with an (as best possibly) paired hardware environment where the asserted performance of the tool can be reproduced.  I have 3 goals here.
+
+## Goal 1: Shift Conversation To Better Ways of Assessing Tools, Spend Less Time Finding Winners & Loosers
+I am not really interested in advocating for which tool is the best for `x` application. My experience has been that selecting tools tends to be highly use-case driven, and what is helpful when making these decisions are datasets and approaches to evaluate a tool for your needs.... and barring this, at least being able to find sufficent information to make comparisons from published data would be nice.  
+
+## Goal 2: Establish Higher Expectations re: What Is Considered Sufficent Supporting Data/Docs For Published Tools
+I hope this conversation helps to set a higher expectation regarding what consititutes sufficent metrics and documentation produce when discussing these tools which allow unambiguous assessments of tools (so: detailed and comprehensive cost data, details on hardware which publised performance may be reporduced on, far richer concordance metrics and expansive QC reporting).
+
+## Goal 3: Move Beyond 'commonly accepted best practices'. Why? Because they have our field stuck in 2012
+I consider best practices to be a helpful starting point of investigation when moving into a new space, not as the end of the story. Rather than continue into a very satisfying rant, I'll offer that `best practices` have become so entrenched because there are not yet easily sharable frameworks to get reporducible pipepleine perofrmance (again, both in accuracy AND runtime/cost), and this factor is a very significant contributor to how stuck we are in quite outdated best practices. I think `daylily` can help.
+
+> The [daylily GIAB analyses](https://github.com/Daylily-Informatics/daylily_giab_analyses) repo will holds the (_WIP_) analsis from reuslts of the first stable release of `daylily` running on 7 GIAB samples. 
 
 ---
 
