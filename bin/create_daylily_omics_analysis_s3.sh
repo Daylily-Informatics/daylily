@@ -180,8 +180,6 @@ cmd_hg38_annotations="aws s3 cp s3://${source_bucket}/data/genomic_data/organism
 cmd_giab_reads="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_reads s3://${new_bucket}/data/genomic_data/organism_reads --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
 
 
-overall_status='success'
-
 if [ "$disable_dryrun" = false ]; then
     echo "[Dry-run] Skipping S3 COPY commands, which would be:"
     echo "$cmd_version"
@@ -226,30 +224,30 @@ else
     echo ""
     echo "NOW RUNNING 1 of 11"
     echo "...$cmd_version"
-    $cmd_version >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
+    $cmd_version >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal"
+    
 
     echo " "
     echo "NOW RUNNING 2 of 11"
     echo "...$cmd_cluster_boot_config"
-    $cmd_cluster_boot_config  >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
+    $cmd_cluster_boot_config  >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal"
     
 
     echo "NOW RUNNING 3 of 11"
     echo "... $cmd_cached_envs"
-    $cmd_cached_envs >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< prob ok, but unexpected" && overall_status='FAILED'
+    $cmd_cached_envs >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< prob ok, but unexpected"
   
     echo "NOW RUNNING 4 of 11"
     echo "...$cmd_libs"
-    $cmd_libs >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
-
+    $cmd_libs >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal"
 
     echo "NOW RUNNING 5 of 11"
     echo "...$cmd_tool_specific_resources"
-    $cmd_tool_specific_resources  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
+    $cmd_tool_specific_resources  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal"
 
     echo "NOW RUNNING 6 of 11"
     echo "...$cmd_budget"
-    $cmd_budget  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal" && overall_status='FAILED'
+    $cmd_budget  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal"
     
 
     # Execute commands based on flags
@@ -260,11 +258,11 @@ else
     else
         echo "NOW RUNNING 7 of 11"
         echo "...$cmd_hg38_ref"
-        $cmd_hg38_ref  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal if hg38 is needed" && overall_status='FAILED'
+        $cmd_hg38_ref  >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal if hg38 is needed" 
 
         echo "NOW RUNNING 8 of 11"
         echo "...$cmd_hg38_annotations"
-        $cmd_hg38_annotations >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal if hg38 is needed" && overall_status='FAILED'
+        $cmd_hg38_annotations >> $LOGFILE 2>&1  && echo "success" || echo ">>>FAILED<<< will be fatal if hg38 is needed" 
 
     fi
 
@@ -275,11 +273,11 @@ else
     else
         echo "NOW RUNNING 9 of 11"
         echo "...$cmd_b37_ref"
-        $cmd_b37_ref  >> $LOGFILE 2>&1   && echo "success" || echo ">>>FAILED<<< will be fatal if b37 is needed" && overall_status='FAILED'
+        $cmd_b37_ref  >> $LOGFILE 2>&1   && echo "success" || echo ">>>FAILED<<< will be fatal if b37 is needed" 
 
         echo "NOW RUNNING 10 of 11"
         echo "...$cmd_b37_annotations"
-        $cmd_b37_annotations >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal if b37 is needed" && overall_status='FAILED'
+        $cmd_b37_annotations >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal if b37 is needed" 
 
     fi
 
@@ -289,7 +287,7 @@ else
     else
         echo "NOW RUNNING 11 of 11"
         echo "...$cmd_giab_reads"
-        $cmd_giab_reads >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal if GIAB reads are needed" && overall_status='FAILED'
+        $cmd_giab_reads >> $LOGFILE 2>&1 && echo "success" || echo ">>>FAILED<<< will be fatal if GIAB reads are needed" 
     
     fi
 
@@ -305,5 +303,5 @@ fi
 
 
 echo ""
-echo "Cloning of daylily-references-public to '$new_bucket' :: $overall_status"
+echo "Cloning of daylily-references-public to '$new_bucket' completed, check the log for more"
 echo "... see $LOGFILE for details"
