@@ -252,7 +252,7 @@ check_quota() {
     quota_value=$(echo "$quota" | jq -r '.Quota.Value')
 
     if (( $(echo "$quota_value < $recommended_count" | bc -l) )); then
-        handle_warning "Warning: $resource_name quota is below the recommended $recommended_count. Current quota: $quota_value."
+        handle_warning "Warning: $resource_name quota $quota_code in $region is below the recommended $recommended_count. Current quota: $quota_value."
         if [[ $? -ne 0 ]]; then
             echo "quota check failed"
             exit 3
@@ -269,6 +269,8 @@ echo "Performing AWS quota checks..."
 # Dedicated Instances
 check_quota "Spot vCPU Max" "L-1216C47A" 20 ec2
 if [[ $? -ne 0 ]]; then
+    echo "Spot vCPU Max quota L-1216C47A in $region MUST BE >= 20 <<< DO NOT SKIP THIS WARNING!!! request a quota incr."
+    sleep 30
     exit 3
 fi
 echo ""
@@ -276,6 +278,8 @@ echo ""
 # Spot vCPU Max Quota 
 check_quota "Spot vCPU Max" "L-34B43A08" 208 ec2
 if [[ $? -ne 0 ]]; then
+    echo "Spot vCPU Max quota L-34B43A08  in $region MUST BE >= 208 <<< DO NOT SKIP THIS WARNING!!! request a quota incr."
+    sleep 30
     exit 3
 fi
 echo ""
