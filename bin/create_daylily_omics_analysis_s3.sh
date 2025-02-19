@@ -109,10 +109,17 @@ sleep 2
 new_bucket="${bucket_prefix}-omics-analysis-${region}"
 echo "Creating bucket: $new_bucket"
 
-accel_endpoint=""
-
-# Determine if acceleration can be used
 accel_enabled="--endpoint-url https://s3-accelerate.amazonaws.com"
+# Prompt user to use acceleration endpoint or not
+read -p "Use S3 acceleration endpoint? (y/n): " use_accel
+
+if [[ "$use_accel" == "y" || "$use_accel" == "Y" ]]; then
+    accel_endpoint=$accel_enabled
+else
+    accel_endpoint=''
+fi
+
+echo "Using acceleration ( $use_accel ): '$accel_endpoint'"
 
 
 # Check if the bucket with the specified prefix already exists
@@ -155,11 +162,11 @@ create_bucket
 # Core dirs to copy
 echo "$s3_reference_data_version" > daylily_reference_version_$s3_reference_data_version.info
 cmd_version="aws s3 cp daylily_reference_version_$s3_reference_data_version.info  s3://${new_bucket}/s3_reference_data_version.info"
-cmd_cluster_boot_config="aws s3 cp s3://${source_bucket}/cluster_boot_config s3://${new_bucket}/cluster_boot_config --recursive  --request-payer requester --metadata-directive REPLACE "
-cmd_cached_envs="aws s3 cp s3://${source_bucket}/data/cached_envs s3://${new_bucket}/data/cached_envs --recursive --request-payer requester --metadata-directive REPLACE "
-cmd_libs="aws s3 cp s3://${source_bucket}/data/lib s3://${new_bucket}/data/lib --recursive --request-payer requester  --metadata-directive REPLACE "
-cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_resources s3://${new_bucket}/data/tool_specific_resources --recursive --request-payer requester --metadata-directive REPLACE "
-cmd_budget="aws s3 cp s3://${source_bucket}/data/budget_tags s3://${new_bucket}/data/budget_tags --recursive --request-payer requester --metadata-directive REPLACE "
+cmd_cluster_boot_config="aws s3 cp s3://${source_bucket}/cluster_boot_config s3://${new_bucket}/cluster_boot_config --recursive  --request-payer requester $accel_endpoint --metadata-directive REPLACE "
+cmd_cached_envs="aws s3 cp s3://${source_bucket}/data/cached_envs s3://${new_bucket}/data/cached_envs --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
+cmd_libs="aws s3 cp s3://${source_bucket}/data/lib s3://${new_bucket}/data/lib --recursive --request-payer requester  $accel_endpoint --metadata-directive REPLACE "
+cmd_tool_specific_resources="aws s3 cp s3://${source_bucket}/data/tool_specific_resources s3://${new_bucket}/data/tool_specific_resources --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
+cmd_budget="aws s3 cp s3://${source_bucket}/data/budget_tags s3://${new_bucket}/data/budget_tags --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
 
 # b37 references
 cmd_b37_ref="aws s3 cp s3://${source_bucket}/data/genomic_data/organism_references/H_sapiens/b37 s3://${new_bucket}/data/genomic_data/organism_references/H_sapiens/b37 --recursive --request-payer requester $accel_endpoint --metadata-directive REPLACE "
