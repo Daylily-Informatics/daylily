@@ -206,7 +206,7 @@ _still as the admin user_
 #### Permissions
 
 - Navigate to the `IAM -> Users` console, click on the `daylily-service` user.
-- Click on the `Add permissions` button, then select `Add permission`.
+- Click on the `Add permissions` button, then select `Add permission`, `Attach policies directly`.
 - Search for `AmazonQDeveloperAccess` , select and add.
 
 #### Inline Policy
