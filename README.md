@@ -276,6 +276,8 @@ _as the `daylily-service` user_
 ##### SSH Key Pair(s)
 _as the `daylily-service` user_
 
+> Must include `-omics-` in the name!
+
 _key pairs are region specific, be sure you create a key pair in the region you intend to create an ephemeral cluster in_
 
 - Navigate to the `EC2 dashboard`, in the left hand menu under `Network & Security`, click on `Key Pairs`. 
