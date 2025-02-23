@@ -211,6 +211,22 @@ _still as the admin user_
 - Search for `AmazonEC2SpotFleetAutoscaleRole`, select and add.
 - Search for `AmazonEC2SpotFleetTaggingRole`, select and add.
 
+#### Create Service Linked Role `VERY IMPORTANT`
+
+> If this role is missing, you will get very challenging to debug failures for spot instances to launch, despite the cluster building and headnode running fine.
+
+- Does it exist?
+```bash
+aws iam list-roles --query "Roles[?RoleName=='AWSServiceRoleForEC2Spot'].RoleName"
+```
+> if `[]`, then it does not exist.
+
+- Create it if not:
+```bash
+aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
+```
+
+
 #### Inline Policy
 __**note:**__ [please consult the parallel cluster docs for fine grained permissions control, the below is a broad approach](https://docs.aws.amazon.com/parallelcluster/latest/ug/iam-roles-in-parallelcluster-v3.html).
 - Navigate to the `IAM -> Users` console, click on the `daylily-service` user.
