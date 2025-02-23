@@ -660,7 +660,7 @@ The cost drivers are:
 2. `fsx` filesystem = `$1.11 / hr` (for 4.8TB, which is the default size for daylily. You do not pay by usage, but by size requested). 
 3.  No other EC2 or storage (beyond the s3 storage used for the ref bucket and your sample data storage) costs are incurred.
 
-## OF RUNNING CLUSTER ( >= $2.50 / hr )
+## OF RUNNING CLUSTER ( >= $1.20 / hr )
 There is the idle hourly costs, plus...
 
 ### Spot instances ( ~$1.20 / hr per 192vcpu instance )
@@ -687,6 +687,7 @@ If its not being used, there is no cost incurred.
 ## OF REFERENCE DATA in S3 ( $14.50 / month )
 - The reference bucket will cost ~$14.50/mo to keep available in `us-west-2`, and one will be needed in any AZ you intend to run in. 
 - You should not store your sample or analysis data here long term.
+-   ONETIME per region reference bucket cloning costs $10-$27.
 
 ## OF SAMPLE / READ DATA in S3 ( $0.00 to $A LOT / month )
 - I argue that it is unecessary to store `fastq` files once bams are (properly) created, as the bam can reconstitute the fastq. So, the cost of storing fastqs beyond initial analysis, should be `$0.00`.
