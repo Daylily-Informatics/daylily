@@ -559,27 +559,55 @@ select arn_policy_id in "${policy_arns[@]}"; do
 done
 echo ""
 
+if [[ -z "$arn_policy_id" ]]; then
+    echo "Error: No IAM policy ARN selected. Exiting."
+    exit 3
+fi
+
 echo ""
+
+## Function to validate cluster name
+#validate_cluster_name() {
+#    if [[ ! "$1" =~ ^[a-zA-Z0-9\-]+$ ]] || [[ ${#1} -gt 25 ]]; then
+#        return 1
+#    else
+#        return 0
+#    fi
+#}
+#
+# Prompt user for cluster name
+#while true; do
+#    echo -n "Enter the name for your cluster (alphanumeric and '-', max 25 chars): "
+#    read cluster_name
+#
+#    if validate_cluster_name "$cluster_name"; then
+#        echo "Cluster name accepted: $cluster_name"
+#        break
+#    else
+#        echo "Error: Invalid cluster name. Please ensure it is alphanumeric, may include '-', and is 25 characters or fewer."
+#    fi
+#done
+
 
 # Function to validate cluster name
 validate_cluster_name() {
     if [[ ! "$1" =~ ^[a-zA-Z0-9\-]+$ ]] || [[ ${#1} -gt 25 ]]; then
-        exit 1
+        return 1
     else
         return 0
     fi
 }
 
-# Prompt user for cluster name
+# Prompt user for cluster name in a loop until valid input is given
 while true; do
-    echo -n "Enter the name for your cluster (alphanumeric and '-', max 25 chars): "
-    read cluster_name
+    read -rp "Enter the name for your cluster (alphanumeric and '-', max 25 chars): " cluster_name
 
     if validate_cluster_name "$cluster_name"; then
-        echo "Cluster name accepted: $cluster_name"
+        echo "✅ Cluster name accepted: $cluster_name"
         break
     else
-        echo "Error: Invalid cluster name. Please ensure it is alphanumeric, may include '-', and is 25 characters or fewer."
+        echo "❌ Error: Invalid cluster name."
+        echo "   ➜ The name must be alphanumeric, may include '-', and be 25 characters or fewer."
     fi
 done
 
@@ -830,6 +858,8 @@ done
 echo "You selected the allocation strategy: $allocation_strategy"
 echo ""
 
+git_deets=$(bin/get_git_deets.sh)
+
 # Write variables to config
 cat <<EOF > $regsub_vals
 REGSUB_REGION=$region
@@ -853,6 +883,7 @@ REGSUB_SAVE_FSX=$save_fsx
 REGSUB_ENFORCE_BUDGET=$enforce_budget_bool
 REGSUB_AWS_ACCOUNT_ID=aws_profile-$AWS_PROFILE
 REGSUB_ALLOCATION_STRATEGY=$allocation_strategy
+REGSUB_DAYLILY_GIT_DEETS=$git_deets
 EOF
 
 echo ""
