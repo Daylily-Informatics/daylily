@@ -585,6 +585,26 @@ done
 
 # Default Budget Check
 
+# Function to prompt for email
+budget_email=""
+prompt_for_email() {
+    while true; do
+        echo ""
+        read -rp "Enter an email address to send budget alerts to: " budget_email
+        # Regex pattern for basic email validation
+        if [[ -z "$budget_email" ]]; then
+            echo "Email cannot be empty. Please try again."
+        elif [[ "$budget_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+            echo "Valid email entered: $budget_email"
+            break
+        else
+            echo "Invalid email format. Please use string@string.string format."
+        fi
+    done
+}
+
+prompt_for_email
+
 echo ""
 # CLuster Budget Check
 global_budget_name="daylily-global"
@@ -601,25 +621,14 @@ if [[ -z "$global_budget_exists" || "$global_budget_exists" == "None" ]]; then
 
     echo -n "Enter csv string of allowed user names for budget (ubuntu is allowed for all budgets):"
     read gallowed_users
-    while [[ -z "$user_email" ]]; do
-        echo -n "Enter an email address to receive alerts (required): "
-        read user_email
 
-        # Basic validation to check if input contains "@" and "."
-        if [[ "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
-            break
-        else
-            echo "Invalid email address. Please try again."
-            user_email=""
-        fi
-    done
     echo -n "Enter a budget amount (default: 300): "
     read gamount
     gamount=${gamount:-300}
 
     echo "Creating the budget..."
-    echo "bin/create_budget.sh -p $global_budget_name -r $region -t 25,50,75,99 -e $guser_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users "
-    bin/create_budget.sh -p $global_budget_name -r $region -t 25,50,75,99 -e "$guser_email" -a "$gamount" -c $cluster_name -z $region_az -b $bucket_url  -u "$gallowed_users "
+    echo "bin/create_budget.sh -p $global_budget_name -r $region -t 25,50,75,99 -e $budget_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users "
+    bin/create_budget.sh -p $global_budget_name -r $region -t 25,50,75,99 -e "$budget_email" -a "$gamount" -c $cluster_name -z $region_az -b $bucket_url  -u "$gallowed_users "
 
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the budget. Exiting."
@@ -648,27 +657,14 @@ if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
 
     echo -n "Enter csv string of allowed user names for budget (ubuntu is allowed for all budgets):"
     read allowed_users
-    # Loop to ensure a valid email address is entered
-    while [[ -z "$user_email" ]]; do
-        echo -n "Enter an email address to receive alerts (required): "
-        read user_email
-
-        # Basic validation to check if input contains "@" and "."
-        if [[ "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
-            break
-        else
-            echo "Invalid email address. Please try again."
-            user_email=""
-        fi
-    done
 
     echo -n "Enter a budget amount (default: 200): "
     read amount
     amount=${amount:-200}
 
     echo "Creating the budget..."
-    echo "bin/create_budget.sh -p $budget_name -r $region -t 75 -e $user_email -a $amount -c $cluster_name -z $region_az -b $bucket_url  -u $allowed_users "
-    bin/create_budget.sh -p $budget_name -r $region -t 75 -e "$user_email" -a "$amount" -c $cluster_name -z $region_az -b $bucket_url  -u "$allowed_users "
+    echo "bin/create_budget.sh -p $budget_name -r $region -t 75 -e $budget_email -a $amount -c $cluster_name -z $region_az -b $bucket_url  -u $allowed_users "
+    bin/create_budget.sh -p $budget_name -r $region -t 75 -e "$budget_email" -a "$amount" -c $cluster_name -z $region_az -b $bucket_url  -u "$allowed_users "
 
     if [[ $? -ne 0 ]]; then
         echo "Error: Failed to create the budget. Exiting."
