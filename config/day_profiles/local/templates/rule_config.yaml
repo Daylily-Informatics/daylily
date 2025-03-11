@@ -526,3 +526,7 @@ vep:
     threads: 7
     partition: "i8"
      
+snpeff:
+    threads: 7
+    partition: "i192,i128"
+    xmx: "16g"

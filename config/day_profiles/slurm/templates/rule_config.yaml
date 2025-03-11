@@ -527,3 +527,8 @@ seqfu:
 vep:
     threads: 16
     partition: "i192"
+
+snpeff:
+    threads: 16
+    partition: "i192,i128"
+    xmx: "24g"
