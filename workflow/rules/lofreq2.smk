@@ -214,6 +214,9 @@ rule lofreq2_concat_index_chunks:
         tmp_fofn=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.lfq2.snv.concat.vcf.gz.fofn.tmp",
     output:
         vcfgz=touch(MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.lfq2.snv.sort.vcf.gz"),
+        vcfgztemp=temp(
+            MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.lfq2.snv.sort.temp.vcf.gz"
+        ),
         vcfgztbi=touch(MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.lfq2.snv.sort.vcf.gz.tbi"),
     threads: 4
     resources:
@@ -238,7 +241,8 @@ rule lofreq2_concat_index_chunks:
         touch {log};
         mkdir -p $(dirname {log});
         
-        bcftools concat --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
+        bcftools concat --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp};
+        bcftools reheader -s <(echo "x\t{params.cluster_sample}") -o {output.vcftgs} {output.vcfgztemp};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;

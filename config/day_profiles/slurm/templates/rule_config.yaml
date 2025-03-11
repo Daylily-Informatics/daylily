@@ -526,7 +526,7 @@ seqfu:
 
 vep:
     threads: 16
-    partition: "i192"
+    partition: "i192,i192"
 
 snpeff:
     threads: 16

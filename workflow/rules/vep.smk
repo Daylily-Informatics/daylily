@@ -29,11 +29,9 @@ rule vep:
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.{snv}.vep.bench.tsv"
     container:
-        "docker://ensemblorg/ensembl-vep:release_109.3"
+        "docker://ensemblorg/ensembl-vep:release_113.3"        
     shell:
         """
-        mkdir -p resources/vep/{params.cluster_sample};
-        (ln -s {params.huref}* resources/vep/{params.cluster_sample} || echo 'huref link exists') > {log};
         vep \
          --cache \
          --dir {params.vep_cache} \
