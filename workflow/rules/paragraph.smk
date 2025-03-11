@@ -22,11 +22,11 @@ rule paragraph:
         vcf= MDIR + "{sample}/align/{alnr}/sv/para/{sample}.{alnr}.para.sv.vcf",
         vcfsort = MDIR + "{sample}/align/{alnr}/sv/para/{sample}.{alnr}.para.sv.sort.vcf",
         vcfsortgz = MDIR + "{sample}/align/{alnr}/sv/para/{sample}.{alnr}.para.sv.sort.vcf.gz",
-        vcfsortgztbi = = MDIR + "{sample}/align/{alnr}/sv/para/{sample}.{alnr}.para.sv.sort.vcf.gz.tbi",
+        vcfsortgztbi = MDIR + "{sample}/align/{alnr}/sv/para/{sample}.{alnr}.para.sv.sort.vcf.gz.tbi",
         idxjson=MDIR + "{sample}/align/{alnr}/sv/para/{sample}.{alnr}.para.sv.idx.json",
         manifest=MDIR + "{sample}/align/{alnr}/sv/para/{sample}.{alnr}.para.sv.manifest",
     params:
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample_alnr,
         bam_depth=get_bam_depth,
         read_len="150",

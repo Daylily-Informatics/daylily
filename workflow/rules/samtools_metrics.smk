@@ -19,7 +19,7 @@ rule gen_samstats:
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.samt.bench.tsv"
     params:
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     shell:
         "samtools stats -@  {threads} --reference {params.huref} {input.bam} > {output.stats};"

@@ -25,7 +25,7 @@ rule sentieon_qc_metrics:
     benchmark:
         MDIR + "{sample}/benchmarks/{sample}.{alnr}.metrics.sm.bench.tsv"
     params:
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     conda:
         config["sentieon"]["env_yaml"]

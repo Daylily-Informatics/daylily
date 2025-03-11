@@ -103,7 +103,7 @@ rule octopus:
         ochrm_mod=get_ochrm_mod,
         anno=config["octopus"]["anno"],
         addl_options=" " if "addl_options" not in config["octopus"] else config["octopus"]["addl_options"],
-        huref=config["supporting_files"]["files"]["octopus"]["huref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         skr=config['supporting_files']['files']['ucsc']['build_gaps']['name'],
         ld_pre=config['octopus']['ld_pre'],
         mdir=MDIR,
@@ -246,7 +246,7 @@ rule oct_concat_index_chunks:
         
         # This is acceptable bc I am concatenating from the same tools output, not across tools
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp};
-        bcftools reheader -s <(echo "x\t{params.cluster_sample}") -o {output.vcftgs} {output.vcfgztemp};
+        bcftools reheader -s <(echo "x\t{params.cluster_sample}") -o {output.vcftgz} {output.vcfgztemp};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;

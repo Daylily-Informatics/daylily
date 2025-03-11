@@ -12,7 +12,7 @@ rule svim_asm:
         stub = touch(MDIR + "{sample}/align/{alnr}/sv/svasm/{sample}.{alnr}.svasm.sv"),
         vcff = touch(MDIR + "{sample}/align/{alnr}/sv/svasm/{sample}.{alnr}.svasm.sv.vcf"),
     params:
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample_alnr,
     threads: config["svim_asm"]["threads"]
     benchmark:

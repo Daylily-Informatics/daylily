@@ -59,7 +59,7 @@ rule svaba:
         bwa_mem2a_cmd=config["bwa_mem2a_aln_sort"]["cmd"],  #Try and speed up by aliasing bwamem call to bwamem2
         problem_regions_bed=config["supporting_files"]["files"]["ucsc"]["problem_regions_bed"]["name"],
         simple_repeats_bed=config["supporting_files"]["files"]["ucsc"]["simple_repeats_bed"]["name"],   ## ! From UCSC
-        bwv=config["supporting_files"]["files"]["huref"]["bwa_mem_index_vanilla"]["name"],
+        bwv=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         svaba_calling_regions=config["supporting_files"]["files"]["giab_sv"]["v0.6_NA24385_ties_1_2"]['name'],
         cmd=config['svaba']['cmd'],
         #microbial_genomes=config['supporting_files']['files']['microbial']['reprDB']['name'],

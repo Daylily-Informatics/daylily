@@ -19,7 +19,7 @@ rule stargazer:
         directory(MDIR + "{sample}/align/{alnr}/xv/starg/"),
         done=MDIR + "{sample}/align/{alnr}/xv/starg/sg.done",
     params:
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         zdbsnp=config["supporting_files"]["files"]["dbsnp"]["supersonic"]["name"],
         l="{",
         r="}",
