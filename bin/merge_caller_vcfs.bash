@@ -35,11 +35,8 @@ done
 CONCAT_VCF="${SAMPLE}.concat_callers.vcf.gz"
 
 bcftools concat -a --threads 8 -Oz \
-  --merge all --force-samples \
-  --info-rules caller:join \
   clair3.annotated.vcf.gz \
   deepvariant.annotated.vcf.gz \
-  lofreq2.annotated.vcf.gz \
   sentieon.annotated.vcf.gz \
   > "$CONCAT_VCF"
 
@@ -49,12 +46,15 @@ bcftools index $CONCAT_VCF
 
 SORTED_VCF="${SAMPLE}.merged_callers.sorted.vcf.gz"
 bcftools sort -Oz -o "$SORTED_VCF" $CONCAT_VCF
+tabix $SORTED_VCF
+bcftools index $SORTED_VCF
 
 bcftools norm -Oz -m+any \
   $SORTED_VCF \
   -o all_callers.merged.vcf.gz
 
 tabix all_callers.merged.vcf.gz
+
 bcftools index all_callers.merged.vcf.gz
 
 bcftools sort -Oz -o all_callers.merged.sort.vcf.gz all_callers.merged.vcf.gz
