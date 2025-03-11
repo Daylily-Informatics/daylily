@@ -1,8 +1,6 @@
 channels:
   - conda-forge
-  - bioconda
-  - anaconda
-  - r
-  - defaults
 dependencies:
-  - snpeff
+  - snpeff=5.2
+  - tabix=1.11
+

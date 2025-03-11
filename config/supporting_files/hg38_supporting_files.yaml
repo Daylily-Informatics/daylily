@@ -61,6 +61,8 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
       vep_cache:
         class: file_only
         name: /fsx/data/tool_specific_data/.vep/
+    snpeff:
+      ref_build_code: GRCh38.99
     ucsc:
       simple_repeats_bed:
         class: file_only
