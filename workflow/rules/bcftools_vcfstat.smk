@@ -28,7 +28,7 @@ rule bcftools_vcfstat:
     threads: config["bcftools_vcfstat"]["threads"]
     params:
         cluster_sample=ret_sample,
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
     shell:
         """
         bcftools stats --threads {threads} {input.snv_vcf} -F {params.huref} > {output};

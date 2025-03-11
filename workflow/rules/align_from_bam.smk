@@ -165,7 +165,7 @@ if True:
                     k=config["bwa_mem2a_aln_sort"]["k"],
                     K=config["bwa_mem2a_aln_sort"]["K"],
                     thread_mem=config["bwa_mem2a_aln_sort"]["thread_mem"],
-                    bwv=config["supporting_files"]["files"]["huref"]["bwa_mem_index_vanilla"]["name"],
+                    bwv=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
                     ri=ri,
                     ulim=" ",
                     cluster_sample=ret_sample,

@@ -30,7 +30,7 @@ rule bwa_mem2_sort:
         bwa_mem2a_cmd=config["bwa_mem2a_aln_sort"]["cmd"],
         bwa_opts=config["bwa_mem2a_aln_sort"]["bwa_opts"],
         sort_thread_mem=config["bwa_mem2a_aln_sort"]["sort_thread_mem"],
-        huref=config["supporting_files"]["files"]["huref"]["bwa_mem_index_vanilla"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
         rgpu="presumedCombinedLanes",  # ideally flowcell_lane(s)
         rgsm='x', # ret_sample,  # samplename

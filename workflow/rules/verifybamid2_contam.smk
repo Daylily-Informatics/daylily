@@ -26,7 +26,7 @@ rule verifybamid2_contam:
         partition=config["verifybamid2_contam"]["partition"],
     params:
         cluster_sample=ret_sample,
-        huref=config["supporting_files"]["files"]["octopus"]["huref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
     shell:
         """

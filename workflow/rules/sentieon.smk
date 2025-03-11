@@ -26,7 +26,7 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         mem_mb=config['sentieon']['mem_mb'],
         constraint=config['sentieon']['constraint'],
     params:
-        huref=config["supporting_files"]["files"]["huref"]["bwa_mem_sent"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         max_mem="130G"
         if "max_mem" not in config["sentieon"]
         else config["sentieon"]["max_mem"],

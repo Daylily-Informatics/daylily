@@ -23,7 +23,7 @@ rule sentieon_mm2:
         vcpu=config['sentieon']['threads'],
         threads=config['sentieon']['threads'],
     params:
-        huref=config["supporting_files"]["files"]["huref"]["bwa_mem_sent"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_end="echo done"
         if "cluster_end" not in config["sentieon"]
         else config["sentieon"]["cluster_end"],

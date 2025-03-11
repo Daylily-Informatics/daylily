@@ -18,7 +18,7 @@ rule picard:
     conda:
         "../envs/picard_v0.1.yaml"
     params:
-        huref=config["supporting_files"]["files"]["huref"]["ref"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
         metric_accumulation_level="SAMPLE" if 'metric_accumulation_level' not in config['picard'] else config['picard']['metric_accumulation_level'],
         stop_after="2000000" if 'stop_after' not in config['picard'] else config['picard']['stop_after'],

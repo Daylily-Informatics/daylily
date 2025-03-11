@@ -1,0 +1,6 @@
+channels:
+  - bioconda
+dependencies:
+  - ensembl-vep=113.0
+  - tabix=1.11
+
