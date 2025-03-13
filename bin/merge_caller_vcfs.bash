@@ -3,20 +3,20 @@
 set -euo pipefail
 
 # Define input files
-ALIGNERS=("bwa2a" "strobe")
+ALIGNERS=("bwa2a" "strobe" "sent")
 SAMPLE="RIH0_ANA0-HG002-19_DBC0_0"
 CALLERS=("clair3" "deep" "lfq2" "sentd" "oct")
 CALLER_NAMES=("clair3" "deepvariant" "lofreq2" "sentieon" "octopus")
 
 # Annotate each caller's VCF
 
-for ai in ALIGNERS; do
+for ai in "${!ALIGNERS[@]}"; do
 
   for i in "${!CALLERS[@]}"; do
     CALLER=${CALLERS[$i]}
     ALIGNER=${ALIGNERS[$ai]}
     CALLER_FILE="${SAMPLE}.${ALIGNER}.${CALLERS[$i]}.snv.sort.rh.vcf.gz"
-    CALLER_LABEL="${CALLER_NAMES[$i]}"-"$ALIGNER"
+    CALLER_LABEL="$ALIGNER"-"${CALLER_NAMES[$i]}"
     OUTPUT_FILE="${CALLER_LABEL}.annotated.vcf.gz"
 
     echo "Annotating $CALLER_FILE with caller: $CALLER_LABEL"
