@@ -242,7 +242,7 @@ rule lofreq2_concat_index_chunks:
         mkdir -p $(dirname {log});
         
         bcftools concat --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp};
-        bcftools reheader -s <(echo "x\t{params.cluster_sample}") -o {output.vcftgs} {output.vcfgztemp};
+        bcftools reheader -s <(echo "x\t{params.cluster_sample}") -o {output.vcfgz} {output.vcfgztemp};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
