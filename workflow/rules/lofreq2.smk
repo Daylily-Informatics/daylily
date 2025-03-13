@@ -241,8 +241,11 @@ rule lofreq2_concat_index_chunks:
         touch {log};
         mkdir -p $(dirname {log});
         
-        bcftools concat --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp};
-        bcftools reheader -s <(echo "x\t{params.cluster_sample}") -o {output.vcfgz} {output.vcfgztemp};
+        # This is acceptable bc I am concatenating from the same tools output, not across tools
+        #bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp};
+        #bcftools reheader -s <(echo "x\t{params.cluster_sample}") -o {output.vcfgz} {output.vcfgztemp};
+        touch {output.vcfgztemp};
+        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;

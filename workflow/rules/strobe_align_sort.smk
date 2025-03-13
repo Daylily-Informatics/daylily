@@ -30,8 +30,8 @@ rule strobe_align_sort:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
         rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
         rgpu="presumedCombinedLanes",  # ideally flowcell_lane(s)
-        rgsm='x', # ret_sample,  # samplename
-        rgid='x', #ret_sample,  # ideally samplename_flowcell_lane(s)_barcode  ! Imp this is unique, I add epoc seconds to the end of start of this rule
+        rgsm=ret_sample, # ret_sample,  # samplename
+        rgid=ret_sample, #ret_sample,  # ideally samplename_flowcell_lane(s)_barcode  ! Imp this is unique, I add epoc seconds to the end of start of this rule
         rglb="_presumedNoAmpWGS",  # prepend sample_name in shell block ideally samplename_libprep
         rgcn="CenterName",  # center name
         subsample_head=get_subsample_head,
