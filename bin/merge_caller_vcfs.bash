@@ -16,7 +16,7 @@ for ai in ALIGNERS; do
     CALLER=${CALLERS[$i]}
     ALIGNER=${ALIGNERS[$ai]}
     CALLER_FILE="${SAMPLE}.${ALIGNER}.${CALLERS[$i]}.snv.sort.rh.vcf.gz"
-    CALLER_LABEL="${CALLER_NAMES[$i]}"
+    CALLER_LABEL="${CALLER_NAMES[$i]}"-"$ALIGNER"
     OUTPUT_FILE="${CALLER_LABEL}.annotated.vcf.gz"
 
     echo "Annotating $CALLER_FILE with caller: $CALLER_LABEL"
@@ -40,11 +40,10 @@ done
 # Merge annotated VCFs into one
 CONCAT_VCF="${SAMPLE}.concat_callers.vcf.gz"
 
+
+
 bcftools concat -a --threads 8 -Oz \
-  clair3.annotated.vcf.gz \
-  deepvariant.annotated.vcf.gz \
-  lofreq2.annotated.vcf.gz \
-  sentieon.annotated.vcf.gz \
+  $(ls *anno*.gz) \
   > "$CONCAT_VCF"
 
 # Sort and index merged VCF
