@@ -55,6 +55,9 @@ bcftools sort -Oz -o "$SORTED_VCF" $CONCAT_VCF
 tabix $SORTED_VCF
 bcftools index $SORTED_VCF
 
+#### If combining across different aligners (strobe aligner specifically), the AF fields get wacky and need to be completely stripped
+# bcftools annotate -x INFO/AF RIH0_ANA0-HG002-19_DBC0_0.merged_callers.sorted.vcf.gz -Oz -o no_AF.vcf.gz
+
 bcftools norm -Oz -m+any \
   $SORTED_VCF \
   -o all_callers.merged.vcf.gz
