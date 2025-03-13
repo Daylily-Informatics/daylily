@@ -92,6 +92,7 @@ rule clair3:
         --threads={params.clair3_threads} \
         --platform='ilmn' \
         --model_path=/opt/models/ilmn \
+        --sample_name={params.cluster_sample} \
         --ctg_name=$cchr \
         --output=$(dirname {input.d})  >> {log} 2>&1;
 
