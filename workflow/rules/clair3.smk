@@ -56,7 +56,7 @@ rule clair3:
     params:
         cchrm=get_clair3_chrom,
         cluster_sample=ret_sample,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
         mdir=MDIR,
         mem_mb=config['clair3']['mem_mb'],
         numa=config['clair3']['numa'],
@@ -210,7 +210,7 @@ rule clair3_concat_index_chunks:
         partition=config['clair3']['partition_other'],
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
