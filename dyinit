@@ -319,7 +319,7 @@ echo -e "\n"
 echo -e "\t\tdy-a slurm hg38 # or b37\n"
 
 echo -e "\t(example): RUN ALIGNMENT\n"
-echo -e "\t\tcp .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv congfig/analysis_manifest.csv\n"
+echo -e "\t\tcp .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv config/analysis_manifest.csv\n"
 echo -e "\t\tdy-r produce_snv_concordances -p -k -j 20 --config aligners=[\"bwa2a\"] dedupers=[\"dppl\"]  snv_callers=[\"deep\"] -n # remove -n to quit dry-run\n"
 
 return 0
