@@ -1,5 +1,5 @@
 # Daylily AWS Ephemeral Cluster Setup
-_(0.7.168)_
+_(0.7.169)_
 
 **beta release**
 
@@ -699,8 +699,7 @@ Once logged in, as the 'ubuntu' user, run the following commands:
   cd ~/projects/daylily
   source dyinit
   source dyinit  --project PROJECT
-  dy-a local
-  dy-g hg38
+  dy-a local hg38 # the other option being b37
 
   dy-r help
  
@@ -952,8 +951,8 @@ bin/daylily-ssh-into-headnode
 ```bash
 cd ~/projects/daylily
 . dyinit # inisitalizes the daylily cli
-dy-a local # activates the local config
-dy-g hg38 # sets the genome to hg38
+dy-a local hg38 # activates the local config using reference hg38, the other build available is b37
+
 ```
 
 > if `. dyinit` works, but `dy-a local` fails, try `dy-b BUILD`
@@ -998,8 +997,7 @@ drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 ```bash
 . dyinit  --project PROJECT
 
-dy-a local
-dy-g hg38 # the other option: b37 ( or set via config command line below)
+dy-a local hg38 # the other option: b37 ( or set via config command line below)
 
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
 
@@ -1060,8 +1058,7 @@ cd daylily
 #  prepare to run the test
 tmux new -s slurm_test
 . dyinit 
-dy-a slurm
-dy-g hg38
+dy-a slurm hg38 # the other options being b37
 
 # create a test manifest for one giab sample only, which will run on the 0.01x test dataset
 head -n 2 .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv > config/analysis_manifest.csv
@@ -1121,8 +1118,7 @@ git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have 
 cd daylily
 
 . dyinit  --project PROJECT 
-dy-a slurm
-dy-g hg38
+dy-a slurm hg38 # the other option being b37
 
 # TO create a single sample manifest
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv > config/analysis_manifest.csv
@@ -1146,8 +1142,7 @@ git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have 
 cd daylily
 
 . dyinit  --project PROJECT 
-dy-a slurm
-dy-g hg38
+dy-a slurm hg38 # the other options being b37
 
 # copy full 30x giab sample template to config/analysis_manifest.csv
 cp .test_data/data/giab_30x_hg38_analysis_manifest.csv  config/analysis_manifest.csv
