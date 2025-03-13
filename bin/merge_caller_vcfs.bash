@@ -4,8 +4,8 @@ set -euo pipefail
 
 # Define input files
 SAMPLE="RIH0_ANA0-HG002-19_DBC0_0"
-CALLERS=("clair3" "deep" "lfq2" "sentd")
-CALLER_NAMES=("clair3" "deepvariant" "lofreq2" "sentieon")
+CALLERS=("clair3" "deep" "lfq2" "sentd" "oct")
+CALLER_NAMES=("clair3" "deepvariant" "lofreq2" "sentieon" "octopus")
 
 # Annotate each caller's VCF
 for i in "${!CALLERS[@]}"; do
@@ -16,9 +16,10 @@ for i in "${!CALLERS[@]}"; do
 
   echo "Annotating $CALLER_FILE with caller: $CALLER_LABEL"
 
+  #    -x INFO/AF,FORMAT/AF \
+
   echo "A" $CALLER .. $CALLER_FILE
   bcftools annotate \
-    -x INFO/AF,FORMAT/AF \
     -h <(echo '##INFO=<ID=caller,Number=.,Type=String,Description="Source caller">') \
     --set-id +'%CHROM:%POS:%REF:%ALT' \
     --set "INFO/caller=$CALLER" \
@@ -37,6 +38,7 @@ CONCAT_VCF="${SAMPLE}.concat_callers.vcf.gz"
 bcftools concat -a --threads 8 -Oz \
   clair3.annotated.vcf.gz \
   deepvariant.annotated.vcf.gz \
+  lofreq2.annotated.vcf.gz \
   sentieon.annotated.vcf.gz \
   > "$CONCAT_VCF"
 
@@ -54,11 +56,9 @@ bcftools norm -Oz -m+any \
   -o all_callers.merged.vcf.gz
 
 tabix all_callers.merged.vcf.gz
-
 bcftools index all_callers.merged.vcf.gz
 
 bcftools sort -Oz -o all_callers.merged.sort.vcf.gz all_callers.merged.vcf.gz
-
 bcftools index all_callers.merged.sort.vcf.gz
 tabix all_callers.merged.sort.vcf.gz
 
