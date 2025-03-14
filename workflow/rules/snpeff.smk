@@ -35,6 +35,7 @@ rule snpeff:
         -v {params.snpeff_genome_build} \
         {input.vcfgz} \
         | bgzip -c > {output.annovcf} ) > {log} 2>&1;
+        tabix -p vcf {output.annovcf} 2>> {log};
         """
 
 
