@@ -30,7 +30,7 @@ rule snpeff:
         "../envs/snpeff_v0.1.yaml"
     shell:
         """=
-        ( java -Xmx{snpeff_xmx} -jar  \
+        ( java -Xmx{params.snpeff_xmx} -jar  \
         $(find $CONDA_PREFIX -name snpEff.jar) \
         -v {params.snpeff_genome_build} \
         {input.vcfgz} \
