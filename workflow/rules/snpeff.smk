@@ -34,8 +34,7 @@ rule snpeff:
         $(find $CONDA_PREFIX -name snpEff.jar) \
         -v {params.snpeff_genome_build} \
         {input.vcfgz} \
-        | bgzip -c > {output.annovcf} ) > {log} 2>&1;
-        tabix -p vcf {output.annovcf} 2>> {log};
+        ) > {log} 2>&1;
         """
 
 
