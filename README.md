@@ -870,7 +870,14 @@ Go to the `IAM Dashboard`, and under roles, search for the role `ParallelCluster
 				"arn:aws:s3:::YOURBUCKETNAME-EUCENTRAL1/*",
 				"arn:aws:s3:::YOURBUCKETNAME-APSOUTH1/*"
 			]
-		}
+		},
+    {
+        "Effect": "Allow",
+        "Action": [
+            "fsx:*"
+        ],
+        "Resource": "*"
+    }
 	]
 }
 ```
