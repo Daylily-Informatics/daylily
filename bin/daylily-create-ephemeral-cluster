@@ -13,6 +13,7 @@ usage() {
     echo "       --region-az REGION-AZ   Specify the AWS region and availability zone (ie: us-west-2b)"
     echo "       --pass-on-warn          Allow warnings to pass without failure (default: false)"
     echo "       --profile  aws profile to use"
+    echo " .     --config <path>       Path to the daylily-create-ephemeral-cluster config, default: ./.dayephmeral.env)"
 }
 
 
@@ -23,9 +24,11 @@ if [[ $# -eq 0 ]]; then
 fi
 
 if [ -z "$AWS_PROFILE" ]; then
-    echo "Error: AWS_PROFILE is not set."
+    echo "❌ Error: AWS_PROFILE is not set."
     exit 1  # Exit the function with an error status
 fi
+
+CONFIG_FILE="./.dayephemeral.env"  # Default config file
 
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
@@ -47,8 +50,12 @@ while [[ $# -gt 0 ]]; do
             AWS_PROFILEIN="$2"
             shift 2
             ;;
+        --config)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
         *)
-            echo "Error: Unknown option: $1"
+            echo "❌ Error: Unknown option: $1"
             usage
             exit 3
             ;;
@@ -56,19 +63,43 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$AWS_PROFILE" ]]; then
-    echo "Error: --profile flag not set"
+    echo "❌ Error: --profile flag not set"
     exit 3  # Exit the function with an error status
 fi
 
 if [[ "$AWS_PROFILE" != "$AWS_PROFILEIN" ]]; then
-    echo "Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
+    echo "❌ Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
     exit 3  # Exit the function with an error status
 fi
 
 if [[ -z "$region_az" ]]; then
-    echo "Error: --region-az flag not set"
+    echo "❌ Error: --region-az flag not set"
     exit 3  # Exit the function with an error status
 fi
+
+
+# Load the environment variables from .env file
+if [ -f $CONFIG_FILE ]; then
+  set -o allexport
+  source $CONFIG_FILE
+  set +o allexport
+else
+  echo "$CONFIG_FILE file not found!"
+  sleep 1
+fi
+
+echo "$CONFIG_FILE file VARS (if any):"
+echo "CONFIG_BUDGET_EMAIL: $CONFIG_BUDGET_EMAIL"
+echo "CONFIG_ALLOWED_BUDGET_USERS: $CONFIG_ALLOWED_BUDGET_USERS"
+echo "CONFIG_BUDGET_AMOUNT: $CONFIG_BUDGET_AMOUNT"
+echo "CONFIG_ENFORCE_BUDGET: $CONFIG_ENFORCE_BUDGET"
+echo "CONFIG_DELETE_LOCAL_ROOT: $CONFIG_DELETE_LOCAL_ROOT"
+echo "CONFIG_AUTO_DELETE_FSX: $CONFIG_AUTO_DELETE_FSX"
+echo "CONFIG_FSX_FS_SIZE: $CONFIG_FSX_FS_SIZE"
+echo "CONFIG_ENABLE_DETAILED_MONITORING: $CONFIG_ENABLE_DETAILED_MONITORING"
+echo "CONFIG_CLUSTER_TEMPLATE_YAML: $CONFIG_CLUSTER_TEMPLATE_YAML"
+echo "CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY: $CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY"
+sleep 0.5
 
 # Extract the last character
 az_char="${region_az: -1}"
@@ -77,12 +108,12 @@ az_char="${region_az: -1}"
 if [[ "$az_char" =~ [a-zA-Z] ]]; then
     echo "The last character of --region-az ${region_az} '$az_char' is a letter."
 else
-    echo "ERROR: The last character of --region-az ${region_az} '$az_char' is a NOT letter."
+    echo "❌ Error: The last character of --region-az ${region_az} '$az_char' is a NOT letter."
     exit 3  # Exit the function with an error status
 fi
 
 if [[ "$AWS_PROFILEIN" != "$AWS_PROFILE" ]]; then
-    echo "Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
+    echo "❌ Error: AWS_PROFILE and --profile must match: $AWS_PROFILE and $AWS_PROFILEIN"
     exit 3  # Exit the function with an error status
 fi
 
@@ -110,7 +141,7 @@ echo "DEBUG: pass_on_warn after parsing: $pass_on_warn"
 if [ $? -ne 0 ]; then
     handle_warning "There were problems detected with pre-requisites, and the warnings bypassed. Run './bin/check_prereq_sw.sh' for more information ." 
     if [[ $? -ne 0 ]]; then
-        echo "Error: System package check failed, investigate or run again with or use --pass-on-warn."
+        echo "❌ Error: System package check failed, investigate or run again with or use --pass-on-warn."
         exit 3
     fi
 fi
@@ -118,7 +149,7 @@ fi
 # Ensure Conda exists
 conda --version &> /dev/null
 if [[ $? -ne 0 ]]; then
-    echo ">  > Error <  <"
+    echo ">  > ❌ Error <  <"
     echo "Conda is not available in this shell (version >= 24.0.0)."
     echo "Please run the following command to install miniconda. *warning*, if you are using homebrew conda, things might get wobbly."
     echo ""
@@ -136,7 +167,7 @@ current_version=$(conda --version | awk '{print $2}')
 
 # Compare versions
 if [[ "$(printf '%s\n' "$required_version" "$current_version" | sort -V | head -n1)" != "$required_version" ]]; then
-    echo "Error: Conda version $current_version is less than the required version $required_version ."
+    echo "❌ Error: Conda version $current_version is less than the required version $required_version ."
     exit 3
 fi
 
@@ -165,7 +196,7 @@ else
     echo "Creating 'DAYCLI' environment."
     source bin/init_daycli
     if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to create the 'DAYCLI' environment. Exiting."
+        echo "❌ Error: Failed to create the 'DAYCLI' environment. Exiting."
         exit 3
     fi
 fi
@@ -180,7 +211,7 @@ pcluster_version=$(pcluster version | grep 'version' | cut -d '"' -f 4)
 if [[ "$pcluster_version" != "$expected_pcluster_version" ]]; then
     handle_warning "Warning: Expected pcluster version $expected_pcluster_version, but found version $pcluster_version."
     if [[ $? -ne 0 ]]; then
-        echo "Error: pcluster version mis-match:  expected:$expected_pcluster_version , detected:$pcluster_version ."
+        echo "❌ Error: pcluster version mis-match:  expected:$expected_pcluster_version , detected:$pcluster_version ."
         exit 3
     fi
 fi
@@ -189,10 +220,10 @@ fi
 # Check AWS credentials
 echo "Verifying AWS credentials..."
 if ! aws sts get-caller-identity --region "$region" --profile $AWS_PROFILE  &> /dev/null; then
-    echo "Error: AWS credentials are invalid or do not have access to the AWS account in region $region."
+    echo "❌ Error: AWS credentials are invalid or do not have access to the AWS account in region $region."
     exit 3
 else
-    echo "AWS credentials verified successfully."
+    echo "✅  AWS credentials verified successfully."
 fi
 
 # Call the region validation function
@@ -222,17 +253,15 @@ else
     read CHOICE
 
     if [ "$CHOICE" -eq 1 ]; then
-        echo "Proceeding anyway..."
+        echo "✅ Proceeding anyway..."
     elif [ "$CHOICE" -eq 2 ]; then
-        echo "Exiting."
+        echo "❌ Exiting."
         exit 3 2>/dev/null || exit 3
     else
-        echo "Invalid choice. Exiting."
+        echo "❌ Invalid choice. Exiting."
         exit 3 2>/dev/null || exit 3
     fi
 fi
-
-
 
 # AWS Quota Check Function
 check_quota() {
@@ -245,7 +274,7 @@ check_quota() {
     quota=$(aws service-quotas get-service-quota --service-code $sccode --quota-code "$quota_code" --region "$region" --profile $AWS_PROFILE  2>/dev/null)
 
     if [[ $? -ne 0 ]]; then
-        handle_warning "Error: Unable to retrieve quota for $resource_name."
+        handle_warning "❌ Error: Unable to retrieve quota for $resource_name."
         exit 3
     fi
 
@@ -254,11 +283,11 @@ check_quota() {
     if (( $(echo "$quota_value < $recommended_count" | bc -l) )); then
         handle_warning "Warning: $resource_name quota $quota_code in $region is below the recommended $recommended_count. Current quota: $quota_value."
         if [[ $? -ne 0 ]]; then
-            echo "quota check failed"
+            echo "❌ quota check failed"
             exit 3
         fi
     else
-        echo "$resource_name quota is sufficient: $quota_value."
+        echo "✅ $resource_name quota is sufficient: $quota_value."
     fi
 }
 echo ""
@@ -344,7 +373,7 @@ echo ""
 # Fetch all key pairs in the given region
 key_data=$(aws ec2 describe-key-pairs --region "$region" --query 'KeyPairs[*].[KeyName, KeyType]' --output text  --profile $AWS_PROFILE | grep omics)
 
-echo "KEYs in region $region:"
+echo "Keys in region $region:"
 echo "$key_data"
 
 # Filter for keys with the required suffix
@@ -374,7 +403,7 @@ echo ""
 
 # Check if no valid keys were found
 if [[ ${#valid_keys[@]} -eq 0 ]]; then
-    echo "No valid ED25519 keys with matching PEM files were found."
+    echo "❌ No valid ED25519 keys with matching PEM files were found."
     echo "Please ensure the required keys are available in the $HOME/.ssh directory AND that the keypair name includes 'omics' in the name."
     exit 3
 fi
@@ -400,7 +429,7 @@ pem_file=$HOME/.ssh/"${selected_key}.pem"
 
 # Check if the PEM file exists
 if [[ ! -e "$pem_file" ]]; then
-    echo "Error: PEM file $pem_file does not exist. Exiting."
+    echo "❌ Error: PEM file $pem_file does not exist. Exiting."
     exit 1
 fi
 
@@ -408,19 +437,19 @@ fi
 current_permissions=$(stat --format='%a' "$pem_file" 2>/dev/null || stat -f '%A' "$pem_file" 2>/dev/null)
 
 if [[ -z "$current_permissions" ]]; then
-    echo "Error: Unable to determine permissions for $pem_file. Ensure 'stat' is available."
+    echo "❌ Error: Unable to determine permissions for $pem_file. Ensure 'stat' is available."
     exit 2
 fi
 
 # Check if the PEM file permissions are 400
 if [[ "$current_permissions" -ne 400 ]]; then
-    echo "Error: The PEM file $pem_file does not have the required permissions of 400."
+    echo "❌ Error: The PEM file $pem_file does not have the required permissions of 400."
     echo "Please run: chmod 400 $pem_file"
     exit 3
 fi
 
 echo "The PEM file $pem_file has the correct permissions (400)."
-echo "Using key: $selected_key with PEM file $pem_file"
+echo "✅ Using key: $selected_key with PEM file $pem_file"
 
 # Query available S3 buckets and present only those in the correct region
 echo "Fetching S3 buckets matching 'omics-analysis' in $region..."
@@ -445,14 +474,14 @@ while IFS= read  bucket; do
 done <<< "$buckets"
 
 if [[ ${#matching_buckets[@]} -eq 0 ]]; then
-    echo "No matching buckets found in region $region."
+    echo "❌ No matching buckets found in region $region."
     exit 3
 fi
 
 echo "Select a matching S3 bucket:"
 select bucket_choice in "${matching_buckets[@]}"; do
     selected_bucket=$(echo "$bucket_choice" | awk '{print $1}')
-    echo "You selected: $selected_bucket"
+    echo "✅ You selected: $selected_bucket"
     break
 done
 
@@ -467,7 +496,7 @@ check_s3_folder() {
     if aws s3 ls "s3://$bucket/$folder/" --profile $AWS_PROFILE > /dev/null 2>&1; then
         echo "Folder s3://$bucket/$folder/ exists."
     else
-        echo "ERROR: Folder s3://$bucket/$folder/ does not exist."
+        echo "❌ Error: Folder s3://$bucket/$folder/ does not exist."
         exit 1
     fi
 }
@@ -479,7 +508,7 @@ check_s3_folder "$bucket" "cluster_boot_config" || exit 3
 
 bucket_url="s3://$selected_bucket"
 bucket_name=$bucket
-echo "All required folders exist in $bucket_url."
+echo "✅ All required folders exist in $bucket_url."
 
 ## TODO: add a check to confirim the bucket has the expected s3://%{bucket}/data and s3://%{bucket}/cluster_boot_config folders
 
@@ -506,14 +535,14 @@ if [[ -z "$public_subnets" && -z "$private_subnets" ]]; then
 
     bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml "$res_prefix" "$region_az" "$region" $AWS_PROFILE
 elif [[ -z "$public_subnets" || -z "$private_subnets"  ]]; then
-    echo "Error: Incomplete setup. Ensure public and private subnets and the required ARN are available.  You might try running : bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml $res_prefix $region_az $region $AWS_PROFILE"
+    echo "❌ Error: Incomplete setup. Ensure public and private subnets and the required ARN are available.  You might try running : bin/init_cloudstackformation.sh ./config/day_cluster/pcluster_env.yml $res_prefix $region_az $region $AWS_PROFILE"
     exit 1
 else
-    echo "All required resources are available."
+    echo "✅ All required resources are available."
 fi
 echo ""
 
-echo "Setup complete. Proceeding with the remaining steps..."
+echo "✅ Setup complete. Proceeding with the remaining steps..."
 
 echo ""
 echo ""
@@ -529,7 +558,7 @@ echo ""
 
 select public_subnet_choice in "${public_subnet_choices[@]}"; do
     public_subnet=$(echo "$public_subnet_choice" | sed -n 's/.*(\(.*\)).*/\1/p')
-    echo "You selected Public Subnet: $public_subnet"
+    echo "✅ You selected Public Subnet: $public_subnet"
     break
 done
 echo ""
@@ -544,7 +573,7 @@ echo ""
 
 select private_subnet_choice in "${private_subnet_choices[@]}"; do
     private_subnet=$(echo "$private_subnet_choice" | sed -n 's/.*(\(.*\)).*/\1/p')
-    echo "You selected Private Subnet: $private_subnet"
+    echo "✅ You selected Private Subnet: $private_subnet"
     break
 done
 
@@ -554,40 +583,17 @@ echo ""
 policy_arns=($(aws iam list-policies --query 'Policies[?PolicyName==`pclusterTagsAndBudget`].Arn' --output text --region "$region" --profile $AWS_PROFILE ))
 echo "Select an IAM policy ARN for 'pclusterTagsAndBudget':"
 select arn_policy_id in "${policy_arns[@]}"; do
-    echo "You selected: $arn_policy_id"
+    echo "✅ You selected: $arn_policy_id"
     break
 done
 echo ""
 
 if [[ -z "$arn_policy_id" ]]; then
-    echo "Error: No IAM policy ARN selected. Exiting."
+    echo "❌ Error: No IAM policy ARN selected. Exiting."
     exit 3
 fi
 
 echo ""
-
-## Function to validate cluster name
-#validate_cluster_name() {
-#    if [[ ! "$1" =~ ^[a-zA-Z0-9\-]+$ ]] || [[ ${#1} -gt 25 ]]; then
-#        return 1
-#    else
-#        return 0
-#    fi
-#}
-#
-# Prompt user for cluster name
-#while true; do
-#    echo -n "Enter the name for your cluster (alphanumeric and '-', max 25 chars): "
-#    read cluster_name
-#
-#    if validate_cluster_name "$cluster_name"; then
-#        echo "Cluster name accepted: $cluster_name"
-#        break
-#    else
-#        echo "Error: Invalid cluster name. Please ensure it is alphanumeric, may include '-', and is 25 characters or fewer."
-#    fi
-#done
-
 
 # Function to validate cluster name
 validate_cluster_name() {
@@ -615,23 +621,27 @@ done
 
 # Function to prompt for email
 budget_email=""
-prompt_for_email() {
-    while true; do
-        echo ""
-        read -rp "Enter an email address to send budget alerts to: " budget_email
-        # Regex pattern for basic email validation
-        if [[ -z "$budget_email" ]]; then
-            echo "Email cannot be empty. Please try again."
-        elif [[ "$budget_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
-            echo "Valid email entered: $budget_email"
-            break
-        else
-            echo "Invalid email format. Please use string@string.string format."
-        fi
-    done
-}
+if [[ -n "$CONFIG_BUDGET_EMAIL" ]]; then
+    budget_email="$CONFIG_BUDGET_EMAIL"
+else
+    prompt_for_email() {
+        while true; do
+            echo ""
+            read -rp "Enter an email address to send budget alerts to: " budget_email
+            # Regex pattern for basic email validation
+            if [[ -z "$budget_email" ]]; then
+                echo "Email cannot be empty. Please try again."
+            elif [[ "$budget_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+                echo "Valid email entered: $budget_email"
+                break
+            else
+                echo "Invalid email format. Please use string@string.string format."
+            fi
+        done
+    }
 
-prompt_for_email
+    prompt_for_email
+fi
 
 echo ""
 # CLuster Budget Check
@@ -652,20 +662,20 @@ if [[ -z "$global_budget_exists" || "$global_budget_exists" == "None" ]]; then
 
     echo -n "Enter a budget amount (default: 300): "
     read gamount
-    gamount=${gamount:-300}
+    gamount=${gamount:-200}
 
     echo "Creating the budget..."
     echo "bin/create_budget.sh -p $global_budget_name -r $region -t 25,50,75,99 -e $budget_email -a $gamount -c $cluster_name -z $region_az -b $bucket_url  -u $gallowed_users "
     bin/create_budget.sh -p $global_budget_name -r $region -t 25,50,75,99 -e "$budget_email" -a "$gamount" -c $cluster_name -z $region_az -b $bucket_url  -u "$gallowed_users "
 
     if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to create the budget. Exiting."
+        echo "❌ Error: Failed to create the budget. Exiting."
         exit 3
     else
-        echo "Budget '$global_budget_name' created successfully."
+        echo "✅  Budget '$global_budget_name' created successfully."
     fi
 else
-    echo "Default budget '$global_budget_name' exists. Proceeding"
+    echo "✅ Default budget '$global_budget_name' exists. Proceeding"
 fi
 
 
@@ -683,55 +693,74 @@ budget_exists=$(aws budgets describe-budgets \
 if [[ -z "$budget_exists" || "$budget_exists" == "None" ]]; then
     echo "Budget '$budget_name' not found."
 
-    echo -n "Enter csv string of allowed user names for budget (ubuntu is allowed for all budgets):"
-    read allowed_users
+    allowed_users=""
+    if [[ -n "$CONFIG_ALLOWED_BUDGET_USERS" ]]; then
+        allowed_users="$CONFIG_ALLOWED_BUDGET_USERS"
+    else        
+        echo -n "Enter csv string of allowed user names for budget (ubuntu is allowed for all budgets):"
+        read allowed_users
+    fi
 
-    echo -n "Enter a budget amount (default: 200): "
-    read amount
-    amount=${amount:-200}
+    amount="200"
+    if [[ -n "$CONFIG_BUDGET_AMOUNT" ]]; then
+        amount="$CONFIG_BUDGET_AMOUNT"
+    else
+        echo -n "Enter a budget amount (default: 200): "
+        read amount
+        amount=${gamount:-200}
+    fi
 
     echo "Creating the budget..."
     echo "bin/create_budget.sh -p $budget_name -r $region -t 75 -e $budget_email -a $amount -c $cluster_name -z $region_az -b $bucket_url  -u $allowed_users "
     bin/create_budget.sh -p $budget_name -r $region -t 75 -e "$budget_email" -a "$amount" -c $cluster_name -z $region_az -b $bucket_url  -u "$allowed_users "
 
     if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to create the budget. Exiting."
+        echo "❌ Error: Failed to create the budget. Exiting."
         exit 3
     else
-        echo "Budget '$budget_name' created successfully."
+        echo "✅ Budget '$budget_name' created successfully."
     fi
 else
-    echo "Default budget '$budget_name' exists. Proceeding"
+    echo "✅ Default budget '$budget_name' exists. Proceeding"
 fi
 echo ""
 
 # Budget enforcement
-echo "Enforce budget for the cluster? (1) No (2) Yes:"
-echo "if enforced, new jobs will be blocked if the budget is exceeded, but the cluster will continue to run until you shut it down."
-enforce_budget_bool="false"
-select enforce_budget in "No" "Yes"; do
-    if [[ "$enforce_budget" == "Yes" ]]; then
-        enforce_budget_bool="enforce"
-    else
-        enforce_budget_bool="skip"
-    fi
-    break
-done
-echo ""
-
-# Cluster config file input
-echo -n "Enter the path to the Daylily cluster config YAML file [press Enter to use default 'config/day_cluster/prod_cluster.yaml']: "
-read cluster_yaml
-
-if [[ -z "$cluster_yaml" ]]; then
-    cluster_yaml="config/day_cluster/prod_cluster.yaml"
-    echo "Using default: $cluster_yaml"
+enforce_budget_opt="false"
+if [[ -n "$CONFIG_ENFORCE_BUDGET" ]]; then
+    enforce_budget_opt="$CONFIG_ENFORCE_BUDGET"
+else
+    echo "Enforce budget for the cluster? (1) No (2) Yes:"
+    echo "if enforced, new jobs will be blocked if the budget is exceeded, but the cluster will continue to run until you shut it down."
+    select enforce_budget in "No" "Yes"; do
+        if [[ "$enforce_budget" == "Yes" ]]; then
+            enforce_budget_opt="enforce"
+        else
+            enforce_budget_opt="skip"
+        fi
+        break
+    done
+    echo ""
 fi
 
+# Cluster config file input
+cluster_yaml=""
+if [[ -n "$CONFIG_CLUSTER_TEMPLATE_YAML" ]]; then
+    cluster_yaml="$CONFIG_CLUSTER_TEMPLATE_YAML"
+else
+
+    echo -n "Enter the path to the Daylily cluster config YAML file [press Enter to use default 'config/day_cluster/prod_cluster.yaml']: "
+    read cluster_yaml
+
+    if [[ -z "$cluster_yaml" ]]; then
+        cluster_yaml="config/day_cluster/prod_cluster.yaml"
+    fi    
+fi
 if [[ ! -f "$cluster_yaml" ]]; then
-    echo "Error: YAML file '$cluster_yaml' does not exist."
-    exit 3
-fi 
+        echo "❌ Error: YAML file '$cluster_yaml' does not exist."
+        exit 3
+    fi 
+echo "✅ Using cluster template yaml: $cluster_yaml"
 
 echo ""
 
@@ -764,31 +793,50 @@ enable_xmr=0
 echo ""
 
 echo "Choose the FSX Lustre File System Size (tested with 4800):"
-fsx_options="4800 7200"
 
-# Define select loop
-select fsx_size in $fsx_options; do
-    sel_fsx_size=$(echo $fsx_size | awk '{print $1}')
-    echo "You selected FSX Lustre File System Size: $sel_fsx_size"
-    break
-done
-echo "FSX Lustre File System Size: $sel_fsx_size"
+sel_fsx_size="4800"
+if [[ -n "$CONFIG_FSX_FS_SIZE" ]]; then
+    sel_fsx_size="$CONFIG_FSX_FS_SIZE"
+else
+    fsx_options="4800 7200"
+    # Define select loop
+    select fsx_size in $fsx_options; do
+        sel_fsx_size=$(echo $fsx_size | awk '{print $1}')
+        echo "You selected FSX Lustre File System Size: $sel_fsx_size"
+        break
+    done
+    echo "FSX Lustre File System Size: $sel_fsx_size"
+    echo ""
+fi
+echo "✅ FSX Lustre File System Size: $sel_fsx_size"
 echo ""
 
-echo "Enable detailed monitoring (yes == incurs addl cost)? (1) No (2) Yes:"
-det_mon_options="No Yes"
-select detailed_monitoring in $det_mon_options; do
-    sel_detailed_monitoring=$(echo $detailed_monitoring | awk '{print $1}')
-    echo "You selected detailed monitoring: $sel_detailed_monitoring"
-    if [[ "$act_detailed_monitoring" == "Yes" ]]; then
+# Enable detailed monitoring
+act_detailed_monitoring=false
+if [[ -n "$CONFIG_ENABLE_DETAILED_MONITORING" ]]; then
+    if [[ "$CONFIG_ENABLE_DETAILED_MONITORING" == "true" ]]; then
         act_detailed_monitoring="true"
-    else
+    elif [[ "$CONFIG_ENABLE_DETAILED_MONITORING" == "false" ]]; then
         act_detailed_monitoring="false"
+    else
+        echo "❌ Error: Invalid value for CONFIG_DETAILED_MONITORING. Expected 'true' or 'false'."
+        exit 3
     fi
-    break
-done
-
-echo "Detailed monitoring enabled: $act_detailed_monitoring"
+else
+    echo "Enable detailed monitoring (yes == incurs addl cost)? (1) No (2) Yes:"
+    det_mon_options="No Yes"
+    select detailed_monitoring in $det_mon_options; do
+        sel_detailed_monitoring=$(echo $detailed_monitoring | awk '{print $1}')
+        echo "You selected detailed monitoring: $sel_detailed_monitoring"
+        if [[ "$act_detailed_monitoring" == "Yes" ]]; then
+            act_detailed_monitoring="true"
+        else
+            act_detailed_monitoring="false"
+        fi
+        break
+    done
+fi
+echo "✅ Detailed monitoring enabled?: $act_detailed_monitoring"
 echo ""
 
 # Prepare configuration
@@ -800,62 +848,115 @@ regsub_vals=$HOME/.config/daylily/${cluster_name}_cluster_init_vals.txt
 cp "$cluster_yaml" "$target_conf"
 pem_name=$(basename "$pem_file" | cut -d '.' -f 1)
 
-# capture 'true' or 'false' for delete_local_root
-echo "Delete local root volume on termination? (1) No (2) Yes:"
-select delete_local_root in "No" "Yes"; do
-    if [[ "$delete_local_root" == "Yes" ]]; then
-        delete_local_root="true"
-    else
-        delete_local_root="false"
-    fi
-    break
-done
-echo ""
 
-echo "[Retain|Delete] FSx Lustre file system on custer [update|termination]? (1) Retain (2) Delete:"
-select save_fsx in "Retain" "Delete"; do
-    if [[ "$save_fsx" == "Delete" ]]; then
+# capture 'true' or 'false' for delete_local_root
+# if CONFIG_DELETE_LOCAL_ROOT is set, use that value
+delete_local_root=true
+if [[ -n "$CONFIG_DELETE_LOCAL_ROOT" ]]; then
+    if [[ "$CONFIG_DELETE_LOCAL_ROOT" == "true" ]]; then
+        delete_local_root="true"
+    elif [[ "$CONFIG_DELETE_LOCAL_ROOT" == "false" ]]; then
+        delete_local_root="false"
+    else
+        echo "❌ Error: Invalid value for CONFIG_DELETE_LOCAL_ROOT. Expected 'true' or 'false'."
+        exit 3
+    fi
+else
+
+    echo "Delete local root volume on termination? (1) No (2) Yes:"
+
+    delete_local_root="true"
+    if [[ -n "$CONFIG_DELETE_LOCAL_ROOT" ]]; then
+        if [[ "$CONFIG_DELETE_LOCAL_ROOT" == "true" ]]; then
+            delete_local_root="true"
+        elif [[ "$CONFIG_DELETE_LOCAL_ROOT" == "false" ]]; then
+            delete_local_root="false"
+        else
+            echo "❌ Error: Invalid value for CONFIG_DELETE_LOCAL_ROOT. Expected 'true' or 'false'."
+            exit 3
+        fi
+    else
+        select delete_local_root in "No" "Yes"; do
+            if [[ "$delete_local_root" == "Yes" ]]; then
+                delete_local_root="true"
+            else
+                delete_local_root="false"
+            fi
+            break
+        done
+    fi
+fi
+echo "✅ Delete local root volume on termination?: $delete_local_root"
+
+# Retailn or delete the FSx Lustre file system
+save_fsx="Delete"
+if [[ -n "$CONFIG_AUTO_DELETE_FSX" ]]; then
+    if [[ "$CONFIG_AUTO_DELETE_FSX" == "Retain" ]]; then
+        save_fsx="Retain"
+    elif [[ "$CONFIG_AUTO_DELETE_FSX" == "Delete" ]]; then
         save_fsx="Delete"
     else
-        save_fsx="Retain"
+        echo "❌ Error: Invalid value for CONFIG_AUTO_DELETE_FSX. Expected 'Retain' or 'Delete'."
+        exit 3
     fi
-    break
-done
+else
+    echo "Retain or delete the FSx Lustre file system on cluster [update|termination]? (1) Retain (2) Delete:"
+   
+    echo "[Retain|Delete] FSx Lustre file system on custer [update|termination]? (1) Retain (2) Delete:"
+    select save_fsx in "Retain" "Delete"; do
+        if [[ "$save_fsx" == "Delete" ]]; then
+            save_fsx="Delete"
+        else
+            save_fsx="Retain"
+        fi
+        break
+    done
+fi
+echo "✅ Retain or delete the FSx Lustre file system on cluster [update|termination]?: $save_fsx"
 echo ""
 
 allocation_strategy=""
+if [[ -n "$CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY" ]]; then
+    if [[ "$CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY" == "price-capacity-optimized" || "$CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY" == "capacity-optimized" || "$CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY" == "lowest-price" ]]; then
+        allocation_strategy="$CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY"
+    else
+        echo "❌ Error: Invalid value for CONFIG_ALLOCATION_STRATEGY. Expected 'price-capacity-optimized', 'capacity-optimized', or 'lowest-price'."
+        exit 3
+    fi
+else
 
-# Loop until we get a valid selection or user presses Enter
-while true; do
-  echo "Select A Spot Instance Allocation Strategy:"
-  echo "1) price-capacity-optimized (default, balance of lowest-cost + capacity optimized placement)"
-  echo "2) capacity-optimized (more expensive, fewer disruptions)"
-  echo "3) lowest-price (potentially more disruptions)"
-  echo -n "Enter selection [1]: "
-  read user_choice
+    # Loop until we get a valid selection or user presses Enter
+    while true; do
+    echo "Select A Spot Instance Allocation Strategy:"
+    echo "1) price-capacity-optimized (default, balance of lowest-cost + capacity optimized placement)"
+    echo "2) capacity-optimized (more expensive, fewer disruptions)"
+    echo "3) lowest-price (potentially more disruptions)"
+    echo -n "Enter selection [1]: "
+    read user_choice
 
-  case "$user_choice" in
-    ""|1)
-      # Default or user entered 1
-      allocation_strategy="price-capacity-optimized"
-      break
-      ;;
-    2)
-      allocation_strategy="capacity-optimized"
-      break
-      ;;
-    3)
-      allocation_strategy="lowest-price"
-      break
-      ;;
-    *)
-      echo "Invalid selection. Please try again."
-      echo
-      ;;
-  esac
-done
+    case "$user_choice" in
+        ""|1)
+        # Default or user entered 1
+        allocation_strategy="price-capacity-optimized"
+        break
+        ;;
+        2)
+        allocation_strategy="capacity-optimized"
+        break
+        ;;
+        3)
+        allocation_strategy="lowest-price"
+        break
+        ;;
+        *)
+        echo "Invalid selection. Please try again."
+        echo
+        ;;
+    esac
+    done
+fi
 
-echo "You selected the allocation strategy: $allocation_strategy"
+echo "✅ You selected the allocation strategy: $allocation_strategy"
 echo ""
 
 git_deets=$(bin/get_git_deets.sh)
@@ -880,7 +981,7 @@ REGSUB_USERNAME=${USER}-${AWS_CLI_USER}
 REGSUB_PROJECT=$budget_name
 REGSUB_DELETE_LOCAL_ROOT=$delete_local_root
 REGSUB_SAVE_FSX=$save_fsx
-REGSUB_ENFORCE_BUDGET=$enforce_budget_bool
+REGSUB_ENFORCE_BUDGET=$enforce_budget_opt
 REGSUB_AWS_ACCOUNT_ID=aws_profile-$AWS_PROFILE
 REGSUB_ALLOCATION_STRATEGY=$allocation_strategy
 REGSUB_DAYLILY_GIT_DEETS=$git_deets
@@ -899,12 +1000,12 @@ echo ""
 
 # Check the exit status of the previous command
 if [[ $? -ne 0 ]]; then
-    echo "Error: Failed to calculate spot bid prices."
+    echo "❌ Error: Failed to calculate spot bid prices."
     echo "This is likely due to a policy/permissions issue in AWS."
     echo "Please refer to the quickstart guide for more information on required policies."
     exit 3  # Use 'exit 3' if outside a function or script
 fi
-echo ""
+echo "✅ Spot bid prices calculated successfully."
 
 # Dry run cluster creation
 echo "Running a cluster creation dry run..."
@@ -917,12 +1018,12 @@ echo ""
 
 # Validate the message
 if [[ "$message" == "Request would have succeeded, but DryRun flag is set." ]]; then
-    echo "Dry run successful. Proceeding with cluster creation."
+    echo "✅ Dry run successful. Proceeding with cluster creation."
 elif [[ "$DAY_BREAK" == "1" ]]; then
     echo "DAY_BREAK == '1'.  Exiting without creating the cluster."
     exit 0
 else
-    echo "Error: Dry run failed (  pcluster create-cluster -n $cluster_name -c $target_conf_fin --dryrun true --region $region   ). Exiting."
+    echo "❌ Error: Dry run failed (  pcluster create-cluster -n $cluster_name -c $target_conf_fin --dryrun true --region $region   ). Exiting."
     exit 3
 fi
 echo ""
@@ -939,7 +1040,7 @@ echo "Monitoring cluster creation... this may take 15-60 minutes."
 python bin/helpers/watch_cluster_status.py "$region"
 echo ""
 
-echo "Once the cluster is complete, configure the head node by running 'source ./bin/daylily-cfg-headnode $pem_file $region $AWS_PROFILE' ."
+echo "✅ The cluster creation is complete, configure the head node by running 'source ./bin/daylily-cfg-headnode $pem_file $region $AWS_PROFILE' ."
 echo "....trying this now!"
 echo ""
 
@@ -947,4 +1048,4 @@ sleep 2
 source ./bin/daylily-cfg-headnode $pem_file $region $AWS_PROFILE
 echo ""
 
-echo "....fin! "
+echo "✅ ✅ ✅ ....fin! "

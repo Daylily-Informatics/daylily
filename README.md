@@ -1,5 +1,5 @@
 # Daylily AWS Ephemeral Cluster Setup
-_(0.7.171)_
+_(0.7.173)_
 
 **beta release**
 
@@ -644,6 +644,20 @@ REGION_AZ=us-west-2c
 ./bin/daylily-create-ephemeral-cluster --region-az $REGION_AZ --profile $AWS_PROFILE --pass-on-warn # If you created an inline policy with a name other than daylily-service-cluster-policy, you will need to acknowledge the warning to proceed (assuming the policy permissions were granted other ways)
 
 ```    
+
+> Pre-set configs for `daylily-create-ephemeral-clsuter` can be specified in a file named `.dayephemeral.env`. This file will auto-select options in the create script. This file may contain the following vars:
+> ```bash
+CONFIG_DELETE_LOCAL_ROOT=true # or false
+CONFIG_BUDGET_EMAIL=johnm@lsmc.com # any single valid email
+CONFIG_ALLOWED_BUDGET_USERS=ubuntu # or other username or csv of usernames
+CONFIG_BUDGET_AMOUNT=200 # or other int
+CONFIG_ENFORCE_BUDGET=skip # or enforce
+CONFIG_AUTO_DELETE_FSX=Delete # or Retain
+CONFIG_FSX_FS_SIZE=4800 # or 7200 or other valid FSX fs sizes
+CONFIG_ENABLE_DETAILED_MONITORING=false # or true
+CONFIG_CLUSTER_TEMPLATE_YAML=config/day_cluster/prod_cluster.yaml
+CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY=price-capacity-optimized # price-capacity-optimized,capacity-optimized,lowest-price .. ! you probably do not want lowest-price
+```
 
 **The gist of the flow of the script is as follows:**
 
