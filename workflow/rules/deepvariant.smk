@@ -161,7 +161,7 @@ rule deep_concat_fofn:
     resources:
         vcpu=2,
         threads=2,
-        partition="i192",
+        partition="i192,i192mem",
     params:
         fn_stub="{sample}.{alnr}.deep.",
         cluster_sample=ret_sample,
@@ -247,7 +247,7 @@ rule clear_combined_deep_vcf:  # TARGET:  clear combined deep vcf so the chunks 
     resources:
         vcpu=2,
         threads=2,
-        partition="i192",
+        partition="i192,i192mem",
     shell:
         "(rm {input.vcf}*   1> /dev/null  2> /dev/null ) || echo 'file not found for deletion: {input}';"
 

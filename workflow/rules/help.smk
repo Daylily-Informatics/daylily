@@ -156,7 +156,7 @@ rule util_env_check:  # TARGET : Will create a few files in the results dir, use
         cluster_sample="na",
         cluster_slots=get_slots,
     resources:
-        partition="i8,i192",  # if partition is not set in rule, default from profile config is used
+        partition="i8,i192,i192mem",  # if partition is not set in rule, default from profile config is used
         threads=get_slots,  # if threads is not set in rule, default from profile config is used
     conda:
         "../envs/vanilla_v0.1.yaml"  # oddity- the conda envs are declared relative to the rules directory, not like everything else which is from the execution directory.
@@ -224,7 +224,7 @@ rule test_benchmark:
     resources:
         vcpu=2,
         threads=2,
-        partition="i8,i128,i192"
+        partition="i8,i128,i192,i192mem"
     benchmark:
         "logs/test_bench.tsv"
     shell:
@@ -241,7 +241,7 @@ rule help:
     resources:
         vcpu=1,
         threads=1,
-        partition="i8,i192",
+        partition="i8,i192,i192mem",
     shell:
         """
 
