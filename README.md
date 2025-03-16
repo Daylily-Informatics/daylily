@@ -75,6 +75,7 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
   - [OF RESULTS DATA in S3 ( $Varies, are you storing BAM or CRAM, vcf.gz or gvcf.gz? )](#of-results-data-in-s3--varies-are-you-storing-bam-or-cram-vcfgz-or-gvcfgz-)
 - [PCUI (technically optional, but you will be missing out)](#pcui-technically-optional-but-you-will-be-missing-out)
   - [Install Steps](#install-steps)
+    - [Adding `inline policies` To The PCUI IAM Roles To Allow Access To Parallel Cluster Ref Buckets](#adding-inline-policies-to-the-pcui-iam-roles-to-allow-access-to-parallel-cluster-ref-buckets)
   - [PCUI Costs ( ~ $1.00 / month )](#pcui-costs---100--month-)
 - [Working With The Ephemeral Clusters](#working-with-the-ephemeral-clusters)
   - [PCUI](#pcui)
@@ -838,6 +839,42 @@ To find the PCUI url, visit the `Outputs` tab of the `parallelcluster-ui` stack 
 > The PCUI stuff is not required, but very VERY awesome.
 
 > AND, it seems there is a permissions problem with the `daylily-service` user, as it is setup right now... the stack is failing.  Permissions are likely missing...
+
+### Adding `inline policies` To The PCUI IAM Roles To Allow Access To Parallel Cluster Ref Buckets
+Go to the `IAM Dashboard`, and under roles, search for the role `ParallelClusterUIUserRole-*` and the role `ParallelClusterLambdaRole-*`. For each, add an in line json policy as follows (_you will need to enumerate all reference buckets you wish to be able to edit with PCUI_). Name it something like `pcui-additional-s3-access`.
+
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:ListBucket",
+				"s3:GetBucketLocation"
+			],
+			"Resource": [
+				"arn:aws:s3:::YOURBUCKETNAME-USWEST2",
+				"arn:aws:s3:::YOURBUCKETNAME-EUCENTRAL1",
+				"arn:aws:s3:::YOURBUCKETNAME-APSOUTH1"
+			]
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:GetObject",
+				"s3:PutObject"
+			],
+			"Resource": [
+				"arn:aws:s3:::YOURBUCKETNAME-USWEST2/*",
+				"arn:aws:s3:::YOURBUCKETNAME-EUCENTRAL1/*",
+				"arn:aws:s3:::YOURBUCKETNAME-APSOUTH1/*"
+			]
+		}
+	]
+}
+```
+
 
 
 ## PCUI Costs ( ~ $1.00 / month )
