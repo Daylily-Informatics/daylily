@@ -12,7 +12,16 @@ if [[ -z "$dayp" ]]; then
     echo "ERROR: No profile specified, please specify [slurm|local] ([hg38|b37])"
     return 1
 fi
-        
+
+if ! which yq &>/dev/null; then
+  echo "yq not found. Installing via conda in base environment..."
+  conda install -c conda-forge yq -y || {
+    echo "Failed to install yq."
+    return 3
+  }
+else
+  echo "yq is already installed."
+fi
 CONFIG_FILE=~/.config/daylily/daylily_cli_global.yaml
 git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
 
