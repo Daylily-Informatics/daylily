@@ -91,9 +91,9 @@ if [ -d "$destination" ]; then
 fi
 
 # Clone the repo
-git clone --branch "$git_tag" "$git_repo" "$destination" || { echo "Git clone failed"; exit 1; }
+git clone --branch "$git_tag" "$git_repo" "$destination/daylily" || { echo "Git clone failed"; exit 1; }
 
-cd "$destination"
+cd "$destination/daylily"
 
 cat <<EOF
 
@@ -108,5 +108,5 @@ EOF
 
 echo ""
 echo "TO MOVE TO YOUR NEW ANALYSIS DIRECTORY, run:"
-echo "  cd $clone_root/$user_name/$destination"
+echo "  cd $clone_root/$user_name/$destination/daylily"
 echo ""
