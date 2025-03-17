@@ -7,6 +7,6 @@ channels:
 dependencies:
   - samtools>=1.11
   - bwa-mem2
-  - isa-l
+  - isa-l==2.31.0
   - seqkit
   - mbuffer

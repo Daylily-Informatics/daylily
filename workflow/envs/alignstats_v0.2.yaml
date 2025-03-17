@@ -8,7 +8,7 @@ dependencies:
   - samtools
   - pigz
   - bcftools
-  - isa-l
+  - isa-l==2.31.0
   - htslib
   - bedtools
   - perl

@@ -6,7 +6,7 @@ dependencies:
   - samtools=1.21
   - pigz
   - bcftools
-  - isa-l
+  - isa-l==2.31.0
   - htslib
   - bedtools
   - perl

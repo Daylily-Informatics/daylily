@@ -9,4 +9,4 @@ dependencies:
   - biobambam
   - seqkit
   - seqfu
-  - isa-l
+  - isa-l==2.31.0
