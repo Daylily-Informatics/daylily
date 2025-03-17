@@ -21,6 +21,7 @@ dependencies:
   - graphviz
   - nodejs
   - jq
+  - yq
   - pip:
     - docopt==0.6.2
     - colr==0.9.1

@@ -15,6 +15,13 @@ echo "Attempting to deactivate existing environments & re-init with --project $D
 # Handle build argument
 if [[ "$1" == "BUILD" ]]; then
 
+    mkdir -p ~/.config/daylily
+    cp config/daylily_cli_global.yaml ~/.config/daylily/daylily_cli_global.yaml
+    if [[ "$?" != "0" ]]; then
+        echo "Error: Failed to copy the global config file."
+        return 1
+    fi
+    
     # Source the environment installer
     source config/day/day_env_installer.sh DAY
     if [[ "$?" != "0" ]]; then
@@ -22,6 +29,13 @@ if [[ "$1" == "BUILD" ]]; then
         return 1
     else
         echo "DAY environment installed successfully."
+        cp bin/day-clone ~/miniconda3/bin/day-clone
+        if [[ "$?" != "0" ]]; then
+            echo "Error: Failed to copy the day-clone script."
+            return 1
+        fi
+        echo "day-clone script copied successfully."
+
         return 0
     fi
 

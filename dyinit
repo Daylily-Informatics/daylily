@@ -10,7 +10,16 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     return 3
 fi
 
-
+if [[ -z "~/miniconda3/bin/day-clone" ]]; then
+    echo "!!!!"
+    echo "!!!!"
+    echo "Error: day-clone script not found. Please run 'day-build' to set up the environment."
+    echo "day-clone was released with tagged version 0.7.180 of daylily, and is a breaking change from previous versions."
+    echo "You will need to update your local daylily repository to >=0.7.180 to proceed."
+    echo "If you have existing clusters created prior to 0.7.180, you will need to rebuild and/or rerun dy-b BUILD."
+    echo "!!!!"
+    return 3
+fi
 
 # Set default contact email if not already set
 export DAY_CONTACT_EMAIL="${DAY_CONTACT_EMAIL:-john@daylilyinformatics.com}"

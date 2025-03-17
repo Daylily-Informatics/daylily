@@ -8,6 +8,12 @@ region=$2
 aws_profile=$3
 duser="ubuntu"
 
+
+CONFIG_FILE="config/daylily_cli_global.yaml"
+
+git_tag=$(yq '.daylily.git_tag' "$CONFIG_FILE")
+git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
+
 # Ensure both PEM file and region are provided
 if [[ -z "$pem_file" || -z "$region" || -z "$aws_profile" ]]; then
     echo "Error: You must provide both the PEM file path and the AWS region."
@@ -96,7 +102,7 @@ sleep 15
 # Clone the Daylily repository to the head node
 echo "Cloning Daylily repository usibng https to the head node ~/projects"
 ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
-    "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects &&  git clone https://github.com/Daylily-Informatics/daylily.git'"
+    "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects &&  git clone -b ${git_tag} ${git_repo} daylily'"
 
 # Initialize and configure the Daylily environment on the head node
 echo "Configuring Daylily environment on the head node..."
@@ -135,6 +141,7 @@ echo "Setup complete. "
 echo " "
 echo "___bonus round___"
 echo "Would you like to start building various caches needed to run jobs? [y/n]"
+
 
 # Dont really need this if using the updated ref bucket
 timeout 1 bash -c 'read -p "Press y to start or n to skip: " REPLY && echo "$REPLY"' && export REPLY=$REPLY
