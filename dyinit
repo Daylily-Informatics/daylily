@@ -10,7 +10,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     return 3
 fi
 
-if [[ -z "~/miniconda3/bin/day-clone" ]]; then
+if [[ ! -f "~/miniconda3/bin/day-clone" ]]; then
     echo "!!!!"
     echo "!!!!"
     echo "Error: day-clone script not found. Please run 'day-build' to set up the environment."
