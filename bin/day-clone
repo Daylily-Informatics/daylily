@@ -6,18 +6,20 @@ CONFIG_FILE="$HOME/.config/daylily/daylily_cli_global.yaml"
 
 git_tag=$(yq '.daylily.git_tag' "$CONFIG_FILE")
 git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
-
-# Defaults
+clone_root=$(yq '.daylily.analysis_root' "$CONFIG_FILE")
 user_name="$USER"
+
+destination=""
 
 print_help() {
   cat <<EOF
 Usage: $(basename "$0") [OPTIONS]
-
+Config defaults from: $CONFIG_FILE
 Options:
-  -t, --git-tag       Git tag to clone (default from $CONFIG_FILE)
-  -r, --git-repo      Git repository URL (default from $CONFIG_FILE)
-  -c, --clone-root    Root directory to clone into (required)
+  -t, --git-tag       Git tag to clone (default: $git_tag)
+  -r, --git-repo      Git repository URL (default: $git_repo)
+  -c, --clone-root    Root directory to clone into (default: $clone_root)
+  -d, --destination   Directory name to create in \$clone_root/\$user_name (REQUIRED)
   -u, --user-name     Username to create directory as (default: $USER)
   -h, --help          Show this help message and exit
 EOF
@@ -38,6 +40,10 @@ while [[ $# -gt 0 ]]; do
       clone_root="$2"
       shift; shift
       ;;
+    -d|--destination)
+      destination="$2"
+      shift; shift
+      ;;
     -u|--user-name)
       user_name="$2"
       shift; shift
@@ -54,9 +60,9 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Required parameter check
-if [ -z "$clone_root" ]; then
-  echo "Error: --clone-root (-c) is required."
+# Check required parameter 'destination'
+if [ -z "$destination" ]; then
+  echo "Error: --destination (-d) is required."
   print_help
   exit 1
 fi
@@ -76,18 +82,6 @@ if [ ! -d "$clone_root/$user_name" ]; then
 fi
 
 cd "$clone_root/$user_name"
-
-if [ -z "$git_repo" ]; then
-  git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
-fi
-
-if [ -z "$git_tag" ]; then
-  git_tag=$(yq '.daylily.git_tag' "$CONFIG_FILE")
-fi
-
-if [ -z "$destination" ]; then
-  destination=$(basename "$git_repo" .git)
-fi
 
 if [ -d "$destination" ]; then
   echo "Error: directory '$destination' already exists."
