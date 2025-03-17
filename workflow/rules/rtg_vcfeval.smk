@@ -70,6 +70,8 @@ if len(CONCORDANCE_SAMPLES.keys()) > 0:
             alt_name=get_alt_sample_name, 
         shell:
             """
+            # This is a *very* old shameful mess :-) I apologize in advance if you need to debug this before I've killed it off.
+
             export TMPDIR="/fsx/scratch/";
             mkdir -p $HOME/.parallel;
             parallel --record-env;

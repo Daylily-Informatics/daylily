@@ -10,7 +10,7 @@ ephemeral_cluster:
     fsx_fs_size: 4800 # or 7200 or other valid FSX fs sizes
     enable_detailed_monitoring: false # or true
     cluster_template_yaml: config/day_cluster/prod_cluster.yaml
-    spot_instance_allocation_strategy: price-capacity-optimized # lowest_price, price-capacity-optimized,capacity-optimized
+    spot_instance_allocation_strategy: lowest-price # lowest_price, price-capacity-optimized,capacity-optimized
     max_count_8I: 4 # max number of spots of this cpu size to request
     max_count_128I: 3 # max number of spots of this cpu size to request
     max_count_192I: 2 # max number of spots of this cpu size to request

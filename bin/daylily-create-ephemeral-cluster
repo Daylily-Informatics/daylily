@@ -113,7 +113,17 @@ echo "CONFIG_MAX_COUNT_8I: $CONFIG_MAX_COUNT_8I"
 echo "CONFIG_MAX_COUNT_128I: $CONFIG_MAX_COUNT_128I"
 echo "CONFIG_MAX_COUNT_192I: $CONFIG_MAX_COUNT_192I"
 echo ""
-sleep 0.5
+
+echo "If you wish to override the above values, please edit the $CONFIG_FILE file appropriately. These defaults are set for a very low quota account, so you will want to boost the CONFIG_MAX_COUNT_*I values if you have higher spot quotas."
+
+echo ""
+echo "please confirm these values are correct and press Enter to continue, or Ctrl-C to exit."
+
+read confirm "Press enter to continue, any other key to exit: " 
+if [[ "$confirm" != "" ]]; then
+    echo "Exiting..."
+    exit 3
+fi
 
 if [[ -z "$CONFIG_MAX_COUNT_8I" ]]; then
     CONFIG_MAX_COUNT_8I=1
@@ -1022,7 +1032,7 @@ echo ""
 echo "Calculating max spot bid prices per partition resource group..."
 echo ""
 
-python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE -b 3.03
+python bin/calcuate_spotprice_for_cluster_yaml.py -i $target_conf -o $target_conf_fin --az $region_az --profile $AWS_PROFILE -b 3.73
 echo ""
 
 # Check the exit status of the previous command
