@@ -1,0 +1,94 @@
+#!/bin/bash
+
+#!/usr/bin/env bash
+
+set -e
+
+CONFIG_FILE="$HOME/.config/daylily/daylily_cli_global.yaml"
+
+git_tag=$(yq '.daylily.git_tag' "$CONFIG_FILE")
+git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
+
+# Defaults
+user_name="$USER"
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -t|--git-tag)
+      git_tag="$2"
+      shift; shift
+      ;;
+    -r|--git-repo)
+      git_repo="$2"
+      shift; shift
+      ;;
+    -c|--clone-root)
+      clone_root="$2"
+      shift; shift
+      ;;
+    -u|--user-name)
+      user_name="$2"
+      shift; shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+esac
+done
+
+# Required parameter check
+if [ -z "$clone_root" ]; then
+  echo "Error: --clone-root (-c) is required."
+  exit 1
+fi
+
+if [ ! -d "$clone_root" ]; then
+  echo "Error: clone_root directory '$clone_root' does not exist."
+  exit 1
+fi
+
+if [ -z "$user_name" ]; then
+  user_name="$USER"
+else
+  user_name="$user_name"
+fi
+
+if [ ! -d "$clone_root/$user_name" ]; then
+  echo "Warning: Directory '$clone_root/$user_name' does not exist. Creating."
+  mkdir -p "$clone_root/$user_name" || { echo "Failed to create directory"; exit 1; }
+fi
+
+cd "$clone_root/$user_name"
+
+if [ -z "$git_repo" ]; then
+  git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
+fi
+
+if [ -z "$git_tag" ]; then
+  git_tag=$(yq '.daylily.git_tag' "$CONFIG_FILE")
+fi
+
+if [ -z "$destination" ]; then
+  destination=$(basename "$git_repo" .git)
+else
+  destination=$git_repo
+fi
+
+if [ -d "$destination" ]; then
+  echo "Error: directory '$destination' already exists."
+  exit 1
+fi
+
+# Clone the repo
+git clone --branch "$git_tag" "$git_repo" "$destination" || { echo "Git clone failed"; exit 1; }
+
+cd "$destination"
+
+
+echo "Great Success!"
+echo "Daylily $git_tag has been cloned to $(pwd) & you are ready to roll."
+echo "   run '. dyinit' to init your daylily environment and see further instructions."
+echo "   you can create a samples.tsv as described in the README.md then run 'bin/daylily-analysis.sh'"
+echo ""
