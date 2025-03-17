@@ -4,9 +4,9 @@ set -e
 
 CONFIG_FILE="$HOME/.config/daylily/daylily_cli_global.yaml"
 
-git_tag=$(yq '.daylily.git_tag' "$CONFIG_FILE")
-git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
-clone_root=$(yq '.daylily.analysis_root' "$CONFIG_FILE")
+git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
+git_repo=$(yq -r '.daylily.git_repo' "$CONFIG_FILE")
+clone_root=$(yq -r '.daylily.analysis_root' "$CONFIG_FILE")
 user_name="$USER"
 
 echo CR: $clone_root

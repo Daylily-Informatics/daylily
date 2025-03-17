@@ -11,8 +11,8 @@ duser="ubuntu"
 
 CONFIG_FILE="config/daylily_cli_global.yaml"
 
-git_tag=$(yq '.daylily.git_tag' "$CONFIG_FILE")
-git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
+git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
+git_repo=$(yq -r '.daylily.git_repo' "$CONFIG_FILE")
 
 # Ensure both PEM file and region are provided
 if [[ -z "$pem_file" || -z "$region" || -z "$aws_profile" ]]; then

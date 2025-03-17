@@ -82,20 +82,20 @@ fi
 if [ -f $CONFIG_FILE ]; then
     echo "Loading configuration from $CONFIG_FILE"
     source $CONFIG_FILE
-    CONFIG_YAML=$(yq '.ephemeral_cluster.config.yaml' $CONFIG_FILE)
-    CONFIG_BUDGET_EMAIL=$(yq '.ephemeral_cluster.config.budget_email' $CONFIG_FILE)
-    CONFIG_ALLOWED_BUDGET_USERS=$(yq '.ephemeral_cluster.config.allowed_budget_users' $CONFIG_FILE)
-    CONFIG_BUDGET_AMOUNT=$(yq '.ephemeral_cluster.config.budget_amount' $CONFIG_FILE)
-    CONFIG_ENFORCE_BUDGET=$(yq '.ephemeral_cluster.config.enforce_budget' $CONFIG_FILE)
-    CONFIG_DELETE_LOCAL_ROOT=$(yq '.ephemeral_cluster.config.delete_local_root' $CONFIG_FILE)
-    CONFIG_AUTO_DELETE_FSX=$(yq '.ephemeral_cluster.config.auto_delete_fsx' $CONFIG_FILE)
-    CONFIG_FSX_FS_SIZE=$(yq '.ephemeral_cluster.config.fsx_fs_size' $CONFIG_FILE)
-    CONFIG_ENABLE_DETAILED_MONITORING=$(yq '.ephemeral_cluster.config.enable_detailed_monitoring' $CONFIG_FILE)
-    CONFIG_CLUSTER_TEMPLATE_YAML=$(yq '.ephemeral_cluster.config.cluster_template_yaml' $CONFIG_FILE)
-    CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY=$(yq '.ephemeral_cluster.config.spot_instance_allocation_strategy' $CONFIG_FILE)
-    CONFIG_MAX_COUNT_8I=$(yq '.ephemeral_cluster.config.max_count_8I' $CONFIG_FILE)
-    CONFIG_MAX_COUNT_128I=$(yq '.ephemeral_cluster.config.max_count_128I' $CONFIG_FILE)
-    CONFIG_MAX_COUNT_192I=$(yq '.ephemeral_cluster.config.max_count_192I' $CONFIG_FILE)
+    CONFIG_YAML=$(yq -r '.ephemeral_cluster.config.yaml' $CONFIG_FILE)
+    CONFIG_BUDGET_EMAIL=$(yq -r '.ephemeral_cluster.config.budget_email' $CONFIG_FILE)
+    CONFIG_ALLOWED_BUDGET_USERS=$(yq -r '.ephemeral_cluster.config.allowed_budget_users' $CONFIG_FILE)
+    CONFIG_BUDGET_AMOUNT=$(yq -r '.ephemeral_cluster.config.budget_amount' $CONFIG_FILE)
+    CONFIG_ENFORCE_BUDGET=$(yq -r '.ephemeral_cluster.config.enforce_budget' $CONFIG_FILE)
+    CONFIG_DELETE_LOCAL_ROOT=$(yq -r '.ephemeral_cluster.config.delete_local_root' $CONFIG_FILE)
+    CONFIG_AUTO_DELETE_FSX=$(yq -r '.ephemeral_cluster.config.auto_delete_fsx' $CONFIG_FILE)
+    CONFIG_FSX_FS_SIZE=$(yq -r '.ephemeral_cluster.config.fsx_fs_size' $CONFIG_FILE)
+    CONFIG_ENABLE_DETAILED_MONITORING=$(yq -r '.ephemeral_cluster.config.enable_detailed_monitoring' $CONFIG_FILE)
+    CONFIG_CLUSTER_TEMPLATE_YAML=$(yq -r '.ephemeral_cluster.config.cluster_template_yaml' $CONFIG_FILE)
+    CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY=$(yq -r '.ephemeral_cluster.config.spot_instance_allocation_strategy' $CONFIG_FILE)
+    CONFIG_MAX_COUNT_8I=$(yq -r '.ephemeral_cluster.config.max_count_8I' $CONFIG_FILE)
+    CONFIG_MAX_COUNT_128I=$(yq -r '.ephemeral_cluster.config.max_count_128I' $CONFIG_FILE)
+    CONFIG_MAX_COUNT_192I=$(yq -r '.ephemeral_cluster.config.max_count_192I' $CONFIG_FILE)
 else
   echo "$CONFIG_FILE file not found!"
   sleep 1
