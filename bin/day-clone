@@ -96,8 +96,12 @@ git clone --branch "$git_tag" "$git_repo" "$destination" || { echo "Git clone fa
 cd "$destination"
 
 cat <<EOF
+
 Great Success!
 Daylily $git_tag has been cloned to $(pwd) & you are ready to roll.
    run '. dyinit' to init your daylily environment and see further instructions.
-   you can create a samples.tsv as described in the README.md then run 'bin/daylily-analysis.sh'
+   you can create a samples.tsv, a template can be found in 'etc/analysis_samples_template.tsv' as described in the README.md
+     then run 'bin/daylily-analysis-samples-to-manifest.py local ./samples.tsv $AWS_PROFILE' (omit this step to use canned test data)
+  ... and proceed to start analysis with 'dy-a slurm hg38' then 'dy-r ...'
+
 EOF

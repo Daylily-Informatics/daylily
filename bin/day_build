@@ -26,8 +26,7 @@ if [[ "$1" == "BUILD" ]]; then
         echo "Error: Failed to install the DAY environment."
         return 1
     else
-        echo "DAY environment installed successfully."
-        cp bin/day-clone ~/miniconda3/bin/day-clone
+        touch ~/.config/daylily/0.7.180
         if [[ "$?" != "0" ]]; then
             echo "Error: Failed to copy the day-clone script."
             return 1
