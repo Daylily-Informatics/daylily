@@ -9,6 +9,8 @@ git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
 clone_root=$(yq '.daylily.analysis_root' "$CONFIG_FILE")
 user_name="$USER"
 
+echo CR: $clone_root
+exit 1
 destination=""
 
 print_help() {
