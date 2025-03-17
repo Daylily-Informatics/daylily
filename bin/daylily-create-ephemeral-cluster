@@ -117,7 +117,7 @@ echo ""
 echo "If you wish to override the above values, please edit the $CONFIG_FILE file appropriately. These defaults are set for a very low quota account, so you will want to boost the CONFIG_MAX_COUNT_*I values if you have higher spot quotas."
 
 echo ""
-echo "please confirm these values are correct and press Enter to continue, or Ctrl-C to exit."
+echo "please confirm these values are correct and press Enter to continue, or any other key to exit."
 
 read confirm "Press enter to continue, any other key to exit: " 
 if [[ "$confirm" != "" ]]; then
@@ -410,6 +410,7 @@ key_data=$(aws ec2 describe-key-pairs --region "$region" --query 'KeyPairs[*].[K
 echo "Keys in region $region:"
 echo "$key_data"
 
+export pem_file="na"
 # Filter for keys with the required suffix
 filtered_keys=()
 while IFS=$'\t' read -r key_name key_type; do
@@ -1066,7 +1067,7 @@ fi
 echo ""
 
 # Create the cluster
-echo "Creating the cluster '$cluster_name' in region $region"
+echo "Creating the cluster $cluster_name in region $region"
 echo ""
 
 pcluster create-cluster -n "$cluster_name" -c "$target_conf_fin" --region "$region"
