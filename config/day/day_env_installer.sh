@@ -96,6 +96,7 @@ if conda env list | grep -q "^$DY_ENVNAME\s"; then
     echo "  conda env remove -n DAY"
     exit 0
 else
+    conda install -y -n base -c conda-forge yq || echo 'Failed to install yq'
     echo "Installing DAY environment..."
     # Create the DAY environment
     if conda env create -n "$DY_ENVNAME" -f "$SCRIPT_DIR/day.yaml"; then

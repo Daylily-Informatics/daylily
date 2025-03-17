@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #!/usr/bin/env bash
 
 set -e
@@ -11,6 +9,19 @@ git_repo=$(yq '.daylily.git_repo' "$CONFIG_FILE")
 
 # Defaults
 user_name="$USER"
+
+print_help() {
+  cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+
+Options:
+  -t, --git-tag       Git tag to clone (default from $CONFIG_FILE)
+  -r, --git-repo      Git repository URL (default from $CONFIG_FILE)
+  -c, --clone-root    Root directory to clone into (required)
+  -u, --user-name     Username to create directory as (default: $USER)
+  -h, --help          Show this help message and exit
+EOF
+}
 
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
@@ -31,16 +42,22 @@ while [[ $# -gt 0 ]]; do
       user_name="$2"
       shift; shift
       ;;
+    -h|--help)
+      print_help
+      exit 0
+      ;;
     *)
       echo "Unknown option: $1"
+      print_help
       exit 1
       ;;
-esac
+  esac
 done
 
 # Required parameter check
 if [ -z "$clone_root" ]; then
   echo "Error: --clone-root (-c) is required."
+  print_help
   exit 1
 fi
 
@@ -51,8 +68,6 @@ fi
 
 if [ -z "$user_name" ]; then
   user_name="$USER"
-else
-  user_name="$user_name"
 fi
 
 if [ ! -d "$clone_root/$user_name" ]; then
@@ -72,8 +87,6 @@ fi
 
 if [ -z "$destination" ]; then
   destination=$(basename "$git_repo" .git)
-else
-  destination=$git_repo
 fi
 
 if [ -d "$destination" ]; then
@@ -86,9 +99,9 @@ git clone --branch "$git_tag" "$git_repo" "$destination" || { echo "Git clone fa
 
 cd "$destination"
 
-
-echo "Great Success!"
-echo "Daylily $git_tag has been cloned to $(pwd) & you are ready to roll."
-echo "   run '. dyinit' to init your daylily environment and see further instructions."
-echo "   you can create a samples.tsv as described in the README.md then run 'bin/daylily-analysis.sh'"
-echo ""
+cat <<EOF
+Great Success!
+Daylily $git_tag has been cloned to $(pwd) & you are ready to roll.
+   run '. dyinit' to init your daylily environment and see further instructions.
+   you can create a samples.tsv as described in the README.md then run 'bin/daylily-analysis.sh'
+EOF
