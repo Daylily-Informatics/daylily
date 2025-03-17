@@ -15,5 +15,8 @@ branch_name=$(git symbolic-ref --short HEAD 2>/dev/null || echo "N/A")
 # Get the latest commit hash
 commit_hash=$(git rev-parse HEAD 2>/dev/null)
 
+GLOBAL_CONFIG_FILE=config/daylily_cli_global.yaml
+git_tag=$(yq -r '.daylily.git_tag' "$GLOBAL_CONFIG_FILE")
+
 # Output results
-echo $repo_name-$branch_name-$commit_hash
+echo $repo_name-$branch_name-$commit_hash-$git_tag

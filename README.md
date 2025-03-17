@@ -1,5 +1,5 @@
 # Daylily AWS Ephemeral Cluster Setup
-_(0.7.179c)_
+_(0.7.181)_
 
 **beta release**
 
@@ -49,7 +49,8 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
       - [Check if your prereq's meet the min versions required](#check-if-your-prereqs-meet-the-min-versions-required)
     - [AWS CLI Configuration](#aws-cli-configuration)
       - [Opt 2](#opt-2)
-    - [Clone `daylily` Git Repository](#clone-daylily-git-repository)
+    - [Clone stable release of `daylily` Git Repository](#clone-stable-release-of-daylily-git-repository)
+      - [stable `daylily` release](#stable-daylily-release)
     - [Install Miniconda (homebrew is not advised)](#install-miniconda-homebrew-is-not-advised)
     - [Install DAYCLI Environment](#install-daycli-environment)
 - [Ephemeral Cluster Creation](#ephemeral-cluster-creation)
@@ -475,12 +476,23 @@ region = <REGION>
 
 
 
-### Clone `daylily` Git Repository
+### Clone stable release of `daylily` Git Repository
 
 ```bash
-git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
+git clone -b $(yq -r '.daylily.git_tag' "config/daylily/daylily_cli_global.yaml") https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
 cd daylily
 ```
+
+#### stable `daylily` release
+
+This repo is cloned to your working environment, and cloned again each time a cluster is created and again for each analysis set executed on the cluster.  The version is pinned to a tagged release so that all of these clones work from the same released version.  This is accomplished by all clone operations pulling the release via:
+
+```bash
+echo "Pinned release: "$(yq -r '.daylily.git_tag' "config/daylily_cli_global.yaml")
+```
+
+Further, when attemtping to activate an environment on an ephemeral cluster with `dy-a`, this will check to verify that the cluster deployment was created with the matching tag, and throw an error if a mismatch is detected. You can also find the tag logged in the cluster yaml created in `~/.config/daylily/<yourclustername>.yaml`.
+
 
 ### Install Miniconda (homebrew is not advised)
 _tested with conda version **`24.11.1`**_
@@ -646,21 +658,24 @@ REGION_AZ=us-west-2c
 
 ```    
 
-> Pre-set configs for `daylily-create-ephemeral-clsuter` can be specified in a file named `.dayephemeral.env`. This file will auto-select options in the create script. This file may contain the following vars:
-> ```bash
-> CONFIG_DELETE_LOCAL_ROOT=true # or false
-> CONFIG_BUDGET_EMAIL=johnm@lsmc.com # any single valid email
-> CONFIG_ALLOWED_BUDGET_USERS=ubuntu # or other username or csv of usernames
-> CONFIG_BUDGET_AMOUNT=200 # or other int
-> CONFIG_ENFORCE_BUDGET=skip # or enforce
-> CONFIG_AUTO_DELETE_FSX=Delete # or Retain
-> CONFIG_FSX_FS_SIZE=4800 # or 7200 or other valid FSX fs sizes
-> CONFIG_ENABLE_DETAILED_MONITORING=false # or true
-> CONFIG_CLUSTER_TEMPLATE_YAML=config/day_cluster/prod_cluster.yaml
-> CONFIG_SPOT_INSTANCE_ALLOCATION_STRATEGY=price-capacity-optimized # price-capacity-optimized,capacity-optimized,lowest-price .. ! you probably do not want lowest-price
-> CONFIG_MAX_COUNT_8I=1 # max number of spots of this cpu size to request
-> CONFIG_MAX_COUNT_128I=1 # max number of spots of this cpu size to request
-> CONFIG_MAX_COUNT_192I=1 # max number of spots of this cpu size to request
+> config for many user prompted options in `daylily-create-ephemeral-clsuter` can be specified in the yaml file: `config/daylily_ephemeral_cluster.yaml`.
+> The options specified there will be used in lieu of prompting on the command line.
+> ```yaml
+> ephemeral_cluster:
+>  config:
+>    delete_local_root: true # or false
+>    budget_email: johnm@lsmc.com # any single valid email
+>    allowed_budget_users: ubuntu # or other username or csv of usernames
+>    budget_amount: 200 # or other int
+>    enforce_budget: skip # or enforce
+>    auto_delete_fsx: Delete # or Retain
+>    fsx_fs_size: 4800 # or 7200 or other valid FSX fs sizes
+>    enable_detailed_monitoring: false # or true
+>    cluster_template_yaml: config/day_cluster/prod_cluster.yaml
+>    spot_instance_allocation_strategy: price-capacity-optimized # lowest_price, price-capacity-optimized,capacity-optimized
+>    max_count_8I: 4 # max number of spots of this cpu size to request
+>    max_count_128I: 3 # max number of spots of this cpu size to request
+>    max_count_192I: 2 # max number of spots of this cpu size to request
 > ```
 >
 > *note:* CONFIG_MAX_COUNT_(n)I should be set so that you do not over-request spot instances far beyond your quotas as a deadlock can occur, especially when your quotas are very small.
