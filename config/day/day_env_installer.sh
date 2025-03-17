@@ -62,6 +62,18 @@ install_miniconda() {
     conda activate
 
     echo "Conda installation complete."
+    
+    echo "Adding repo tag pinning stuff"
+    conda install -y -n base -c conda-forge yq || (echo 'Failed to install yq' && exit 1)
+    
+    mkdir -p ~/.config/daylily
+    cp config/daylily_cli_global.yaml ~/.config/daylily/daylily_cli_global.yaml
+
+    CONFIG_FILE=~/.config/daylily/daylily_cli_global.yaml
+    git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
+    touch ~/.config/daylily/$git_tag
+
+    cp bin/day-clone "~/miniconda3/condabin/day-clone" || (echo 'Failed to copy day-clone script' && exit 1)
 }
 
 # Detect or install conda
