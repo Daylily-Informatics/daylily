@@ -97,6 +97,7 @@ if conda env list | grep -q "^$DY_ENVNAME\s"; then
     exit 0
 else
     conda install -y -n base -c conda-forge yq || echo 'Failed to install yq'
+    cp bin/day-clone "~/miniconda3/condabin/day-clone" || echo 'Failed to copy day-clone script to ~/minconda3/condabin'
     echo "Installing DAY environment..."
     # Create the DAY environment
     if conda env create -n "$DY_ENVNAME" -f "$SCRIPT_DIR/day.yaml"; then
