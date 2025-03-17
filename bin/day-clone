@@ -10,7 +10,7 @@ clone_root=$(yq -r '.daylily.analysis_root' "$CONFIG_FILE")
 user_name="$USER"
 
 echo CR: $clone_root
-exit 1
+
 destination=""
 
 print_help() {
