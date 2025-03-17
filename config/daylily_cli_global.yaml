@@ -1,5 +1,5 @@
 ---
 daylily:
-  git_tag: 0.7.183
+  git_tag: 0.7.185
   git_repo: https://github.com/Daylily-Informatics/daylily.git
   analysis_root: /fsx/analysis_results/

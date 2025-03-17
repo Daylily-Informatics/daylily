@@ -14,7 +14,7 @@ usage() {
     echo "Usage: source $0 DAY"
     echo "This script installs Miniconda and sets up the DAY conda environment."
     echo "Provide 'DAY' as the argument to start the installation."
-    exit 2
+    return 2
 }
 
 # Check if the correct argument is provided
@@ -64,7 +64,7 @@ install_miniconda() {
     echo "Conda installation complete."
     
     echo "Adding repo tag pinning stuff"
-    conda install -y -n base -c conda-forge yq || (echo 'Failed to install yq' && exit 1)
+    conda install -y -n base -c conda-forge yq || (echo 'Failed to install yq' && return 1)
     
     mkdir -p ~/.config/daylily
     cp config/daylily_cli_global.yaml ~/.config/daylily/daylily_cli_global.yaml
@@ -73,7 +73,7 @@ install_miniconda() {
     git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
     touch ~/.config/daylily/$git_tag
 
-    cp bin/day-clone "~/miniconda3/condabin/day-clone" || (echo 'Failed to copy day-clone script' && exit 1)
+    cp bin/day-clone ~/miniconda3/condabin/day-clone || (echo 'Failed to copy day-clone script' && return 1)
 }
 
 # Detect or install conda
@@ -106,10 +106,10 @@ if conda env list | grep -q "^$DY_ENVNAME\s"; then
     echo "You may need to manually remove the conda env dir for DAY and try again."
     echo "To remove the environment, run:"
     echo "  conda env remove -n DAY"
-    exit 0
+    return 0
 else
     conda install -y -n base -c conda-forge yq || echo 'Failed to install yq'
-    cp bin/day-clone "~/miniconda3/condabin/day-clone" || echo 'Failed to copy day-clone script to ~/minconda3/condabin'
+    cp bin/day-clone ~/miniconda3/condabin/day-clone || echo 'Failed to copy day-clone script to ~/minconda3/condabin'
     echo "Installing DAY environment..."
     # Create the DAY environment
     if conda env create -n "$DY_ENVNAME" -f "$SCRIPT_DIR/day.yaml"; then
@@ -121,7 +121,7 @@ else
         echo "  dy-r help"
     else
         echo "Failed to create DAY environment."
-        exit 1
+        return 1
     fi
 fi
 
@@ -132,4 +132,4 @@ echo "  source dyinit --project <PROJECT>"
 echo "  dy-a local"
 echo "  dy-r help"
 
-exit 0
+return 0
