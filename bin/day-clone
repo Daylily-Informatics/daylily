@@ -105,3 +105,8 @@ Daylily $git_tag has been cloned to $(pwd) & you are ready to roll.
   ... and proceed to start analysis with 'dy-a slurm hg38' then 'dy-r ...'
 
 EOF
+
+echo ""
+echo "TO MOVE TO YOUR NEW ANALYSIS DIRECTORY, run:"
+echo "  cd $clone_root/$user_name/$destination"
+echo ""
