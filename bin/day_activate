@@ -12,8 +12,11 @@ if [[ -z "$dayp" ]]; then
     echo "ERROR: No profile specified, please specify [slurm|local] ([hg38|b37])"
     return 1
 fi
+        
+CONFIG_FILE=~/.config/daylily/daylily_cli_global.yaml
+git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
 
-if [[ ! -f ~/.config/daylily/0.7.180 ]]; then
+if [[ ! -f ~/.config/daylily/$git_tag ]]; then
     echo ""
     echo "!!!!"
     echo "!!!!"

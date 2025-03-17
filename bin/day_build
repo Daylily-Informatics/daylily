@@ -26,7 +26,9 @@ if [[ "$1" == "BUILD" ]]; then
         echo "Error: Failed to install the DAY environment."
         return 1
     else
-        touch ~/.config/daylily/0.7.180
+        CONFIG_FILE=~/.config/daylily/daylily_cli_global.yaml
+        git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
+        touch ~/.config/daylily/$git_tag
         if [[ "$?" != "0" ]]; then
             echo "Error: Failed to copy the day-clone script."
             return 1

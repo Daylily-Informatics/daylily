@@ -28,7 +28,7 @@ if [ -z "$AWS_PROFILE" ]; then
     exit 1  # Exit the function with an error status
 fi
 
-CONFIG_FILE="./.dayephemeral.env"  # Default config file
+CONFIG_FILE="config/daylily_ephemeral_cluster.yaml"
 
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
@@ -81,8 +81,6 @@ fi
 # Load the environment variables from .env file
 if [ -f $CONFIG_FILE ]; then
     echo "Loading configuration from $CONFIG_FILE"
-    source $CONFIG_FILE
-    CONFIG_YAML=$(yq -r '.ephemeral_cluster.config.yaml' $CONFIG_FILE)
     CONFIG_BUDGET_EMAIL=$(yq -r '.ephemeral_cluster.config.budget_email' $CONFIG_FILE)
     CONFIG_ALLOWED_BUDGET_USERS=$(yq -r '.ephemeral_cluster.config.allowed_budget_users' $CONFIG_FILE)
     CONFIG_BUDGET_AMOUNT=$(yq -r '.ephemeral_cluster.config.budget_amount' $CONFIG_FILE)
