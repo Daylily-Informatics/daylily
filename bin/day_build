@@ -2,8 +2,6 @@
 # This script is intended to be sourced, not executed directly.
 
 
-
-
 DP=$DAY_PROJECT
 
 # Attempt to deactivate any existing environment
