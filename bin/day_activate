@@ -13,7 +13,7 @@ if [[ -z "$dayp" ]]; then
     return 1
 fi
 
-if [[ ! -f "~/.config/daylily/0.7.180" ]]; then
+if [[ ! -f ~/.config/daylily/0.7.180 ]]; then
     echo ""
     echo "!!!!"
     echo "!!!!"
