@@ -1084,10 +1084,12 @@ day-clone --help
 # create new analysis dir and clone daylily into it
 day-clone -d first_analysis
 echo "TO MOVE TO YOUR NEW ANALYSIS DIRECTORY, run:"
-echo  "        bash && cd /fsx/analysis_results//ubuntu/07194a/daylily"
+echo  "        bash"
+echo  "        cd /fsx/analysis_results//ubuntu/07194a/daylily"
 
 # move to your new analysis dir
-bash && cd /fsx/analysis_results//ubuntu/07194a/daylily
+bash
+cd /fsx/analysis_results//ubuntu/07194a/daylily
 
 ```
 
@@ -1153,7 +1155,8 @@ First, create a working directory on the `/fsx/` filesystem.
 # create a working analysis directory & clone daylily
 day-clone -d first_analysis
 
-bash && cd /fsx/analysis_results/first_analysis/daylily # this command is provided from day-clone
+bash
+cd /fsx/analysis_results/first_analysis/daylily # this command is provided from day-clone
 
 #  prepare to run the test
 tmux new -s slurm_test
@@ -1215,8 +1218,8 @@ tmux new -s slurm_test_30x_single
 
 # Create new analyiss dir
 day-clone -d slurmtest
-
-bash && cd /fsx/analysis_results/slurmtest/daylily # this command is provided from day-clone
+bash
+cd /fsx/analysis_results/slurmtest/daylily # this command is provided from day-clone
 
 
 . dyinit  --project PROJECT 
@@ -1241,7 +1244,8 @@ tmux new -s slurm_test_30x_multi
 
 # Create new analyiss dir
 day-clone -d fulltest
-bash && cd /fsx/analysis_results/fulltest/daylily # this command is provided from day-clone
+bash
+cd /fsx/analysis_results/fulltest/daylily # this command is provided from day-clone
 
 
 . dyinit  --project PROJECT 
