@@ -5,7 +5,7 @@ set -e
 CONFIG_FILE="$HOME/.config/daylily/daylily_cli_global.yaml"
 
 git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
-git_repo=$(yq -r '.daylily.git_repo' "$CONFIG_FILE")
+git_repo_https=$(yq -r '.daylily.git_repo' "$CONFIG_FILE")
 git_repo_ssh=$(yq -r '.daylily.git_repo_ssh' "$CONFIG_FILE")
 clone_root=$(yq -r '.daylily.analysis_root' "$CONFIG_FILE")
 user_name="$USER"
@@ -80,12 +80,11 @@ if [ ! -d "$clone_root" ]; then
   exit 1
 fi
 
-if [ -z "$which_one" ]; then
-    which_one="https"
-fi
 
 if [[ "$which_one" == "ssh" ]]; then
     git_repo=$git_repo_ssh
+else
+    git_repo=$git_repo_https
 fi
 
 if [ -z "$user_name" ]; then
