@@ -90,9 +90,11 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
         - [Facilitated](#facilitated)
 - [From The Epheemeral Cluster Headnode](#from-the-epheemeral-cluster-headnode)
   - [Confirm Headnode Configuration Is Complete](#confirm-headnode-configuration-is-complete)
-    - [Headnode Confiugration Incomplete](#headnode-confiugration-incomplete)
+    - [(if) Headnode Confiugration Incomplete](#if-headnode-confiugration-incomplete)
     - [Confirm Headnode /fsx/ Directory Structure](#confirm-headnode-fsx-directory-structure)
     - [Run A Local Test Workflow](#run-a-local-test-workflow)
+      - [First, clone a new daylily repo with `day-clone`.](#first-clone-a-new-daylily-repo-with-day-clone)
+      - [Next, init daylily and, set genome, stage an analysis\_manigest.csv and run a test workflow.](#next-init-daylily-and-set-genome-stage-an-analysis_manigestcsv-and-run-a-test-workflow)
       - [More On The `-j` Flag](#more-on-the--j-flag)
     - [Run A Slurm Test Workflow](#run-a-slurm-test-workflow)
       - [(RUN ON A FULL 30x WGS DATA SET)](#run-on-a-full-30x-wgs-data-set)
@@ -1041,7 +1043,7 @@ dy-a local hg38 # activates the local config using reference hg38, the other bui
 
 This should produce a magenta `WORKFLOW SUCCESS` message and `RETURN CODE: 0` at the end of the output.  If so, you are set. If not, see the next section.
 
-### Headnode Confiugration Incomplete
+### (if) Headnode Confiugration Incomplete
 
 If there is no `~/projects/daylily` directory, or the `dyinit` command is not found, the headnode configuration is incomplete. 
 
@@ -1072,7 +1074,24 @@ drwxrwxrwx 3 root root 33K Sep 26 08:35 resources
 
 ### Run A Local Test Workflow
 
-> init daylily, activate an analysis profile, set genome, stage an analysis_manigest.csv and run a test workflow.
+#### First, clone a new daylily repo with `day-clone`.
+
+`day-clone` will be available on your path as long as conda is activated. This script will create a new named analysis directory in `/fsx/analysis_results/ubuntu/` named the string specified in the `-d` flag. It will use defaults to clone this repo into the new analysis dir (_to override defaults, run with `-h`_).
+
+```bash
+day-clone --help
+
+# create new analysis dir and clone daylily into it
+day-clone -d first_analysis
+echo "TO MOVE TO YOUR NEW ANALYSIS DIRECTORY, run:"
+echo  "        bash && cd /fsx/analysis_results//ubuntu/07194a/daylily"
+
+# move to your new analysis dir
+bash && cd /fsx/analysis_results//ubuntu/07194a/daylily
+
+```
+
+#### Next, init daylily and, set genome, stage an analysis_manigest.csv and run a test workflow.
 
 ```bash
 . dyinit  --project PROJECT
@@ -1131,11 +1150,10 @@ First, create a working directory on the `/fsx/` filesystem.
 > init daylily, activate an analysis profile, set genome, stage an analysis_manigest.csv and run a test workflow.
 
 ```bash
-# create a working analysis directory
-mkdir -p /fsx/analysis_results/ubuntu/init_test
-cd /fsx/analysis_results/ubuntu/init_test
-git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
-cd daylily
+# create a working analysis directory & clone daylily
+day-clone -d first_analysis
+
+bash && cd /fsx/analysis_results/first_analysis/daylily # this command is provided from day-clone
 
 #  prepare to run the test
 tmux new -s slurm_test
@@ -1195,11 +1213,11 @@ You may repeat the above, and use the pre-existing analysis_manifest.csv templat
 ```bash
 tmux new -s slurm_test_30x_single
 
-mkdir /fsx/analysis_results/ubuntu/slurm_single
-cd /fsx/analysis_results/ubuntu/slurm_single
+# Create new analyiss dir
+day-clone -d slurmtest
 
-git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
-cd daylily
+bash && cd /fsx/analysis_results/slurmtest/daylily # this command is provided from day-clone
+
 
 . dyinit  --project PROJECT 
 dy-a slurm hg38 # the other option being b37
@@ -1221,11 +1239,10 @@ dy-r produce_snv_concordances -p -k -j 10  --config genome_build=hg38 aligners=[
 
 tmux new -s slurm_test_30x_multi
 
-mkdir /fsx/analysis_results/ubuntu/slurm_multi_30x_test
-cd /fsx/analysis_results/ubuntu/slurm_multi_30x_test
+# Create new analyiss dir
+day-clone -d fulltest
+bash && cd /fsx/analysis_results/fulltest/daylily # this command is provided from day-clone
 
-git clone https://github.com/Daylily-Informatics/daylily.git  # or, if you have set ssh keys with github and intend to make changes:  git clone git@github.com:Daylily-Informatics/daylily.git
-cd daylily
 
 . dyinit  --project PROJECT 
 dy-a slurm hg38 # the other options being b37
