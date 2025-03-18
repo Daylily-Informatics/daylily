@@ -2,7 +2,12 @@ import os
 import sys
 
 # COMMENT OUT TO USE LOCAL CONDA ENVS
-containerized: "docker://daylilyinformatics/daylily:0.7.192"
+if os.path.exists('/fsx/resources/environments/containers/daylily:0.7.192.simg'):
+    print("CONTAINERIZED with /fsx/resources/environments/containers/daylily:0.7.192.simg ", file=sys.stderr )
+    containerized: "/fsx/resources/environments/containers/daylily:0.7.192.simg"
+else:
+    print("NOT CONTAINERIZED", file=sys.stderr )
+    pass
 
 # resource scopes for running via slurm
 resource_scopes:

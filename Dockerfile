@@ -4,7 +4,9 @@ LABEL io.github.snakemake.conda_env_hash="82749d950ab686518a025ca0575ffbdc93398d
 
 RUN conda install -n base conda=25.1.1 -c conda-forge -y && \
     conda clean -afy
-    
+
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Step 1: Retrieve conda environments
 
 # Conda environment:
