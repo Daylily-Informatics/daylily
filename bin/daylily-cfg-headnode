@@ -100,8 +100,7 @@ sleep 15
 echo "Building the Daylily container on the head node..."
 # Pull the Daylily container using Singularity
 ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null ubuntu@"$cluster_ip_address" \
-    "singularity pull --name /fsx/resources/environments/containers/daylily:0.7.192.simg docker://daylilyinformatics/daylily:0.7.192"
-
+    "singularity pull --name /fsx/resources/environments/containers/daylily:0.7.193.simg docker://daylilyinformatics/daylily:0.7.193"
 
 # Clone the Daylily repository to the head node
 echo "Cloning Daylily repository usibng https to the head node ~/projects"
