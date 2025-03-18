@@ -1,7 +1,8 @@
 import os
 import sys
 
-containerized: "docker://daylilyinformatics/daylily:1.7.191"
+# COMMENT OUT TO USE LOCAL CONDA ENVS
+containerized: "docker://daylilyinformatics/daylily:0.7.192"
 
 # resource scopes for running via slurm
 resource_scopes:
