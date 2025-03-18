@@ -3,4 +3,4 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - dysgu==1.8.1
+  - dysgu==1.8.0
