@@ -1,6 +1,8 @@
 import os
 import sys
 
+containerized: "docker://daylilyinformatics/daylily:1.7.191"
+
 # resource scopes for running via slurm
 resource_scopes:
     gpus="local",
