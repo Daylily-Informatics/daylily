@@ -104,6 +104,7 @@ if [ -d "$destination" ]; then
 fi
 
 # Clone the repo
+echo git clone --branch "$git_tag" "$git_repo" "$destination/daylily" 
 git clone --branch "$git_tag" "$git_repo" "$destination/daylily" || { echo "Git clone failed"; exit 1; }
 
 cd "$destination/daylily"
