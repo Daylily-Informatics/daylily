@@ -108,5 +108,5 @@ EOF
 
 echo ""
 echo "TO MOVE TO YOUR NEW ANALYSIS DIRECTORY, run:"
-echo "  cd $clone_root/$user_name/$destination/daylily"
+echo "  bash && cd $clone_root/$user_name/$destination/daylily"
 echo ""
