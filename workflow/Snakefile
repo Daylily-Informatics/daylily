@@ -2,9 +2,9 @@ import os
 import sys
 
 # COMMENT OUT TO USE LOCAL CONDA ENVS
-if os.path.exists('/fsx/resources/environments/containers/daylily:0.7.192.simg'):
-    print("CONTAINERIZED with /fsx/resources/environments/containers/daylily:0.7.192.simg ", file=sys.stderr )
-    containerized: "/fsx/resources/environments/containers/daylily:0.7.192.simg"
+if os.path.exists('/fsx/resources/environments/containers/daylily:0.7.193.simg'):
+    print("CONTAINERIZED with /fsx/resources/environments/containers/daylily:0.7.193.simg ", file=sys.stderr )
+    containerized: "/fsx/resources/environments/containers/daylily:0.7.193.simg"
 else:
     print("NOT CONTAINERIZED", file=sys.stderr )
     pass
