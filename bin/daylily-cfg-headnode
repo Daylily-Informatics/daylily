@@ -97,6 +97,10 @@ ssh -i "$pem_file"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/nul
 echo " "
 echo "(optional) save this SSH key in GitHub to your settings->ssh/gpg keys, which will allow you to push changes back to github if you make any. You can always add this key latter too, find it in you ~/.ssh/id_rsa.pub.\n\n\tSleeping for 15s then proceeding."
 sleep 15
+echo "Building the Daylily container on the head node..."
+# Pull the Daylily container using Singularity
+ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null ubuntu@"$cluster_ip_address" \
+    "singularity pull --name /fsx/resources/environments/containers/daylily:0.7.192.simg docker://daylilyinformatics/daylily:0.7.192"
 
 
 # Clone the Daylily repository to the head node
