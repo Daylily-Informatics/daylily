@@ -6,6 +6,7 @@ CONFIG_FILE="$HOME/.config/daylily/daylily_cli_global.yaml"
 
 git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
 git_repo=$(yq -r '.daylily.git_repo' "$CONFIG_FILE")
+git_repo_ssh=$(yq -r '.daylily.git_repo_ssh' "$CONFIG_FILE")
 clone_root=$(yq -r '.daylily.analysis_root' "$CONFIG_FILE")
 user_name="$USER"
 
@@ -19,10 +20,11 @@ Usage: $(basename "$0") [OPTIONS]
 Config defaults from: $CONFIG_FILE
 Options:
   -t, --git-tag       Git tag to clone (default: $git_tag)
-  -r, --git-repo      Git repository URL (default: $git_repo)
+  -r, --git-repo      Git repository URL (default: $git_repo or $git_repo_ssh)
   -c, --clone-root    Root directory to clone into (default: $clone_root)
   -d, --destination   Directory name to create in \$clone_root/\$user_name (REQUIRED)
   -u, --user-name     Username to create directory as (default: $USER)
+  -w, --which-one     https or ssh (default https)
   -h, --help          Show this help message and exit
 EOF
 }
@@ -50,6 +52,10 @@ while [[ $# -gt 0 ]]; do
       user_name="$2"
       shift; shift
       ;;
+    -w|--which-one)
+      which_one="$2"
+      shift; shift
+      ;;
     -h|--help)
       print_help
       exit 0
@@ -72,6 +78,14 @@ fi
 if [ ! -d "$clone_root" ]; then
   echo "Error: clone_root directory '$clone_root' does not exist."
   exit 1
+fi
+
+if [ -z "$which_one" ]; then
+    which_one="https"
+fi
+
+if [[ "$which_one" == "ssh" ]]; then
+    git_repo=$git_repo_ssh
 fi
 
 if [ -z "$user_name" ]; then
