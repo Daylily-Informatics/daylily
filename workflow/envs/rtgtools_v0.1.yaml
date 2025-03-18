@@ -1,5 +1,7 @@
 channels:
   - conda-forge
+  - bioconda
+  - defaults
 dependencies:
   - rtg-tools=3.12.1
   - parallel

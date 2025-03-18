@@ -1,4 +1,6 @@
 channels:
   - conda-forge
+  - bioconda
+  - defaults
 dependencies:
-  - dysgu==1.6.6
+  - dysgu==1.8.1
