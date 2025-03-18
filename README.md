@@ -1,5 +1,5 @@
 # Daylily AWS Ephemeral Cluster Setup
-_(stable tagged release to use --> 0.7.193 ... use main at own risk)_
+_(stable tagged release to use --> 0.7.196 ... use main at own risk)_
 
 **beta release**
 
@@ -736,6 +736,8 @@ Once logged in, as the 'ubuntu' user, run the following commands:
   source dyinit  --project PROJECT
   dy-a local hg38 # the other option being b37
 
+  export DAY_CONTAINERIZED=false # or true to use pre-built container of all analysis envs. false will create each conda env as needed
+
   dy-r help
  
 "Would you like to start building various caches needed to run jobs? [y/n]"
@@ -1079,6 +1081,8 @@ dy-a local hg38 # the other option: b37 ( or set via config command line below)
 
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv
 
+export DAY_CONTAINERIZED=false # or true to use pre-built container of all analysis envs. false will create each conda env as needed
+
 dy-r produce_deduplicated_bams -p -j 2 --config genome_build=hg38 aligners=['bwa2a','sent'] dedupers=['dppl'] -n # dry run
 dy-r produce_deduplicated_bams -p -j 2 --config genome_build=hg38 aligners=['bwa2a','sent'] dedupers=['dppl'] 
 ```
@@ -1141,6 +1145,8 @@ dy-a slurm hg38 # the other options being b37
 # create a test manifest for one giab sample only, which will run on the 0.01x test dataset
 head -n 2 .test_data/data/0.01xwgs_HG002_hg38.samplesheet.csv > config/analysis_manifest.csv
 
+export DAY_CONTAINERIZED=false # or true to use pre-built container of all analysis envs. false will create each conda env as needed
+
 # run the test, which will auto detect the analysis_manifest.csv file & will run this all via slurm
 dy-r produce_snv_concordances -p -k -j 2 --config genome_build=hg38 aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n
 ```
@@ -1201,6 +1207,8 @@ dy-a slurm hg38 # the other option being b37
 # TO create a single sample manifest
 head -n 2 .test_data/data/giab_30x_hg38_analysis_manifest.csv > config/analysis_manifest.csv
 
+export DAY_CONTAINERIZED=false # or true to use pre-built container of all analysis envs. false will create each conda env as needed
+
 dy-r produce_snv_concordances -p -k -j 10 --config genome_build=hg38 aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] -n  # dry run
 
 dy-r produce_snv_concordances -p -k -j 10  --config genome_build=hg38 aligners=['bwa2a'] dedupers=['dppl'] snv_callers=['deep'] # run jobs, and wait for completion
@@ -1224,6 +1232,8 @@ dy-a slurm hg38 # the other options being b37
 
 # copy full 30x giab sample template to config/analysis_manifest.csv
 cp .test_data/data/giab_30x_hg38_analysis_manifest.csv  config/analysis_manifest.csv
+
+export DAY_CONTAINERIZED=false # or true to use pre-built container of all analysis envs. false will create each conda env as needed
 
 dy-r produce_snv_concordances -p -k -j 10 --config genome_build=hg38 aligners=['strobe,'bwa2a'] dedupers=['dppl'] snv_callers=['oct','deep'] -n  # dry run
 

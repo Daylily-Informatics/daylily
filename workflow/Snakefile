@@ -3,12 +3,13 @@ import sys
 
 # COMMENT OUT TO USE LOCAL CONDA ENVS
 container_path=os.popen('''yq -r '.daylily.daylily_image_path' "config/daylily_cli_global.yaml"''').readline().rstrip()
-if os.path.exists(container_path):
-    print(f"CONTAINERIZED with {container_path} ", file=sys.stderr )
-    containerized: "/fsx/resources/environments/containers/daylily:0.7.193.simg"
+if os.path.exists(container_path) and os.environ.get("DAY_CONTAINERIZED", "false") in ["true", "True", "1"]:
+    print(f"CONTAINERIZED with {container_path} from 'config/daylily_cli_global.yaml' \nTo run w/out container set DAY_CONTAINERIZED=false\n", file=sys.stderr )
+    containerized: f"{container_path}"
+    os.sleep(3)
 else:
-    print(f"NOT CONTAINERIZED, no {container_path} detected.", file=sys.stderr )
-    pass
+    print(f"NOT CONTAINERIZED, no {container_path} detected in 'config/daylily_cli_global.yaml' &| DAY_CONTAINERIZED=false.\n\tTo run w/container, set DAY_CONTAINERIZED=true\n", file=sys.stderr )
+    sleep(3)
 
 # resource scopes for running via slurm
 resource_scopes:
