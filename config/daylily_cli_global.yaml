@@ -1,6 +1,6 @@
 ---
 daylily:
-  git_tag: 0.7.189
+  git_tag: 0.7.193
   git_repo: https://github.com/Daylily-Informatics/daylily.git
   analysis_root: /fsx/analysis_results/
   daylily_image_cmd: "singularity pull --name /fsx/resources/environments/containers/daylily:0.7.193.simg docker://daylilyinformatics/daylily:0.7.193"
