@@ -314,6 +314,26 @@ check_quota() {
 
     quota_value=$(echo "$quota" | jq -r '.Quota.Value')
 
+
+    # Calculate total vCPUs requested
+    tot_vcpu=$(( (CONFIG_MAX_COUNT_8I * 8) + (CONFIG_MAX_COUNT_128I * 128) + (CONFIG_MAX_COUNT_192I * 192) ))
+
+    
+    # Check if the requested vCPUs exceed the quota
+    if [[ "$quota_code" == "L-34B43A08" && "$tot_vcpu" -ge "$quota_value" ]]; then
+        echo "Your requested instance types total vCPUs ($tot_vcpu) exceed the quota ($quota_value) for $quota_code in region $region."
+        echo "This will cause the cluster to fail to allocate spot instances."
+        echo "You must request a quota increase of at least $tot_vcpu or adjust downwards the instance type max in config/daylily_ephemeral_cluster.yaml."
+        echo "It is not advised to skip this warning, but you may by pressing enter, all other keys will exis"
+
+        read confirmq "Press enter to continue, any other key to exit: " 
+        if [[ "$confirmq" != "" ]]; then
+            echo "Exiting..."
+            exit 3
+        fi
+        echo "There be dragons..."
+    fi
+
     if (( $(echo "$quota_value < $recommended_count" | bc -l) )); then
         handle_warning "Warning: $resource_name quota $quota_code in $region is below the recommended $recommended_count. Current quota: $quota_value."
         if [[ $? -ne 0 ]]; then
@@ -330,18 +350,18 @@ echo ""
 echo "Performing AWS quota checks..."
 
 # Dedicated Instances
-check_quota "Spot vCPU Max" "L-1216C47A" 20 ec2
+check_quota "On Demand vCPU Max" "L-1216C47A" 20 ec2
 if [[ $? -ne 0 ]]; then
-    echo "Spot vCPU Max quota L-1216C47A in $region MUST BE >= 20 <<< DO NOT SKIP THIS WARNING!!! request a quota incr."
+    echo "On Demand vCPU Max quota L-1216C47A in $region MUST BE >= 20 <<< DO NOT SKIP THIS WARNING!!! request a quota incr."
     sleep 30
     exit 3
 fi
 echo ""
 
 # Spot vCPU Max Quota 
-check_quota "Spot vCPU Max" "L-34B43A08" 208 ec2
+check_quota "Spot vCPU Max" "L-34B43A08" 192 ec2
 if [[ $? -ne 0 ]]; then
-    echo "Spot vCPU Max quota L-34B43A08  in $region MUST BE >= 208 <<< DO NOT SKIP THIS WARNING!!! request a quota incr."
+    echo "Spot vCPU Max quota L-34B43A08  in $region MUST BE >= 192 <<< DO NOT SKIP THIS WARNING!!! request a quota incr."
     sleep 30
     exit 3
 fi
