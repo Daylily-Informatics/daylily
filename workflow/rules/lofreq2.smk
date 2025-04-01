@@ -202,7 +202,7 @@ rule lofreq2_concat_fofn:
 
         for i in {input.chunk_tbi}; do
             ii=$(echo $i | perl -pe 's/\.tbi$//g');
-            len=$(zcat $ii |  wc -l);
+            len=$(zcat $ii |  wc -l | cut -d ' ' -f 1);
             if [[ $len -lt 4 ]]; then
                 echo "Skipping $i because it has $len lines" >> {log} 2>&1;
                 continue;
