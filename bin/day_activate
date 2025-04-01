@@ -76,9 +76,28 @@ fi
 CONFIG_FILE=~/.config/daylily/daylily_cli_global.yaml
 git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
 export SENTIEON_TMPDIR=$(yq -r '.daylily.sentieon_tmpdir' "$CONFIG_FILE")
-export SENTIEON_LICENSE=$(yq -r '.daylily.sentieon_lic_path' "$CONFIG_FILE")
+export SENTIEON_LICENSE_YAM=$(yq -r '.daylily.sentieon_lic_path' "$CONFIG_FILE")
 export SENTIEON_INSTALL_DIR=$(yq -r '.daylily.sentieon_install_dir' "$CONFIG_FILE")
 export PATH="$PATH:$SENTIEON_INSTALL_DIR/bin/"
+export SENTIEON_LICENSE=''
+
+# Test if file exists
+if [[ ! -f "$SENTIEON_LICENSE_YAM" ]]; then
+    echo "WARNING: sentieon lic file $SENTIEON_LICENSE_YAM not found."
+
+    detected_license=$(ls /fsx/data/cached_envs/*lic)
+    if [[ ! -f "$detected_license" ]]; then
+        echo "WARNING: sentieon lic file not detected in '/fsx/data/cached_envs/*lic' ."
+        echo "If you try to use any of the sentieon tools, you will get an error."
+        sleep 2
+    else
+        echo "Detected sentieon license file: $detected_license will be used and overrides what is in ~/.config/daylily/daylily_cli_global.yaml"
+        export SENTIEON_LICENSE=$detected_license
+    fi
+else
+    echo "Using sentieon license file: $SENTIEON_LICENSE_YAM from ~/.config/daylily/daylily_cli_global.yaml"
+    export SENTIEON_LICENSE=$SENTIEON_LICENSE_YAM
+fi
 
 if [[ ! -f ~/.config/daylily/$git_tag ]]; then
     echo ""
