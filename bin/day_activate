@@ -73,7 +73,7 @@ else
   echo "yq is already installed."
 fi
 
-CONFIG_FILE=./config/daylily/daylily_cli_global.yaml
+CONFIG_FILE=./config/daylily_cli_global.yaml
 git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
 export SENTIEON_TMPDIR=$(yq -r '.daylily.sentieon_tmpdir' "$CONFIG_FILE")
 export SENTIEON_LICENSE=$(yq -r '.daylily.sentieon_lic_path' "$CONFIG_FILE")
