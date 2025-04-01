@@ -202,7 +202,14 @@ rule lofreq2_concat_fofn:
 
         for i in {input.chunk_tbi}; do
             ii=$(echo $i | perl -pe 's/\.tbi$//g');
-            echo $ii >> {output.tmp_fofn};
+            len=$(zcat $ii |  wc -l);
+            if [[ $len -lt 4 ]]; then
+                echo "Skipping $i because it has $len lines" >> {log} 2>&1;
+                continue;
+            else
+                echo "Processing $i because it has $len lines" >> {log} 2>&1;
+                echo $ii >> {output.tmp_fofn};
+            fi;
         done;
         (workflow/scripts/sort_concat_chrm_list.py {output.tmp_fofn} {wildcards.sample}.{wildcards.alnr}.lfq2. {output.fin_fofn}) >> {log} 2>&1;
         """
