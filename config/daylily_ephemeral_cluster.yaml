@@ -2,7 +2,7 @@
 ephemeral_cluster:
   config:
     delete_local_root: true # or false
-    budget_email: johnm@lsmc.com # any single valid email
+    budget_email: ENTEREMAIL # any single valid email
     allowed_budget_users: ubuntu # or other username or csv of usernames
     budget_amount: 200 # or other int
     enforce_budget: skip # or enforce
@@ -10,7 +10,7 @@ ephemeral_cluster:
     fsx_fs_size: 4800 # or 7200 or other valid FSX fs sizes
     enable_detailed_monitoring: false # or true
     cluster_template_yaml: config/day_cluster/prod_cluster.yaml
-    spot_instance_allocation_strategy: lowest-price # lowest-price, price-capacity-optimized,capacity-optimized
+    spot_instance_allocation_strategy: price-capacity-optimized # lowest-price, price-capacity-optimized,capacity-optimized - lowest price can be very interrrupt'y
     max_count_8I: 1 # max number of spots of this cpu size to request
     max_count_128I: 6 # max number of spots of this cpu size to request
     max_count_192I: 10 # max number of spots of this cpu size to request

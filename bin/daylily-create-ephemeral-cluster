@@ -676,7 +676,7 @@ done
 
 # Function to prompt for email
 budget_email=""
-if [[ -n "$CONFIG_BUDGET_EMAIL" ]]; then
+if [[ -n "$CONFIG_BUDGET_EMAIL" && "$CONFIG_BUDGET_EMAIL" != "ENTEREMAIL" ]]; then
     budget_email="$CONFIG_BUDGET_EMAIL"
 else
     prompt_for_email() {
