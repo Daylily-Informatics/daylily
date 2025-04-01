@@ -1,6 +1,6 @@
 ---
 daylily:
-  git_tag: 0.7.196e
+  git_tag: 0.7.196f
   git_repo: https://github.com/Daylily-Informatics/daylily.git
   git_repo_ssh: git@github.com:Daylily-Informatics/daylily.git
   analysis_root: /fsx/analysis_results/
