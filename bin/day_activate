@@ -73,7 +73,7 @@ else
   echo "yq is already installed."
 fi
 
-CONFIG_FILE=~/.config/daylily/daylily_cli_global.yaml
+CONFIG_FILE=./config/daylily/daylily_cli_global.yaml
 git_tag=$(yq -r '.daylily.git_tag' "$CONFIG_FILE")
 export SENTIEON_TMPDIR=$(yq -r '.daylily.sentieon_tmpdir' "$CONFIG_FILE")
 export SENTIEON_LICENSE=$(yq -r '.daylily.sentieon_lic_path' "$CONFIG_FILE")
@@ -84,11 +84,12 @@ if [[ ! -f ~/.config/daylily/$git_tag ]]; then
     echo ""
     echo "!!!!"
     echo "!!!!"
-    echo "    Error: day-clone script not found. Please run 'day-build' to set up the environment."
-    echo "     day-clone was released with tagged version $git_tag of daylily. "
+    echo "    WARNING: gittag:$git_tag not found touched in  ~/.config/daylily/$git_tag "
+    echo "     This might be fine if you have cloned a more recent release of daylily compared to the tagged version used to create this ephemeral cluster."
+    echo "     ... however, this is not expected. If you are running an ephemeral cluster headnode for days+, this is not the intended use of daylily, a fresh build might be called for."
     echo "     This is checked by testing if ~/.config/daylily/$git_tag exists ."
     echo "!!!!"
-    return 3
+    sleep 3
 fi
 
 
