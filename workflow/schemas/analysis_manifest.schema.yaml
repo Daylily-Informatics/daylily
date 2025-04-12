@@ -19,7 +19,7 @@ properties:
         type: string
         description: SAMPLE_ID
     LANE:
-        type: string
+        type: integer
         description: Lane-SeqBarcodeID
     r1_path:
         type: string
