@@ -1,5 +1,5 @@
 # Daylily AWS Ephemeral Cluster Setup
-_(stable tagged release to use --> 0.7.196l ... use main at own risk)_
+_(stable tagged release to use --> 0.7.196m ... use main at own risk)_
 
 **beta release**
 
@@ -1271,9 +1271,11 @@ dy-r produce_snv_concordances produce_manta produce_tiddit produce_dysgu produce
 
 ## To Create Your Own `config/analysis_manifest.csv` File From Your Own `analysis_samples.tsv` File
 
-The `analysis_manifest.csv` file is required to run the daylily pipeline. It should only be created via the helper script `./bin/daylily-analysis-samples-to-manifest`.
+The `analysis_manifest.csv` file is required to run the daylily pipeline. It should only be created via the helper script `./bin/daylily-analysis-samples-to-manifest-new`.
 
 **this script is still in development, more docs to come**, run with `-h` for now and see the example [etc/analysis_samples.tsv template](etc/analysis_samples.tsv) file for the format of the `analysis_samples.tsv` file. You also need to have a valid ephemeral cluster available.
+
+**TODO** document this
 
 ---
 
