@@ -436,8 +436,8 @@ filtered_keys=()
 while IFS=$'\t' read -r key_name key_type; do
     if [[ $key_type == "ed25519" ]]; then
         pem_file_f=$HOME/.ssh/"${key_name}.pem"
-        pem_status="pem - NOT FOUND"
-        [[ -f "$pem_file_f" ]] && pem_status="pem - FOUND"
+        pem_status="❌ pem - NOT FOUND"
+        [[ -f "$pem_file_f" ]] && pem_status="✅ pem - FOUND"
         filtered_keys+=("$key_name|$key_type|$pem_status|$pem_file_f")
     fi
 done <<< "$key_data"
@@ -448,7 +448,7 @@ valid_keys=()
 index=1
 for key_info in "${filtered_keys[@]}"; do
     IFS='|' read -r key_name key_type pem_status pem_file <<< "$key_info"
-    if [[ $pem_status == "pem - FOUND" ]]; then
+    if [[ $pem_status == "✅ pem - FOUND" ]]; then
         valid_keys+=("$key_name")
         echo "[$index] Key: $key_name | Type: $key_type | PEM: $pem_status"
         ((index++))
