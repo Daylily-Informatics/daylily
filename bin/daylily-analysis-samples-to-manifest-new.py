@@ -115,8 +115,25 @@ def parse_and_validate_tsv(input_file, stage_target):
             for f in r1_files + r2_files:
                 check_file_exists(f)
 
-            subprocess.run(f"cat {' '.join(r1_files)} > {merged_r1}", shell=True, check=True)
-            subprocess.run(f"cat {' '.join(r2_files)} > {merged_r2}", shell=True, check=True)
+            tmp_r1_files = []
+            tmp_r2_files = []
+
+            # Download S3 files locally first if they're from S3
+            for idx, (r1, r2) in enumerate(zip(r1_files, r2_files)):
+                local_r1 = os.path.join(staged_sample_path, f"tmp_{idx}_R1.fastq.gz")
+                local_r2 = os.path.join(staged_sample_path, f"tmp_{idx}_R2.fastq.gz")
+                copy_files_to_target(r1, local_r1)
+                copy_files_to_target(r2, local_r2)
+                tmp_r1_files.append(local_r1)
+                tmp_r2_files.append(local_r2)
+
+            # Concatenate the downloaded local files
+            subprocess.run(f"cat {' '.join(tmp_r1_files)} > {merged_r1}", shell=True, check=True)
+            subprocess.run(f"cat {' '.join(tmp_r2_files)} > {merged_r2}", shell=True, check=True)
+
+            # Clean up temporary files
+            for tmp_file in tmp_r1_files + tmp_r2_files:
+                os.remove(tmp_file)
 
             rows.append([
                 sample_prefix, sample_prefix, sample_prefix, sample_key[3], sample_key[0], sample_key[1],
