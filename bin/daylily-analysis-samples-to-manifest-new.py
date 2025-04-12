@@ -160,6 +160,7 @@ def parse_and_validate_tsv(input_file, stage_target):
     manifest_file = os.path.join(stage_target, "analysis_manifest.csv")
     generate_analysis_manifest(manifest_file, rows)
     log_info(f"Manifest created: {manifest_file}")
+    log_info(f"Use this manifest: \n\tcp {manifest_file} config/analysis_manifest.csv")
 
 # Add the following main function to handle command-line arguments and invoke parsing
 def main():
