@@ -47,4 +47,4 @@ force-use-threads: True
 stats: "day_pipe_stats.json"
 use-singularity: True
 singularity-prefix: "/fsx/resources/environments/containers/USER_REGSUB/HOSTNAME"
-singularity-args: " -B ./config:$PWD/config -B ./bin:$PWD/bin -B ./results:$PWD/results -B /tmp:/tmp -B /fsx:/fsx -B resources/fsx:/fsx -B $PWD/:$PWD  -B /fsx/scratch:/fsx/scratch " 
+singularity-args: " -B $PWD/config:$PWD/config -B ./bin:$PWD/bin -B $PWD/results:$PWD/results -B /tmp:/tmp -B /fsx:/fsx -B resources/fsx:/fsx -B $PWD/:$PWD  -B /fsx/scratch:/fsx/scratch " 
