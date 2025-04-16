@@ -89,14 +89,14 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
         fi
-        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon bwa mem \
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon bwa mem \
         -t {params.bwa_threads}  {params.sent_opts}  \
         -x {params.bwa_model} \
         -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.huref} \
          {params.subsample_head} <( {params.igz} -q  {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <( {params.igz} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer} \
-        | /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon util sort \
+        | /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon util sort \
         --thread_count {params.sort_threads} \
         --sortblock_thread_count {params.sort_threads} \
         --bam_compression 1 \
