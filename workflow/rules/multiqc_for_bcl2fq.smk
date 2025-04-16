@@ -108,8 +108,8 @@ rule multiqc_bcl2fq:
         mdir="results/",
         cluster_sample="bcl2fqMQC_{config['b2fq_ruid']}",
         iop_d="results/bcl2fq_reports/"+config["b2fq_ruid"],
-    conda:
-        "../envs/bcl_reports_interop_v0.1.yaml"
+    container:
+        "docker://daylilyinformatics/daylily_multiqc:0.2"
     shell:
        """
        (ln -s {params.rud} results/bcl2fq_reports/{params.ru}) ;

@@ -88,8 +88,8 @@ rule multiqc_final_wgs:  # TARGET: the big report
         cemail=config["day_contact_email"],
     log:
         f"{MDIR}reports/logs/all__mqc_fin_a.log",
-    conda:
-        config["multiqc"]["final"]["env_yaml"]
+    container:
+        "docker://daylilyinformatics/daylily_multiqc:0.2"
     shell:
         """
         dbill='$';

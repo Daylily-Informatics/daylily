@@ -30,8 +30,8 @@ rule multiqc_for_raw_fastqs:
         cluster_sample=f"{RU[0]}_{EX[0]}",
     log:
         f"{MDIR}logs/multiqc/SEQQC_multiqc.FQ.log",
-    conda:
-        config["multiqc"]["seqqc"]["env_yaml"]  #  ...
+    container:
+        "docker://daylilyinformatics/daylily_multiqc:0.2"
     shell:
         """
 
