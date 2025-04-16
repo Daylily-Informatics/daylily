@@ -98,8 +98,8 @@ rule sent_DNAscope:
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
 
-        /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon driver --thread_count {threads} --interval {params.schrm_mod} --reference {params.huref} --input {input.b} --algo DNAscope --pcr_indel_model none --model {params.model}  {output.tvcf};
-        /fsx/data/cached_envs/sentieon-genomics-202308.03/bin/sentieon driver -t {threads} -r {params.huref} --algo DNAModelApply --model {params.model} -v {output.tvcf} {output.vcf};
+        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver --thread_count {threads} --interval {params.schrm_mod} --reference {params.huref} --input {input.b} --algo DNAscope --pcr_indel_model none --model {params.model}  {output.tvcf};
+        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} -r {params.huref} --algo DNAModelApply --model {params.model} -v {output.tvcf} {output.vcf};
 
 
         end_time=$(date +%s);
