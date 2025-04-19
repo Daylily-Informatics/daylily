@@ -3,7 +3,7 @@ import os
 # so it can generate a final QC report, and that report will satisfy the input
 # requirement of all to run
 
- localrules:
+localrules:
     collect_rules_benchmark_data2,
 
 rule collect_rules_benchmark_data2:
