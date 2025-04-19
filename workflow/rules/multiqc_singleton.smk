@@ -24,7 +24,7 @@ rule collect_rules_benchmark_data2:
         "sed -i -E 's/\t$/\tNA/' {output};"
 
 
-rule multiqc_final_wgs:  # TARGET: the big report
+rule multiqc_singleton:  # TARGET: the big report
     input:
 	    f"{MDIR}other_reports/rules_benchmark_data_mqc2.tsv",
     output:
