@@ -86,4 +86,4 @@ localrules:
 
 rule produce_multiqc_singleton:  # TARGET : Generated All WGS Reports
     input:
-        MDIR+ "reports/multiqc_final.html"
+        MDIR+ "reports/multiqc_singleton.html"
