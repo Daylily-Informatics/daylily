@@ -3,12 +3,10 @@ import os
 # so it can generate a final QC report, and that report will satisfy the input
 # requirement of all to run
 
-localrules:
+ localrules:
     collect_rules_benchmark_data2,
 
 rule collect_rules_benchmark_data2:
-    input:
-        f"{MDIR}logs/report_components_aggregated.done",
     output:
         f"{MDIR}other_reports/rules_benchmark_data_mqc2.tsv",
     params:
