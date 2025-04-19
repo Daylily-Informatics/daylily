@@ -12,7 +12,7 @@ rule collect_rules_benchmark_data2:
     params:
         cluster_sample="rules_benchmark_collect",
         working_file=f"{MDIR}reports/benchmarks_summary.tsv",
-        ref_code=config["genome_build"],
+        ref_code=config["genome_build"],    
     log:
         f"{MDIR}other_reports/logs/rules_benchmarks_summary2.log",
     container: None
