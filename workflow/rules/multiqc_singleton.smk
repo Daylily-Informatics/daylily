@@ -61,10 +61,10 @@ rule multiqc_singleton:  # TARGET: the big report
         perl -pi -e "s/REGSUB_SPOTCOST/median: \\\$dbill$MEDIAN_SPOT_PRICE  mean: \\\$dbill$AVERAGE_SPOT_PRICE ( avg cost per vcpu,per min: \\\$dbill$VCPU_COST_PER_MIN ) /g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
         perl -pi -e "s/REGSUB_SPOTINSTANCES/ $INSTANCE_TYPES_LINE /g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
 
-        source bin/proc_aligner_costs.sh {input[1]} $VCPU_COST_PER_MIN >> {log} 2>&1;
+        source bin/proc_aligner_costs.sh {input[0]} $VCPU_COST_PER_MIN >> {log} 2>&1;
         perl -pi -e "s/REGSUB_TOTALCOST/$ALNR_SUMMARY_COST/g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
         
-        source bin/proc_mrkdup_costs.sh {input[1]} $VCPU_COST_PER_MIN  >> {log} 2>&1;
+        source bin/proc_mrkdup_costs.sh {input[0]} $VCPU_COST_PER_MIN  >> {log} 2>&1;
         perl -pi -e "s/REGSUB_MRKDUPCOST/$MRKDUP_AVG_MINUTES min, costing \\\$dbill$MRKDUP_AVG_COST/g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
 
         multiqc -f  \
