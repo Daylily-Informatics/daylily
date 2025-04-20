@@ -19,7 +19,7 @@ print_help() {
 Usage: $(basename "$0") [OPTIONS]
 Config defaults from: $CONFIG_FILE
 Options:
-  -t, --git-tag       Git tag to clone (default: $git_tag)
+  -t, --git-tag       Git tag to clone, any tag string or branch string may be used, even if newer than the tagged repo used to init the cluster you are on (default: $git_tag)
   -r, --git-repo      Git repository URL (default: $git_repo or $git_repo_ssh)
   -c, --clone-root    Root directory to clone into (default: $clone_root)
   -d, --destination   Directory name to create in \$clone_root/\$user_name (REQUIRED)
