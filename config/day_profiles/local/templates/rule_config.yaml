@@ -330,8 +330,8 @@ octopus:
 
 sentdhio:
     threads: 192
-    hg38_sentD_chrms: "1-24"
-    b37_sentD_chrms: "1-24" #"19,21" # "1-24"
+    hg38_sentdhio_chrms: "1-24"
+    b37_sentdhio_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
     env_yaml: "../envs/vanilla_v0.1.yaml"
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
@@ -343,8 +343,8 @@ sentdhio:
 
 sentdhuo:
     threads: 192
-    hg38_sentD_chrms: "1-24"
-    b37_sentD_chrms: "1-24" #"19,21" # "1-24"
+    hg38_sentdhuo_chrms: "1-24"
+    b37_sentdhuo_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
     env_yaml: "../envs/vanilla_v0.1.yaml"
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
@@ -356,8 +356,8 @@ sentdhuo:
 
 sentdug:
     threads: 192
-    hg38_sentD_chrms: "1-24"
-    b37_sentD_chrms: "1-24" #"19,21" # "1-24"
+    hg38_sentdug_chrms: "1-24"
+    b37_sentdug_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
     env_yaml: "../envs/vanilla_v0.1.yaml"
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
@@ -369,8 +369,8 @@ sentdug:
 
 sentdont:
     threads: 192
-    hg38_sentD_chrms: "1-24"
-    b37_sentD_chrms: "1-24" #"19,21" # "1-24"
+    hg38_sentdont_chrms: "1-24"
+    b37_sentdont_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
     env_yaml: "../envs/vanilla_v0.1.yaml"
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
