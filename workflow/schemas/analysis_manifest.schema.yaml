@@ -54,8 +54,6 @@ required:
     - LANE
     - r1_path
     - r2_path
-    - cram_ont
-    - cram_ultima
     - biological_sex
     - iddna_uid
     - concordance_control_path
