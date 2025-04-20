@@ -57,7 +57,7 @@ config["supporting_files"] = {
     "files": files_yaml_file["supporting_files"]["files"],
     "root": files_yaml_file["supporting_files"]["root"],
 }
-
+ 
 
 # SNV caller chunk arrays
 SENTD_CHRMS = config["sentD"][f"{config['genome_build']}_sentD_chrms"].split(",")
