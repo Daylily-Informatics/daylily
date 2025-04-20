@@ -3,7 +3,7 @@ import os
 
 # snv=["sentdont"]
 
-rule sent_snv_ug:
+rule sent_snv_ont:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.crai",
