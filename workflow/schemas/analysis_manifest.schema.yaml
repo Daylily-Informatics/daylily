@@ -25,6 +25,10 @@ properties:
         type: string
     r2_path:
         type: string
+    cram_ont:
+	type: string
+    cram_ultima:
+	type: string
     biological_sex:
         type: string
     iddna_uid:
@@ -50,6 +54,8 @@ required:
     - LANE
     - r1_path
     - r2_path
+    - cram_ont
+    - cram_ultima
     - biological_sex
     - iddna_uid
     - concordance_control_path
