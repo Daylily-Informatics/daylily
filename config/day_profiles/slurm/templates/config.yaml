@@ -31,7 +31,7 @@ jobs: 300
 cores: 4608  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 latency-wait: 100
 local-cores: 8
-restart-times: 3
+restart-times: 2
 max-jobs-per-second: 10
 keep-going: True
 keep-remote: True
