@@ -27,6 +27,7 @@ rule multiqc_singleton:  # TARGET: the big report
 	    f"{MDIR}other_reports/rules_benchmark_data_mqc2.tsv",
     output:
         f"{MDIR}reports/multiqc_singleton.html",
+        f"{MDIR}reports/multiqc_header2.yaml",
     benchmark:
         f"{MDIR}benchmarks/DAY_all.final_multiqc2.bench.tsv"
     threads: config["multiqc"]["threads"]
@@ -48,33 +49,33 @@ rule multiqc_singleton:  # TARGET: the big report
     shell:
         """
         dbill='$';
-        cp config/external_tools/multiqc_header.yaml $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
-        perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
-        perl -pi -e "s/REGSUB_BUDGET/\\\$dbill$USED_BUDGET of \\\$dbill$TOTAL_BUDGET spent ( $PERCENT_USED\%)/g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
+        cp config/external_tools/multiqc_header.yaml {output[1]} >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;" {output[1]} >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_BUDGET/\\\$dbill$USED_BUDGET of \\\$dbill$TOTAL_BUDGET spent ( $PERCENT_USED\%)/g;" {output[1]} >> {log} 2>&1;
 
         size=$(du -hs results | cut -f1) >> {log} 2>&1;
-        perl -pi -e "s/REGSUB_TOTALSIZE/$size/g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_TOTALSIZE/$size/g;" {output[1]} >> {log} 2>&1;
 
         source bin/proc_spot_price_logs.sh >> {log} 2>&1;
-        perl -pi -e "s/REGSUB_SPOTCOST/median: \\\$dbill$MEDIAN_SPOT_PRICE  mean: \\\$dbill$AVERAGE_SPOT_PRICE ( avg cost per vcpu,per min: \\\$dbill$VCPU_COST_PER_MIN ) /g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
-        perl -pi -e "s/REGSUB_SPOTINSTANCES/ $INSTANCE_TYPES_LINE /g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_SPOTCOST/median: \\\$dbill$MEDIAN_SPOT_PRICE  mean: \\\$dbill$AVERAGE_SPOT_PRICE ( avg cost per vcpu,per min: \\\$dbill$VCPU_COST_PER_MIN ) /g;" {output[1]} >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_SPOTINSTANCES/ $INSTANCE_TYPES_LINE /g;" {output[1]} >> {log} 2>&1;
 
-        source bin/proc_aligner_costs.sh {input[0]} $VCPU_COST_PER_MIN >> {log} 2>&1;
-        perl -pi -e "s/REGSUB_TOTALCOST/$ALNR_SUMMARY_COST/g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
+        source bin/proc_aligner_costs.sh {input} $VCPU_COST_PER_MIN >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_TOTALCOST/$ALNR_SUMMARY_COST/g;" {output[1]} >> {log} 2>&1;
         
-        source bin/proc_mrkdup_costs.sh {input[0]} $VCPU_COST_PER_MIN  >> {log} 2>&1;
-        perl -pi -e "s/REGSUB_MRKDUPCOST/$MRKDUP_AVG_MINUTES min, costing \\\$dbill$MRKDUP_AVG_COST/g;" $(dirname {output})/multiqc_header2.yaml >> {log} 2>&1;
+        source bin/proc_mrkdup_costs.sh {input} $VCPU_COST_PER_MIN  >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_MRKDUPCOST/$MRKDUP_AVG_MINUTES min, costing \\\$dbill$MRKDUP_AVG_COST/g;"  {output[1]} >> {log} 2>&1;
 
         multiqc -f  \
-        --config   $(dirname {output})/multiqc_header2.yaml \
+        --config  {output[1]} \
         --config  config/external_tools/multiqc_config.yaml  \
         --custom-css-file config/external_tools/multiqc.css \
         --template default \
-        --filename {output} \
+        --filename {output[0]} \
         -i 'Singleton Multiqc Report' \
         -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH:{params.ghash}) ' \
         $(dirname {input} )/../ >> {log} 2>&1;
-        ls -lt {output}  >> {log} 2>&1;
+        ls -lt {output[0]} {output[1]}  >> {log} 2>&1;
         """
 
 
