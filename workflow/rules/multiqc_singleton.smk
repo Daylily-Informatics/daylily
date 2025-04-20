@@ -49,7 +49,18 @@ rule multiqc_singleton:  # TARGET: the big report
     shell:
         """
         dbill='$';
-        cp ./config/external_tools/multiqc_header.yaml {output[1]} >> {log} 2>&1;
+
+        echo '''
+eport_header_info:
+  - Project/Budget: "REGSUB_PROJECT"
+  - Budget @ Runtime: "REGSUB_BUDGET"
+  - Spot Instances: "REGSUB_SPOTINSTANCES"
+  - Spot Costs per hr: "REGSUB_SPOTCOST"
+  - FQ->BAM.sort avg Costs: "REGSUB_TOTALCOST"
+  - BAM mrkdup avg Cost: "REGSUB_MRKDUPCOST"
+  - Results Dir (GB): "REGSUB_TOTALSIZE"
+  ''' > {output[1]} >> {log} 2>&1;
+
         perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;" {output[1]} >> {log} 2>&1;
         perl -pi -e "s/REGSUB_BUDGET/\\\$dbill$USED_BUDGET of \\\$dbill$TOTAL_BUDGET spent ( $PERCENT_USED\%)/g;" {output[1]} >> {log} 2>&1;
 
