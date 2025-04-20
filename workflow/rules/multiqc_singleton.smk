@@ -49,7 +49,7 @@ rule multiqc_singleton:  # TARGET: the big report
     shell:
         """
         dbill='$';
-        cp config/external_tools/multiqc_header.yaml {output[1]} >> {log} 2>&1;
+        cp ./config/external_tools/multiqc_header.yaml {output[1]} >> {log} 2>&1;
         perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;" {output[1]} >> {log} 2>&1;
         perl -pi -e "s/REGSUB_BUDGET/\\\$dbill$USED_BUDGET of \\\$dbill$TOTAL_BUDGET spent ( $PERCENT_USED\%)/g;" {output[1]} >> {log} 2>&1;
 
@@ -68,8 +68,8 @@ rule multiqc_singleton:  # TARGET: the big report
 
         multiqc -f  \
         --config  {output[1]} \
-        --config  config/external_tools/multiqc_config.yaml  \
-        --custom-css-file config/external_tools/multiqc.css \
+        --config  ./config/external_tools/multiqc_config.yaml  \
+        --custom-css-file ./config/external_tools/multiqc.css \
         --template default \
         --filename {output[0]} \
         -i 'Singleton Multiqc Report' \
