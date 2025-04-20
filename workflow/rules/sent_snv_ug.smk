@@ -1,7 +1,7 @@
 import sys
 import os
 
-# snv=["sentdub"]
+# snv=["sentdug"]
 
 rule sent_snv_ug:
     input:
