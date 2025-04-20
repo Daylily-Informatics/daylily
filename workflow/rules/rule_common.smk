@@ -65,7 +65,10 @@ DEEPD_CHRMS = config["deepvariant"][f"{config['genome_build']}_deep_chrms"].spli
 OCTO_CHRMS = config["octopus"][f"{config['genome_build']}_octo_chrms"].split(",")
 CLAIR3_CHRMS = config["clair3"][f"{config['genome_build']}_clair3_chrms"].split(",")
 LOFREQ_CHRMS = config["lofreq2"][f"{config['genome_build']}_lofreq_chrms"].split(",")
-
+SENTDUG_CHRMS = config["sentdug"][f"{config['genome_build']}_lofreq_chrms"].split(",")
+SENTDONT_CHRMS = config["sentdont"][f"{config['genome_build']}_lofreq_chrms"].split(",")
+SENTDHUO_CHRMS = config["sentdhuo"][f"{config['genome_build']}_lofreq_chrms"].split(",")
+SENTDHIO_CHRMS = config["sentdhio"][f"{config['genome_build']}_lofreq_chrms"].split(",")
 # ##### Setting the allowed aligners to run and to which deduper to use.
 # presently, 1+ aligners may run, but all must use the same deduper
 

@@ -328,6 +328,57 @@ octopus:
         --forest-model /fsx/data/tool_specific_resources/H_sapiens/b37/octopus/forests/germline.v0.7.4.forest \
     partition: "i8"
 
+sentdhio:
+    threads: 192
+    hg38_sentD_chrms: "1-24"
+    b37_sentD_chrms: "1-24" #"19,21" # "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: " "
+    partition: "i192,i192mem"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/HybridIlluminaONT1.0/dnascope.model"
+    mem_mb: 200000
+
+sentdhuo:
+    threads: 192
+    hg38_sentD_chrms: "1-24"
+    b37_sentD_chrms: "1-24" #"19,21" # "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: " "
+    partition: "i192,i192mem"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2/dnascope.model"
+    mem_mb: 200000
+
+sentdug:
+    threads: 192
+    hg38_sentD_chrms: "1-24"
+    b37_sentD_chrms: "1-24" #"19,21" # "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: " "
+    partition: "i192,i192mem"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonUltima1.0/dnascope.model"
+    mem_mb: 200000
+
+sentdont:
+    threads: 192
+    hg38_sentD_chrms: "1-24"
+    b37_sentD_chrms: "1-24" #"19,21" # "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: " "
+    partition: "i192,i192mem"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopePacBio2.1/dnascope.model"
+    mem_mb: 200000
 
 sentD:
     regions_to_call: '  '  # testing:' --regions 11:1-115169878 MT:1-16569  '
