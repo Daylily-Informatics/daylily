@@ -37,12 +37,12 @@ rule multiqc_for_raw_fastqs:
 
 
         dbill='$';
-        cp config/external_tools/multiqc_header.yaml $(dirname {output})/rfq_multiqc_header.yaml;
+        cp ./config/external_tools/multiqc_header.yaml ./$(dirname {output})/rfq_multiqc_header.yaml;
 
         multiqc -f  \
-        --config   $(dirname {output})/rfq_multiqc_header.yaml \
-        --config  config/external_tools/multiqc_config.yaml  \
-        --custom-css-file config/external_tools/multiqc.css \
+        --config   ./$(dirname {output})/rfq_multiqc_header.yaml \
+        --config  ./config/external_tools/multiqc_config.yaml  \
+        --custom-css-file ./config/external_tools/multiqc.css \
         --template default \
         --filename {output} \
         -i 'FASTQ Multiqc Report' \
