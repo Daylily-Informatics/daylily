@@ -417,7 +417,6 @@ rule prep_cram_inputs:  # TARGET: Just Pre
     input:
         cram=MDIR + "{sample}/{sample_lane}.cram",
         crai=MDIR + "{sample}/{sample_lane}.cram.crai",
-    output:
-        "crams_staged",
+
     shell:
         "touch  {output}"
