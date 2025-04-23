@@ -214,7 +214,7 @@ rule clear_combined_sentdhuo_vcf:  # TARGET:  clear combined sentdhuo vcf so the
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=CRAM_ALIGNERS,
         ),
     threads: 2
     priority: 42
@@ -234,7 +234,7 @@ rule produce_sentdhuo_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=CRAM_ALIGNERS,
         ),
     output:
         "gatheredall.sentdhuo",

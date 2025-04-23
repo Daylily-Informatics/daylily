@@ -256,6 +256,7 @@ cluster_config["sub_user"] = os.environ.get("USER", "na")
 
 # Set info for concordance calculations
 CONCORDANCE_SAMPLES = {}
+CRAM_ALIGNERS = []
 sample_info = {}
 sample_lane_info = {}
 for i in samples.iterrows():
@@ -304,8 +305,8 @@ for i in samples.iterrows():
         elif iix in ["cram_aligner"]:
             sample_info[samp][iix] = val
             
-            if val not in ALIGNERS:
-                ALIGNERS.append(val)
+            if val not in CRAM_ALIGNERS:
+                CRAM_ALIGNERS.append(val)
 
         elif iix in ["cram_snv_caller"]:
             sample_info[samp][iix] = val
