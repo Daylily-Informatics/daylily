@@ -386,11 +386,12 @@ def get_crams(wildcards):
     # cam_gen == cram_ultima, cram_ont, etc
     crams = []
 
-    cram_gen="ultima"
+    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['r2_path'][0])
+
     #cram_gen=samples.loc[(wildcards.sample, wildcards.sample_lane), f"{cram_gen}"][0]
-    crams.append(os.path.abspath(samples.loc[(wildcards.sample, wildcards.sample_lane), "cram"]))
+    crams.append(cram)
     
-    return [cram]
+    return crams
 
 
 localrules:
