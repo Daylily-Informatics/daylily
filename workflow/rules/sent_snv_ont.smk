@@ -5,8 +5,8 @@ import os
 
 rule sent_snv_ont:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=temp(MDIR
