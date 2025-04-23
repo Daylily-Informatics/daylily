@@ -10,10 +10,9 @@ import os
 # remote source via rclone, but then can be reused as long as the credntials are valid.
 # ---------
 
+    
 def ret_all_local_R1_R2_lane_fqs(wildcards):
     ret_str = []
-    from IPython import embed
-    embed()
 
     for i in samples.iterrows():
 
@@ -410,3 +409,15 @@ rule pre_prep_raw_cram:
     shell:
         "{params.c} {input[0]} {output.or1};"
         "{params.c} {input[1]} {output.or2};"
+
+
+localrules: prep_cram_inputs,
+
+rule prep_cram_inputs:  # TARGET: Just Pre
+    input:
+        cram=MDIR + "{sample}/{sample_lane}.cram",
+        crai=MDIR + "{sample}/{sample_lane}.cram.crai",
+    output:
+        "crams_staged",
+    shell:
+        "touch  {output}"
