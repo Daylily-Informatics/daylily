@@ -36,7 +36,7 @@ rule sent_snv_ug:
         partition=config['sentdug']['partition'],
         threads=config['sentdug']['threads'],
         vcpu=config['sentdug']['threads'],
-	mem_mb=config['sentdug']['mem_mb'],
+	    mem_mb=config['sentdug']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
@@ -79,7 +79,7 @@ rule sent_snv_ug:
             {output.gvcf} >> {log} 2>&1;
 
         /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
-            -r {input.ref} \
+            -r {params.huref} \
             --algo DNAModelApply \
             --model {params.model} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;

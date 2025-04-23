@@ -77,7 +77,7 @@ rule sent_snv_ont:
             {output.gvcf} >> {log} 2>&1;
 
         /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
-            -r {input.ref} \
+            -r {params.huref} \
             --algo DNAModelApply \
             --model {params.model} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;
