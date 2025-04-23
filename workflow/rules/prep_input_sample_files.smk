@@ -383,8 +383,9 @@ else:
 # LOCAL FASTQS
 # Fetch and stage our input data, but only as links. deal with fastqs seperately until BAM creation
 
-def get_crams(wildcards, cram_gen=None):
+def get_crams(wildcards):
     # cam_gen == cram_ultima, cram_ont, etc
+    cram_gen="cram_ultima"
     cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample][cram_gen][0]) #os.path.abspath(samples.loc[(wildcards.sample, wildcards.sample_lane), "r1_path"])
     
     return [r1]
