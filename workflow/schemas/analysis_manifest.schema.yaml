@@ -45,6 +45,8 @@ properties:
         type: string
     external_sample_id:
         type: string
+    cram_generator:
+        type: string
 required:
     - sample
     - sample_lane
