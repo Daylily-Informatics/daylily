@@ -415,10 +415,9 @@ localrules: prep_cram_inputs,
 
 rule prep_cram_inputs:  # TARGET: Just Pre
     input:
-        cram=MDIR + "{sample}/{sample_lane}.cram",
-        crai=MDIR + "{sample}/{sample_lane}.cram.crai",
+        cram=expand(MDIR + "{sample}/{sample_lane}.cram",sample=SAMPS),
+        crai=expand(MDIR + "{sample}/{sample_lane}.cram.crai",sample=SAMPS)
     output:
-         expand(MDIR + "{sample}/{{sample_lane}}.cram.prep", sample=SAMPS)
-
+        "crams_staged",
     shell:
         "touch  {output}"
