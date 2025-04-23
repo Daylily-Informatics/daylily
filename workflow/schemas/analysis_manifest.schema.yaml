@@ -25,9 +25,7 @@ properties:
         type: string
     r2_path:
         type: string
-    cram_ont:
-        type: string
-    cram_ultima:
+    cram:
         type: string
     biological_sex:
         type: string
