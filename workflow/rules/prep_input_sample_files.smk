@@ -385,10 +385,15 @@ else:
 
 def get_crams(wildcards):
     # cam_gen == cram_ultima, cram_ont, etc
-    cram_gen="cram_ultima"
-    cram=os.path.abspath(wildcards.sample][cram_gen]) #os.path.abspath(samples.loc[(wildcards.sample, wildcards.sample_lane), "r1_path"])
+    if wildcards.cram_generator == "na":
+        return []
+    else:
+
+        cram_gen="cram_ultima"
+        cram=os.path.abspath(samples.loc[(wildcards.sample, wildcards.sample_lane), f"{cram_gen}"])
     
-    return [r1]
+        return [cram]
+
 
 localrules:
     pre_prep_raw_cram,
@@ -404,5 +409,3 @@ rule pre_prep_raw_cram:
     shell:
         "{params.c} {input[0]} {output.or1};"
         "{params.c} {input[1]} {output.or2};"
-
-
