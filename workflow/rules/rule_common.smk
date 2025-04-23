@@ -299,7 +299,7 @@ for i in samples.iterrows():
             sample_info[samp][iix] = val
         elif iix in ["cram"]:
             sample_info[samp][iix] = val
-         elif iix in ["cram_generator"]:
+        elif iix in ["cram_generator"]:
             sample_info[samp][iix] = val
         elif iix in ["cram_aligner"]:
             sample_info[samp][iix] = val
