@@ -375,3 +375,33 @@ else:
             "staged",
         shell:
             "touch  {output}"
+
+
+
+
+
+# LOCAL FASTQS
+# Fetch and stage our input data, but only as links. deal with fastqs seperately until BAM creation
+
+def get_crams(wildcards, cram_gen=None):
+    # cam_gen == cram_ultima, cram_ont, etc
+    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample][cram_gen][0]) #os.path.abspath(samples.loc[(wildcards.sample, wildcards.sample_lane), "r1_path"])
+    
+    return [r1]
+
+localrules:
+    pre_prep_raw_cram,
+
+rule pre_prep_raw_cram:
+    input:
+        get_crams,
+    output:
+        cram=MDIR + "{sample}/{sample_lane}.cram",
+        crai=MDIR + "{sample}/{sample_lane}.cram.crai",
+    params:
+        c=config["prep_input_sample_files"]["source_read_method"],
+    shell:
+        "{params.c} {input[0]} {output.or1};"
+        "{params.c} {input[1]} {output.or2};"
+
+
