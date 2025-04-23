@@ -5,8 +5,8 @@ import os
 
 rule sent_snv_ug:
     input:
-        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
-        cram=getCRAMs,
+        cram=MDIR + "{sample}/{sample_lane}.cram",
+        crai=MDIR + "{sample}/{sample_lane}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=temp(MDIR
@@ -270,7 +270,8 @@ localrules:
 
 rule prep_sentdug_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        cram=MDIR + "{sample}/{sample_lane}.cram",
+        crai=MDIR + "{sample}/{sample_lane}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdug/vcfs/{dchrm}/{{sample}}.ready",
