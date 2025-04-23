@@ -237,7 +237,7 @@ rule clear_combined_sentdont_vcf:  # TARGET:  clear combined sentdont vcf so the
 localrules:
     produce_sentdont_vcf,
 
-
+ 
 rule produce_sentdont_vcf:  # TARGET: sentieon dnascope vcf
     input:
         expand(
@@ -265,7 +265,8 @@ localrules:
 
 rule prep_sentdont_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdont/vcfs/{dchrm}/{{sample}}.ready",
