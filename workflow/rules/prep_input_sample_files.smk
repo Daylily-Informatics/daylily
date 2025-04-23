@@ -418,8 +418,7 @@ rule prep_cram_inputs:  # TARGET: Just Pre
         cram=MDIR + "{sample}/{sample_lane}.cram",
         crai=MDIR + "{sample}/{sample_lane}.cram.crai",
     output:
-        expand(
-            MDIR + "{{sample}}/{sample_lane}.cram.ready", SAMPS
-        ),
+         expand(MDIR + "{sample}/{sample_lane}.cram.prep", sample=SAMPS)
+
     shell:
         "touch  {output}"
