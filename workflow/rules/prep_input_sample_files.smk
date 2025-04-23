@@ -400,8 +400,8 @@ rule pre_prep_raw_cram:
     input:
         get_crams,
     output:
-        cram=MDIR + "{sample}/{sample}.cram",
-        crai=MDIR + "{sample}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/{sample_lane}.cram",
+        crai=MDIR + "{sample}/{sample_lane}.cram.crai",
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
     shell:
@@ -413,8 +413,8 @@ localrules: prep_cram_inputs,
 
 rule prep_cram_inputs:  # TARGET: Just Pre
     input:
-        cram=expand(MDIR + "{sample}/{sample}.cram",sample=SAMPS),
-        crai=expand(MDIR + "{sample}/{sample}.cram.crai",sample=SAMPS)
+        cram=expand(MDIR + "{sample}/{{sample_lane}}.cram",sample=SAMPS),
+        crai=expand(MDIR + "{sample}/{{sample_lane}}.cram.crai",sample=SAMPS)
     output:
         "crams_staged",
     shell:
