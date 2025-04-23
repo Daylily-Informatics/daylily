@@ -299,6 +299,12 @@ for i in samples.iterrows():
             sample_info[samp][iix] = val
         elif iix in ["cram"]:
             sample_info[samp][iix] = val
+         elif iix in ["cram_generator"]:
+            sample_info[samp][iix] = val
+        elif iix in ["cram_aligner"]:
+            sample_info[samp][iix] = val
+        elif iix in ["cram_snv_caller"]:
+            sample_info[samp][iix] = val
         elif iix in ["concordance_control_path"]:
             sample_info[samp][iix] = val
             if val not in ["na", "NA", "", None, "None"]:

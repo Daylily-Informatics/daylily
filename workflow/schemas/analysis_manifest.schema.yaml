@@ -45,6 +45,10 @@ properties:
         type: string
     cram_generator:
         type: string
+    cram_aligner:
+        type: string
+    cram_snv_caller:
+        type: string
 required:
     - sample
     - sample_lane
@@ -64,3 +68,5 @@ required:
     - external_sample_id
     - cram
     - cram_generator
+    - cram_aligner
+    - cram_snv_caller
