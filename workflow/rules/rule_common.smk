@@ -454,6 +454,14 @@ def getR1s(wildcards):
         fr1s.append(r1)
     return sorted(fr1s)
 
+def getCRAMs(wildcards):
+    crams = []
+    for ss_cram in samples.loc[wildcards.sample, "cram"]:
+        if ss_cram not in [None, "None", "", "na"]:
+            cram = os.path.abspath(cram)
+        else:
+            pass
+    return sorted(crams)
 
 def getR2sS(wildcards):
     fr2s = []

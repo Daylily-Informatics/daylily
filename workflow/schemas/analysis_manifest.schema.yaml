@@ -62,3 +62,5 @@ required:
     - sample_type
     - merge_single
     - external_sample_id
+    - cram
+    - cram_generator

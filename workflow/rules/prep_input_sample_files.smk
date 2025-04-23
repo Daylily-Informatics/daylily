@@ -389,7 +389,8 @@ def get_crams(wildcards):
         return []
     else:
 
-        cram_gen="cram_ultima"
+        cram_gen="ultima"
+        #cram_gen=samples.loc[(wildcards.sample, wildcards.sample_lane), f"{cram_gen}"][0]
         cram=os.path.abspath(samples.loc[(wildcards.sample, wildcards.sample_lane), f"{cram_gen}"])
     
         return [cram]
