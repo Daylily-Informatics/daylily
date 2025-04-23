@@ -388,14 +388,17 @@ def get_crams(wildcards):
 
     cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['cram'][0])
     crai=f"{cram}.crai"
-    #cram_gen=samples.loc[(wildcards.sample, wildcards.sample_lane), f"{cram_gen}"][0]
+    cram_aligner=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['cram_aligner'][0])
+    cram_aligner_dir= f"mkdir -p {MDIR}/{wildcards.sample}/align/{cram_aligner}/"
+    os.system(f"mkdir -p {cram_aligner_dir})
+    os.system(f"touch {cram_aligner_dir}/.ok")
     crams.append(cram)
     crams.append(crai)
 
 
     return crams
 
-
+ 
 localrules:
     pre_prep_raw_cram,
 
@@ -403,8 +406,8 @@ rule pre_prep_raw_cram:
     input:
         get_crams,
     output:
-        cram=MDIR + "{sample}/{sample_lane}.cram",
-        crai=MDIR + "{sample}/{sample_lane}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample_lane}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample_lane}.cram.crai",
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
     shell:
@@ -418,8 +421,8 @@ rule prep_cram_inputs:  # TARGET: Just Pre
     input:
         ##cram=MDIR + "{sample}/{sample_lane}.cram",
         #crai=MDIR + "{sample}/{sample_lane}.cram.crai",
-        cram=expand(MDIR + "{sample}/{sample_lane}.cram",sample=SAMPS, sample_lane=SAMPS),
-        crai=expand(MDIR + "{sample}/{sample_lane}.cram.crai",sample=SAMPS, sample_lane=SAMPS)
+        cram=expand(MDIR + "{sample}/align/{alnr}/{sample_lane}.cram",sample=SAMPS, sample_lane=SAMPS, alnr=ALIGNERS),
+        crai=expand(MDIR + "{sample}/align/{alnr}/{sample_lane}.cram.crai",sample=SAMPS, sample_lane=SAMPS,alnr=ALIGNERS)
     output:
         "crams_staged",
     shell:
