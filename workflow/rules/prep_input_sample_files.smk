@@ -386,7 +386,7 @@ def get_crams(wildcards):
     # cam_gen == cram_ultima, cram_ont, etc
     crams = []
 
-    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['r2_path'][0])
+    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['cram'][0])
     crai=f"{cram}.crai"
     #cram_gen=samples.loc[(wildcards.sample, wildcards.sample_lane), f"{cram_gen}"][0]
     crams.append(cram)
