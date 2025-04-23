@@ -8,6 +8,8 @@ rule sentdhio_snv:
     input:
         b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
         bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=temp(MDIR
@@ -255,6 +257,8 @@ localrules:
 rule prep_sentdhio_chunkdirs:
     input:
         b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhio/vcfs/{dchrm}/{{sample}}.ready",

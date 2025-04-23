@@ -3,10 +3,12 @@ import os
 
 
 
-rule sentdhuohuo_snv:
+rule sentdhuo_snv:
     input:
         b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
         bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=temp(MDIR
@@ -32,7 +34,7 @@ rule sentdhuohuo_snv:
         partition=config['sentdhuo']['partition'],
         threads=config['sentdhuo']['threads'],
         vcpu=config['sentdhuo']['threads'],
-	mem_mb=config['sentdhuo']['mem_mb'],
+	    mem_mb=config['sentdhuo']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
@@ -254,6 +256,8 @@ localrules:
 rule prep_sentdhuo_chunkdirs:
     input:
         b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhuo/vcfs/{dchrm}/{{sample}}.ready",
