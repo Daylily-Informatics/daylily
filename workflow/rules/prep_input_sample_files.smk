@@ -387,9 +387,9 @@ def get_crams(wildcards):
     crams = []
 
     cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['r2_path'][0])
-
+    crai=f{cram}.crai"
     #cram_gen=samples.loc[(wildcards.sample, wildcards.sample_lane), f"{cram_gen}"][0]
-    crams.append(cram)
+    crams.append(cram,crai)
     
     return crams
 
@@ -406,8 +406,8 @@ rule pre_prep_raw_cram:
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
     shell:
-        "{params.c} {input[0]} {output.or1};"
-        "{params.c} {input[1]} {output.or2};"
+        "{params.c} {input[0]} {output.cram};"
+        "{params.c} {input[1]} {output.crai};"
 
 
 localrules: prep_cram_inputs,
