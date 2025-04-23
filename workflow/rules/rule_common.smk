@@ -304,8 +304,8 @@ for i in samples.iterrows():
         elif iix in ["cram_aligner"]:
             sample_info[samp][iix] = val
             
-            if var not in ALIGNERS:
-                ALIGNERS.append(var)
+            if val not in ALIGNERS:
+                ALIGNERS.append(val)
 
         elif iix in ["cram_snv_caller"]:
             sample_info[samp][iix] = val
