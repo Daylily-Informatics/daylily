@@ -400,7 +400,7 @@ localrules:
 
 rule pre_prep_raw_cram:
     input:
-        get_crams('cram_ultima'),
+        get_crams,
     output:
         cram=MDIR + "{sample}/{sample_lane}.cram",
         crai=MDIR + "{sample}/{sample_lane}.cram.crai",
