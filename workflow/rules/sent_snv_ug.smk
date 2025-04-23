@@ -22,7 +22,7 @@ rule sent_snv_ug:
         + "{sample}/align/{alnr}/snv/sentdug/log/vcfs/{sample}.{alnr}.sentdug.{dchrm}.snv.log",
     threads: config['sentdug']['threads']
     conda:
-        "../envs/sentd_v0.2.yaml"
+        "../envs/sentD_v0.2.yaml"
     priority: 45
     benchmark:
         repeat(

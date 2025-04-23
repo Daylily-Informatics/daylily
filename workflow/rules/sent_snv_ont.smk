@@ -22,7 +22,7 @@ rule sent_snv_ont:
         + "{sample}/align/{alnr}/snv/sentdont/log/vcfs/{sample}.{alnr}.sentdont.{dchrm}.snv.log",
     threads: config['sentdont']['threads']
     conda:
-        "../envs/sentd_v0.2.yaml"
+        "../envs/sentD_v0.2.yaml"
     priority: 45
     benchmark:
         repeat(
