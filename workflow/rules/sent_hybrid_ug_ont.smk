@@ -1,7 +1,7 @@
 import sys
 import os
 
-
+ALIGNERS_ONT = ["ont"]
 
 rule sentdhuo_snv:
     input:
@@ -214,7 +214,7 @@ rule clear_combined_sentdhuo_vcf:  # TARGET:  clear combined sentdhuo vcf so the
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=CRAM_ALIGNERS,
+            alnr=ALIGNERS_ONT,
         ),
     threads: 2
     priority: 42
@@ -234,7 +234,7 @@ rule produce_sentdhuo_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=CRAM_ALIGNERS,
+            alnr=ALIGNERS_ONT,
         ),
     output:
         "gatheredall.sentdhuo",

@@ -1,6 +1,9 @@
 import sys
 import os
 
+
+ALIGNERS_PB = ["pb"]
+
 rule sent_snv_pacbio:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
@@ -222,7 +225,7 @@ rule clear_combined_sentdpb_vcf:  # TARGET:  clear combined sentdpb vcf so the c
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdpb/{sample}.{alnr}.sentdpb.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=CRAM_ALIGNERS,
+            alnr=ALIGNERS_PB,
         ),
     threads: 2
     priority: 42
@@ -242,7 +245,7 @@ rule produce_sentdpb_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdpb/{sample}.{alnr}.sentdpb.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=CRAM_ALIGNERS,
+            alnr=ALIGNERS_PB,
         ),
     output:
         "gatheredall.sentdpb",

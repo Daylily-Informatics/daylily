@@ -1,7 +1,7 @@
 import sys
 import os
 
-# snv=["sentdont"]
+ALIGNERS_ONT = ["ont"]
 
 rule sent_snv_ont:
     input:
@@ -224,7 +224,7 @@ rule clear_combined_sentdont_vcf:  # TARGET:  clear combined sentdont vcf so the
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdont/{sample}.{alnr}.sentdont.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=CRAM_ALIGNERS,
+            alnr=ALIGNERS_PB,
         ),
     threads: 2
     priority: 42
@@ -244,7 +244,7 @@ rule produce_sentdont_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdont/{sample}.{alnr}.sentdont.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=CRAM_ALIGNERS,
+            alnr=ALIGNERS_ONT,
         ),
     output:
         "gatheredall.sentdont",

@@ -1,7 +1,8 @@
 import sys
 import os
 
-# snv=["sentdug"]
+
+ALIGNERS_UG = "ug"
 
 rule sent_snv_ug:
     input:
@@ -229,7 +230,7 @@ rule clear_combined_sentdug_vcf:  # TARGET:  clear combined sentdug vcf so the c
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdug/{sample}.{alnr}.sentdug.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_UG,
         ),
     threads: 2
     priority: 42
@@ -249,7 +250,7 @@ rule produce_sentdug_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdug/{sample}.{alnr}.sentdug.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_UG,
         ),
     output:
         "gatheredall.sentdug",
