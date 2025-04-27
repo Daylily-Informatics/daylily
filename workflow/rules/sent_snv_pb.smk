@@ -1,7 +1,7 @@
 import sys
 import os
 
-rule sent_snv_ont:
+rule sent_snv_pacbio:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
