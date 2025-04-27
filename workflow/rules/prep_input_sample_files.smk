@@ -412,7 +412,7 @@ rule pre_prep_raw_cram:
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
     log:
-        MDIR + "{sample}/logs/{sample_lane}.cram.log",
+        MDIR + "{sample}/{alnr}/logs/{sample_lane}.cram.log",
     shell:
         "(mkdir -p $(dirname {log}) || echo {log} dir exists >> {log} 2>&1;"
         "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
