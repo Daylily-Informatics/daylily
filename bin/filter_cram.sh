@@ -5,7 +5,8 @@ incram=$2
 out_cram=$3
 
 # Create contigs list from reference
-samtools view -H "$incram" | grep '^@SQ' | cut -f2 | sed 's/SN://' > hg38_contigs.txt
+#samtools view -H "$incram" | grep '^@SQ' | cut -f2 | sed 's/SN://' > hg38_contigs.txt
+grep '^>' $huref | sed 's/>//' > hg38_contigs.txt
 
 # Filter input cram to specified contigs and output new cram
 samtools view -@ 8 -T "$huref" -C -o "$out_cram" "$incram" $(cat hg38_contigs.txt)
