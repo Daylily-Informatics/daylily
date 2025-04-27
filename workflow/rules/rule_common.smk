@@ -69,6 +69,7 @@ SENTDUG_CHRMS = config["sentdug"][f"{config['genome_build']}_sentdug_chrms"].spl
 SENTDONT_CHRMS = config["sentdont"][f"{config['genome_build']}_sentdont_chrms"].split(",")
 SENTDHUO_CHRMS = config["sentdhuo"][f"{config['genome_build']}_sentdhuo_chrms"].split(",")
 SENTDHIO_CHRMS = config["sentdhio"][f"{config['genome_build']}_sentdhio_chrms"].split(",")
+SENTDPB_CHRMS = config["sentdpb"][f"{config['genome_build']}_sentdpb_chrms"].split(",")
 # ##### Setting the allowed aligners to run and to which deduper to use.
 # presently, 1+ aligners may run, but all must use the same deduper
 

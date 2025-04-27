@@ -361,6 +361,20 @@ sentdug:
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonUltima1.0/dnascope.model"
     mem_mb: 200000
 
+
+sentdpb:
+    threads: 192
+    hg38_sentdpb_chrms: "1-24"
+    b37_sentdpb_chrms: "1-24" #"19,21" # "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: " "
+    partition: "i192,i192mem"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopePacBio2.1/dnascope.model"
+    mem_mb: 200000
+
 sentdont:
     threads: 192
     hg38_sentdont_chrms: "1-24"
