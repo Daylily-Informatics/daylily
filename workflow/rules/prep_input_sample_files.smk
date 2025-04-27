@@ -410,9 +410,12 @@ rule pre_prep_raw_cram:
         crai=MDIR + "{sample}/align/{alnr}/{sample_lane}.cram.crai",
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
+    log:
+        MDIR + "{sample}/logs/{sample_lane}.cram.log",
     shell:
-        "{params.c} {input[0]} {output.cram};"
-        "{params.c} {input[1]} {output.crai};"
+        "(mkdir -p $(dirname {output.cram}) || echo {log} dir exists >> {log} 2>&1;"
+        "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
+        "{params.c} {input[1]} {output.crai} >> {log} 2>&1;"
 
 
 localrules: prep_cram_inputs,
