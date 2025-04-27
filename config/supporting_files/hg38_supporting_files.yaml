@@ -12,6 +12,9 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
       fasta_orig:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta
+      broad_fasta:
+        class: file_no_suffix_star
+	name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/Homo_sapiens_assembly38.fasta
       fasta:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta

@@ -39,7 +39,7 @@ rule sent_snv_ont:
 	mem_mb=config['sentdont']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
         model=config["sentdont"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
     shell:
@@ -190,7 +190,7 @@ rule sentdont_concat_index_chunks:
         partition="i192,i192mem"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
