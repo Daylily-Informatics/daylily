@@ -414,7 +414,7 @@ rule pre_prep_raw_cram:
     log:
         MDIR + "{sample}/logs/{sample_lane}.cram.log",
     shell:
-        "(mkdir -p $(dirname {output.cram}) || echo {log} dir exists >> {log} 2>&1;"
+        "(mkdir -p $(dirname {log}) || echo {log} dir exists >> {log} 2>&1;"
         "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
         "{params.c} {input[1]} {output.crai} >> {log} 2>&1;"
 
