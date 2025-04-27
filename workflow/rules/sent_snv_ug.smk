@@ -73,7 +73,7 @@ rule sent_snv_ug:
             -i {input.cram} \
             --interval {params.schrm_mod} \
             --read_filter UltimaReadFilter \
-            --algo DNAscope --model "{params.model}/dnascope.model" \
+            --algo DNAscope --model "{params.model}" \
             --pcr_indel_model none \
             --emit_mode gvcf \
             {output.gvcf} >> {log} 2>&1;
