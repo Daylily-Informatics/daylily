@@ -224,7 +224,7 @@ rule clear_combined_sentdont_vcf:  # TARGET:  clear combined sentdont vcf so the
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdont/{sample}.{alnr}.sentdont.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS_PB,
+            alnr=ALIGNERS_ONT,
         ),
     threads: 2
     priority: 42
