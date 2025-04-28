@@ -5,16 +5,12 @@ channels:
   - r
   - defaults
 dependencies:
-  - sentieon==202112.06
   - mbuffer
   - curl
   - samtools
   - jemalloc
   - htslib
   - pigz
-  - seqkit
-  - seqfu
-  - sambamba
   - isa-l==2.31.0
   - bedtools
   - bcftools>=1.10
@@ -22,4 +18,4 @@ dependencies:
   - mosdepth==0.3.2
   - pip
   - pip:
-      - https://github.com/Sentieon/sentieon-cli/releases/download/v1.2.0/sentieon_cli-1.2.0.tar.gz
+      - https://github.com/Sentieon/sentieon-cli/releases/download/v1.2.1/sentieon_cli-1.2.1.tar.gz
