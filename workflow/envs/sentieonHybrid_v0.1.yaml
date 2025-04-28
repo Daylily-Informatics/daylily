@@ -1,0 +1,14 @@
+name: hybrid_pipeline_env
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - python=3.11
+  - curl
+  - bedtools
+  - bcftools>=1.10
+  - multiqc==1.25.2
+  - mosdepth==0.3.2
+  - pip
+  - pip:
+      - https://github.com/Sentieon/sentieon-cli/releases/download/v1.2.0/sentieon_cli-1.2.0.tar.gz

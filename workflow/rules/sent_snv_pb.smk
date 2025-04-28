@@ -12,8 +12,6 @@ rule sent_snv_pacbio:
     output:
         vcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.vcf"),
-        tvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.vcf.tmp"),
         gvcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.gvcf"),
         gvcfindex=temp(MDIR

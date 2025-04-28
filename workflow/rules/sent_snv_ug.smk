@@ -12,8 +12,6 @@ rule sent_snv_ug:
     output:
         vcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.vcf"),
-        tvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.vcf.tmp"),
         gvcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf"),
         gvcfindex=temp(MDIR
@@ -84,9 +82,6 @@ rule sent_snv_ug:
             --algo DNAModelApply \
             --model {params.model} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;
-
-        #/fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver --thread_count {threads} --interval ##{params.schrm_mod} --reference {params.huref} --input {input.cram} --algo DNAscope --pcr_indel_model none #--model {params.model}  {output.tvcf} >> {log} 2>&1;
-        #/fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} -r {params.huref} --algo DNAModelApply --model {params.model} -v {output.tvcf} {output.vcf} >> {log} 2>&1;
 
 
         end_time=$(date +%s);
