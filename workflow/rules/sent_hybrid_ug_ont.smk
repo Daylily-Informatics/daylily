@@ -20,7 +20,7 @@ rule sentdhuo_snv:
         + "{sample}/align/{alnr}/snv/sentdhuo/log/vcfs/{sample}.{alnr}.sentdhuo.{dchrm}.snv.log",
     threads: config['sentdhuo']['threads']
     conda:
-        "../envs/sentdhuo_v0.2.yaml"
+        "../envs/sentieonHybrid_v0.1.yaml"
     priority: 45
     benchmark:
         repeat(
