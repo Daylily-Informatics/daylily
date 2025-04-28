@@ -331,7 +331,7 @@ sentdhio:
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
     bench_repeat: 0
     numactl: " "
-    partition: "i192,i192mem"
+    partition: "i192mem"
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/HybridIlluminaONT1.0/dnascope.model"
     mem_mb: 200000
 
@@ -344,7 +344,7 @@ sentdhuo:
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
     bench_repeat: 0
     numactl: " "
-    partition: "i192,i192mem"
+    partition: "i192mem"
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2/dnascope.model"
     mem_mb: 200000
 
@@ -357,7 +357,7 @@ sentdug:
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
     bench_repeat: 0
     numactl: " "
-    partition: "i192,i192mem"
+    partition: "i192mem"
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonUltima1.0/dnascope.model"
     mem_mb: 200000
 
@@ -371,7 +371,7 @@ sentdpb:
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
     bench_repeat: 0
     numactl: " "
-    partition: "i192,i192mem"
+    partition: "i192mem"
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopePacBio2.1/dnascope.model"
     mem_mb: 200000
 
@@ -384,7 +384,7 @@ sentdont:
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
     bench_repeat: 0
     numactl: " "
-    partition: "i192,i192mem"
+    partition: "i192mem"
     dna_scope_snv_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1/gvcf_model
     dna_scope_apply_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1/diploid_model
     mem_mb: 200000
