@@ -11,8 +11,6 @@ rule sent_snv_ont:
     output:
         vcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.vcf"),
-        tvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.vcf.tmp"),
         gvcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf"),
         gvcfindex=temp(MDIR
