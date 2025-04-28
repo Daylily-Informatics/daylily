@@ -41,6 +41,7 @@ rule sent_snv_ont:
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
         model=config["sentdont"]["dna_scope_snv_model"],
+	model_2=config["sentdont"]["dna_scope_apply_model"],
         cluster_sample=ret_sample,
     shell:
         """
@@ -72,14 +73,14 @@ rule sent_snv_ont:
             -r {params.huref} \
             -i {input.cram} \
             --interval {params.schrm_mod} \
-            --algo DNAscope --model "{params.model}" \
+            --algo DNAscope --model {params.model} \
             --emit_mode gvcf \
             {output.gvcf} >> {log} 2>&1;
 
         /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
             -r {params.huref} \
             --algo DNAModelApply \
-            --model {params.model} \
+	    --model {params.model_2} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;
 
         end_time=$(date +%s);
