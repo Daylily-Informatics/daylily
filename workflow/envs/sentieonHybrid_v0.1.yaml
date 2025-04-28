@@ -1,10 +1,21 @@
-name: hybrid_pipeline_env
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - anaconda
+  - r
+  - defaults
 dependencies:
-  - python=3.11
+  - sentieon==202112.06
+  - mbuffer
   - curl
+  - samtools
+  - jemalloc
+  - htslib
+  - pigz
+  - seqkit
+  - seqfu
+  - sambamba
+  - isa-l==2.31.0
   - bedtools
   - bcftools>=1.10
   - multiqc==1.25.2
