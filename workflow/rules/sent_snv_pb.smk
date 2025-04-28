@@ -23,7 +23,7 @@ rule sent_snv_pacbio:
         + "{sample}/align/{alnr}/snv/sentdpb/log/vcfs/{sample}.{alnr}.sentdpb.{dchrm}.snv.log",
     threads: config['sentdpb']['threads']
     conda:
-        "../envs/sentD_v0.2.yaml"
+        "../envs/sentieon_v0.1.yaml"
     priority: 45
     benchmark:
         repeat(

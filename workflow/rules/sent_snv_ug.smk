@@ -24,7 +24,7 @@ rule sent_snv_ug:
     threads: config['sentdug']['threads']
     priority: 45
     conda:
-        "../envs/sentD_v0.2.yaml"
+        "../envs/sentieon_v0.1.yaml"
     benchmark:
         repeat(
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.sentdug.{dchrm}.bench.tsv",
