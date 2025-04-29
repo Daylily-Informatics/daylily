@@ -125,7 +125,7 @@ source hyb.sh > hyb_test.log 2>&1
 ## Pipeline Output
 
 ### Log
-- [./docs/jem_reports/hyb_test.log](docs/jem_reports/hyb_test.log)
+- [./docs/jem_reports/hyb_test.log](hyb_test.log)
   
 
 #### Log Tail
