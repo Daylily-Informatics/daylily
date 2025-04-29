@@ -92,17 +92,17 @@ table_columns_visible:
   qualimap_bamqc-percentage_aligned: True
   qualimap_bamqc-mapped_reads: True
   qualimap_bamqc-total_reads: True
-  mosdepth-1_x_pc: False
-  mosdepth-5_x_pc: False
-  mosdepth-10_x_pc: False
-  mosdepth-30_x_pc: False
-  mosdepth-50_x_pc: False
-  mosdepth-median_coverage: False
-  mosdepth-mean_coverage: False
-  mosdepth-min_coverage: False
-  mosdepth-max_coverage: False
-  mosdepth-coverage_bases: False
-  mosdepth-length: False
+  mosdepth-1_x_pc: True
+  mosdepth-5_x_pc: True
+  mosdepth-10_x_pc: True
+  mosdepth-30_x_pc: True
+  mosdepth-50_x_pc: True
+  mosdepth-median_coverage: True
+  mosdepth-mean_coverage: True
+  mosdepth-min_coverage: True
+  mosdepth-max_coverage: True
+  mosdepth-coverage_bases: True
+  mosdepth-length: True
 
 picard_config:
   insertsize_xmax: 1000

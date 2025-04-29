@@ -223,8 +223,6 @@ rule sentD_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/sentd/log/{sample}.{alnr}.sentd.snv.merge.sort.gatherered.log",
     shell:
         """
-
-        
         touch {log};
         mkdir -p $(dirname {log});
         # This is acceptable bc I am concatenating from the same tools output, not across tools
