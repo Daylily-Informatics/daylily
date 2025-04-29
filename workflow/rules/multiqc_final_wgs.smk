@@ -98,31 +98,31 @@ rule aggregate_report_components_cram:
             MDIR
             + "{sample}/align/{alnr}/snv/{snv_caller}/bcfstats/{sample}.{alnr}.{snv_caller}.bcfstats.tsv",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=CRAM_ALIGNERS,
             snv_caller=snv_CALLERS,
         ),
                 expand(
             MDIR
             + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=CRAM_ALIGNERS,
         ),
         expand(
             MDIR
             + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=CRAM_ALIGNERS,
         ),
         #expand(
         #    MDIR + "{sample}/align/{alnr}/alignqc/goleft.done",
         #    sample=SSAMPS,
         #    alnr=ALIGNERS,
         #),
-        expand(
-            MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
-            sample=SSAMPS,
-            alnr=ALIGNERS,
-        ),
+        #expand(
+        #    MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
+        #    sample=SSAMPS,
+        #    alnr=ALIGNERS,
+        #),
         "logs/peddy_gathered.done",
         f"{MDIR}other_reports/alignstats_combo_mqc.tsv",
         #f"{MDIR}logs/all_svVCF_dupheld.done",
@@ -130,7 +130,7 @@ rule aggregate_report_components_cram:
             MDIR
             + "{sample}/align/{alnr}/snv/{snv_caller}/vcf_stats/{sample}.{alnr}.{snv_caller}.rtg.vcfstats.txt",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=CRAM_ALIGNERS,
             snv_caller=snv_CALLERS,
         ),
     threads: 2
