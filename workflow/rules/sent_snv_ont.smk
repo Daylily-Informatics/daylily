@@ -136,11 +136,18 @@ rule sentdont_sort_index_chunk_vcf:
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdontna_chunk_vcf"]['threads']
+    threads: 192 #config["config"]["sort_index_sentdontna_chunk_vcf"]['threads']
     shell:
         """
-        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
         
+        #bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
+        awk 'BEGIN{header=1} 
+            header && /^#/ {print; next} 
+            header && /^[^#]/ {header=0; exit}' {input.vcf} > {output.vcfsort} 2>> {log};
+        awk '/^[^#]/' {input.vcf} | sort --buffer-size=210G -T /fsx/scratch/ --parallel={threads} -k1,1V -k2,2n >> {output.vcfsort} 2>> {log};
+
+        #mv {input.vcf} {output.vcfsort} 2>> {log};
+
         bgzip {output.vcfsort} >> {log} 2>&1;
         touch {output.vcfsort};
 
