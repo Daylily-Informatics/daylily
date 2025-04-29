@@ -68,6 +68,18 @@ ls -lth  /fsx/data/cram_data/ont_crams/HG001-sup-PAW81754.haplotagged.cram*
 -rwxr-xr-x 1 root root  72G Apr 27 23:37 /fsx/data/cram_data/ont_crams/HG001-sup-PAW81754.haplotagged.cram
 ```
 
+### HG001 GIAB HC Regions.bed
+```bash
+ls -lth /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG001/wgsHC/HG001.bed
+-rwxr-xr-x 1 root root 15M Feb 19 06:37 /fsx/data/genomic_data/organism_annotations/H_sapiens/hg38/controls/giab/snv/v4.2.1/HG001/wgsHC/HG001.bed
+```
+
+### Sentieon Bundle
+```bash
+ls -lth /fsx/data/cached_envs/sentieon-genomics-202503/bundles/HybridIlluminaONT1.0.bundle
+-rwxr-xr-x 1 root root 158M Apr 16 08:24 /fsx/data/cached_envs/sentieon-genomics-202503/bundles/HybridIlluminaONT1.0.bundle
+```
+
 ## Pipeline Invocation
 
 ### hyb_test.sh
