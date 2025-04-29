@@ -30,7 +30,6 @@ rule collect_rules_benchmark_data:
 localrules:
     aggregate_report_components,
 
-
 rule aggregate_report_components:
     input:
         f"{MDIR}other_reports/giab_concordance_mqc.tsv",
@@ -62,6 +61,36 @@ rule aggregate_report_components:
     threads: 2
     output:
         f"{MDIR}logs/report_components_aggregated.done",
+    shell:
+        "touch {output};" 
+
+
+localrules:
+    aggregate_report_components_cram,
+
+rule aggregate_report_components_cram:
+    input:
+        f"{MDIR}other_reports/giab_concordance_mqc.tsv",
+        expand(
+            MDIR
+            + "{sample}/align/{alnr}/snv/{snv_caller}/bcfstats/{sample}.{alnr}.{snv_caller}.bcfstats.tsv",
+            sample=SSAMPS,
+            alnr=ALIGNERS,
+            snv_caller=snv_CALLERS,
+        ),
+        "logs/peddy_gathered.done",
+        f"{MDIR}other_reports/alignstats_combo_mqc.tsv",
+        #f"{MDIR}logs/all_svVCF_dupheld.done",
+        expand(
+            MDIR
+            + "{sample}/align/{alnr}/snv/{snv_caller}/vcf_stats/{sample}.{alnr}.{snv_caller}.rtg.vcfstats.txt",
+            sample=SSAMPS,
+            alnr=ALIGNERS,
+            snv_caller=snv_CALLERS,
+        ),
+    threads: 2
+    output:
+        f"{MDIR}logs/report_components_aggregated_cram.done",
     shell:
         "touch {output};" 
 
@@ -135,6 +164,74 @@ eport_header_info:
         """
 
 
+rule multiqc_final_wgs_cram:  # TARGET: the big report
+    input:
+        f"{MDIR}logs/report_components_aggregated_cram.done",
+	    f"{MDIR}other_reports/rules_benchmark_data_mqc.tsv",
+    output:
+        f"{MDIR}reports/DAY_final_multiqc.html",
+        f"{MDIR}reports/multiqc_header.yaml",
+    benchmark:
+        f"{MDIR}benchmarks/DAY_all.final_multiqc.bench.tsv"
+    threads: config["multiqc"]["threads"]
+    resources:
+        threads=config["multiqc"]["threads"],
+        partition=config["multiqc"]["partition"],
+    priority: 50
+    params:
+        fnamef=f"DAY_final_multiqc.html",
+        ghash=config["githash"],
+        gbranch=config["gitbranch"],
+        gtag=config["gittag"],
+        cluster_sample=f"multiqc_final",
+        cemail=config["day_contact_email"],
+    log:
+        f"{MDIR}reports/logs/all__mqc_fin_a.log",
+    container:
+        "docker://daylilyinformatics/daylily_multiqc:0.2"
+    shell:
+        """
+        dbill='$';
+        echo '''
+eport_header_info:
+  - Project/Budget: "REGSUB_PROJECT"
+  - Budget @ Runtime: "REGSUB_BUDGET"
+  - Spot Instances: "REGSUB_SPOTINSTANCES"
+  - Spot Costs per hr: "REGSUB_SPOTCOST"
+  - FQ->BAM.sort avg Costs: "REGSUB_TOTALCOST"
+  - BAM mrkdup avg Cost: "REGSUB_MRKDUPCOST"
+  - Results Dir (GB): "REGSUB_TOTALSIZE"
+  ''' > {output[1]} >> {log} 2>&1;
+
+        #cp $PWD/config/external_tools/multiqc_header.yaml {output[1]} >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;"  {output[1]} >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_BUDGET/\\\$dbill$USED_BUDGET of \\\$dbill$TOTAL_BUDGET spent ( $PERCENT_USED\%)/g;" {output[1]} >> {log} 2>&1;
+
+        size=$(du -hs results | cut -f1) >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_TOTALSIZE/$size/g;" {output[1]} >> {log} 2>&1;
+
+        source bin/proc_spot_price_logs.sh >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_SPOTCOST/median: \\\$dbill$MEDIAN_SPOT_PRICE  mean: \\\$dbill$AVERAGE_SPOT_PRICE ( avg cost per vcpu,per min: \\\$dbill$VCPU_COST_PER_MIN ) /g;"  {output[1]} >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_SPOTINSTANCES/ $INSTANCE_TYPES_LINE /g;" {output[1]} >> {log} 2>&1;
+
+        source bin/proc_aligner_costs.sh {input[1]} $VCPU_COST_PER_MIN >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_TOTALCOST/$ALNR_SUMMARY_COST/g;" {output[1]} >> {log} 2>&1;
+        
+        source bin/proc_mrkdup_costs.sh {input[1]} $VCPU_COST_PER_MIN  >> {log} 2>&1;
+        perl -pi -e "s/REGSUB_MRKDUPCOST/$MRKDUP_AVG_MINUTES min, costing \\\$dbill$MRKDUP_AVG_COST/g;" {output[1]} >> {log} 2>&1;
+
+        multiqc -f  \
+        --config   ./$(dirname {output[0]})/multiqc_header.yaml \
+        --config  ./config/external_tools/multiqc_config.yaml  \
+        --custom-css-file ./config/external_tools/multiqc.css \
+        --template default \
+        --filename {output[0]} \
+        -i 'Final Multiqc Report' \
+        -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH:{params.ghash}) ' \
+        $(dirname {input} )/../ >> {log} 2>&1;
+        ls -lt {output}  >> {log} 2>&1;
+        """
+
 localrules:
     produce_multiqc_final_wgs,
 
@@ -146,3 +243,11 @@ def get_fin_mqc(wildcards):
 rule produce_multiqc_final_wgs:  # TARGET : Generated All WGS Reports
     input:
         MDIR+ "reports/DAY_final_multiqc.html"
+
+
+localrules:
+    produce_multiqc_final_wgs_cram,
+
+rule produce_multiqc_final_wgs_cram:  # TARGET : Generated All WGS Reports
+    input:
+        MDIR+ "reports/DAY_final_multiqc_cram.html"
