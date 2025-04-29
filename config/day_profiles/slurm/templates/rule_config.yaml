@@ -390,7 +390,7 @@ sentdont:
     bench_repeat: 0
     numactl: " "
     partition: "i192mem"
-    dna_scope_snv_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1/gvcf_model
+    dna_scope_snv_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1/diploid_model
     dna_scope_apply_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1/diploid_model
     mem_mb: 200000
 
