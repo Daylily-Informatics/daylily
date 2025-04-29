@@ -351,8 +351,8 @@ sentdhuo:
     mem_mb: 200000
 
 sentdug:
-    threads: 192
-    use_threads: 96
+    threads: 127
+    use_threads: 120
     hg38_sentdug_chrms: "1-24"
     b37_sentdug_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -360,14 +360,14 @@ sentdug:
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"
     bench_repeat: 0
     numactl: " "
-    partition: "i192mem"
+    partition: "i192mem,i128"
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonUltima1.0/dnascope.model"
     mem_mb: 200000
 
 
 sentdpb:
     threads: 192
-    use_threads: 96
+    use_threads: 182
     hg38_sentdpb_chrms: "1-24"
     b37_sentdpb_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -381,7 +381,7 @@ sentdpb:
 
 sentdont:
     threads: 192
-    use_threads: 96
+    use_threads: 182
     hg38_sentdont_chrms: "1-24"
     b37_sentdont_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -442,10 +442,10 @@ qualimap:
     partition: "i192,i192mem,i128"
 
 rtg_vcfeval:
-    threads: 64
+    threads: 96
     env_yaml: "../envs/rtgtools_v0.1.yaml"
     ld_preload: " "
-    partition: "i192,i192mem"
+    partition: "i192,i192mem,i128"
     partition_other: "i192,i192mem,i128"
     rtg_region: " " 
 
@@ -459,7 +459,7 @@ sentieon_haplocaller:
     partition: "i192,i192mem"
 
 rtg_vcfstats:
-    threads: 16
+    threads: 64
     env_yaml: "../envs/rtgtools_v0.1.yaml"
     ld_preload: " "
     partition: "i192,i192mem,i128"
