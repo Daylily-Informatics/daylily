@@ -28,6 +28,29 @@ rule collect_rules_benchmark_data:
 
 
 localrules:
+    collect_rules_benchmark_data_cram,
+
+
+rule collect_rules_benchmark_data_cram:
+    input:
+        f"{MDIR}logs/report_components_aggregated_cram.done",
+    output:
+        f"{MDIR}other_reports/rules_benchmark_data_mqc_cram.tsv",
+    params:
+        cluster_sample="rules_benchmark_collect",
+        working_file=f"{MDIR}reports/benchmarks_summary.tsv",
+        ref_code=config["genome_build"],
+    log:
+        f"{MDIR}other_reports/logs/rules_benchmarks_summary.log",
+    container: None
+    shell:
+        "bin/util/benchmarks/collect_day_benchmark_data.sh {params.ref_code} > {log};"
+        "python bin/util/benchmarks/split_bench_rule_col.py {params.working_file} {output} > {log};"
+        "sed -i -E 's/\t$/\tNA/' {output};"
+
+
+
+localrules:
     aggregate_report_components,
 
 rule aggregate_report_components:
@@ -167,7 +190,7 @@ eport_header_info:
 rule multiqc_final_wgs_cram:  # TARGET: the big report
     input:
         f"{MDIR}logs/report_components_aggregated_cram.done",
-	    f"{MDIR}other_reports/rules_benchmark_data_mqc.tsv",
+	    f"{MDIR}other_reports/rules_benchmark_data_mqc_cram.tsv",
     output:
         f"{MDIR}reports/DAY_final_multiqc_cram.html",
         f"{MDIR}reports/multiqc_header.yaml",
