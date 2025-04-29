@@ -44,8 +44,8 @@ if os.environ.get("DAY_CRAM","") == "":
         shell:
             "alignstats  -C -U  -i {input} -o {output.json}  -j bam -v -P {threads} -p {threads} > {log};"
 
-else
-
+else:
+    
     rule alignstats_cram:
         input:
             cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
