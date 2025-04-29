@@ -5,7 +5,7 @@ import os
 # requirement of all to run
 
 
-if os.environ("DAY_CRAM", "") == "":
+if os.environ.get("DAY_CRAM", "") == "":
 
     localrules:
         alignstats_gather,
