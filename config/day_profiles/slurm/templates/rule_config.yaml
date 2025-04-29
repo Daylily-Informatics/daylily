@@ -351,8 +351,8 @@ sentdhuo:
     mem_mb: 200000
 
 sentdug:
-    threads: 127
-    use_threads: 120
+    threads: 192
+    use_threads: 182
     hg38_sentdug_chrms: "1-24"
     b37_sentdug_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 

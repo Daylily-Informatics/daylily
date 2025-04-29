@@ -213,11 +213,11 @@ rule sentdont_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/sentdont/{sample}.{alnr}.sentdont.snv.sort.vcf.gz.tbi"
         ),
-    threads: 4
+    threads: 64
     resources:
-        vcpu=4,
-        threads=4,
-        partition="i192,i192mem"
+        vcpu=64,
+        threads=64,
+        partition="i192,i192mem,i128"
     priority: 47
     params:
         huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
