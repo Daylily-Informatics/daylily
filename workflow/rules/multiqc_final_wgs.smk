@@ -101,7 +101,7 @@ rule aggregate_report_components_cram:
             alnr=CRAM_ALIGNERS,
             snv_caller=snv_CALLERS,
         ),
-                expand(
+        expand(
             MDIR
             + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done",
             sample=SSAMPS,
@@ -121,7 +121,7 @@ rule aggregate_report_components_cram:
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=CRAM_ALIGNERS,
         ),
         "logs/peddy_gathered.done",
         f"{MDIR}other_reports/alignstats_combo_mqc.tsv",

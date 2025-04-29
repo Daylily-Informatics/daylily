@@ -9,11 +9,26 @@
 - Avg SNP Fscore (GIAB high confidence region bed): `0.9xx`.
 - Avg SNP Fscore (Ultima high confidence region bed): `0.9xx`.
 
-### Results Data
+### Analysis Results Data
 I'll be processing these in more detail, but for now, here are the raw data files.
 
 #### Concordance
 - []()
+ 
+| CmpFootprint   | SNPClass   |   Mean_Fscore |   Min_Fscore |   Max_Fscore |
+|:---------------|:-----------|--------------:|-------------:|-------------:|
+| ultima         | DEL_50     |      0.881195 |     0.852995 |     0.913246 |
+| ultima         | INS_50     |      0.895766 |     0.879083 |     0.920608 |
+| ultima         | Indel_50   |      0.864182 |     0.797539 |     0.922895 |
+| ultima         | SNPts      |      0.964536 |     0.95021  |     0.99902  |
+| ultima         | SNPtv      |      0.951728 |     0.933225 |     0.998589 |
+| wgsHC          | DEL_50     |      0.898143 |     0.87696  |     0.94355  |
+| wgsHC          | INS_50     |      0.89924  |     0.879083 |     0.940202 |
+| wgsHC          | Indel_50   |      0.877399 |     0.841214 |     0.951348 |
+| wgsHC          | SNPts      |      0.99883  |     0.998553 |     0.999274 |
+| wgsHC          | SNPtv      |      0.998351 |     0.997778 |     0.998882 |
+
+> `python bin/calc_concordance_stats.py docs/jem_reports/ont_solo_concordance.tsv`
 
 #### Benchmarking (Runtime, memory, IO, costs)
 - []()
@@ -53,8 +68,11 @@ ls -1 /fsx/data/cram_data/ug_init/*cram
 /fsx/data/cram_data/ug_init/408622-NA24695-Z0120-CTGCTGCGGAGCATGAT.cram
 ```
 
+### CRAM Coverage + Other QC Stats 
 
-# DNAscope Commands
+> **running**
+
+### DNAscope Commands
 
 ```bash
 timestamp=$(date +%Y%m%d%H%M%S);

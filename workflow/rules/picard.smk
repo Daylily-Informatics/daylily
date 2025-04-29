@@ -38,6 +38,12 @@ if os.environ.get("DAY_CRAM","") == "":
             {latency_wait}; ls {output.sent}; cat {output.sent} ; ) > {log} 2>&1;
             exit 0;
             """
+    
+    localrules: produce_picard,
+
+    rule produce_picard:  # $ TARGET: produce picard QC data
+        input:
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=ALIGNERS)
 
 else:
 
@@ -76,8 +82,8 @@ else:
             exit 0;
             """
 
-localrules: produce_picard,
+    localrules: produce_picard_cram,
 
-rule produce_picard:  # $ TARGET: produce picard QC data
-    input:
-        expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=ALIGNERS)
+    rule produce_picard_cram:  # $ TARGET: produce picard QC data
+        input:
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=CRAM_ALIGNERS)
