@@ -27,7 +27,7 @@ rule multiqc_singleton:  # TARGET: the big report
 	    f"{MDIR}other_reports/rules_benchmark_data_mqc2.tsv",
     output:
         f"{MDIR}reports/multiqc_singleton.html",
-        temp(f"{MDIR}reports/multiqc_header2.yaml"),
+        f"{MDIR}reports/multiqc_header2.yaml",
     benchmark:
         f"{MDIR}benchmarks/DAY_all.final_multiqc2.bench.tsv"
     threads: config["multiqc"]["threads"]
