@@ -153,19 +153,19 @@ custom_data:
     plot_type: 'generalstats'
     pconfig:
       - sample:
-          hidden: False
+          hidden: True
       - InsertSizeMean:
-          hidden: False
+          hidden: True
       - InsertSizeMedian:
-          hidden: False
+          hidden: True
       - InsertSizeMode:
-          hidden: False
+          hidden: True
       - InsertSizeStandardDeviation:
-          hidden: False
+          hidden: True
       - DuplicateReadsPct:
-          hidden: False
+          hidden: True
       - ChimericReadPairPct:
-          hidden: False
+          hidden: True
 
 sp:
   giab_concordance:

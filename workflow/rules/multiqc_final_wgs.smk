@@ -4,6 +4,7 @@ import os
 # requirement of all to run
 
 
+RPT_TITLE=os.environ.get("RPT_TITLE", "Final")
 
 localrules:
     collect_rules_benchmark_data,
@@ -161,6 +162,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         gtag=config["gittag"],
         cluster_sample=f"multiqc_final",
         cemail=config["day_contact_email"],
+        rtitle=RPT_TITLE,
     log:
         f"{MDIR}reports/logs/all__mqc_fin_a.log",
     container:
@@ -202,7 +204,7 @@ report_header_info:
         --custom-css-file ./config/external_tools/multiqc.css \
         --template default \
         --filename {output[0]} \
-        -i 'Final Multiqc Report' \
+        -i '{params.rtitle} Multiqc Report' \
         -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH:{params.ghash}) ' \
         $(dirname {input} )/../ >> {log} 2>&1;
         ls -lt {output}  >> {log} 2>&1;
@@ -230,6 +232,7 @@ rule multiqc_final_wgs_cram:  # TARGET: the big report
         gtag=config["gittag"],
         cluster_sample=f"multiqc_final",
         cemail=config["day_contact_email"],
+        rtitle=RPT_TITLE,
     log:
         f"{MDIR}reports/logs/all__mqc_fin_a.log",
     container:
@@ -271,7 +274,7 @@ report_header_info:
         --custom-css-file ./config/external_tools/multiqc.css \
         --template default \
         --filename {output[0]} \
-        -i 'Final Multiqc Report (crams)' \
+        -i '{params.rtitle} Multiqc Report (crams)' \
         -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH:{params.ghash}) ' \
         $(dirname {input} )/../ >> {log} 2>&1;
         ls -lt {output}  >> {log} 2>&1;
