@@ -30,4 +30,4 @@ samtools view -@ "${THREADS}" -s "${SEED}.${DOWNSAMPLE_FRAC}" -C -T "${REF_FA}" 
 echo "Indexing ${OUTPUT_CRAM}..."
 samtools index -@ "${THREADS}" "${OUTPUT_CRAM}"
 
-echo "Done. Output written to ${OUTPUT_CRAM}"
+echo "Done. Output written to ${OUTPUT_CRAM}" 
