@@ -4,15 +4,18 @@
 ## Results In Brief
 - The sentieon Ultima-solo SNV calling pipeline is stable and we can run a very large number of CRAMs in a reproducible and scalable AWS environment.
 - We can process 1000's of crams an hour (more honestly).
-- Avg runtime for SNV calling: `~30m`.
-- Avg EC2 spot cost per cram: `~$1.365`.
-- Avg SNP Fscore (GIAB high confidence region bed): `0.9xx`.
-- Avg SNP Fscore (Ultima high confidence region bed): `0.9xx`.
+- Avg runtime for SNV calling: `38.4m`.
+- Avg EC2 spot cost per cram: `$1.98`.
+- Avg SNP Fscore (GIAB high confidence region bed): `0.994`.
+- Avg SNP Fscore (Ultima high confidence region bed): `0.97`.
 
 ### Analysis Results Data
 I'll be processing these in more detail, but for now, here are the raw data files.
 
 #### Concordance
+
+> I expected the SNP Fscore performance in the ultima bed regions to be higher. This needs to be investigated.
+
 - [docs/jem_reports/ultima_solo_concordance.tsv](docs/jem_reports/ultima_solo_concordance.tsv)
  
 | CmpFootprint   | SNPClass   |   Mean_Fscore |   Min_Fscore |   Max_Fscore |
@@ -32,6 +35,15 @@ I'll be processing these in more detail, but for now, here are the raw data file
 
 #### Benchmarking (Runtime, memory, IO, costs)
 - [docs/jem_reports/ultima_benchmarks.tsv](docs/jem_reports/ultima_benchmarks.tsv)
+
+| rule                     |   avg_task_cost |   min_task_cost |   max_task_cost |   avg_minutes |   min_minutes |   max_minutes |   avg_cpu_efficiency |   min_cpu_efficiency |   max_cpu_efficiency |
+|:-------------------------|----------------:|----------------:|----------------:|--------------:|--------------:|--------------:|---------------------:|---------------------:|---------------------:|
+| sent.sentdug.1-24        |          1.9834 |          1.7239 |          2.4139 |       38.4436 |       34.9796 |       42.7305 |              21.4038 |              19.6914 |              23.1942 |
+| sent.sentdug.concat.fofn |          0.0000 |          0.0000 |          0.0000 |        0.0061 |        0.0058 |        0.0067 |               0.0000 |               0.0000 |               0.0000 |
+| sent.sentdug.concordance |          0.4352 |          0.4127 |          0.4637 |       16.4780 |       16.1782 |       17.2698 |               0.3764 |               0.0062 |               0.6353 |
+| sent.sentdug.merge       |          0.0068 |          0.0067 |          0.0070 |        0.4027 |        0.3947 |        0.4113 |               2.1757 |               2.1102 |               2.2122 |
+
+> `python bin/calc_benchmark_stats.py docs/jem_reports/ultima_benchmarks.tsv`
 
 ## Job Details
 
