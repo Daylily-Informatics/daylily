@@ -66,8 +66,28 @@ rule sent_snv_ug:
         echo "INSTANCE TYPE: $itype" > {log};
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
+        
+        ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
+        
+        timestamp=$(date +%Y%m%d%H%M%S);
+        TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
+        mkdir -p $TMPDIR;
+        APPTAINER_HOME=$TMPDIR;
+        trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
+        tdir=$TMPDIR; 
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
+        # Find the jemalloc library in the active conda environment
+        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
+
+        # Check if jemalloc was found and set LD_PRELOAD accordingly
+        if [[ -n "$jemalloc_path" ]]; then
+            LD_PRELOAD="$jemalloc_path";
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
+        else
+            echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
+            exit 3;
+        fi
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
             -r {params.huref} \
             -i {input.cram} \
             --interval {params.schrm_mod} \
@@ -77,12 +97,11 @@ rule sent_snv_ug:
             --emit_mode gvcf \
             {output.gvcf} >> {log} 2>&1;
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
             -r {params.huref} \
             --algo DNAModelApply \
             --model {params.model} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;
-
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));
