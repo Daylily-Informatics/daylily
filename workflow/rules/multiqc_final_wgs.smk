@@ -169,7 +169,7 @@ rule multiqc_final_wgs:  # TARGET: the big report
         """
         dbill='$';
         echo '''
-eport_header_info:
+report_header_info:
   - Project/Budget: "REGSUB_PROJECT"
   - Budget @ Runtime: "REGSUB_BUDGET"
   - Spot Instances: "REGSUB_SPOTINSTANCES"
@@ -238,7 +238,7 @@ rule multiqc_final_wgs_cram:  # TARGET: the big report
         """
         dbill='$';
         echo '''
-eport_header_info:
+report_header_info:
   - Project/Budget: "REGSUB_PROJECT"
   - Budget @ Runtime: "REGSUB_BUDGET"
   - Spot Instances: "REGSUB_SPOTINSTANCES"
