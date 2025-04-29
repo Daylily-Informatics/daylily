@@ -35,7 +35,7 @@ rule collect_rules_benchmark_data_cram:
     input:
         f"{MDIR}logs/report_components_aggregated_cram.done",
     output:
-        f"{MDIR}other_reports/rules_benchmark_data_mqc_cram.tsv",
+        f"{MDIR}other_reports/rules_benchmark_data_cram_mqc.tsv",
     params:
         cluster_sample="rules_benchmark_collect",
         working_file=f"{MDIR}reports/benchmarks_summary.tsv",
@@ -212,7 +212,7 @@ eport_header_info:
 rule multiqc_final_wgs_cram:  # TARGET: the big report
     input:
         f"{MDIR}logs/report_components_aggregated_cram.done",
-	    f"{MDIR}other_reports/rules_benchmark_data_mqc_cram.tsv",
+	    f"{MDIR}other_reports/rules_benchmark_data_cram_mqc.tsv",
     output:
         f"{MDIR}reports/DAY_final_multiqc_cram.html",
         f"{MDIR}reports/multiqc_header.yaml",
