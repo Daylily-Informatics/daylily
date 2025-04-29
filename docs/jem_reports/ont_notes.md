@@ -8,7 +8,7 @@
 - Avg EC2 spot cost per cram: `$1.57`.
 - Avg Coverage (and other cov stats): _rolling in this AM_
   - [ONT LSMC MultiQC Reports -coming shortly-](./)
-- Avg SNP Fscore (GIAB high confidence region bed): `0.9987`.  **!!! wow !!!**
+- Avg SNP Fscore (GIAB high confidence region bed): `0.9985`.  **!!! wow !!!**
 - Avg SNP Fscore (Ultima high confidence region bed): `0.964`.
 
 ### Analysis Results Data
