@@ -43,6 +43,38 @@ rule alignstats:
         "alignstats  -C -U  -i {input} -o {output.json}  -j bam -v -P {threads} -p {threads} > {log};"
 
 
+rule alignstats_cram:
+    input:
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+    output:
+        json=MDIR
+        + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.json",
+    benchmark:
+        MDIR + "{sample}/benchmarks/{sample}.{alnr}.alignstats.bench.tsv"
+    threads: config["alignstats"]["threads"]
+    resources:
+        attempt_n=lambda wildcards, attempt:  (attempt + 0),
+        partition=config["alignstats"]["partition"],
+        threads=config["alignstats"]["threads"],
+        vcpu=config["alignstats"]["threads"]
+    log:  MDIR + "{sample}/align/{alnr}/alignqc/alignstats/logs/{sample}.{alnr}.alignstats.log",
+    params:
+        P=50,
+        huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+        n=config["alignstats"]["num_reads_in_mem"],
+        cluster_sample=ret_sample,
+        ld_preload=" "
+        if "ld_preload" not in config["malloc_alt"]
+        else config["malloc_alt"]["ld_preload"],
+        ld_pre=" "
+        if "ld_preload" not in config["alignstats"]        else config["alignstats"]["ld_preload"],
+    conda:
+        config["alignstats"]["env_yaml"]
+    shell:
+        "alignstats  -C -U  -i {input.cram} -T {params.huref} -o {output.json}  -j cram -v -P {threads} -p {threads} > {log};"
+
+
 localrules:
     finish_align_stats,
 
