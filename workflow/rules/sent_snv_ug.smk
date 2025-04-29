@@ -12,10 +12,10 @@ rule sent_snv_ug:
     output:
         vcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.vcf"),
-        gvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf"),
-        gvcfindex=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf.idx"),
+        gvcf=MDIR
+        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf",
+        gvcfindex=MDIR
+        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf.idx",
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdug/log/vcfs/{sample}.{alnr}.sentdug.{dchrm}.snv.log",
@@ -111,17 +111,23 @@ rule sentdug_sort_index_chunk_vcf:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/log/{sample}.{alnr}.sentdug.{dchrm}.snv.sort.vcf.gz.log",
     resources:
-        vcpu=1,
-        threads=1,
+        vcpu=64,
+        threads=64,
         partition="i192,i192mem"
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdugna_chunk_vcf"]['threads']
+    threads: 192 #config["config"]["sort_index_sentdugna_chunk_vcf"]['threads']
     shell:
         """
-        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
-        
+        #bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
+        awk 'BEGIN{header=1} 
+            header && /^#/ {print; next} 
+            header && /^[^#]/ {header=0; exit}' {input.vcf} > {output.vcfsort} 2>> {log};
+        awk '/^[^#]/' {input.vcf} | sort --buffer-size=210G -T /fsx/scratch/ --parallel={threads} -k1,1V -k2,2n >> {output.vcfsort} 2>> {log};
+
+        #mv {input.vcf} {output.vcfsort} 2>> {log};
+
         bgzip {output.vcfsort} >> {log} 2>&1;
         touch {output.vcfsort};
 

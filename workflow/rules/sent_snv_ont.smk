@@ -9,12 +9,12 @@ rule sent_snv_ont:
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.ready",
     output:
-        vcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.vcf"),
-        gvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf"),
-        gvcfindex=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf.idx"),
+        vcf=MDIR
+        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.vcf",
+        gvcf=MDIR
+        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf",
+        gvcfindex=MDIR
+        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf.idx",
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdont/log/vcfs/{sample}.{alnr}.sentdont.{dchrm}.snv.log",
@@ -37,6 +37,7 @@ rule sent_snv_ont:
 	mem_mb=config['sentdont']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
+        use_threads=config['sentdont']['use_threads'],
         huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
         model=config["sentdont"]["dna_scope_snv_model"],
 	model_2=config["sentdont"]["dna_scope_apply_model"],
