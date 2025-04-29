@@ -169,7 +169,7 @@ rule multiqc_final_wgs_cram:  # TARGET: the big report
         f"{MDIR}logs/report_components_aggregated_cram.done",
 	    f"{MDIR}other_reports/rules_benchmark_data_mqc.tsv",
     output:
-        f"{MDIR}reports/DAY_final_multiqc.html",
+        f"{MDIR}reports/DAY_final_multiqc_cram.html",
         f"{MDIR}reports/multiqc_header.yaml",
     benchmark:
         f"{MDIR}benchmarks/DAY_all.final_multiqc.bench.tsv"
