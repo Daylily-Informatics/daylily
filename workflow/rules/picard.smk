@@ -70,7 +70,7 @@ else:
             mkdir -p $(dirname {log} );
             pic_d="$(dirname {output.sent} )/picard/";
             mkdir -p $pic_d;
-            picard CollectMultipleMetrics VALIDATION_STRINGENCY={params.validation_stringency} METRIC_ACCUMULATION_LEVEL={params.metric_accumulation_level} LEVEL={params.metric_accumulation_level} STOP_AFTER={params.stop_after} I={input.bam} O=$pic_d R={params.huref} EXT=.txt PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics PROGRAM=QualityScoreDistribution PROGRAM=CollectGcBiasMetrics PROGRAM=CollectSequencingArtifactMetrics PROGRAM=CollectQualityYieldMetrics INCLUDE_UNPAIRED=true ;
+            picard CollectMultipleMetrics VALIDATION_STRINGENCY={params.validation_stringency} METRIC_ACCUMULATION_LEVEL={params.metric_accumulation_level} LEVEL={params.metric_accumulation_level} STOP_AFTER={params.stop_after} I={input.cram} O=$pic_d R={params.huref} EXT=.txt PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics PROGRAM=QualityScoreDistribution PROGRAM=CollectGcBiasMetrics PROGRAM=CollectSequencingArtifactMetrics PROGRAM=CollectQualityYieldMetrics INCLUDE_UNPAIRED=true ;
             touch {output.sent}; echo empySentFilesNotBeingSeen >> {output.sent};
             {latency_wait}; ls {output.sent}; cat {output.sent} ; ) > {log} 2>&1;
             exit 0;
