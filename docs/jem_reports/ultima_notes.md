@@ -6,6 +6,8 @@
 - We can process 1000's of crams an hour (more honestly).
 - Avg runtime for SNV calling: `38.4m`.
 - Avg EC2 spot cost per cram: `$1.98`.
+- Avg Coverage (and other cov stats): _rolling in this AM_
+  - [Ultima LSMC MultiQC Reports -coming shortly-](./)
 - Avg SNP Fscore (GIAB high confidence region bed): `0.994`.
 - Avg SNP Fscore (Ultima high confidence region bed): `0.97`.
 
@@ -61,7 +63,7 @@ One of the spots which processed the Ultima CRAMs:
 - m7i.48xlarge
 - 196vcpu
 - $2.73/hr
-- Ran for ~30min (cost of $1.365)
+- Ran for ~38min (cost of $1.365)
 
 ### Ultima Input crams
 I ran DNAscope on the following subset of Ultima crams, I wanted at least one each for every GIAB sample (I'll be re-running the entire set once the initial data review of whats here checks out).
