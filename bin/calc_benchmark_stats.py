@@ -1,7 +1,8 @@
+import sys
 import pandas as pd
 
 # Load data from TSV file (replace 'input.tsv' with your file path)
-data = pd.read_csv('input.tsv', sep='\t')
+data = pd.read_csv(sys.argv[1], sep='\t')
 
 # Convert seconds to minutes
 data['minutes'] = data['s'] / 60
