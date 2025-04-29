@@ -150,7 +150,7 @@ rule sentdont_sort_index_chunk_vcf:
         touch {input.vcf};
         sleep 1;
         touch {output.vcfsort};
-        bgzip {output.vcfsort} >> {log} 2>&1;
+        bgzip  -@ {threads} {output.vcfsort} >> {log} 2>&1;
         touch {output.vcfsort};
 
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;

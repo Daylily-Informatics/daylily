@@ -129,7 +129,7 @@ rule sentdug_sort_index_chunk_vcf:
         mv {input.vcf} {output.vcfsort} 2>> {log};
         touch {input.vcf};
         sleep 1;
-        bgzip {output.vcfsort} >> {log} 2>&1;
+        bgzip -@ {threads} {output.vcfsort} >> {log} 2>&1;
         touch {output.vcfsort};
 
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
