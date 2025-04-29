@@ -105,16 +105,19 @@ rule sentdhio_sort_index_chunk_vcf:
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdhiona_chunk_vcf"]['threads']
+    threads: 64 #config["config"]["sort_index_sentdhiona_chunk_vcf"]['threads']
     shell:
         """
-        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
         
-        bgzip {output.vcfsort} >> {log} 2>&1;
+        cp {input.vcf} {output.vcfsort} 2>> {log};
+        touch {input.vcf};
+        sleep 1;
         touch {output.vcfsort};
-
-        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
+        bgzip  -@ {threads} {output.vcfsort} >> {log} 2>&1;
+        touch {output.vcfsort};
         
+        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
+                
         """
 
 

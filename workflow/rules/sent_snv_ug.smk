@@ -117,7 +117,7 @@ rule sentdug_sort_index_chunk_vcf:
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 192 #config["config"]["sort_index_sentdugna_chunk_vcf"]['threads']
+    threads: 64 #config["config"]["sort_index_sentdugna_chunk_vcf"]['threads']
     shell:
         """
         #bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};

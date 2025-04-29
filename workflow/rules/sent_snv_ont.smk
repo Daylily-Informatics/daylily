@@ -136,7 +136,7 @@ rule sentdont_sort_index_chunk_vcf:
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 192 #config["config"]["sort_index_sentdontna_chunk_vcf"]['threads']
+    threads: 64 #config["config"]["sort_index_sentdontna_chunk_vcf"]['threads']
     shell:
         """
         
