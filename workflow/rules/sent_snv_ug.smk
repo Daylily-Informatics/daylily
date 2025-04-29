@@ -12,10 +12,10 @@ rule sent_snv_ug:
     output:
         vcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.vcf"),
-        gvcf=MDIR
-        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf",
-        gvcfindex=MDIR
-        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf.idx",
+        gvcf=temp(MDIR
+        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf"),
+        gvcfindex=temp(MDIR
+        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf.idx"),
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdug/log/vcfs/{sample}.{alnr}.sentdug.{dchrm}.snv.log",
