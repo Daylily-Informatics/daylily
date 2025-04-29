@@ -71,13 +71,6 @@ rule sent_snv_ont:
 
         ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
         
-        timestamp=$(date +%Y%m%d%H%M%S);
-        TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
-        mkdir -p $TMPDIR;
-        APPTAINER_HOME=$TMPDIR;
-        trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
-        tdir=$TMPDIR;
-
         # Find the jemalloc library in the active conda environment
         jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
 
@@ -89,6 +82,7 @@ rule sent_snv_ont:
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
         fi
+        
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
             -r {params.huref} \
             -i {input.cram} \
