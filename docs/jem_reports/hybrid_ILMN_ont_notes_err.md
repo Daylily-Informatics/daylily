@@ -1,7 +1,7 @@
 
 
 
-# Sentieon Hybrid Pipeline Notes
+# Sentieon Hybrid ILMN+ONT Pipeline Notes
 
 I am encountering an error towards the end(?) of the pipeline.
 ```
@@ -125,7 +125,7 @@ source hyb.sh > hyb_test.log 2>&1
 ## Pipeline Output
 
 ### Log
-- [./docs/hyb_test.log](docs/hyb_test.log)
+- [./docs/jem_reports/hyb_test.log](hyb_test.log)
   
 
 #### Log Tail

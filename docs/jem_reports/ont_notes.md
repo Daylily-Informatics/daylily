@@ -8,7 +8,7 @@
 - Avg EC2 spot cost per cram: `$1.57`.
 - Avg Coverage (and other cov stats): _rolling in this AM_
   - [ONT LSMC MultiQC Reports -coming shortly-](./)
-- Avg SNP Fscore (GIAB high confidence region bed): `0.9987`.  **!!! wow !!!**
+- Avg SNP Fscore (GIAB high confidence region bed): `0.9985`.  **!!! wow !!!**
 - Avg SNP Fscore (Ultima high confidence region bed): `0.964`.
 
 ### Analysis Results Data
@@ -18,7 +18,7 @@ I'll be processing these in more detail, but for now, here are the raw data file
 
 > I expected the SNP Fscore performance in the ultima bed regions to be higher. This needs to be investigated.
 
-- [docs/jem_reports/ont_solo_concordance.tsv](docs/jem_reports/ont_solo_concordance.tsv)
+- [docs/jem_reports/ont_solo_concordance.tsv](ont_solo_concordance.tsv)
  
 
 | CmpFootprint   | SNPClass   |   Mean_Fscore |   Min_Fscore |   Max_Fscore |
@@ -34,12 +34,12 @@ I'll be processing these in more detail, but for now, here are the raw data file
 | wgsHC          | SNPts      |      0.99883  |     0.998553 |     0.999274 |
 | wgsHC          | SNPtv      |      0.998351 |     0.997778 |     0.998882 |
 
-- I include the ultima bed segmented data for comparison to the [ultima solo results](docs/jem_reports/ultima_notes.md).
+- I include the ultima bed segmented data for comparison to the [ultima solo results](ultima_notes.md).
 
 > `python bin/calc_concordance_stats.py docs/jem_reports/ont_solo_concordance.tsv`
 
 #### Benchmarking (Runtime, memory, IO, costs)
-- [docs/jem_reports/ultima_benchmarks.tsv](docs/jem_reports/ultima_benchmarks.tsv)
+- [docs/jem_reports/ultima_benchmarks.tsv](ultima_benchmarks.tsv)
 
 | rule                      |   avg_task_cost |   min_task_cost |   max_task_cost |   avg_minutes |   min_minutes |   max_minutes |   avg_cpu_efficiency |   min_cpu_efficiency |   max_cpu_efficiency |
 |:--------------------------|----------------:|----------------:|----------------:|--------------:|--------------:|--------------:|---------------------:|---------------------:|---------------------:|
