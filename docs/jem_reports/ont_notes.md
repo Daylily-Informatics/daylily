@@ -50,6 +50,10 @@ I'll be processing these in more detail, but for now, here are the raw data file
 
 > `python bin/calc_benchmark_stats.py docs/jem_reports/ont_benchmarks.tsv`
 
+#### VCF Files
+
+- Data will migrate from FSx to S3 today, I'll drop the links in here.
+
 ## Job Details
 
 ### Spot Instances Jobs May End Up On
