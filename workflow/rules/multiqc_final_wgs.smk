@@ -101,6 +101,28 @@ rule aggregate_report_components_cram:
             alnr=ALIGNERS,
             snv_caller=snv_CALLERS,
         ),
+                expand(
+            MDIR
+            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done",
+            sample=SSAMPS,
+            alnr=ALIGNERS,
+        ),
+        expand(
+            MDIR
+            + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",
+            sample=SSAMPS,
+            alnr=ALIGNERS,
+        ),
+        expand(
+            MDIR + "{sample}/align/{alnr}/alignqc/goleft.done",
+            sample=SSAMPS,
+            alnr=ALIGNERS,
+        ),
+        expand(
+            MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
+            sample=SSAMPS,
+            alnr=ALIGNERS,
+        ),
         "logs/peddy_gathered.done",
         f"{MDIR}other_reports/alignstats_combo_mqc.tsv",
         #f"{MDIR}logs/all_svVCF_dupheld.done",
@@ -249,7 +271,7 @@ eport_header_info:
         --custom-css-file ./config/external_tools/multiqc.css \
         --template default \
         --filename {output[0]} \
-        -i 'Final Multiqc Report' \
+        -i 'Final Multiqc Report (crams)' \
         -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH:{params.ghash}) ' \
         $(dirname {input} )/../ >> {log} 2>&1;
         ls -lt {output}  >> {log} 2>&1;
