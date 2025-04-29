@@ -17,16 +17,16 @@ I'll be processing these in more detail, but for now, here are the raw data file
  
 | CmpFootprint   | SNPClass   |   Mean_Fscore |   Min_Fscore |   Max_Fscore |
 |:---------------|:-----------|--------------:|-------------:|-------------:|
-| ultima         | DEL_50     |      0.881195 |     0.852995 |     0.913246 |
-| ultima         | INS_50     |      0.895766 |     0.879083 |     0.920608 |
-| ultima         | Indel_50   |      0.864182 |     0.797539 |     0.922895 |
-| ultima         | SNPts      |      0.964536 |     0.95021  |     0.99902  |
-| ultima         | SNPtv      |      0.951728 |     0.933225 |     0.998589 |
-| wgsHC          | DEL_50     |      0.898143 |     0.87696  |     0.94355  |
-| wgsHC          | INS_50     |      0.89924  |     0.879083 |     0.940202 |
-| wgsHC          | Indel_50   |      0.877399 |     0.841214 |     0.951348 |
-| wgsHC          | SNPts      |      0.99883  |     0.998553 |     0.999274 |
-| wgsHC          | SNPtv      |      0.998351 |     0.997778 |     0.998882 |
+| ultima         | DEL_50     |      0.886204 |     0.855814 |     0.91461  |
+| ultima         | INS_50     |      0.908542 |     0.885621 |     0.923475 |
+| ultima         | Indel_50   |      0.877434 |     0.801254 |     0.94875  |
+| ultima         | SNPts      |      0.971477 |     0.957412 |     0.994657 |
+| ultima         | SNPtv      |      0.965741 |     0.94875  |     0.992529 |
+| wgsHC          | DEL_50     |      0.904299 |     0.881632 |     0.943329 |
+| wgsHC          | INS_50     |      0.930903 |     0.912714 |     0.959161 |
+| wgsHC          | Indel_50   |      0.847819 |     0.801254 |     0.933683 |
+| wgsHC          | SNPts      |      0.994608 |     0.993956 |     0.995441 |
+| wgsHC          | SNPtv      |      0.992171 |     0.990928 |     0.99303  |
 
 > `python bin/calc_concordance_stats.py docs/jem_reports/ont_solo_concordance.tsv`
 
