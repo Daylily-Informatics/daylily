@@ -141,9 +141,9 @@ rule sentdont_sort_index_chunk_vcf:
         """
         
         #bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
-        awk 'BEGIN{header=1} 
-            header && /^#/ {print; next} 
-            header && /^[^#]/ {header=0; exit}' {input.vcf} > {output.vcfsort} 2>> {log};
+        awk 'BEGIN\{header=1\} 
+            header && /^#/ \{print; next\} 
+            header && /^[^#]/ \{header=0; exit\}' {input.vcf} > {output.vcfsort} 2>> {log};
         awk '/^[^#]/' {input.vcf} | sort --buffer-size=210G -T /fsx/scratch/ --parallel={threads} -k1,1V -k2,2n >> {output.vcfsort} 2>> {log};
 
         #mv {input.vcf} {output.vcfsort} 2>> {log};
