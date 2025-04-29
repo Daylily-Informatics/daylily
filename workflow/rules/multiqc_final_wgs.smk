@@ -177,7 +177,7 @@ eport_header_info:
   - FQ->BAM.sort avg Costs: "REGSUB_TOTALCOST"
   - BAM mrkdup avg Cost: "REGSUB_MRKDUPCOST"
   - Results Dir (GB): "REGSUB_TOTALSIZE"
-  ''' > {output[1]} >> {log} 2>&1;
+  ''' > {output[1]};
 
         #cp $PWD/config/external_tools/multiqc_header.yaml {output[1]} >> {log} 2>&1;
         perl -pi -e "s/REGSUB_PROJECT/$DAY_PROJECT/g;"  {output[1]} >> {log} 2>&1;
