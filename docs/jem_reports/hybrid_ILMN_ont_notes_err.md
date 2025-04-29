@@ -1,7 +1,7 @@
 
 
 
-# Sentieon Hybrid Pipeline Notes
+# Sentieon Hybrid ILMN+ONT Pipeline Notes
 
 I am encountering an error towards the end(?) of the pipeline.
 ```
