@@ -13,7 +13,7 @@
 I'll be processing these in more detail, but for now, here are the raw data files.
 
 #### Concordance
-- []()
+- [docs/jem_reports/ultima_solo_concordance.tsv](docs/jem_reports/ultima_solo_concordance.tsv)
  
 | CmpFootprint   | SNPClass   |   Mean_Fscore |   Min_Fscore |   Max_Fscore |
 |:---------------|:-----------|--------------:|-------------:|-------------:|
@@ -31,7 +31,7 @@ I'll be processing these in more detail, but for now, here are the raw data file
 > `python bin/calc_concordance_stats.py docs/jem_reports/ont_solo_concordance.tsv`
 
 #### Benchmarking (Runtime, memory, IO, costs)
-- []()
+- [docs/jem_reports/ultima_benchmarks.tsv](docs/jem_reports/ultima_benchmarks.tsv)
 
 ## Job Details
 
