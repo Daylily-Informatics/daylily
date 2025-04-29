@@ -70,7 +70,7 @@ rule peddy:
         touch {output.prefix} ;
         """
 
-if os.environ("DAY_CRAM","") == "":
+if os.environ.get("DAY_CRAM","") == "":
         
     localrules:
         produce_peddy,
