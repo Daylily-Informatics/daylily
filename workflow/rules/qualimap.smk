@@ -8,7 +8,7 @@ def _get_queue():
             return " -q dev-short "
     return " -q dev-long "
 
-if os.envrion.get("DAY_CRAM","") == "":
+if os.environ.get("DAY_CRAM","") == "":
 
     rule qualimap:
         """Run Qualimap on BAMs"""
