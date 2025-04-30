@@ -36,7 +36,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
-            verifybamid2 --BamFile {input} --Output {output.vb_prefix} --DisableSanityCheck --SVDPrefix {params.db_prefix} --Reference {params.huref} ;
+            verifybamid2 --BamFile {input} --Output {output.vb_prefix} --DisableSanityCheck  --NumThread  {threads} --SVDPrefix {params.db_prefix} --Reference {params.huref} ;
             touch  {output.vb_prefix}.selfSM {output.vb_tsv};
             cp {output.vb_prefix}.selfSM {output.vb_tsv};
             touch {output.vb_prefix};
@@ -68,12 +68,13 @@ else:
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
+            bed_regions=config["supporting_files"]["files"]["huref"]["broad_verify_bam_bed"]["name"],
         shell:
             """
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
-            verifybamid2 --BamFile {input} --Output {output.vb_prefix} --DisableSanityCheck --SVDPrefix {params.db_prefix} --Reference {params.huref} ;
+            verifybamid2 --BamFile {input} --Output {output.vb_prefix} --DisableSanityCheck --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref} >> {log} 2>&1 ;
             touch  {output.vb_prefix}.selfSM {output.vb_tsv};
             cp {output.vb_prefix}.selfSM {output.vb_tsv};
             touch {output.vb_prefix};

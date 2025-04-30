@@ -8,7 +8,6 @@ import os
 # github: https://github.com/brentp/peddy
 # paper: http://dx.doi.org/10.1016/j.ajhg.2017.01.017
 
-
 # ped file:  "family_id individual_id paternal_id maternal_id bio_sex phenotype"
 def gen_ped_file(wildcards):
     bio_sex = samples[samples["samp"] == wildcards.sample]["biological_sex"][

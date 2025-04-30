@@ -1,6 +1,10 @@
 import sys
 import os
 
+#
+# This pipeline will use the ONT aligned cram directly and call variants
+#
+
 ALIGNERS_ONT = ["ont"]
 
 rule sent_snv_ont:
@@ -83,7 +87,7 @@ rule sent_snv_ont:
             exit 3;
         fi
         
-        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {params.use_threads} \
             -r {params.huref} \
             -i {input.cram} \
             --interval {params.schrm_mod} \
@@ -91,7 +95,7 @@ rule sent_snv_ont:
             --emit_mode variant \
             {output.gvcf} >> {log} 2>&1;
 
-         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
+         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {params.use_threads} \
             -r {params.huref} \
             --algo DNAModelApply \
 	    --model {params.model_2} \
@@ -235,7 +239,7 @@ rule sentdont_concat_index_chunks:
 
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
 
-        local oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        export oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
         echo -e "${{oldname}}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
         bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;

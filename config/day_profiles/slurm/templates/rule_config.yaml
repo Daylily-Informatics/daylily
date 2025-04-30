@@ -324,7 +324,7 @@ octopus:
 
 sentdhio:
     threads: 192
-    use_threads: 96
+    use_threads: 184
     hg38_sentdhio_chrms: "1-24"
     b37_sentdhio_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -333,12 +333,12 @@ sentdhio:
     bench_repeat: 0
     numactl: " "
     partition: "i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/HybridIlluminaONT1.0/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/HybridIlluminaONT1.0.bundle/dnascope.model"
     mem_mb: 200000
 
 sentdhuo:
     threads: 192
-    use_threads: 96
+    use_threads: 184
     hg38_sentdhuo_chrms: "1-24"
     b37_sentdhuo_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -347,12 +347,12 @@ sentdhuo:
     bench_repeat: 0
     numactl: " "
     partition: "i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2.bundle/dnascope.model"
     mem_mb: 200000
 
 sentdug:
     threads: 192
-    use_threads: 182
+    use_threads: 184
     hg38_sentdug_chrms: "1-24"
     b37_sentdug_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -361,13 +361,13 @@ sentdug:
     bench_repeat: 0
     numactl: " "
     partition: "i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonUltima1.0/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonUltima1.0.bundle/dnascope.model"
     mem_mb: 200000
 
 
 sentdpb:
     threads: 192
-    use_threads: 182
+    use_threads: 184
     hg38_sentdpb_chrms: "1-24"
     b37_sentdpb_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -376,12 +376,12 @@ sentdpb:
     bench_repeat: 0
     numactl: " "
     partition: "i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopePacBio2.1/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopePacBio2.1.bundle/dnascope.model"
     mem_mb: 200000
 
 sentdont:
     threads: 192
-    use_threads: 182
+    use_threads: 184
     hg38_sentdont_chrms: "1-24"
     b37_sentdont_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -390,8 +390,23 @@ sentdont:
     bench_repeat: 0
     numactl: " "
     partition: "i192mem"
-    dna_scope_snv_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1/diploid_model
-    dna_scope_apply_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1/diploid_model
+    dna_scope_snv_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1.bundle/diploid_model
+    dna_scope_apply_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1.bundle/diploid_model
+    mem_mb: 200000
+
+
+sentdontr:
+    threads: 192
+    use_threads: 184
+    hg38_sentdontr_chrms: "20"
+    b37_sentdontr_chrms: "20" #"19,21" # "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: " "
+    partition: "i192mem"
+    dnascope_model: /fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopeONT2.1.bundle
     mem_mb: 200000
 
 sentD:
@@ -404,7 +419,7 @@ sentD:
     bench_repeat: 0
     numactl: " "
     partition: "i192,i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2.bundle/dnascope.model"
     mem_mb: 200000
 
 sort_index_sentD_chunk_vcf:
@@ -539,7 +554,7 @@ vanilla:
 
 verifybamid2_contam:
     env_yaml: "../envs/verifybamid2_v0.1.yaml"
-    threads: 6
+    threads: 64
     ld_preload: " "
     partition: "i192,i192mem,i128"
 
