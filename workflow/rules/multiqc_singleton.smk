@@ -10,7 +10,7 @@ localrules:
 
 rule collect_rules_benchmark_data2:
     output:
-        f"{MDIR}other_reports/rules_benchmark_data_mqc2.tsv",
+        f"{MDIR}other_reports/rules_benchmark_data2_mqc.tsv",
     params:
         cluster_sample="rules_benchmark_collect",
         working_file=f"{MDIR}reports/benchmarks_summary.tsv",
@@ -26,7 +26,7 @@ rule collect_rules_benchmark_data2:
 
 rule multiqc_singleton:  # TARGET: the big report
     input:
-	    f"{MDIR}other_reports/rules_benchmark_data_mqc2.tsv",
+	    f"{MDIR}other_reports/rules_benchmark_data2_mqc.tsv",
     output:
         f"{MDIR}reports/multiqc_singleton.html",
         f"{MDIR}reports/multiqc_header2.yaml",
