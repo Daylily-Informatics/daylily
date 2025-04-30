@@ -109,44 +109,43 @@ rule sentdhio_snv:
         """
 
 
-rule sentdhio_sort_index_chunk_vcf:
-    input:
-        vcf=MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.vcf",
-    priority: 46
-    output:
-        vcfsort=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf"),
-        vcfgz=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz"),
-        vcftbi=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.tbi"),
-    conda:
-        "../envs/vanilla_v0.1.yaml"
-    log:
-        MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/log/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.log",
-    resources:
-        vcpu=1,
-        threads=1,
-        partition="i192,i192mem"
-    params:
-        x='y',
-        cluster_sample=ret_sample,
-    threads: 64 #config["config"]["sort_index_sentdhiona_chunk_vcf"]['threads']
-    shell:
-        """
-        
-        cp {input.vcf} {output.vcfsort} 2>> {log};
-        touch {input.vcf};
-        sleep 1;
-        touch {output.vcfsort};
-        bgzip  -@ {threads} {output.vcfsort} >> {log} 2>&1;
-        touch {output.vcfsort};
-        
-        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
-                
-        """
+#rule sentdhio_sort_index_chunk_vcf:
+#    input:
+#        vcf=MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.vcf",
+#    priority: 46
+#    output:
+#        vcfsort=touch(MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf"),
+#        vcfgz=touch(MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz"),
+#        vcftbi=touch(MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.tbi"),
+#    conda:
+#        "../envs/vanilla_v0.1.yaml"
+#    log:
+#        MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/log/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.log",
+#    resources:
+#        vcpu=1,
+#        threads=1,
+#        partition="i192,i192mem"
+#    params:
+#        x='y',
+#        cluster_sample=ret_sample,
+#    threads: 64 #config["config"]["sort_index_sentdhiona_chunk_vcf"]['threads']
+#    shell:
+#        """
+#        
+#        cp {input.vcf} {output.vcfsort} 2>> {log};
+#        touch {input.vcf};
+#        sleep 1;
+#        touch {output.vcfsort};
+#        bgzip  -@ {threads} {output.vcfsort} >> {log} 2>&1;
+#        touch {output.vcfsort};
+#        
+#        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;                
+#        """
 
 
 localrules:
