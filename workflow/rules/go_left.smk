@@ -18,6 +18,7 @@ if os.environ.get('DAY_CRAM','') =='':
             donetwo=touch(MDIR + "{sample}/align/{alnr}/alignqc/goleft/golefttwo.done"),
         params:
             cluster_sample=ret_sample,
+            sexchrms="chrX,chrY" if os.environ.get('DAY_GENOME_BUILD','') == 'hg38' else "X,Y",
         benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.goleft.bench.tsv"
         resources:
@@ -36,7 +37,7 @@ if os.environ.get('DAY_CRAM','') =='':
             echo setlog > {log};
             echo 'goingleft' >> {log} 2>&1;
             export gl=$(dirname {output.donetwo} ) ;
-            goleft indexcov --directory $gl {input.bam} >> {log} 2>&1;
+            goleft indexcov --sex {params.sexchrms} --directory $gl {input.bam} >> {log} 2>&1;
             touch {output.done}; touch {output.donetwo};
             {latency_wait};  ls {output};
             """
@@ -51,6 +52,7 @@ else:
             donetwo=touch(MDIR + "{sample}/align/{alnr}/alignqc/goleft/golefttwo.done"),
         params:
             cluster_sample=ret_sample,
+            sexchrms="chrX,chrY" if os.environ.get('DAY_GENOME_BUILD','') == 'hg38' else "X,Y",
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
         benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.goleft.bench.tsv"
@@ -71,7 +73,7 @@ else:
             
             export gl=$(dirname {output.donetwo} ) ;
             export REF_PATH={params.huref};
-            goleft indexcov --directory $gl {input.cram} >> {log} 2>&1;
+            goleft indexcov --directory $gl --sex {params.sexchrms} --fai {params.huref}.fai {input.crai} >> {log} 2>&1;
             
             touch {output.done}; touch {output.donetwo};
             
