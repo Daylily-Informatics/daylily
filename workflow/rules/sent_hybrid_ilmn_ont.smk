@@ -5,7 +5,6 @@ ALIGNERS_ONT = ["ont"]
 
 rule sentdhio_snv:
     input:
-        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         r1=getR1s,
         r2=getR2s,
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
