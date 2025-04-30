@@ -81,8 +81,9 @@ def create_bed(genome):
     vcf_url = CLINVAR_VCF[genome]
     gtf_url = GENCODE_GTF[genome]
 
-    clinvar_vcf_file = f"clinvar_{genome}.vcf.gz"
-    gtf_file = f"gencode_{genome}.gtf.gz"
+    os.mkdir("./tmp", exist_ok=True)
+    clinvar_vcf_file = f"./tmp/clinvar_{genome}.vcf.gz"
+    gtf_file = f"./tmp/gencode_{genome}.gtf.gz"
 
     download_and_extract(vcf_url, clinvar_vcf_file)
     download_and_extract(gtf_url, gtf_file)
