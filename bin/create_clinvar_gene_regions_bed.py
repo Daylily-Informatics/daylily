@@ -42,7 +42,12 @@ def parse_clinvar_vcf(vcf_gz):
                 continue
             fields = line.strip().split('\t')
             chrom, pos = fields[0], int(fields[1])
-            start = max(0, pos - 501)  # BED is 0-based, subtract 501 to get 500bp pad
+
+            # Explicitly add 'chr' prefix if missing (for hg38 compatibility)
+            if not chrom.startswith('chr'):
+                chrom = 'chr' + chrom
+
+            start = max(0, pos - 501)
             end = pos + 500
             clinvar_bed.append([chrom, start, end])
     print(f"Extracted {len(clinvar_bed)} variants from ClinVar VCF.")
@@ -58,7 +63,12 @@ def parse_gencode_gtf(gtf_gz):
             fields = line.strip().split('\t')
             feature_type = fields[2]
             if feature_type in ('exon', 'UTR'):
-                chrom, start, end = fields[0], int(fields[3])-1, int(fields[4])  # GTF is 1-based
+                chrom, start, end = fields[0], int(fields[3])-1, int(fields[4])
+                
+                # Ensure Gencode chromosome names match ClinVar ('chr' prefix standard)
+                if not chrom.startswith('chr'):
+                    chrom = 'chr' + chrom
+
                 start = max(0, start - 500)
                 end += 500
                 intervals.append([chrom, start, end])
