@@ -339,7 +339,7 @@ sentdhio:
     bench_repeat: 0
     numactl: " "
     partition: "i192,i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/HybridIlluminaONT1.0/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/HybridIlluminaONT1.0.bundle/dnascope.model"
     mem_mb: 200000
 
 sentdhuo:
@@ -353,7 +353,7 @@ sentdhuo:
     bench_repeat: 0
     numactl: " "
     partition: "i192,i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2.bundle/dnascope.model"
     mem_mb: 200000
 
 sentdug:
@@ -367,7 +367,7 @@ sentdug:
     bench_repeat: 0
     numactl: " "
     partition: "i192,i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonUltima1.0/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonUltima1.0.bundle/dnascope.model"
     mem_mb: 200000
 
 
@@ -382,7 +382,7 @@ sentdpb:
     bench_repeat: 0
     numactl: " "
     partition: "i192,i192mem"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopePacBio2.1/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/DNAscopePacBio2.1.bundle/dnascope.model"
     mem_mb: 200000
 
 sentdont:
@@ -426,7 +426,7 @@ sentD:
     bench_repeat: 0
     numactl: " "
     partition: "i8"
-    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2/dnascope.model"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503/bundles/SentieonIlluminaWGS2.2.bundle/dnascope.model"
     mem_mb: 200000
 
 sort_index_sentD_chunk_vcf:
