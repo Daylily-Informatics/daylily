@@ -12,10 +12,10 @@ rule sentdhio_snv:
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.ready",
     output:
-     vcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.vcf"),
-     tvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.vcf.tmp"),
+        vcf=MDIR
+            + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz",
+        tbi=MDIR
+            + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.tbi",           
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdhio/log/vcfs/{sample}.{alnr}.sentdhio.{dchrm}.snv.log",
