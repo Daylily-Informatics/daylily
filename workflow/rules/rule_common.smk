@@ -623,7 +623,7 @@ def get_diploid_bed_arg(wildcards):
 
 
 def get_haploid_bed_arg(wildcards):
-    haploid_bed = ""
+    haploid_bed = " "
 
     try:
         sample_bsex = samples[samples["samp"] == wildcards.sample]["biological_sex"][0].lower()
@@ -631,13 +631,14 @@ def get_haploid_bed_arg(wildcards):
         if "male" == sample_bsex:
             haploid_bed = f' --haploid_bed {config["supporting_files"]["files"]["huref"]["broad_male_haploid"]["name"]} '
         elif "female" == sample_bsex:
-            haploid_bed = f' --haploid_bed {config["supporting_files"]["files"]["huref"]["broad_female_haploid"]["name"]} '
+            haploid_bed = ' '
     
     except Exception as e:
         print(
             f"ERROR:::  Unable to get biological_sex from samples dataframe for sample {wildcards.sample} for haploid bed-- {e}",
             file=sys.stderr,
         )
+        haploid_bed = ' '
 
     return f" {haploid_bed} "
 
