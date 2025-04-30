@@ -169,7 +169,7 @@ rule produce_snv_concordances:  # TARGET:  produce snv concordances
         expand(
             MDIR + "{sample}/align/{alnr}/snv/{snv}/concordance/concordance.done",
             sample=SSAMPS,
-            alnr=ALIGNERS+CRAM_ALIGNERS,
+            alnr=list(set(ALIGNERS+CRAM_ALIGNERS)),
             snv=snv_CALLERS
         )
     priority: 48
