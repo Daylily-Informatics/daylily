@@ -20,16 +20,16 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_broad.bed
       broad_female_diploid:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_broad_female_diploid.bed
-      broad_female_hapload:
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_diploid_female.bed
+      broad_female_haploid:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_broad_female_haploid.bed
+        name: ""
       broad_male_diploid:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_broad_male_diploid.bed
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_diploid_male.bed
       broad_male_haploid:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_broad_male_haploid.bed
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_haploid_male.bed
       broad_verify_bam_bed:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/hg38_broad_verify_bam.bed
