@@ -71,7 +71,7 @@ else:
             rm -rf $(dirname {output.d} ) || echo rmFailedQMAP ;
             mkdir -p $(echo $(dirname {output.d} )/logs ) ;
             export dn=$(dirname {output.d} );
-            qualimap bamqc -bam {input.bam} -nt {threads} -c -gd {params.huref}  -outformat HTML  -outdir $dn --java-mem-size={params.java_mem_size} > {log} 2>&1   || echo QMAPERROR;
+            qualimap bamqc -bam {input.cram} -nt {threads} -c -gd {params.huref}  -outformat HTML  -outdir $dn --java-mem-size={params.java_mem_size} > {log} 2>&1   || echo QMAPERROR;
             touch {output.d};
             ls {output.d};
             """
