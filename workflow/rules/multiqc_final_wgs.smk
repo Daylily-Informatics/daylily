@@ -114,16 +114,22 @@ rule aggregate_report_components_cram:
             sample=SSAMPS,
             alnr=CRAM_ALIGNERS,
         ),
-        #expand(
-        #    MDIR + "{sample}/align/{alnr}/alignqc/goleft.done",
-        #    sample=SSAMPS,
-        #    alnr=CRAM_ALIGNERS,
-        #),
+        expand(
+            MDIR + "{sample}/align/{alnr}/alignqc/goleft.done",
+            sample=SSAMPS,
+            alnr=CRAM_ALIGNERS,
+        ),
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
             sample=SSAMPS,
             alnr=CRAM_ALIGNERS,
         ),
+        expand(
+            MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
+            sample=SSAMPS,
+            alnr=CRAM_ALIGNERS,
+        ),
+        MDIR + "other_reports/samtools_metrics_gather.done",
         "logs/peddy_gathered.done",
         f"{MDIR}other_reports/alignstats_combo_mqc.tsv",
         #f"{MDIR}logs/all_svVCF_dupheld.done",

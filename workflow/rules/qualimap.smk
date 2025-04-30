@@ -8,34 +8,70 @@ def _get_queue():
             return " -q dev-short "
     return " -q dev-long "
 
+if os.envrion.get("DAY_CRAM","") == "":
 
-rule qualimap:
-    """Run Qualimap on BAMs"""
-    input:
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-    output:
-        d=MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
-    benchmark:
-        MDIR + "{sample}/benchmarks/{sample}.{alnr}.qmap.bench.tsv"
-    resources:
-        vcpu=config["qualimap"]["threads"],
-        threads=config["qualimap"]["threads"],
-        partition=config["qualimap"]["partition"],
-    params:
-        java_mem_size=config["qualimap"]["java_mem_size"],
-        cluster_sample=ret_sample,
-    conda:
-        config["qualimap"]["env_yaml"]
-    threads: config["qualimap"]["threads"]
-    log:
-        MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/logs/{sample}.{alnr}.qmap.log",
-    shell:
-        """
-        set +euo pipefail;
-        rm -rf $(dirname {output.d} ) || echo rmFailedQMAP ;
-        mkdir -p $(echo $(dirname {output.d} )/logs ) ;
-        export dn=$(dirname {output.d} );
-        qualimap bamqc -bam {input.bam} -nt {threads}  -outformat HTML  -outdir $dn --java-mem-size={params.java_mem_size} > {log} 2>&1   || echo QMAPERROR;
-        touch {output.d};
-        ls {output.d};
-        """
+    rule qualimap:
+        """Run Qualimap on BAMs"""
+        input:
+            bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        output:
+            d=MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
+        benchmark:
+            MDIR + "{sample}/benchmarks/{sample}.{alnr}.qmap.bench.tsv"
+        resources:
+            vcpu=config["qualimap"]["threads"],
+            threads=config["qualimap"]["threads"],
+            partition=config["qualimap"]["partition"],
+        params:
+            java_mem_size=config["qualimap"]["java_mem_size"],
+            cluster_sample=ret_sample,
+        conda:
+            config["qualimap"]["env_yaml"]
+        threads: config["qualimap"]["threads"]
+        log:
+            MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/logs/{sample}.{alnr}.qmap.log",
+        shell:
+            """
+            set +euo pipefail;
+            rm -rf $(dirname {output.d} ) || echo rmFailedQMAP ;
+            mkdir -p $(echo $(dirname {output.d} )/logs ) ;
+            export dn=$(dirname {output.d} );
+            qualimap bamqc -bam {input.bam} -nt {threads}  -outformat HTML  -outdir $dn --java-mem-size={params.java_mem_size} > {log} 2>&1   || echo QMAPERROR;
+            touch {output.d};
+            ls {output.d};
+            """
+
+else:
+
+    rule qualimap_cram:
+        """Run Qualimap on CRAMs"""
+        input:
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+            crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        output:
+            d=MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
+        benchmark:
+            MDIR + "{sample}/benchmarks/{sample}.{alnr}.qmap.bench.tsv"
+        resources:
+            vcpu=config["qualimap"]["threads"],
+            threads=config["qualimap"]["threads"],
+            partition=config["qualimap"]["partition"],
+        params:
+            java_mem_size=config["qualimap"]["java_mem_size"],
+            cluster_sample=ret_sample,
+            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+        conda:
+            config["qualimap"]["env_yaml"]
+        threads: config["qualimap"]["threads"]
+        log:
+            MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/logs/{sample}.{alnr}.qmap.log",
+        shell:
+            """
+            set +euo pipefail;
+            rm -rf $(dirname {output.d} ) || echo rmFailedQMAP ;
+            mkdir -p $(echo $(dirname {output.d} )/logs ) ;
+            export dn=$(dirname {output.d} );
+            qualimap bamqc -bam {input.bam} -nt {threads} -c -gd {params.huref}  -outformat HTML  -outdir $dn --java-mem-size={params.java_mem_size} > {log} 2>&1   || echo QMAPERROR;
+            touch {output.d};
+            ls {output.d};
+            """
