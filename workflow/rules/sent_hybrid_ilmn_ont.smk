@@ -96,7 +96,7 @@ rule sentdhio_snv:
             --lr_input_ref {params.huref} \
             -m {params.model} \
             --longread_tech ONT \
-            {params.diploid_bed} {output.vcf} >> {log} 2>&1;
+            {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
 
         end_time=$(date +%s);
