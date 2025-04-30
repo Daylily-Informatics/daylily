@@ -602,7 +602,6 @@ def get_samp_name(wildcards):
 
 def get_diploid_bed_arg(wildcards):
 
-    embed()
     diploid_bed = ""
     try:
         sample_bsex = samples[samples["samp"] == wildcards.sample]["biological_sex"][0].lower()
