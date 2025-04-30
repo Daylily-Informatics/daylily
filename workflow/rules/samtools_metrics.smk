@@ -34,7 +34,7 @@ if os.environ.get("DAY_CRAM","") == "":
 
     rule produce_samtools_metrics:  #TARGET: produce samtools BAM metrics
         input:
-            expand(MDIR + "{sample}/align/{alnr}/alignqc/sentmetrics/{sample}.{alnr}.st.complete",
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
                 sample=SAMPS,
                 alnr=ALIGNERS
                 )
@@ -71,7 +71,7 @@ else:
 
     rule produce_samtools_metrics_cram:  #TARGET: produce samtools BAM metrics
         input:
-            expand(MDIR + "{sample}/align/{alnr}/alignqc/sentmetrics/{sample}.{alnr}.st.complete",
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
                 sample=SAMPS,
                 alnr=CRAM_ALIGNERS
                 )
