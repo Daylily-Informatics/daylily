@@ -601,6 +601,8 @@ def get_samp_name(wildcards):
 
 
 def get_diploid_bed_arg(wildcards):
+    from IPython import embed
+    embed()
     diploid_bed = ""
     if wildcards.sample in samples:
         if "male" == samples[wildcards.sample]["biological_sex"].to_lower():
