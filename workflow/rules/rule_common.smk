@@ -623,3 +623,6 @@ def get_haploid_bed_arg(wildcards):
             haploid_bed = f' --haploid_bed {config["supporting_files"]["files"]["huref"]["broad_bed"]["name"]} '
     return f" {haploid_bed} "
 
+
+def print_wildcards_etc(wildcards):
+    print("This SNV CALLER: ", wildcards.snv, "This ALIGNER: ", wildcards.alnr, "This SAMPLE: ", wildcards.sample, " all snv_CALLERS: ", snv_CALLERS, " all ALIGNERS: ", ALIGNERS, " all CRAM_ALIGNERS: ", CRAM_ALIGNERS, " all samples: ", SSAMPS, " all concordance samples: ", CONCORDANCE_SAMPLES.keys(), file=sys.stderr)
