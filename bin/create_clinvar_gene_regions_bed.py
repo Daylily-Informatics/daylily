@@ -16,13 +16,15 @@ from io import StringIO
 
 CLINVAR_VCF = {
     'hg38': 'https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz',
-    'b37': 'https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz'
 }
+#    'b37': 'https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz'
+#}
 
 GENCODE_GTF = {
-    'hg38': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.basic.annotation.gtf.gz',
-    'b37': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz'
+    'hg38': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.basic.annotation.gtf.gz'
 }
+#    'b37': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz'
+#}
 
 def download_and_extract(url, outfile):
     print(f"Downloading {url}...")
@@ -105,8 +107,8 @@ def create_bed(genome):
     print(f"Created BED file: {output_bed}")
 
     # Clean up
-    os.remove(clinvar_vcf_file)
-    os.remove(gtf_file)
+    #os.remove(clinvar_vcf_file)
+    #os.remove(gtf_file)
 
 if __name__ == "__main__":
     for genome in ['hg38']:
