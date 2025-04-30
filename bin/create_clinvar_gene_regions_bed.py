@@ -109,5 +109,5 @@ def create_bed(genome):
     os.remove(gtf_file)
 
 if __name__ == "__main__":
-    for genome in ['hg38', 'b37']:
+    for genome in ['hg38']:
         create_bed(genome)
