@@ -1,12 +1,10 @@
 import sys
 import os
 
-ALIGNERS_ONT = ["ont"]
+ALIGNERS_UG = ["ug"]
 
 rule sentdhuo_snv:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
@@ -244,7 +242,7 @@ rule clear_combined_sentdhuo_vcf:  # TARGET:  clear combined sentdhuo vcf so the
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS_ONT,
+            alnr=ALIGNERS_UG,
         ),
     threads: 2
     priority: 42
@@ -264,7 +262,7 @@ rule produce_sentdhuo_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS_ONT,
+            alnr=ALIGNERS_UG,
         ),
     output:
         "gatheredall.sentdhuo",
@@ -285,7 +283,6 @@ localrules:
 
 rule prep_sentdhuo_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:

@@ -288,6 +288,9 @@ localrules:
 
 rule prep_sentdhio_chunkdirs:
     input:
+        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
+        f1=getR1s,
+        f2=getR2s,
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
