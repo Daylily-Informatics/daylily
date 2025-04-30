@@ -625,4 +625,4 @@ def get_haploid_bed_arg(wildcards):
 
 
 def print_wildcards_etc(wildcards):
-    print("All Wildcards: ", wildcards, "This ALIGNER: ", wildcards.alnr, "This SAMPLE: ", wildcards.sample, " all snv_CALLERS: ", snv_CALLERS, " all ALIGNERS: ", ALIGNERS, " all CRAM_ALIGNERS: ", CRAM_ALIGNERS, " all samples: ", SSAMPS, " all concordance samples: ", CONCORDANCE_SAMPLES.keys(), file=sys.stderr)
+    print("All Wildcards: ", wildcards,  " all snv_CALLERS: ", snv_CALLERS, " all ALIGNERS: ", ALIGNERS, " all CRAM_ALIGNERS: ", CRAM_ALIGNERS, " all samples: ", SSAMPS, " all concordance samples: ", CONCORDANCE_SAMPLES.keys(), file=sys.stderr)
