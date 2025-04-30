@@ -20,7 +20,7 @@ CLINVAR_VCF = {
 }
 
 GENCODE_GTF = {
-    'hg38': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.basic.annotation.gtf.gz'
+    'hg38': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.basic.annotation.gtf.gz',
     'b37': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz'
 }
 
@@ -79,7 +79,7 @@ def create_bed(genome):
     vcf_url = CLINVAR_VCF[genome]
     gtf_url = GENCODE_GTF[genome]
 
-    os.mkdir("./tmp")
+    os.sysmtem("mkdir -p ./tmp")
     clinvar_vcf_file = f"./tmp/clinvar_{genome}.vcf.gz"
     gtf_file = f"./tmp/gencode_{genome}.gtf.gz"
 
@@ -110,5 +110,5 @@ def create_bed(genome):
     #os.remove(gtf_file)
 
 if __name__ == "__main__":
-    for genome in ['b37']:
+    for genome in ['b37','hg38']:
         create_bed(genome)
