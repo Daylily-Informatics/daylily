@@ -44,7 +44,9 @@ if os.environ.get("DAY_CRAM","") == "":
     rule produce_picard:  # TARGET: produce picard QC data
         input:
             expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=ALIGNERS)
-
+        output:
+            touch(MDIR + "other_reports/picard_summary_gather.done"),
+            
 else:
 
     rule picard_cram:
@@ -88,4 +90,4 @@ else:
         input:
             expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=CRAM_ALIGNERS)
         output:
-            MDIR + "other_reports/picard_summary_gather.done",
+            touch(MDIR + "other_reports/picard_summary_gather.done"),
