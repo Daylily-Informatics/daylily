@@ -7,6 +7,9 @@ rule sentdhuo_snv:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
+        r1=getR1s,
+        r2=getR2s,
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=temp(MDIR
@@ -81,16 +84,23 @@ rule sentdhuo_snv:
             exit 3;
         fi
 
-        LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-longread \
+        
+        LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
             -t {params.use_threads} \
-            -r {params.huref} \
-            -i {input.cram} \
-            -m  {params.model} \
-            --tech ONT \
+            -r  {params.huref} \
+            --sr_r1_fastq {input.r1} \
+            --sr_r2_fastq {input.r2} \
+            --sr_readgroups "@RG\tID:{params.cluster_sample}-1\tSM:{params.cluster_sample}\tLB:{params.cluster_sample}-LB-1\tPL:ILLUMINA" \
+            --lr_aln {input.cram} \
+            --lr_align_input \
+            --lr_input_ref {params.huref} \
+            -m {params.model} \
+            --longread_tech ONT \
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
+
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));

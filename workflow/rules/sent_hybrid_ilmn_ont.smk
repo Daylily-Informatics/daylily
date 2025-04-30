@@ -7,6 +7,9 @@ rule sentdhio_snv:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
+        r1=getR1s,
+        r2=getR2s,
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=MDIR
@@ -84,8 +87,8 @@ rule sentdhio_snv:
         LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
-            --sr_r1_fastq input.r1 \
-            --sr_r2_fastq input.r2 \
+            --sr_r1_fastq {input.r1} \
+            --sr_r2_fastq {input.r2} \
             --sr_readgroups "@RG\tID:{params.cluster_sample}-1\tSM:{params.cluster_sample}\tLB:{params.cluster_sample}-LB-1\tPL:ILLUMINA" \
             --lr_aln {input.cram} \
             --lr_align_input \
@@ -289,8 +292,8 @@ localrules:
 rule prep_sentdhio_chunkdirs:
     input:
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
-        f1=getR1s,
-        f2=getR2s,
+        r1=getR1s,
+        r2=getR2s,
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
