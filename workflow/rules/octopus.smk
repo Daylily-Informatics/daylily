@@ -248,7 +248,7 @@ rule oct_concat_index_chunks:
 
         bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
 
-        oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        local oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
         echo -e "${oldname}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
         bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
