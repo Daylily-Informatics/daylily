@@ -86,4 +86,4 @@ else:
 
     rule produce_picard_cram:  # TARGET: produce picard QC data
         input:
-            expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=CRAM_ALIGNERS)
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=ALIGNERS)
