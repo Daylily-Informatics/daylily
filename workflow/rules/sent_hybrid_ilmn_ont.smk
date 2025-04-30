@@ -5,8 +5,6 @@ ALIGNERS_ONT = ["ont"]
 
 rule sentdhio_snv:
     input:
-        r1=getR1s,
-        r2=getR2s,
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.ready",
@@ -86,8 +84,8 @@ rule sentdhio_snv:
         LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
-            --sr_r1_fastq {input.r1} \
-            --sr_r2_fastq {input.r2} \
+            --sr_r1_fastq input.r1 \
+            --sr_r2_fastq input.r2 \
             --sr_readgroups "@RG\tID:{params.cluster_sample}-1\tSM:{params.cluster_sample}\tLB:{params.cluster_sample}-LB-1\tPL:ILLUMINA" \
             --lr_aln {input.cram} \
             --lr_align_input \
