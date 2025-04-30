@@ -69,7 +69,7 @@ else:
             rm -rf $(dirname {output.donetwo} ) || echo rmGOLfailed ;
             mkdir -p $(dirname {output.donetwo} )/logs ; 
             
-            local gl=$(dirname {output.donetwo} ) ;
+            export gl=$(dirname {output.donetwo} ) ;
             export REF_PATH={params.huref};
             goleft indexcov --directory $gl {input.cram} >> {log} 2>&1;
             
