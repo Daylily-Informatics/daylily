@@ -34,9 +34,10 @@ rule sentdhio_snv:
         partition=config['sentdhio']['partition'],
         threads=config['sentdhio']['threads'],
         vcpu=config['sentdhio']['threads'],
-	mem_mb=config['sentdhio']['mem_mb'],
+    	mem_mb=config['sentdhio']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
+        use_threads=config["sentdhio"]["use_threads"],
         huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
         model=config["sentdhio"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
@@ -83,7 +84,7 @@ rule sentdhio_snv:
         fi
 
         LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-longread \
-            -t {threads} \
+            -t {params.use_threads} \
             -r {params.huref} \
             -i {input.cram} \
             -m  {params.model} \

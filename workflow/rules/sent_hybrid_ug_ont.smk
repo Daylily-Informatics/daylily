@@ -42,6 +42,7 @@ rule sentdhuo_snv:
         cluster_sample=ret_sample,
         haploid_bed=get_haploid_bed_arg,
         diploid_bed=get_diploid_bed_arg,
+        use_threads=config["sentdhuo"]["use_threads"],
     shell:
         """
         export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503/bin/
@@ -83,7 +84,7 @@ rule sentdhuo_snv:
         fi
 
         LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-longread \
-            -t {threads} \
+            -t {params.use_threads} \
             -r {params.huref} \
             -i {input.cram} \
             -m  {params.model} \

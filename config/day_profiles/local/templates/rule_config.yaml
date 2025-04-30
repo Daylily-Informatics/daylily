@@ -329,8 +329,8 @@ octopus:
     partition: "i8"
 
 sentdhio:
-    threads: 192
-    use_threads: 96
+    threads: 7
+    use_threads: 7
     hg38_sentdhio_chrms: "19-20"
     b37_sentdhio_chrms: "19-20" #"19,21" # "1-24"
     ld_preload: " " 
@@ -343,8 +343,8 @@ sentdhio:
     mem_mb: 200000
 
 sentdhuo:
-    threads: 192
-    use_threads: 96
+    threads: 7
+    use_threads: 7
     hg38_sentdhuo_chrms: "19-20"
     b37_sentdhuo_chrms: "19-20" #"19,21" # "1-24"
     ld_preload: " " 
@@ -357,8 +357,8 @@ sentdhuo:
     mem_mb: 200000
 
 sentdug:
-    threads: 192
-    use_threads: 96
+    threads: 7
+    use_threads: 7
     hg38_sentdug_chrms: "19-20"
     b37_sentdug_chrms: "19-20"  # "19,21" # "1-24"
     ld_preload: " " 
@@ -372,8 +372,8 @@ sentdug:
 
 
 sentdpb:
-    threads: 192
-    use_threads: 96
+    threads: 7
+    use_threads: 7
     hg38_sentdpb_chrms: "19-20"
     b37_sentdpb_chrms: "19-20" #"19,21" # "1-24"
     ld_preload: " " 
@@ -386,8 +386,8 @@ sentdpb:
     mem_mb: 200000
 
 sentdont:
-    threads: 192
-    use_threads: 96
+    threads: 7
+    use_threads: 7
     hg38_sentdont_chrms: "20"
     b37_sentdont_chrms: "20" #"19,21" # "1-24"
     ld_preload: " " 
