@@ -539,7 +539,7 @@ vanilla:
 
 verifybamid2_contam:
     env_yaml: "../envs/verifybamid2_v0.1.yaml"
-    threads: 6
+    threads: 64
     ld_preload: " "
     partition: "i192,i192mem,i128"
 
