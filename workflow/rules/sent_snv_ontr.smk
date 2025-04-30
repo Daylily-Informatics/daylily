@@ -5,9 +5,9 @@ import os
 # This pipeline will realign the ONT reads and call variants
 #
 
-ALIGNERS_ONT = ["ontr"]
+ALIGNERS_ONT = ["ont"]
 
-rule sent_snv_ont:
+rule sent_snv_ontr:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
