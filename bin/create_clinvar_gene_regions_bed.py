@@ -16,15 +16,13 @@ from io import StringIO
 
 CLINVAR_VCF = {
     'hg38': 'https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz',
+    'b37': 'https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz'
 }
-#    'b37': 'https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz'
-#}
 
 GENCODE_GTF = {
     'hg38': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.basic.annotation.gtf.gz'
+    'b37': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz'
 }
-#    'b37': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz'
-#}
 
 def download_and_extract(url, outfile):
     print(f"Downloading {url}...")
@@ -112,5 +110,5 @@ def create_bed(genome):
     #os.remove(gtf_file)
 
 if __name__ == "__main__":
-    for genome in ['hg38']:
+    for genome in ['b37']:
         create_bed(genome)
