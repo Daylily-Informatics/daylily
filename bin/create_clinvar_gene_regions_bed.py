@@ -1,59 +1,103 @@
 #!/usr/bin/env python3
+
+
+#chmod +x generate_comprehensive_clinvar_bed.py
+#pip install pandas pybedtools requests
+#sudo apt install bedtools
+
+#!/usr/bin/env python3
+
 import pandas as pd
-import gzip
 import requests
-from io import StringIO
 import pybedtools
+import gzip
 import os
+from io import StringIO
 
-CLINVAR_URL = "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/variant_summary.txt.gz"
-GFF_HG38_URL = "https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/Homo_sapiens/latest_assembly_versions/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_genomic.gff.gz"
-GFF_GRCH37_URL = "https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/Homo_sapiens/all_assembly_versions/GCF_000001405.25_GRCh37.p13/GCF_000001405.25_GRCh37.p13_genomic.gff.gz"
+CLINVAR_VCF = {
+    'hg38': 'https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz',
+    'b37': 'https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz'
+}
 
-# download and parse ClinVar gene list
-def get_clinvar_genes():
-    response = requests.get(CLINVAR_URL, stream=True)
-    with gzip.open(response.raw, 'rt') as f:
-        df = pd.read_csv(f, sep='\t', low_memory=False)
-    genes = set(df['GeneSymbol'].dropna().unique())
-    print(f"ClinVar Genes extracted: {len(genes)}")
-    return genes
+GENCODE_GTF = {
+    'hg38': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.basic.annotation.gtf.gz',
+    'b37': 'https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz'
+}
 
-# parse GFF, extract exons/UTRs by gene, extend by 500 bp, output BED
-def generate_bed(gff_url, genes, assembly):
-    print(f"Processing assembly: {assembly}")
-    response = requests.get(gff_url, stream=True)
-    with gzip.open(response.raw, 'rt') as f:
-        gff_lines = [line for line in f if not line.startswith('#')]
+def download_and_extract(url, outfile):
+    print(f"Downloading {url}...")
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+    with open(outfile, 'wb') as f_out:
+        for chunk in response.iter_content(chunk_size=8192):
+            f_out.write(chunk)
+    print(f"Downloaded to {outfile}")
 
-    gff_df = pd.read_csv(StringIO(''.join(gff_lines)), sep='\t', header=None,
-                         names=['chr','source','feature','start','end','score','strand','phase','attributes'],
-                         low_memory=False)
+def parse_clinvar_vcf(vcf_gz):
+    print(f"Parsing ClinVar VCF {vcf_gz}...")
+    clinvar_bed = []
+    with gzip.open(vcf_gz, 'rt') as vcf:
+        for line in vcf:
+            if line.startswith('#'):
+                continue
+            fields = line.strip().split('\t')
+            chrom, pos = fields[0], int(fields[1])
+            start = max(0, pos - 501)  # BED is 0-based, subtract 501 to get 500bp pad
+            end = pos + 500
+            clinvar_bed.append([chrom, start, end])
+    print(f"Extracted {len(clinvar_bed)} variants from ClinVar VCF.")
+    return pybedtools.BedTool(clinvar_bed)
 
-    gff_df = gff_df[gff_df['feature'].isin(['exon','UTR'])]
-    
-    def parse_attrs(attr):
-        attrs = {k:v for k,v in [x.split('=') for x in attr.split(';') if '=' in x]}
-        return attrs.get('gene', attrs.get('Name',''))
+def parse_gencode_gtf(gtf_gz):
+    print(f"Parsing Gencode GTF {gtf_gz}...")
+    intervals = []
+    with gzip.open(gtf_gz, 'rt') as gtf:
+        for line in gtf:
+            if line.startswith('#'):
+                continue
+            fields = line.strip().split('\t')
+            feature_type = fields[2]
+            if feature_type in ('exon', 'UTR'):
+                chrom, start, end = fields[0], int(fields[3])-1, int(fields[4])  # GTF is 1-based
+                start = max(0, start - 500)
+                end += 500
+                intervals.append([chrom, start, end])
+    print(f"Extracted {len(intervals)} exonic/UTR intervals from GTF.")
+    return pybedtools.BedTool(intervals)
 
-    gff_df['gene'] = gff_df['attributes'].apply(parse_attrs)
-    gff_df = gff_df[gff_df['gene'].isin(genes)]
+def create_bed(genome):
+    vcf_url = CLINVAR_VCF[genome]
+    gtf_url = GENCODE_GTF[genome]
 
-    bed_lines = []
-    for gene, group in gff_df.groupby('gene'):
-        intervals = pybedtools.BedTool.from_dataframe(group[['chr','start','end']])
-        intervals = intervals.slop(b=500, genome=assembly).merge()
-        for interval in intervals:
-            bed_lines.append([interval.chrom, interval.start, interval.end, gene])
+    clinvar_vcf_file = f"clinvar_{genome}.vcf.gz"
+    gtf_file = f"gencode_{genome}.gtf.gz"
 
-    bed_df = pd.DataFrame(bed_lines, columns=['chr','start','end','gene'])
-    bed_df = bed_df.sort_values(['chr','start'])
+    download_and_extract(vcf_url, clinvar_vcf_file)
+    download_and_extract(gtf_url, gtf_file)
 
-    bed_file = f"clinvar_genes_{assembly}.bed"
-    bed_df.to_csv(bed_file, sep='\t', header=False, index=False)
-    print(f"Saved BED file: {bed_file}")
+    clinvar_variants = parse_clinvar_vcf(clinvar_vcf_file)
+    gene_regions = parse_gencode_gtf(gtf_file)
+
+    # Subtract gene regions from clinvar variants to find non-coding variants
+    print("Subtracting gene regions from ClinVar variants to isolate non-coding variants...")
+    noncoding_variants = clinvar_variants.subtract(gene_regions)
+
+    # Combine noncoding variants with gene regions
+    print("Combining gene regions and non-coding ClinVar variants...")
+    combined = gene_regions.cat(noncoding_variants, postmerge=False)
+
+    # Merge overlapping intervals
+    print("Merging overlapping intervals...")
+    merged = combined.sort().merge()
+
+    output_bed = f"comprehensive_clinvar_genes_{genome}.bed"
+    merged.saveas(output_bed)
+    print(f"Created BED file: {output_bed}")
+
+    # Clean up
+    os.remove(clinvar_vcf_file)
+    os.remove(gtf_file)
 
 if __name__ == "__main__":
-    genes = get_clinvar_genes()
-    generate_bed(GFF_HG38_URL, genes, "hg38")
-    generate_bed(GFF_GRCH37_URL, genes, "hg19")
+    for genome in ['hg38', 'b37']:
+        create_bed(genome)
