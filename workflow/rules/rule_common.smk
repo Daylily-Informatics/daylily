@@ -595,3 +595,29 @@ def get_subsample_tail(wildcards):
 
 def get_samp_name(wildcards):
     return wildcards.sample
+
+
+
+def get_diploid_bed_arg(wildcards):
+    diploid_bed = ""
+    if wildcards.sample in samples:
+        if "male" == samples[wildcards.sample]["biological_sex"].to_lower():
+            diploid_bed = f" -b {config["supporting_files"]["files"]["huref"]["broad_male_diploid"]["name"]} "
+        elif "female" == samples[wildcards.sample]["biological_sex"].to_lower():
+            diploid_bed = f" -b {config["supporting_files"]["files"]["huref"]["broad_female_diploid"]["name"]} "
+        else:
+            diploid_bed = f" -b {config["supporting_files"]["files"]["huref"]["broad_bed"]["name"]} "
+    
+    return f" {diploid_bed} "
+
+def get_haploid_bed_arg(wildcards):
+    haploid_bed = ""
+    if wildcards.sample in samples:
+        if "male" == samples[wildcards.sample]["biological_sex"].to_lower():
+            haploid_bed = f" --haploid_bed {config["supporting_files"]["files"]["huref"]["broad_male_haploid"]["name"]} "
+        elif "female" == samples[wildcards.sample]["biological_sex"].to_lower():
+            haploid_bed = f" --haploid_bed {config["supporting_files"]["files"]["huref"]["broad_female_haploid"]["name"]} "
+        else:
+            haploid_bed = f" --haploid_bed {config["supporting_files"]["files"]["huref"]["broad_bed"]["name"]} "
+    return f" {haploid_bed} "
+
