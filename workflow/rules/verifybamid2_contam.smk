@@ -32,7 +32,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
-            subsamp_chrms="chr1 chr20 chr22 chrX chrY" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "1 20 22 X Y",
+            subsamp_chrms=" chr20 " if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else " 20 ",
             oneM_snps_vcf=config["supporting_files"]["files"]["verifybam2"]["oneM_snps_vcf"]["name"],
             oneM_snps_bed=config["supporting_files"]["files"]["verifybam2"]["oneM_snps_bed"]["name"],
         shell:
@@ -81,7 +81,7 @@ else:
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
             bed_regions=config["supporting_files"]["files"]["huref"]["broad_verify_bam_bed"]["name"],
-            subsamp_chrms="chr1 chr20 chr22 chrX chrY" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "1 20 22 X Y",
+            subsamp_chrms=" chr20" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else " 20 ",
             oneM_snps_vcf=config["supporting_files"]["files"]["verifybam2"]["oneM_snps_vcf"]["name"],
             oneM_snps_bed=config["supporting_files"]["files"]["verifybam2"]["oneM_snps_bed"]["name"],
         shell:
