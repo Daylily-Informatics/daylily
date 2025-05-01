@@ -38,6 +38,13 @@ if os.environ.get("DAY_CRAM","") == "":
             "rm  $(dirname {log.b})/*per-base* || echo 'rm perbase failed' >> {log.a} 2>&1;"
             "{latency_wait}; ls {output};"
 
+    localrules:
+        produce_mosdepth,
+    rule produce_mosdepth:  # TARGET:  jusg gen mosdepth
+        input:
+            MDIR
+            + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",
+
 else:
         
     rule mosdepth_cram:
@@ -72,3 +79,12 @@ else:
             "touch {output};"
             "rm  $(dirname {log.b})/*per-base* || echo 'rm perbase failed' >> {log.a} 2>&1;"
             "{latency_wait}; ls {output};"
+
+    localrules:
+        produce_mosdepth,
+
+    rule produce_mosdepth:  # TARGET:  jusg gen mosdepth
+        input:
+            MDIR
+            + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",
+        
