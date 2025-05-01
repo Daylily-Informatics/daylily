@@ -95,6 +95,16 @@ else:
             ls {output};
             """
 
+    localrules:
+        produce_contam_estimate_cram,
+
+    rule produce_contam_estimate_cram:  # TARGET:  jusg gen contam
+        input:
+            expand(
+                MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
+                sample=SSAMPS,
+                alnr=CRAM_ALIGNERS,
+            ),
 
 
 localrules:
