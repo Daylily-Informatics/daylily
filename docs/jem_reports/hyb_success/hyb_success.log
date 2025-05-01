@@ -1,3 +1,10 @@
+The collected server benchmark metrics
+
+sample  rule    s       h:m:s   max_rss max_vms max_uss max_pss io_in   io_out  mean_load       cpu_time        hostname        ip      nproc   cpu_efficiency  instance_type   region_az       spot_cost       snakemake_threads       task_cost
+ONT2_IOhyb-HG007        ont.sentdhio.1-24       22541.5573      6:15:41 402525.00       568800.04       403112.77       403146.26       838627.13       704501.82       4582.23 104.40  i192mem-dy-all-1        10.0.1.70       192     0.0046  m7i.metal-48xl  us-west-2d        2.846900        192     17.825989
+
+### sent output
+
 INSTANCE TYPE: m7i.metal-48xl
 LD_PRELOAD set to: /fsx/resources/environments/conda/ubuntu/ip-10-0-0-110/3a12468ada7a0f709fecdcd3cbaf33f3_/lib/libjemalloc.so
 [32mINFO:sentieon_cli.dnascope_hybrid:Starting sentieon-cli version: 1.2.1[0m
