@@ -94,7 +94,7 @@ else:
             samtools index {output.tmpcram} >> {log} 2>&1 ;
 
             verifybamid2 --BamFile {output.tmpcram} --Output {output.vb_prefix} --DisableSanityCheck \
-                --SVDPrefix {params.db_prefix} \ --NumThread  {threads} --Reference {params.huref}  >> {log} 2>&1 ;
+                --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref}  >> {log} 2>&1 ;
             touch  {output.vb_prefix}.selfSM {output.vb_tsv};
             cp {output.vb_prefix}.selfSM {output.vb_tsv};
             touch {output.vb_prefix};
