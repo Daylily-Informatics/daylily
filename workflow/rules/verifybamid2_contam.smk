@@ -17,7 +17,7 @@ if os.environ.get("DAY_CRAM", "") == "":
         output:
             vb_prefix=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2",
             vb_tsv=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
-            tmpcram=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/tmpc/{sample}.{alnr}.tmp.cram"),
+            tmpcram=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.tmp.cram"),
         log:
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/logs/{sample}.{alnr}.vb2.log",
         benchmark:
@@ -60,7 +60,7 @@ else:
         output:
             vb_prefix=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2",
             vb_tsv=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
-            tmpcram=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/tmpc/{sample}.{alnr}.tmp.cram"),
+            tmpcram=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.tmp.cram"),
         log:
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/logs/{sample}.{alnr}.vb2.log",
         benchmark:
