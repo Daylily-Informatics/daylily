@@ -309,11 +309,10 @@ for i in samples.iterrows():
             sample_info[samp][iix] = val
             
             if val not in CRAM_ALIGNERS:
-	        if val in ['','na',None,'None']:
-		    pass
-		else:
+	            if val in ['','na',None,'None']:
+                    pass
+		        else: 
                     CRAM_ALIGNERS.append(val)
-
         elif iix in ["cram_snv_caller"]:
             sample_info[samp][iix] = val
         elif iix in ["concordance_control_path"]:
