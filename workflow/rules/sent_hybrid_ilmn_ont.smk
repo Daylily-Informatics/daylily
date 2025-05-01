@@ -90,7 +90,7 @@ rule sentdhio_snv:
             -r  {params.huref} \
             --sr_r1_fastq {input.r1} \
             --sr_r2_fastq {input.r2} \
-            --sr_readgroups "@RG\tID:${{cram_sid}}-1\tSM:${{cram_sid}}\tLB:${{cram_sid}}-LB-1\tPL:ILLUMINA" \
+            --sr_readgroups "@RG\\tID:${{cram_sid}}-1\\tSM:${{cram_sid}}\\tLB:${{cram_sid}}-LB-1\\tPL:ILLUMINA" \
             --lr_aln {input.cram} \
             --lr_align_input \
             --lr_input_ref {params.huref} \
