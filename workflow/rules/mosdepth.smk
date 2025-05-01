@@ -42,8 +42,9 @@ if os.environ.get("DAY_CRAM","") == "":
         produce_mosdepth,
     rule produce_mosdepth:  # TARGET:  jusg gen mosdepth
         input:
-            MDIR
-            + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",
+            expand(MDIR
+            + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed", sample=SSAMPS, alnr=CRAM_ALIGNERS),
+
 
 else:
         
@@ -85,6 +86,6 @@ else:
 
     rule produce_mosdepth:  # TARGET:  jusg gen mosdepth
         input:
-            MDIR
-            + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",
+            expand(MDIR
+            + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed", sample=SSAMPS, alnr=CRAM_ALIGNERS),
         
