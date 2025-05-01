@@ -17,6 +17,7 @@ if os.environ.get("DAY_CRAM", "") == "":
         output:
             vb_prefix=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2",
             vb_tsv=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
+            tmpcram=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/tmpc/{sample}.{alnr}.tmp.cram"),
         log:
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/logs/{sample}.{alnr}.vb2.log",
         benchmark:
@@ -36,7 +37,11 @@ if os.environ.get("DAY_CRAM", "") == "":
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
-            verifybamid2 --BamFile {input} --Output {output.vb_prefix} --DisableSanityCheck  --NumThread  {threads} --SVDPrefix {params.db_prefix} --Reference {params.huref} ;
+            
+            samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input.cram} chr20 >> {log} 2>&1 ;
+            samtools index {output.tmpcram} >> {log} 2>&1 ;
+
+            verifybamid2 --BamFile {output.tmpcram} --Output {output.vb_prefix} --DisableSanityCheck  --NumThread  {threads} --SVDPrefix {params.db_prefix} --Reference {params.huref} ;
             touch  {output.vb_prefix}.selfSM {output.vb_tsv};
             cp {output.vb_prefix}.selfSM {output.vb_tsv};
             touch {output.vb_prefix};
@@ -54,6 +59,7 @@ else:
         output:
             vb_prefix=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2",
             vb_tsv=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
+            tmpcram=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/tmpc/{sample}.{alnr}.tmp.cram"),
         log:
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/logs/{sample}.{alnr}.vb2.log",
         benchmark:
@@ -74,7 +80,11 @@ else:
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
-            verifybamid2 --BamFile {input} --Output {output.vb_prefix} --DisableSanityCheck --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref} >> {log} 2>&1 ;
+
+            samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input.cram} chr20 >> {log} 2>&1 ;
+            samtools index {output.tmpcram} >> {log} 2>&1 ;
+
+            verifybamid2 --BamFile {output.tmpcram} --Output {output.vb_prefix} --DisableSanityCheck --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref} >> {log} 2>&1 ;
             touch  {output.vb_prefix}.selfSM {output.vb_tsv};
             cp {output.vb_prefix}.selfSM {output.vb_tsv};
             touch {output.vb_prefix};
