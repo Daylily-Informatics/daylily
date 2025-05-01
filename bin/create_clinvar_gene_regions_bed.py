@@ -79,7 +79,7 @@ def create_bed(genome):
     vcf_url = CLINVAR_VCF[genome]
     gtf_url = GENCODE_GTF[genome]
 
-    os.sysmtem("mkdir -p ./tmp")
+    os.system("mkdir -p ./tmp")
     clinvar_vcf_file = f"./tmp/clinvar_{genome}.vcf.gz"
     gtf_file = f"./tmp/gencode_{genome}.gtf.gz"
 

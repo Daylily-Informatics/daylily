@@ -611,7 +611,7 @@ def get_diploid_bed_arg(wildcards):
         elif "female" == sample_bsex:
             diploid_bed = f' -b {config["supporting_files"]["files"]["huref"]["broad_female_diploid"]["name"]} '
         else:
-            diploid_bed = f' -b {config["supporting_files"]["files"]["huref"]["broad_bed"]["name"]} '
+            diploid_bed = f' -b {config["supporting_files"]["files"]["huref"]["broad_core_bed"]["name"]} '
     except Exception as e:
         print(
             f"ERROR:::  Unable to get biological_sex from samples dataframe for sample {wildcards.sample} for diploid bed-- {e}",

@@ -22,7 +22,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
       broad_female_diploid:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37
-      broad_female_hapload:
+      broad_female_haploid:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37
       broad_male_diploid:
@@ -31,6 +31,9 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
       broad_male_haploid:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37
+      broad_core_bed:
+        class: file_no_suffix_star
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/blah/b37_broad_core.bed
       broad_verify_bam_bed:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/calling_regions.bed
