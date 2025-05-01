@@ -324,7 +324,7 @@ octopus:
 
 sentdhio:
     threads: 192
-    use_threads: 184
+    use_threads: 128
     hg38_sentdhio_chrms: "1-24"
     b37_sentdhio_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
