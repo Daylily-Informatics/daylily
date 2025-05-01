@@ -32,7 +32,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
-            subsamp_chrms="chr7 chr17 chr19 chr20 chr21 chr22 chrX chrY" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "7 17 19 20 21 22 X Y",
+            subsamp_chrms="chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "17 18 19 20 21 22 X Y",
         shell:
             """
             set +euo pipefail;
@@ -76,7 +76,7 @@ else:
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
             bed_regions=config["supporting_files"]["files"]["huref"]["broad_verify_bam_bed"]["name"],
-            subsamp_chrms="chr7 chr17 chr19 chr20 chr21 chr22 chrX chrY" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "7 17 19 20 21 22 X Y",
+            subsamp_chrms="chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "17 18 19 20 21 22 X Y",
         shell:
             """
             set +euo pipefail;
