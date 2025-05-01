@@ -32,13 +32,14 @@ if os.environ.get("DAY_CRAM", "") == "":
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
+            subsamp_chrms="chr7 chr17 chr19 chr20 chr21 chr22 chrX chrY" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "7 17 19 20 21 22 X Y",
         shell:
             """
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
             
-            samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input.cram} chr20 >> {log} 2>&1 ;
+            samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input} {params.subsamp_chrms} >> {log} 2>&1 ;
             samtools index {output.tmpcram} >> {log} 2>&1 ;
 
             verifybamid2 --BamFile {output.tmpcram} --Output {output.vb_prefix} --DisableSanityCheck  --NumThread  {threads} --SVDPrefix {params.db_prefix} --Reference {params.huref} ;
@@ -75,13 +76,14 @@ else:
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
             bed_regions=config["supporting_files"]["files"]["huref"]["broad_verify_bam_bed"]["name"],
+            subsamp_chrms="chr7 chr17 chr19 chr20 chr21 chr22 chrX chrY" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "7 17 19 20 21 22 X Y",
         shell:
             """
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
 
-            samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input.cram} chr20 >> {log} 2>&1 ;
+            samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input} {params.subsamp_chrms} >> {log} 2>&1 ;
             samtools index {output.tmpcram} >> {log} 2>&1 ;
 
             verifybamid2 --BamFile {output.tmpcram} --Output {output.vb_prefix} --DisableSanityCheck --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref} >> {log} 2>&1 ;
