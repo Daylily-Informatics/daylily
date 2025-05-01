@@ -133,6 +133,12 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
       dat_files:
         class: file_no_suffix_star
         name:  /fsx/data/tool_specific_resources/verifybam2/1000g.phase3.100k.b37.vcf.gz.dat
+      oneM_snps_vcf:
+        class: file_only
+        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/b37/snp_vcfs/snp_subset_1M/1M_snps.sorted.vcf.gz
+      oneM_snps_bed:
+        class: file_only
+        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/b37/snp_vcfs/snp_subset_1M/1M_snps.sorted.bed
     fastv:
       microbial_kmer_collection:
         class: file_only
