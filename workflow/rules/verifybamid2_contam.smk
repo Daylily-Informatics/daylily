@@ -47,9 +47,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             verifybamid2 --BamFile {input.b} --Output {output.vb_prefix} --DisableSanityCheck  \
                 --NumThread  {threads} \
                 --SVDPrefix {params.db_prefix} \
-                --Reference {params.huref} \
-                --SiteFile {params.oneM_snps_vcf} \
-                --SiteBED {params.oneM_snps_bed} >> {log} 2>&1 ;
+                --Reference {params.huref}  >> {log} 2>&1 ;
             touch  {output.vb_prefix}.selfSM {output.vb_tsv};
             cp {output.vb_prefix}.selfSM {output.vb_tsv};
             touch {output.vb_prefix};
@@ -96,9 +94,7 @@ else:
             #samtools index {output.tmpcram} >> {log} 2>&1 ;
 
             verifybamid2 --BamFile {input.cram} --Output {output.vb_prefix} --DisableSanityCheck \
-                --SVDPrefix {params.db_prefix} \ --NumThread  {threads} --Reference {params.huref}               \
-                --SiteFile {params.oneM_snps_vcf} \
-                --SiteBED {params.oneM_snps_bed} >> {log} 2>&1 ;
+                --SVDPrefix {params.db_prefix} \ --NumThread  {threads} --Reference {params.huref}  >> {log} 2>&1 ;
             touch  {output.vb_prefix}.selfSM {output.vb_tsv};
             cp {output.vb_prefix}.selfSM {output.vb_tsv};
             touch {output.vb_prefix};
