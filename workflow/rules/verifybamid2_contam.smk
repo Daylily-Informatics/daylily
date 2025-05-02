@@ -33,18 +33,16 @@ if os.environ.get("DAY_CRAM", "") == "":
             huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
             subsamp_chrms=" chr20 " if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else " 20 ",
-            oneM_snps_vcf=config["supporting_files"]["files"]["verifybam2"]["oneM_snps_vcf"]["name"],
-            oneM_snps_bed=config["supporting_files"]["files"]["verifybam2"]["oneM_snps_bed"]["name"],
         shell:
             """
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
             
-            samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input} {params.subsamp_chrms} >> {log} 2>&1 ;
-            samtools index {output.tmpcram} >> {log} 2>&1 ;
+            #samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input} {params.subsamp_chrms} >> {log} 2>&1 ;
+            #samtools index {output.tmpcram} >> {log} 2>&1 ;
 
-            verifybamid2 --BamFile {output.tmpcram} --Output {output.vb_prefix} --DisableSanityCheck  \
+            verifybamid2 --BamFile {input.b} --Output {output.vb_prefix} --DisableSanityCheck  \
                 --NumThread  {threads} \
                 --SVDPrefix {params.db_prefix} \
                 --Reference {params.huref}  >> {log} 2>&1 ;
@@ -80,20 +78,17 @@ else:
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
-            bed_regions=config["supporting_files"]["files"]["huref"]["broad_verify_bam_bed"]["name"],
             subsamp_chrms=" chr20" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else " 20 ",
-            oneM_snps_vcf=config["supporting_files"]["files"]["verifybam2"]["oneM_snps_vcf"]["name"],
-            oneM_snps_bed=config["supporting_files"]["files"]["verifybam2"]["oneM_snps_bed"]["name"],
         shell:
             """
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
 
-            samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input} {params.subsamp_chrms} >> {log} 2>&1 ;
-            samtools index {output.tmpcram} >> {log} 2>&1 ;
+            #samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input} {params.subsamp_chrms} >> {log} 2>&1 ;
+            #samtools index {output.tmpcram} >> {log} 2>&1 ;
 
-            verifybamid2 --BamFile {output.tmpcram} --Output {output.vb_prefix} --DisableSanityCheck \
+            verifybamid2 --BamFile {input.cram} --Output {output.vb_prefix} --DisableSanityCheck \
                 --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref}  >> {log} 2>&1 ;
             touch  {output.vb_prefix}.selfSM {output.vb_tsv};
             cp {output.vb_prefix}.selfSM {output.vb_tsv};
