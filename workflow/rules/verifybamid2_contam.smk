@@ -17,7 +17,9 @@ if os.environ.get("DAY_CRAM", "") == "":
         output:
             vb_prefix=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2",
             vb_tsv=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
-            tmpcram=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.tmp.cram"),
+            tmppile=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.tmp.pileups.table"),
+            contam=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.contam.tsv",
+            selfSM=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.selfSM.tsv",
         log:
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/logs/{sample}.{alnr}.vb2.log",
         benchmark:
@@ -32,28 +34,44 @@ if os.environ.get("DAY_CRAM", "") == "":
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
-            subsamp_chrms=" chr20 " if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else " 20 ",
+            chrm_prefix="chr" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "",
         shell:
             """
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
             
-            #samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input} {params.subsamp_chrms} >> {log} 2>&1 ;
-            #samtools index {output.tmpcram} >> {log} 2>&1 ;
+            #verifybamid2 --WithinAncestry --BamFile {input.b} --Output {output.vb_prefix} --DisableSanityCheck  \
+            #    --NumThread  {threads} \
+            #    --SVDPrefix {params.db_prefix} \
+            #    --Reference {params.huref}  >> {log} 2>&1 ;
+                        for chr in {params.chrm_prefix}{1..22} {params.chrm_prefix}X; do echo $chr; done | parallel -j {threads} '
+                gatk GetPileupSummaries \
+                -I {input.cram} \
+                -V {params.db_prefix} \
+                --reference {params.huref} \
+                -O  {output.tmppile}.{{}}.pileups.table.tmp \
+                --interval-set-rule INTERSECTION \
+                -L {params.db_prefix} \
+                -L {{}} > {log}.{{}} 2>&1 ;
+            ';
 
-            verifybamid2 --BamFile {input.b} --Output {output.vb_prefix} --DisableSanityCheck  \
-                --NumThread  {threads} \
-                --SVDPrefix {params.db_prefix} \
-                --Reference {params.huref}  >> {log} 2>&1 ;
-            touch  {output.vb_prefix}.selfSM {output.vb_tsv};
-            cp {output.vb_prefix}.selfSM {output.vb_tsv};
+            head -n 1 *.{params.chrm_prefix}1.pileups.table.tmp > {output.tmppile};
+            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}/g;' {output.tmppile};
+            tail -n +2 -q your_sample.{params.chrm_prefix}*.pileups.table >> {output.tmppile};
+
+            gatk CalculateContamination \
+            -I {output.tmppile} \
+            -O {output.contam}
+
+            export contam=$(awk 'NR==2 {{print $2}}' {output.contam});
+
+            echo -e "SEQ_ID\tRG\tCHIP_ID\t#SNPS\t#READS\tAVG_DP\tFREEMIX\tFREELK1\tFREELK0\tFREE_RH\tFREE_RA\tCHIPMIX\tCHIPLK1\tCHIPLK0\tCHIP_RH\tCHIP_RA\tDPREF\tRDPHET\tRDPALT" > {output.selfSM};
+            echo -e "{params.cluster_sample}\tNA\tNA\tNA\tNA\tNA\t$contam\t-1\t-1\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" >> {output.selfSM};
+            cp {output.selfSM} {output.vb_tsv};
+
             touch {output.vb_prefix};
-            export samplename=$(echo $(basename {output.vb_tsv}) | cut -d'.' -f 1);
-            perl -pi -e "s/^x\t/$samplename\t/g;" {output.vb_prefix}.selfSM;
-            perl -pi -e "s/^x\t/$samplename\t/g;" {output.vb_tsv};
-            {latency_wait};
-            ls {output};
+
             """
 else:
 
@@ -63,7 +81,9 @@ else:
         output:
             vb_prefix=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2",
             vb_tsv=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
-            tmpcram=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.tmp.cram"),
+            tmppile=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.tmp.pileups.table"),
+            contam=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.contam.tsv",
+            selfSM=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.selfSM.tsv",
         log:
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/logs/{sample}.{alnr}.vb2.log",
         benchmark:
@@ -78,26 +98,44 @@ else:
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
-            subsamp_chrms=" chr20" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else " 20 ",
+            chrm_prefix="chr" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "",
         shell:
             """
             set +euo pipefail;
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
 
-            #samtools view -T {params.huref} -@ {threads} -C -o {output.tmpcram} {input} {params.subsamp_chrms} >> {log} 2>&1 ;
-            #samtools index {output.tmpcram} >> {log} 2>&1 ;
+            #verifybamid2 --WithinAncestry --BamFile {input.cram} --Output {output.vb_prefix} --DisableSanityCheck \
+            #    --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref}  >> {log} 2>&1 ;
+                        
+            for chr in {params.chrm_prefix}{1..22} {params.chrm_prefix}X; do echo $chr; done | parallel -j {threads} '
+                gatk GetPileupSummaries \
+                -I {input.cram} \
+                -V {params.db_prefix} \
+                --reference {params.huref} \
+                -O  {output.tmppile}.{{}}.pileups.table.tmp \
+                --interval-set-rule INTERSECTION \
+                -L {params.db_prefix} \
+                -L {{}} > {log}.{{}} 2>&1 ;
+            ';
 
-            verifybamid2 --BamFile {input.cram} --Output {output.vb_prefix} --DisableSanityCheck \
-                --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref}  >> {log} 2>&1 ;
-            touch  {output.vb_prefix}.selfSM {output.vb_tsv};
-            cp {output.vb_prefix}.selfSM {output.vb_tsv};
+            head -n 1 *.{params.chrm_prefix}1.pileups.table.tmp > {output.tmppile};
+            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}/g;' {output.tmppile};
+            tail -n +2 -q your_sample.{params.chrm_prefix}*.pileups.table >> {output.tmppile};
+
+            gatk CalculateContamination \
+            -I {output.tmppile} \
+            -O {output.contam}
+
+            export contam=$(awk 'NR==2 {{print $2}}' {output.contam});
+
+            echo -e "SEQ_ID\tRG\tCHIP_ID\t#SNPS\t#READS\tAVG_DP\tFREEMIX\tFREELK1\tFREELK0\tFREE_RH\tFREE_RA\tCHIPMIX\tCHIPLK1\tCHIPLK0\tCHIP_RH\tCHIP_RA\tDPREF\tRDPHET\tRDPALT" > {output.selfSM};
+            echo -e "{params.cluster_sample}\tNA\tNA\tNA\tNA\tNA\t$contam\t-1\t-1\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" >> {output.selfSM};
+            cp {output.selfSM} {output.vb_tsv};
+
             touch {output.vb_prefix};
-            export samplename=$(echo $(basename {output.vb_tsv}) | cut -d'.' -f 1);
-            perl -pi -e "s/^x\t/$samplename\t/g;" {output.vb_prefix}.selfSM;
-            perl -pi -e "s/^x\t/$samplename\t/g;" {output.vb_tsv};
-            {latency_wait};
-            ls {output};
+
+
             """
 
     localrules:
