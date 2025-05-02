@@ -94,6 +94,9 @@ rule sentdhio_snv:
             --lr_aln {input.cram} \
             --lr_align_input \
             --lr_input_ref {params.huref} \
+            --skip_svs \
+            --skip_mosdepth \
+            --skip_cnv \
             -m {params.model} \
             --longread_tech ONT \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
