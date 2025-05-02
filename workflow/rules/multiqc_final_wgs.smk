@@ -57,7 +57,7 @@ localrules:
 rule aggregate_report_components:
     input:
         f"{MDIR}other_reports/giab_concordance_mqc.tsv",
-        f"{MDIR}other_reports/norm_cov_evenness_combo_mqc.tsv",
+        f"{MDIR}other_reports/normcovevenness_combo_mqc.tsv",
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/cov_calcs_complete.done",
             sample=SSAMPS,
@@ -105,6 +105,12 @@ rule aggregate_report_components_cram:
             sample=SSAMPS,
             alnr=CRAM_ALIGNERS,
             snv_caller=snv_CALLERS,
+        ),
+        f"{MDIR}other_reports/normcovevenness_combo_mqc.tsv",
+        expand(
+            MDIR + "{sample}/align/{alnr}/alignqc/cov_calcs_complete.done",
+            sample=SSAMPS,
+            alnr=CRAM_ALIGNERS,
         ),
         expand(
             MDIR
@@ -216,6 +222,7 @@ report_header_info:
         --config   ./$(dirname {output[0]})/multiqc_header.yaml \
         --config  ./config/external_tools/multiqc_config.yaml  \
         --custom-css-file ./config/external_tools/multiqc.css \
+        --ignore "*/norm_cov_eveness/*" \
         --template default \
         --filename {output[0]} \
         -i '{params.rtitle} Multiqc Report' \
@@ -286,6 +293,7 @@ report_header_info:
         --config   ./$(dirname {output[0]})/multiqc_header.yaml \
         --config  ./config/external_tools/multiqc_config.yaml  \
         --custom-css-file ./config/external_tools/multiqc.css \
+        --ignore "*/norm_cov_eveness/*" \
         --template default \
         --filename {output[0]} \
         -i '{params.rtitle} Multiqc Report (crams)' \
