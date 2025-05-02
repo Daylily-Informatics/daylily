@@ -5,7 +5,5 @@ channels:
   - r
   - defaults
 dependencies:
-  - verifybamid2
-  - samtools
   - parallel
-  - gatk
+  - gatk4=4.6.2.0
