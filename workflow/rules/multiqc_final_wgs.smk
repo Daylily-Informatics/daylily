@@ -74,7 +74,7 @@ rule aggregate_report_components:
         "logs/peddy_gathered.done",
         f"{MDIR}other_reports/alignstats_combo_mqc.tsv",
         #f"{MDIR}logs/all_svVCF_dupheld.done",
-        f"{MDIRreportsd}SEQQC_multiqc.html",
+        #f"{MDIRreportsd}SEQQC_multiqc.html",
         expand(
             MDIR
             + "{sample}/align/{alnr}/snv/{snv_caller}/vcf_stats/{sample}.{alnr}.{snv_caller}.rtg.vcfstats.txt",
@@ -129,7 +129,7 @@ rule aggregate_report_components_cram:
             alnr=CRAM_ALIGNERS,
         ),
         expand(
-            MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
+            MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}.{alnr}/{sample}.{alnr}.qmap.done",
             sample=SSAMPS,
             alnr=CRAM_ALIGNERS,
         ),

@@ -15,7 +15,7 @@ if os.environ.get("DAY_CRAM","") == "":
         input:
             bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
         output:
-            d=MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
+            d=MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}.{alnr}/{sample}.{alnr}.qmap.done",
         benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.qmap.bench.tsv"
         resources:
@@ -49,7 +49,7 @@ else:
             cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
             crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         output:
-            d=MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
+            d=MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}.{alnr}/{sample}.{alnr}.qmap.done",
         benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.qmap.bench.tsv"
         resources:

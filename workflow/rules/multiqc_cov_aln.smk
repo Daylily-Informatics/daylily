@@ -68,7 +68,7 @@ rule cov_aln_qc:
             alnr=ALIGNERS,
         ),
         f"{MDIR}other_reports/alignstats_bsummary.tsv",
-        MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
+        MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}.{alnr}/{sample}.{alnr}.qmap.done",
         expand(
             MDIR
             + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done",
