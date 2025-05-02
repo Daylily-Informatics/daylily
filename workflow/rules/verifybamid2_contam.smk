@@ -69,7 +69,8 @@ if os.environ.get("DAY_CRAM", "") == "":
             echo -e "SEQ_ID\tRG\tCHIP_ID\t#SNPS\t#READS\tAVG_DP\tFREEMIX\tFREELK1\tFREELK0\tFREE_RH\tFREE_RA\tCHIPMIX\tCHIPLK1\tCHIPLK0\tCHIP_RH\tCHIP_RA\tDPREF\tRDPHET\tRDPALT" > {output.selfSM};
             echo -e "{params.cluster_sample}\tNA\tNA\tNA\tNA\tNA\t$contam\t-1\t-1\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" >> {output.selfSM};
             cp {output.selfSM} {output.vb_tsv};
-
+            cp {output.selfSM} {output.mqc};
+            
             touch {output.vb_prefix};
 
             """
