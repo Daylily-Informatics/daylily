@@ -105,7 +105,7 @@ else:
             l="{",
             r="}",
             chr="" if config['genome_build'] in ['b37'] else "chr",
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["fasta"],
+            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
         shell:
             """
             set +euo pipefail;
