@@ -28,7 +28,7 @@ rule strobe_align_sort:
         strobe_opts=config["strobe_align_sort"]["strobe_opts"],  # BIG KAY
         sort_thread_mem=config["strobe_align_sort"]["sort_thread_mem"],
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
-        rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
+        rgpl="ILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
         rgpu="presumedCombinedLanes",  # ideally flowcell_lane(s)
         rgsm=ret_sample, # ret_sample,  # samplename
         rgid=ret_sample, #ret_sample,  # ideally samplename_flowcell_lane(s)_barcode  ! Imp this is unique, I add epoc seconds to the end of start of this rule
@@ -64,9 +64,9 @@ rule strobe_align_sort:
 
         {params.strobe_cmd} \
         -t {params.strobe_threads} {params.strobe_opts} \
-        --rg-id="{params.rgid}_$epocsec" \
-        --rg="SM:{params.rgsm}" \
-        --rg=LB:"{params.samp}{params.rglb}" \
+        --rg-id="{params.cluster_sample}-$epocsec" \
+        --rg="SM:{params.cluster_sample}" \
+        --rg=LB:"{params.cluster_sample}-LB-1" \
         --rg=PL:"{params.rgpl}" \
         --rg=PU:"{params.rgpu}" \
         --rg=CN:"{params.rgcn}" \
