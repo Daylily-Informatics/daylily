@@ -324,7 +324,7 @@ octopus:
 
 sentdhio:
     threads: 192
-    use_threads: 96
+    use_threads: 190
     hg38_sentdhio_chrms: "1-24"
     b37_sentdhio_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -338,7 +338,7 @@ sentdhio:
 
 sentdhuo:
     threads: 192
-    use_threads: 184
+    use_threads: 190
     hg38_sentdhuo_chrms: "1-24"
     b37_sentdhuo_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -352,7 +352,7 @@ sentdhuo:
 
 sentdug:
     threads: 192
-    use_threads: 184
+    use_threads: 190
     hg38_sentdug_chrms: "1-24"
     b37_sentdug_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -367,7 +367,7 @@ sentdug:
 
 sentdpb:
     threads: 192
-    use_threads: 184
+    use_threads: 190
     hg38_sentdpb_chrms: "1-24"
     b37_sentdpb_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
@@ -381,7 +381,7 @@ sentdpb:
 
 sentdont:
     threads: 192
-    use_threads: 184
+    use_threads: 190
     hg38_sentdont_chrms: "1-24"
     b37_sentdont_chrms: "1-24" #"19,21" # "1-24"
     ld_preload: " " 
