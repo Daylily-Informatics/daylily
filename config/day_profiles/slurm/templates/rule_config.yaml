@@ -255,7 +255,7 @@ manta:
 mosdepth:
     threads: 16
     env_yaml: "../envs/mosdepth_v0.1.yaml"
-    depth_bins: "0,1,3,5,10,15,20,30,40"
+    depth_bins: "0,1,3,5,10,15,20,30,40,50,60"
     partition: "i192,i192mem,i128"
 
 duphold_sort_index:
