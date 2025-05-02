@@ -57,7 +57,7 @@ if os.environ.get("DAY_CRAM", "") == "":
 
             touch {output.tmppile};
             head -n 2 $(ls $(dirname {output.tmppile} )/*.tmp | head -n 1) > {output.tmppile};
-            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}-{params.alnr}/g;' {output.tmppile};
+            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}.{params.alnr}/g;' {output.tmppile};
             tail -n +2 -q your_sample.{params.chrm_prefix}*.pileups.table >> {output.tmppile};
 
             gatk CalculateContamination \
@@ -67,11 +67,13 @@ if os.environ.get("DAY_CRAM", "") == "":
             export contam=$(awk 'NR==2 {{print $2}}' {output.contam});
 
             echo -e "SEQ_ID\tRG\tCHIP_ID\t#SNPS\t#READS\tAVG_DP\tFREEMIX\tFREELK1\tFREELK0\tFREE_RH\tFREE_RA\tCHIPMIX\tCHIPLK1\tCHIPLK0\tCHIP_RH\tCHIP_RA\tDPREF\tRDPHET\tRDPALT" > {output.selfSM};
-            echo -e "{params.cluster_sample}\tNA\tNA\tNA\tNA\tNA\t$contam\t-1\t-1\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" >> {output.selfSM};
+            echo -e "{params.cluster_sample}.{params.alnr}\tNA\tNA\tNA\tNA\tNA\t$contam\t-1\t-1\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" >> {output.selfSM};
             cp {output.selfSM} {output.vb_tsv};
             cp {output.selfSM} {output.mqc};
-            
+
             touch {output.vb_prefix};
+
+            rm  $(dirname {output.tmppile} )/*.tmp
 
             """
 else:
@@ -125,7 +127,7 @@ else:
 
             touch {output.tmppile};
             head -n 2 $(ls $(dirname {output.tmppile} )/*.tmp | head -n 1) > {output.tmppile};
-            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}-{params.alnr}/g;' {output.tmppile};
+            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}.{params.alnr}/g;' {output.tmppile};
             tail -n +2 -q your_sample.{params.chrm_prefix}*.pileups.table >> {output.tmppile};
 
             gatk CalculateContamination \
@@ -135,11 +137,12 @@ else:
             export contam=$(awk 'NR==2 {{print $2}}' {output.contam});
 
             echo -e "SEQ_ID\tRG\tCHIP_ID\t#SNPS\t#READS\tAVG_DP\tFREEMIX\tFREELK1\tFREELK0\tFREE_RH\tFREE_RA\tCHIPMIX\tCHIPLK1\tCHIPLK0\tCHIP_RH\tCHIP_RA\tDPREF\tRDPHET\tRDPALT" > {output.selfSM};
-            echo -e "{params.cluster_sample}\tNA\tNA\tNA\tNA\tNA\t$contam\t-1\t-1\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" >> {output.selfSM};
+            echo -e "{params.cluster_sample}.{params.alnr}\tNA\tNA\tNA\tNA\tNA\t$contam\t-1\t-1\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" >> {output.selfSM};
             cp {output.selfSM} {output.vb_tsv};
             cp {output.selfSM} {output.mqc};
             touch {output.vb_prefix};
 
+            rm  $(dirname {output.tmppile} )/*.tmp
 
             """
 

@@ -33,7 +33,7 @@ if os.environ.get("DAY_CRAM","") == "":
             cluster_sample=ret_sample,
         shell:
             "rm -rf {log.b}* || echo rmlogFailedMosDepth;"
-            "mosdepth --threads {threads} --by {params.win_size} --fast-mode --mapq {params.mapq} -T {params.T} {log.b} {input} > {log.a} 2>&1; "
+            "mosdepth --threads {threads} --by {params.win_size} --fast-mode --mapq {params.mapq} -T {params.T} $(dirname {log.b}) {input} > {log.a} 2>&1; "
             "touch {output};"
             "rm  $(dirname {log.b})/*per-base* || echo 'rm perbase failed' >> {log.a} 2>&1;"
             "{latency_wait}; ls {output};"
@@ -76,7 +76,7 @@ else:
             cluster_sample=ret_sample,
         shell:
             "rm -rf {log.b}* || echo rmlogFailedMosDepth;"
-            "mosdepth --threads {threads} --by {params.win_size} --fast-mode --mapq {params.mapq} -f {params.huref} -T {params.T} {log.b} {input.cram} > {log.a} 2>&1; "
+            "mosdepth --threads {threads} --by {params.win_size} --fast-mode --mapq {params.mapq} -f {params.huref} -T {params.T} $(dirname {log.b}) {input.cram} > {log.a} 2>&1; "
             "touch {output};"
             "rm  $(dirname {log.b})/*per-base* || echo 'rm perbase failed' >> {log.a} 2>&1;"
             "{latency_wait}; ls {output};"
