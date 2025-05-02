@@ -105,7 +105,7 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         --intermediate_compress_level 1  \
         --block_size {params.sort_thread_mem}   \
         --sam2bam \
-        -o {output.bamo} --index {output.bamo}.bai - >> {log} 2>&1;
+        -o {output.bamo} - >> {log} 2>&1;
 
         #samtools index -b -@ {threads} {output.baio}  >> {log} 2>&1;
 
