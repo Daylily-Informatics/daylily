@@ -8,7 +8,7 @@ import os
 #
 
 
-if os.environ.get("DAY_CRAM,"") == "":
+if os.environ.get("DAY_CRAM","") == "":
 
     rule calc_coverage_evenness:
         input:
