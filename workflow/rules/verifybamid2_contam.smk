@@ -53,7 +53,8 @@ if os.environ.get("DAY_CRAM", "") == "":
                 -L {{}} > {log}.{{}} 2>&1 ;
             ';
 
-            head -n 1 *.{params.chrm_prefix}1.pileups.table.tmp > {output.tmppile};
+            touch {output.tmppile};
+            head -n 2 $(ls $(dirname {output.tmppile} )/*.tmp | head -n 1) > {output.tmppile};
             perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}/g;' {output.tmppile};
             tail -n +2 -q your_sample.{params.chrm_prefix}*.pileups.table >> {output.tmppile};
 
@@ -116,7 +117,9 @@ else:
                 -L {{}} > {log}.{{}} 2>&1 ;
             ';
 
-            head -n 1 *.{params.chrm_prefix}1.pileups.table.tmp > {output.tmppile};
+
+            touch {output.tmppile};
+            head -n 2 $(ls $(dirname {output.tmppile} )/*.tmp | head -n 1) > {output.tmppile};
             perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}/g;' {output.tmppile};
             tail -n +2 -q your_sample.{params.chrm_prefix}*.pileups.table >> {output.tmppile};
 
