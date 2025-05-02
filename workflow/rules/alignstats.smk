@@ -107,7 +107,7 @@ rule finish_align_stats:
 
         j = json.load(open(f"{input.json}", "r"))
         aa = "sample\taligner\t" + "\t".join([str(x) for x in sorted(j)])
-        bb = f"{params.cluster_sample}_{params.alnr_f}\t{params.alnr_f}\t" + "\t".join(
+        bb = f"{params.cluster_sample}.{params.alnr_f}\t{params.alnr_f}\t" + "\t".join(
             [str(j[x]) for x in sorted(j)]
         )
         os.system(f"echo {aa} > {output.tsv} ; echo {bb} >> {output.tsv}")

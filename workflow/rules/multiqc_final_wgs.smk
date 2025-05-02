@@ -82,6 +82,10 @@ rule aggregate_report_components:
             alnr=ALIGNERS,
             snv_caller=snv_CALLERS,
         ),
+        expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
+               sample=SSAMPS,
+               alnr=ALIGNERS,
+        ),
     threads: 2
     output:
         f"{MDIR}logs/report_components_aggregated.done",
@@ -104,7 +108,7 @@ rule aggregate_report_components_cram:
         ),
         expand(
             MDIR
-            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done",
+            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done",
             sample=SSAMPS,
             alnr=CRAM_ALIGNERS,
         ),
@@ -128,6 +132,10 @@ rule aggregate_report_components_cram:
             MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
             sample=SSAMPS,
             alnr=CRAM_ALIGNERS,
+        ),
+        expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
+               sample=SSAMPS,
+               alnr=CRAM_ALIGNERS,
         ),
         MDIR + "other_reports/samtools_metrics_gather.done",
         "logs/peddy_gathered.done",

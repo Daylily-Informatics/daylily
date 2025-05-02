@@ -38,7 +38,7 @@ localrules:
 
 rule cov_aln_qc:
     input:
-        expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
+        expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
                sample=SSAMPS,
                alnr=ALIGNERS,
         ),
@@ -71,7 +71,7 @@ rule cov_aln_qc:
         MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
         expand(
             MDIR
-            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done",
+            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done",
             sample=SSAMPS,
             alnr=ALIGNERS,
         ),

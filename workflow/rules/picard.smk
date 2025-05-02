@@ -8,7 +8,7 @@ if os.environ.get("DAY_CRAM","") == "":
         input:
             bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
         output:
-            sent=touch(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done"),
+            sent=touch(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done"),
         threads: config["picard"]["threads"]
         resources:
             vcpu=config["picard"]["threads"],
@@ -43,7 +43,7 @@ if os.environ.get("DAY_CRAM","") == "":
 
     rule produce_picard:  # TARGET: produce picard QC data
         input:
-            expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=ALIGNERS)
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done", sample=SSAMPS,alnr=ALIGNERS)
         output:
             touch(MDIR + "other_reports/picard_summary_gather.done"),
             
@@ -53,7 +53,7 @@ else:
         input:
             cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
         output:
-            sent=touch(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done"),
+            sent=touch(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done"),
         threads: config["picard"]["threads"]
         resources:
             vcpu=config["picard"]["threads"],
@@ -61,13 +61,14 @@ else:
         benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.mrkdup.sort.picard.bench.tsv"
         log:
-            MDIR + "{sample}/align/{alnr}/alignqc/picard/logs/{sample}.{alnr}.picard.stats.log"
+            MDIR + "{sample}/align/{alnr}/alignqc/picard/logs/{sample}.{alnr}.stats.log"
         conda:
             "../envs/picard_v0.1.yaml"
         params:
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             metric_accumulation_level="SAMPLE" if 'metric_accumulation_level' not in config['picard'] else config['picard']['metric_accumulation_level'],
+            alnr=get_alnr,
             stop_after="2000000" if 'stop_after' not in config['picard'] else config['picard']['stop_after'],
             validation_stringency="LENIENT" if 'validation_stringency' not in config['picard'] else config['picard']['validation_stringency']
         shell:
@@ -88,6 +89,6 @@ else:
 
     rule produce_picard_cram:  # TARGET: produce picard QC data
         input:
-            expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done", sample=SSAMPS,alnr=CRAM_ALIGNERS)
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done", sample=SSAMPS,alnr=CRAM_ALIGNERS)
         output:
             touch(MDIR + "other_reports/picard_summary_gather.done"),

@@ -11,10 +11,10 @@ if os.environ.get("DAY_CRAM","") == "":
             bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
             bami=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
         output:
-            stats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.stats.tsv",
-            flagstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.flagstat.tsv",
-            idxstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.idxstat.tsv",
-            sent=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
+            stats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.stats.tsv",
+            flagstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.flagstat.tsv",
+            idxstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.idxstat.tsv",
+            sent=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
         threads: 8
         conda:
             config["samtools_markdups"]["env_yaml"]
@@ -34,7 +34,7 @@ if os.environ.get("DAY_CRAM","") == "":
 
     rule produce_samtools_metrics:  #TARGET: produce samtools BAM metrics
         input:
-            expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
                 sample=SAMPS,
                 alnr=ALIGNERS
                 )
@@ -48,10 +48,10 @@ else:
             cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
             crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         output:
-            stats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.stats.tsv",
-            flagstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.flagstat.tsv",
-            idxstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.idxstat.tsv",
-            sent=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
+            stats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.stats.tsv",
+            flagstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.flagstat.tsv",
+            idxstats=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.idxstat.tsv",
+            sent=MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
         threads: 8
         conda:
             config["samtools_markdups"]["env_yaml"]
@@ -71,7 +71,7 @@ else:
 
     rule produce_samtools_metrics_cram:  #TARGET: produce samtools BAM metrics
         input:
-            expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
+            expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
                 sample=SAMPS,
                 alnr=CRAM_ALIGNERS
                 )
