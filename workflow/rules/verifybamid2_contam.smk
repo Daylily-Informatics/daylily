@@ -47,7 +47,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             #    --Reference {params.huref}  >> {log} 2>&1 ;
                         for chr in {params.chrm_prefix}{1..22} {params.chrm_prefix}X; do echo $chr; done | parallel -j {threads} '
                 gatk GetPileupSummaries \
-                -I {input.cram} \
+                -I {input.b} \
                 -V {params.db_prefix} \
                 --reference {params.huref} \
                 -O  {output.tmppile}.{{}}.pileups.table.tmp \
