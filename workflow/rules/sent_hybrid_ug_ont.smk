@@ -99,6 +99,7 @@ rule sentdhuo_snv:
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
+            --skip_multiqc \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
 
