@@ -35,7 +35,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
-            alnr=ret_alnr,
+            alnr=get_alnr,
             chrm_prefix="chr" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "",
         shell:
             """
@@ -97,7 +97,7 @@ else:
             partition=config["verifybamid2_contam"]["partition"],
         params:
             cluster_sample=ret_sample,
-            alnr=ret_alnr,
+            alnr=get_alnr,
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
             chrm_prefix="chr" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "",
