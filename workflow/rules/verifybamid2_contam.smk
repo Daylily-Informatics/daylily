@@ -41,11 +41,8 @@ if os.environ.get("DAY_CRAM", "") == "":
             rm -rf $(dirname {output.vb_tsv} ) || echo rmVerifyBAMfailed;
             mkdir -p $(dirname {output.vb_tsv} )/logs;
             
-            #verifybamid2 --WithinAncestry --BamFile {input.b} --Output {output.vb_prefix} --DisableSanityCheck  \
-            #    --NumThread  {threads} \
-            #    --SVDPrefix {params.db_prefix} \
-            #    --Reference {params.huref}  >> {log} 2>&1 ;
-                        for chr in {params.chrm_prefix}{1..22} {params.chrm_prefix}X; do echo $chr; done | parallel -j {threads} '
+
+            for chr in {params.chrm_prefix}{{1..22}} {params.chrm_prefix}X; do echo $chr; done | parallel -j {threads} '
                 gatk GetPileupSummaries \
                 -I {input.b} \
                 -V {params.db_prefix} \
@@ -108,7 +105,7 @@ else:
             #verifybamid2 --WithinAncestry --BamFile {input.cram} --Output {output.vb_prefix} --DisableSanityCheck \
             #    --SVDPrefix {params.db_prefix}  --NumThread  {threads} --Reference {params.huref}  >> {log} 2>&1 ;
                         
-            for chr in {params.chrm_prefix}{1..22} {params.chrm_prefix}X; do echo $chr; done | parallel -j {threads} '
+            for chr in {params.chrm_prefix}{{1..22}} {params.chrm_prefix}X; do echo $chr; done | parallel -j {threads} '
                 gatk GetPileupSummaries \
                 -I {input.cram} \
                 -V {params.db_prefix} \
