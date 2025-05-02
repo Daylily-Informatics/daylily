@@ -20,6 +20,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             tmppile=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.tmp.pileups.table"),
             contam=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.contam.tsv",
             selfSM=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.selfSM",
+            mqc=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2_mqc.tsv",
         log:
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/logs/{sample}.{alnr}.vb2.log",
         benchmark:
@@ -34,6 +35,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             cluster_sample=ret_sample,
             huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
+            alnr=ret_alnr,
             chrm_prefix="chr" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "",
         shell:
             """
@@ -55,7 +57,7 @@ if os.environ.get("DAY_CRAM", "") == "":
 
             touch {output.tmppile};
             head -n 2 $(ls $(dirname {output.tmppile} )/*.tmp | head -n 1) > {output.tmppile};
-            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}/g;' {output.tmppile};
+            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}-{params.alnr}/g;' {output.tmppile};
             tail -n +2 -q your_sample.{params.chrm_prefix}*.pileups.table >> {output.tmppile};
 
             gatk CalculateContamination \
@@ -82,6 +84,7 @@ else:
             tmppile=temp(MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.tmp.pileups.table"),
             contam=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.contam.tsv",
             selfSM=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.selfSM",
+            mqc=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2_mqc.tsv",
         log:
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/logs/{sample}.{alnr}.vb2.log",
         benchmark:
@@ -94,6 +97,7 @@ else:
             partition=config["verifybamid2_contam"]["partition"],
         params:
             cluster_sample=ret_sample,
+            alnr=ret_alnr,
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
             chrm_prefix="chr" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "",
@@ -120,7 +124,7 @@ else:
 
             touch {output.tmppile};
             head -n 2 $(ls $(dirname {output.tmppile} )/*.tmp | head -n 1) > {output.tmppile};
-            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}/g;' {output.tmppile};
+            perl -pi -e 's/(^.*SAMPLE\=)(.*$)/$1{params.cluster_sample}-{params.alnr}/g;' {output.tmppile};
             tail -n +2 -q your_sample.{params.chrm_prefix}*.pileups.table >> {output.tmppile};
 
             gatk CalculateContamination \
@@ -132,7 +136,7 @@ else:
             echo -e "SEQ_ID\tRG\tCHIP_ID\t#SNPS\t#READS\tAVG_DP\tFREEMIX\tFREELK1\tFREELK0\tFREE_RH\tFREE_RA\tCHIPMIX\tCHIPLK1\tCHIPLK0\tCHIP_RH\tCHIP_RA\tDPREF\tRDPHET\tRDPALT" > {output.selfSM};
             echo -e "{params.cluster_sample}\tNA\tNA\tNA\tNA\tNA\t$contam\t-1\t-1\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" >> {output.selfSM};
             cp {output.selfSM} {output.vb_tsv};
-
+            cp {output.selfSM} {output.mqc};
             touch {output.vb_prefix};
 
 

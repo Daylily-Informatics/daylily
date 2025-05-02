@@ -13,8 +13,6 @@ def get_alt_sample_name(wildcards):
 def get_sampn(wildcards):
     return wildcards.sample
 
-def get_alnr(wildcards):
-    return wildcards.alnr
 
 def get_snv_caller(wildcards):
     return wildcards.snv
