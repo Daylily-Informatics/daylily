@@ -29,8 +29,8 @@ def get_clair3_chrom(wildcards):
 
 rule clair3:
     input:
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.ready",
     output:
         vcf=MDIR
@@ -58,6 +58,7 @@ rule clair3:
         cluster_sample=ret_sample,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
+        samview_threads=config['clair3']['samview_threads'],
         mem_mb=config['clair3']['mem_mb'],
         numa=config['clair3']['numa'],
         clair3_threads=config['clair3']['clair3_threads'],  
@@ -87,7 +88,7 @@ rule clair3:
 
         echo "CCHRM: $cchr" >> {log} 2>&1;
         {params.numa}   /opt/bin/run_clair3.sh \
-        --bam_fn={input.bam} \
+        --bam_fn=<(samtools view -@ {params.samview_threads} -b -T {params.huref} {input.cram}) \
         --ref_fn={params.huref} \
         --threads={params.clair3_threads} \
         --platform='ilmn' \

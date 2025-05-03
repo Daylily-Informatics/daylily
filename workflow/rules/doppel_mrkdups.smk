@@ -2,7 +2,6 @@
 # --------------------------
 # name=doppelmark
 # comment="v fast dedup marking."
-# note="seems fussy about some aligners output bams, ie: bwamem2-ert fails/...."  
 # git=https://github.com/grailbio/doppelmark
 #
 
@@ -12,14 +11,14 @@ if "dppl" in DDUP:
 
 
     rule doppelmark_dups:
-        """Runs duplicate marking on the merged(mg) BAM."""
+        """Runs duplicate marking on the merged(mg) CRAM."""
         input:
             bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam",
             bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.sort.bam.bai",
         priority: 3
         output:
-            bamo="{MDIR}{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-            bami="{MDIR}{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+            cram="{MDIR}{sample}/align/{alnr}/{sample}.{alnr}.cram",
+            crai="{MDIR}{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         threads: config["doppelmark"]["threads"]
         benchmark:
             repeat("{MDIR}{sample}/benchmarks/{sample}.{alnr}.mrkdup.bench.tsv", 0)
@@ -35,6 +34,7 @@ if "dppl" in DDUP:
             cluster_sample=ret_sample,
 	        numa=config['doppelmark']['numa'],
             doppelmark_threads=config['doppelmark']['doppelmark_threads'],
+            cram_compression=config["doppelmark"]["cram_compression"],
             shard_size=config['doppelmark']['shard_size'],
             clip_padding=config['doppelmark']['clip_padding'],
             min_bases=config['doppelmark']['min_bases'],
@@ -52,8 +52,6 @@ if "dppl" in DDUP:
             echo "INSTANCE TYPE: $itype" > {log};
 	        echo "INSTANCE TYPE: $itype";
             start_time=$(date +%s);
-
-
             
             timestamp=$(date +%Y%m%d%H%M%S);
 
@@ -70,20 +68,16 @@ if "dppl" in DDUP:
              -logtostderr \
     	     -disk-mate-shards 0 \
 	         -scratch-dir $tdir \
-             -output {output.bamo} \
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
-             -shard-size {params.shard_size}   >> {log} 2>&1;
+             -shard-size {params.shard_size}   \
+            | mbuffer -m 8G \
+            | samtools view -@ {view_threads} -m {params.view_mem} --output-fmt-option level={params.cram_compression} -C -T {params.huref_fasta}   --write-index  -o  {output.cram}.cram - >> {log} 2>&1; 
 
-            samtools index -b -@ {threads} {output.bamo}  >> {log} 2>&1;
 
             end_time=$(date +%s);
     	    elapsed_time=$((($end_time - $start_time) / 60));
 	        echo "Elapsed-Time-min:\t$itype\t$elapsed_time";
             echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
-
-	        cram_cmd="samtools view -@ {threads} -m 2G  -C -T {params.huref_fasta}   --write-index  -o  {output.bamo}.cram  {output.bamo}";
-	        echo "$cram_cmd";
-	        echo "$cram_cmd" >> {log};
             
             """ 
