@@ -23,12 +23,8 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         namenogz: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/broad_hg38/Homo_sapiens_assembly38.fasta
       hisat2:
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/blah.createme.note
-      rtg_tools_genome_full:
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38_broad/rtg/Homo_sapiens_assembly38.fasta.sdf
-      rtg_tools_genome_noalt:
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta.sdf
       rtg_tools_genome:
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/fasta_fai_minalt/GRCh38_no_alt_analysis_set.fasta.sdf
+        name:  /fsx/data/genomic_data/organism_references/H_sapiens/hg38_broad/rtg/Homo_sapiens_assembly38.sdf
     vep:
       vep_genome_build: 113_GRCh38
       vep_cache:
