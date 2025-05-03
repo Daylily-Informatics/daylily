@@ -6,6 +6,8 @@ import pandas as pd
 import re
 import math
 
+cpus_div4 = os.cpu_count() // 4  # Integer division
+
 summary_fh = open(sys.argv[1], "r")
 sample = sys.argv[2]  # Sample name
 tgt_region_bed = sys.argv[3]  # bed  file of the regions used in vcf eval
@@ -109,7 +111,7 @@ for i in summary_fh:
 
 def _proc_vcf(vcf_n):
     new_vcf_n = f"{vcf_n.replace('.','_')}_stripped.vcf.gz"
-    ccmd = f" bcftools  annotate  -x INFO/datasets,INFO/platforms,INFO/callsetnames,INFO/platformnames,INFO/callable,INFO/datasetnames  --threads 4 -O z -o {new_vcf_n} {vcf_n}; tabix -f {new_vcf_n}; "
+    ccmd = f" bcftools  annotate  -x INFO/datasets,INFO/platforms,INFO/callsetnames,INFO/platformnames,INFO/callable,INFO/datasetnames  --threads {cpus_div4} -O z -o {new_vcf_n} {vcf_n}; tabix -f {new_vcf_n}; "
     print(f"{ccmd}", file=sys.stderr)
     os.system(ccmd)
     return(new_vcf_n)

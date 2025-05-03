@@ -1,25 +1,27 @@
 import sys
 import os
 
-
-
+ALIGNERS_ONT = ["ont"]
 
 rule sentdhio_snv:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
+        r1=getR1s,
+        r2=getR2s,
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.ready",
     output:
-     vcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.vcf"),
-     tvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.vcf.tmp"),
+        vcf=MDIR
+            + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz",
+        tbi=MDIR
+            + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.tbi",           
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdhio/log/vcfs/{sample}.{alnr}.sentdhio.{dchrm}.snv.log",
     threads: config['sentdhio']['threads']
     conda:
-        "../envs/sentdhio_v0.2.yaml"
+        "../envs/sentieonHybrid_v0.1.yaml"
     priority: 45
     benchmark:
         repeat(
@@ -33,23 +35,24 @@ rule sentdhio_snv:
         partition=config['sentdhio']['partition'],
         threads=config['sentdhio']['threads'],
         vcpu=config['sentdhio']['threads'],
-	mem_mb=config['sentdhio']['mem_mb'],
+    	mem_mb=config['sentdhio']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        use_threads=config["sentdhio"]["use_threads"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdhio"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
+        haploid_bed=get_haploid_bed_arg,
+        diploid_bed=get_diploid_bed_arg,
     shell:
         """
-
-
+        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503/bin/
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/sentdhio_tmp_$timestamp;
+        export TMPDIR=/fsx/scratch/sentdontr_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
-        tdir=$TMPDIR;
 
         if [ -z "$SENTIEON_LICENSE" ]; then
             echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well." >> {log} 2>&1;
@@ -67,8 +70,37 @@ rule sentdhio_snv:
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver --thread_count {threads} --interval {params.schrm_mod} --reference {params.huref} --input {input.b} --algo DNAscope --pcr_indel_model none --model {params.model}  {output.tvcf} >> {log} 2>&1;
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} -r {params.huref} --algo DNAModelApply --model {params.model} -v {output.tvcf} {output.vcf} >> {log} 2>&1;
+        ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
+        
+        # Find the jemalloc library in the active conda environment
+        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
+
+        # Check if jemalloc was found and set LD_PRELOAD accordingly
+        if [[ -n "$jemalloc_path" ]]; then
+            LD_PRELOAD="$jemalloc_path";
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
+        else
+            echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
+            exit 3;
+        fi
+        export cram_sid=$(samtools view -H {input.cram} | grep  '^@RG' | tr '\t' '\n' | grep '^SM:' | cut -f2 -d':' | sort | uniq)
+
+        LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
+            -t {params.use_threads} \
+            -r  {params.huref} \
+            --sr_r1_fastq {input.r1} \
+            --sr_r2_fastq {input.r2} \
+            --sr_readgroups "@RG\\tID:${{cram_sid}}-1\\tSM:${{cram_sid}}\\tLB:${{cram_sid}}-LB-1\\tPL:ILLUMINA" \
+            --lr_aln {input.cram} \
+            --lr_align_input \
+            --lr_input_ref {params.huref} \
+            --skip_svs \
+            --skip_mosdepth \
+            --skip_cnv \
+            --skip_multiqc \
+            -m {params.model} \
+            --longread_tech ONT \
+            {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
 
         end_time=$(date +%s);
@@ -76,45 +108,46 @@ rule sentdhio_snv:
 	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
 
-        touch {output.vcf};
         """
 
 
-rule sentdhio_sort_index_chunk_vcf:
-    input:
-        vcf=MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.vcf",
-    priority: 46
-    output:
-        vcfsort=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf"),
-        vcfgz=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz"),
-        vcftbi=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.tbi"),
-    conda:
-        "../envs/vanilla_v0.1.yaml"
-    log:
-        MDIR
-        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/log/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.log",
-    resources:
-        vcpu=1,
-        threads=1,
-        partition="i192,i192mem"
-    params:
-        x='y',
-        cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdhiona_chunk_vcf"]['threads']
-    shell:
-        """
-        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
-        
-        bgzip {output.vcfsort} >> {log} 2>&1;
-        touch {output.vcfsort};
-
-        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
-        
-        """
+#rule sentdhio_sort_index_chunk_vcf:
+#    input:
+#        vcf=MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.vcf",
+#    priority: 46
+#    output:
+#        vcfsort=touch(MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf"),
+#        vcfgz=touch(MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz"),
+#        vcftbi=touch(MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.tbi"),
+#    conda:
+#        "../envs/vanilla_v0.1.yaml"
+#    log:
+#        MDIR
+#        + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/log/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.log",
+#    resources:
+#        vcpu=1,
+#        threads=1,
+#        partition="i192,i192mem"
+#    params:
+#        x='y',
+#        cluster_sample=ret_sample,
+#    threads: 64 #config["config"]["sort_index_sentdhiona_chunk_vcf"]['threads']
+#    shell:
+#        """
+#        
+#        cp {input.vcf} {output.vcfsort} 2>> {log};
+#        touch {input.vcf};
+#        sleep 1;
+#        touch {output.vcfsort};
+#        bgzip  -@ {threads} {output.vcfsort} >> {log} 2>&1;
+#        touch {output.vcfsort};
+#        
+#        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;                
+#        """
 
 
 localrules:
@@ -172,14 +205,14 @@ rule sentdhio_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/sentdhio/{sample}.{alnr}.sentdhio.snv.sort.vcf.gz.tbi"
         ),
-    threads: 4
+    threads: 64
     resources:
-        vcpu=4,
-        threads=4,
-        partition="i192,i192mem"
+        vcpu=64,
+        threads=64,
+        partition="i192,i192mem,i128"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
@@ -193,12 +226,18 @@ rule sentdhio_concat_index_chunks:
     shell:
         """
 
+        
         touch {log};
         mkdir -p $(dirname {log});
         # This is acceptable bc I am concatenating from the same tools output, not across tools
-        touch {output.vcfgztemp};
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
-        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
+        #touch {output.vcfgztemp};
+
+        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
+
+        export oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        echo -e "${{oldname}}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
+        bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
+        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
 
@@ -213,7 +252,7 @@ rule clear_combined_sentdhio_vcf:  # TARGET:  clear combined sentdhio vcf so the
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdhio/{sample}.{alnr}.sentdhio.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_ONT,
         ),
     threads: 2
     priority: 42
@@ -233,7 +272,7 @@ rule produce_sentdhio_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdhio/{sample}.{alnr}.sentdhio.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_ONT,
         ),
     output:
         "gatheredall.sentdhio",
@@ -254,7 +293,11 @@ localrules:
 
 rule prep_sentdhio_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
+        r1=getR1s,
+        r2=getR2s,
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhio/vcfs/{dchrm}/{{sample}}.ready",

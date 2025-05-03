@@ -5,36 +5,6 @@ import os
 # ---------------------------
 #
 
-
-def get_dchrm_day(wildcards):
-    pchr=""
-    if config['genome_build'] not in ['b37']:
-        pchr="chr"
-
-
-    ret_str = ""
-    sl = wildcards.dchrm.replace('chr','').split("-")
-    sl2 = wildcards.dchrm.replace('chr','').split("~")
-    
-    if len(sl2) == 2:
-        ret_str = pchr + wildcards.dchrm + ':'
-    elif len(sl) == 1:
-        ret_str = pchr + sl[0] + ':'
-    elif len(sl) == 2:
-        start = int(sl[0])
-        end = int(sl[1])
-        while start <= end:
-            ret_str = str(ret_str) + "," + pchr + str(start) + ':'
-            start = start + 1
-    else:
-        raise Exception(
-            "sentD chunks can only be one contiguous range per chunk : ie: 1-4 with the non numerical chrms assigned 23=X, 24=Y, 25=MT"
-        )
-    mito_code="MT" if "b37" == config['genome_build'] else "M",
-
-    return ret_mod_chrm(ret_str).lstrip(',').replace('chr23','chrX').replace('chr24','chrY').replace('chr25','chrMT').replace('23:','X:').replace('24:','Y:').replace('25:',f'{mito_code}:')
-
-
 rule sent_DNAscope:
     input:
         b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
@@ -67,14 +37,11 @@ rule sent_DNAscope:
 	mem_mb=config['sentD']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentD"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
     shell:
         """
-
-
-
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentd_tmp_$timestamp;
         mkdir -p $TMPDIR;
@@ -210,7 +177,7 @@ rule sentD_concat_index_chunks:
         partition="i192,i192mem"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
@@ -223,16 +190,20 @@ rule sentD_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/sentd/log/{sample}.{alnr}.sentd.snv.merge.sort.gatherered.log",
     shell:
         """
-
         touch {log};
         mkdir -p $(dirname {log});
         # This is acceptable bc I am concatenating from the same tools output, not across tools
-        touch {output.vcfgztemp};
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
-        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
+        #touch {output.vcfgztemp};
+
+        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
+
+        export oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        echo -e "${{oldname}}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
+        bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
+        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
-
+        
         """
 
 localrules:

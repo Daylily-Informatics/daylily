@@ -47,10 +47,10 @@ if "bbb2" in DDUP:
             bammarkduplicates2 -@ {threads} \
             I={input.bam} \
             O={output.bamo} \
-            colhashbits=20 \
-            collistsize=335544320 \
-            fragbufsize=503316480 \
-            inputbuffersize=65536 \
+            colhashbits=22 \
+            collistsize=2147483648 \
+            fragbufsize=4294967296 \
+            inputbuffersize=262144 \
             optminpixeldif=1000 \
             index=1;
             {latency_wait};

@@ -2,6 +2,7 @@ import os
 import sys
 
 
+
 def get_samp_concordance_truth_dir(wildcards):
     cntrl_dir = samples[samples['samp'] == wildcards.sample]["concordance_control_path"][0]
     return cntrl_dir
@@ -12,8 +13,6 @@ def get_alt_sample_name(wildcards):
 def get_sampn(wildcards):
     return wildcards.sample
 
-def get_alnr(wildcards):
-    return wildcards.alnr
 
 def get_snv_caller(wildcards):
     return wildcards.snv
@@ -168,7 +167,7 @@ rule produce_snv_concordances:  # TARGET:  produce snv concordances
         expand(
             MDIR + "{sample}/align/{alnr}/snv/{snv}/concordance/concordance.done",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=list(set(ALIGNERS+CRAM_ALIGNERS)),
             snv=snv_CALLERS
         )
     priority: 48
@@ -178,6 +177,7 @@ rule produce_snv_concordances:  # TARGET:  produce snv concordances
         cluster_sample="aggregate",
         mdir=MDIR,
         genome_build=config['genome_build'],
+        pc=print_wildcards_etc,
     output:
         touch(MDIR+"other_reports/giab_concordance_mqc.tsv")
     shell:

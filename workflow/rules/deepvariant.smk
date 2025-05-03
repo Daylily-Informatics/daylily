@@ -6,7 +6,7 @@ import os
 #
  
 def get_dvchrm_day(wildcards):
-    pchr=""
+    pchr="" #prefix handled already
     ret_str = ""
     sl = wildcards.dvchrm.replace('chr','').split("-")
     sl2 = wildcards.dvchrm.replace('chr','').split("~")
@@ -60,7 +60,7 @@ rule deepvariant:
     params:
         dchrm=get_dvchrm_day,
         cluster_sample=ret_sample, #
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
         mem_mb=config['deepvariant']['mem_mb'],
         numa=config['deepvariant']['numa'],
@@ -209,7 +209,7 @@ rule deep_concat_index_chunks:
         partition=config['deepvariant']['partition_other'],
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
@@ -222,15 +222,21 @@ rule deep_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/deep/log/{sample}.{alnr}.deep.snv.merge.sort.gatherered.log",
     shell:
         """
+ 
         touch {log};
         mkdir -p $(dirname {log});
-
         # This is acceptable bc I am concatenating from the same tools output, not across tools
-        touch {output.vcfgztemp};
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
-        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
+        #touch {output.vcfgztemp};
+
+        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
+
+        export oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        echo -e "${{oldname}}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
+        bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
+        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
+
         """
 
 

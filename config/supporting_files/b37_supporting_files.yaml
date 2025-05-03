@@ -11,8 +11,26 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.genome
       fasta:
         class: file_no_suffix_star
-        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta.gz
-        namenogz: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.fasta
+        bed: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.bed
+      bed:
+        class: file_no_suffix_star
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37.bed
+      female_diploid:
+        class: file_no_suffix_star
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37
+      female_haploid:
+        class: file_no_suffix_star
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37
+      male_diploid:
+        class: file_no_suffix_star
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37
+      male_haploid:
+        class: file_no_suffix_star
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37
+      core_bed:
+        class: file_no_suffix_star
+        name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/blah/b37_broad_core.bed
       hisat2:
         class: file_no_suffix_star
         name: /fsx/data/genomic_data/organism_references/H_sapiens/b37/human_1kg_v37/human_1kg_v37
@@ -108,7 +126,13 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
     verifybam2:
       dat_files:
         class: file_no_suffix_star
-        name:  /fsx/data/tool_specific_resources/verifybam2/1000g.phase3.100k.b37.vcf.gz.dat
+        name:  /fsx/data/genomic_data/organism_annotations/H_sapiens/b37/snp_vcfs/chr20_verbam/chr20.sampled.vcf.gz
+      oneM_snps_vcf:
+        class: file_only
+        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/b37/snp_vcfs/chr20_verbam/chr20.sampled.vcf.gz
+      oneM_snps_bed:
+        class: file_only
+        name: /fsx/data/genomic_data/organism_annotations/H_sapiens/b37/snp_vcfs/chr20_verbam/chr20.sampled.vcf.gz
     fastv:
       microbial_kmer_collection:
         class: file_only

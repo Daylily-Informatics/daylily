@@ -1,3 +1,5 @@
+import os
+
 # ##### PEDDY - Pedigree Tools
 # ----------------------------
 # ** ported from SUPERSONIC
@@ -5,7 +7,6 @@
 # capabilities
 # github: https://github.com/brentp/peddy
 # paper: http://dx.doi.org/10.1016/j.ajhg.2017.01.017
-
 
 # ped file:  "family_id individual_id paternal_id maternal_id bio_sex phenotype"
 def gen_ped_file(wildcards):
@@ -68,21 +69,42 @@ rule peddy:
         touch {output.prefix} ;
         """
 
+if os.environ.get("DAY_CRAM","") == "":
+        
+    localrules:
+        produce_peddy,
 
-localrules:
-    produce_peddy,
+
+    rule produce_peddy:  # TARGET: just produce peddy results
+        input:
+            expand(
+                MDIR
+                + "{sample}/align/{alnr}/snv/{snv}/peddy/{sample}.{alnr}.{snv}.peddy.done",
+                sample=SSAMPS,
+                alnr=ALIGNERS,
+                snv=snv_CALLERS,
+            ),
+        output:
+            "logs/peddy_gathered.done",
+        shell:
+            "touch {output};"
+
+else:
+
+    localrules:
+        produce_peddy_cram,
 
 
-rule produce_peddy:  # TARGET: just produce peddy results
-    input:
-        expand(
-            MDIR
-            + "{sample}/align/{alnr}/snv/{snv}/peddy/{sample}.{alnr}.{snv}.peddy.done",
-            sample=SSAMPS,
-            alnr=ALIGNERS,
-            snv=snv_CALLERS,
-        ),
-    output:
-        "logs/peddy_gathered.done",
-    shell:
-        "touch {output};"
+    rule produce_peddy_cram:  # TARGET: just produce peddy results
+        input:
+            expand(
+                MDIR
+                + "{sample}/align/{alnr}/snv/{snv}/peddy/{sample}.{alnr}.{snv}.peddy.done",
+                sample=SSAMPS,
+                alnr=CRAM_ALIGNERS,
+                snv=snv_CALLERS,
+            ),
+        output:
+            "logs/peddy_gathered.done",
+        shell:
+            "touch {output};"

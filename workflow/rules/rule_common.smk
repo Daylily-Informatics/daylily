@@ -57,7 +57,29 @@ config["supporting_files"] = {
     "files": files_yaml_file["supporting_files"]["files"],
     "root": files_yaml_file["supporting_files"]["root"],
 }
- 
+
+genome_build_chrm_prefix_map = {
+    "b37": "",
+    "hg38": "chr", 
+    "hg38_broad": "chr",
+} 
+
+GENOME_CHR_PREFIX="na"
+if os.environ.get("DAY_GENOME_BUILD","na") in genome_build_chrm_prefix_map:
+    GENOME_CHR_PREFIX = genome_build_chrm_prefix_map[os.environ.get("DAY_GENOME_BUILD")]
+    print(
+        f"INFO::: The genome build {os.environ.get('DAY_GENOME_BUILD')} is supported.  The genome build prefix is '{GENOME_CHR_PREFIX}''.",
+        file=sys.stderr,
+    )
+else:
+    err_msg=f"ERROR::: The genome build {os.environ.get('DAY_GENOME_BUILD')} is not supported.  Please check the config file and try again. No genome build prefix was set."
+    print(
+        err_msg,
+        file=sys.stderr,
+    )
+    raise Exception(
+        err_msg
+    )
 
 # SNV caller chunk arrays
 SENTD_CHRMS = config["sentD"][f"{config['genome_build']}_sentD_chrms"].split(",")
@@ -69,6 +91,9 @@ SENTDUG_CHRMS = config["sentdug"][f"{config['genome_build']}_sentdug_chrms"].spl
 SENTDONT_CHRMS = config["sentdont"][f"{config['genome_build']}_sentdont_chrms"].split(",")
 SENTDHUO_CHRMS = config["sentdhuo"][f"{config['genome_build']}_sentdhuo_chrms"].split(",")
 SENTDHIO_CHRMS = config["sentdhio"][f"{config['genome_build']}_sentdhio_chrms"].split(",")
+SENTDPB_CHRMS = config["sentdpb"][f"{config['genome_build']}_sentdpb_chrms"].split(",")
+SENTDONTR_CHRMS = config["sentdontr"][f"{config['genome_build']}_sentdontr_chrms"].split(",")
+
 # ##### Setting the allowed aligners to run and to which deduper to use.
 # presently, 1+ aligners may run, but all must use the same deduper
 
@@ -256,6 +281,7 @@ cluster_config["sub_user"] = os.environ.get("USER", "na")
 
 # Set info for concordance calculations
 CONCORDANCE_SAMPLES = {}
+CRAM_ALIGNERS = []
 sample_info = {}
 sample_lane_info = {}
 for i in samples.iterrows():
@@ -296,6 +322,19 @@ for i in samples.iterrows():
                 val = "female"
             else:
                 val = "na"
+            sample_info[samp][iix] = val
+        elif iix in ["cram"]:
+            sample_info[samp][iix] = val
+        elif iix in ["cram_generator"]:
+            sample_info[samp][iix] = val
+        elif iix in ["cram_aligner"]:
+            sample_info[samp][iix] = val
+            if val not in CRAM_ALIGNERS:
+                if val in ['','na',None,'None']:
+                    pass
+                else: 
+                    CRAM_ALIGNERS.append(val)
+        elif iix in ["cram_snv_caller"]:
             sample_info[samp][iix] = val
         elif iix in ["concordance_control_path"]:
             sample_info[samp][iix] = val
@@ -454,6 +493,14 @@ def getR1s(wildcards):
         fr1s.append(r1)
     return sorted(fr1s)
 
+def getCRAMs(wildcards):
+    crams = []
+    for ss_cram in samples.loc[wildcards.sample, "cram"]:
+        if ss_cram not in [None, "None", "", "na"]:
+            cram = os.path.abspath(cram)
+        else:
+            pass
+    return sorted(crams)
 
 def getR2sS(wildcards):
     fr2s = []
@@ -573,3 +620,79 @@ def get_subsample_tail(wildcards):
 
 def get_samp_name(wildcards):
     return wildcards.sample
+
+
+
+def get_diploid_bed_arg(wildcards):
+
+    diploid_bed = ""
+    try:
+        sample_bsex = samples[samples["samp"] == wildcards.sample]["biological_sex"][0].lower()
+
+        if "male" == sample_bsex:
+            diploid_bed = f' -b {config["supporting_files"]["files"]["huref"]["male_diploid"]["name"]} '
+        elif "female" == sample_bsex:
+            diploid_bed = f' -b {config["supporting_files"]["files"]["huref"]["female_diploid"]["name"]} '
+        else:
+            diploid_bed = f' -b {config["supporting_files"]["files"]["huref"]["core_bed"]["name"]} '
+    except Exception as e:
+        print(
+            f"ERROR:::  Unable to get biological_sex from samples dataframe for sample {wildcards.sample} for diploid bed-- {e}",
+            file=sys.stderr,
+        )
+        diploid_bed = f' -b {config["supporting_files"]["files"]["huref"]["bed"]["name"]} '
+
+    return f" {diploid_bed} "
+
+
+def get_haploid_bed_arg(wildcards):
+    haploid_bed = " "
+
+    try:
+        sample_bsex = samples[samples["samp"] == wildcards.sample]["biological_sex"][0].lower()
+
+        if "male" == sample_bsex:
+            haploid_bed = f' --haploid_bed {config["supporting_files"]["files"]["huref"]["male_haploid"]["name"]} '
+        elif "female" == sample_bsex:
+            haploid_bed = ' '
+    
+    except Exception as e:
+        print(
+            f"ERROR:::  Unable to get biological_sex from samples dataframe for sample {wildcards.sample} for haploid bed-- {e}",
+            file=sys.stderr,
+        )
+        haploid_bed = ' '
+
+    return f" {haploid_bed} "
+
+
+def print_wildcards_etc(wildcards):
+    print("All Wildcards: ", wildcards,  " all snv_CALLERS: ", snv_CALLERS, " all ALIGNERS: ", ALIGNERS, " all CRAM_ALIGNERS: ", CRAM_ALIGNERS, " all samples: ", SSAMPS, " all concordance samples: ", CONCORDANCE_SAMPLES.keys(), file=sys.stderr)
+
+def get_alnr(wildcards):
+    return wildcards.alnr
+
+def get_dchrm_day(wildcards):
+    pchr= GENOME_CHR_PREFIX
+
+    ret_str = ""
+    sl = wildcards.dchrm.replace('chr','').split("-")
+    sl2 = wildcards.dchrm.replace('chr','').split("~")
+    
+    if len(sl2) == 2:
+        ret_str = pchr + wildcards.dchrm + ':'
+    elif len(sl) == 1:
+        ret_str = pchr + sl[0] + ':'
+    elif len(sl) == 2:
+        start = int(sl[0])
+        end = int(sl[1])
+        while start <= end:
+            ret_str = str(ret_str) + "," + pchr + str(start) + ':'
+            start = start + 1
+    else:
+        raise Exception(
+            "sentD chunks can only be one contiguous range per chunk : ie: 1-4 with the non numerical chrms assigned 23=X, 24=Y, 25=MT"
+        )
+    mito_code="MT" if "b37" == config['genome_build'] else "M",
+
+    return ret_mod_chrm(ret_str).lstrip(',').replace('chr23','chrX').replace('chr24','chrY').replace('chr25','chrMT').replace('23:','X:').replace('24:','Y:').replace('25:',f'{mito_code}:')

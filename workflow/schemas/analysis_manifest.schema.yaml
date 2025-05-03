@@ -25,9 +25,7 @@ properties:
         type: string
     r2_path:
         type: string
-    cram_ont:
-        type: string
-    cram_ultima:
+    cram:
         type: string
     biological_sex:
         type: string
@@ -44,6 +42,12 @@ properties:
     merge_single:
         type: string
     external_sample_id:
+        type: string
+    cram_generator:
+        type: string
+    cram_aligner:
+        type: string
+    cram_snv_caller:
         type: string
 required:
     - sample
@@ -62,3 +66,7 @@ required:
     - sample_type
     - merge_single
     - external_sample_id
+    - cram
+    - cram_generator
+    - cram_aligner
+    - cram_snv_caller

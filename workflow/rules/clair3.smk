@@ -5,7 +5,7 @@ import os
 # ---------------------------
 
 def get_clair3_chrom(wildcards):
-    pchr=""
+    pchr="" #prefix handled already
     ret_str = ""
     sl = wildcards.clairchrm.replace('chr','').split("-")
     sl2 = wildcards.clairchrm.replace('chr','').split("~")
@@ -56,7 +56,7 @@ rule clair3:
     params:
         cchrm=get_clair3_chrom,
         cluster_sample=ret_sample,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
         mem_mb=config['clair3']['mem_mb'],
         numa=config['clair3']['numa'],
@@ -211,7 +211,7 @@ rule clair3_concat_index_chunks:
         partition=config['clair3']['partition_other'],
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
@@ -227,13 +227,18 @@ rule clair3_concat_index_chunks:
 
         touch {log};
         mkdir -p $(dirname {log});
-
         # This is acceptable bc I am concatenating from the same tools output, not across tools
-        touch {output.vcfgztemp};
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
-        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
+        #touch {output.vcfgztemp};
+
+        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
+
+        export oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        echo -e "${{oldname}}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
+        bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
+        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
+
         """
 
 localrules:

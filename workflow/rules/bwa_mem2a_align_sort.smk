@@ -31,7 +31,7 @@ rule bwa_mem2_sort:
         bwa_opts=config["bwa_mem2a_aln_sort"]["bwa_opts"],
         sort_thread_mem=config["bwa_mem2a_aln_sort"]["sort_thread_mem"],
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
-        rgpl="presumedILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
+        rgpl="ILLUMINA",  # ideally: passed in technology # nice to get to this point: https://support.sentieon.com/appnotes/read_groups/  :: note, the default sample name contains the RU_EX_SQ_Lane (0 for combined)
         rgpu="presumedCombinedLanes",  # ideally flowcell_lane(s)
         rgsm=ret_sample, # ret_sample,  # samplename
         rgid=ret_sample, #ret_sample,  # ideally samplename_flowcell_lane(s)_barcode  ! Imp this is unique, I add epoc seconds to the end of start of this rule
@@ -68,7 +68,7 @@ rule bwa_mem2_sort:
         
 
         {params.bwa_mem2a_cmd} mem \
-        -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.samp}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
+        -R '@RG\\tID:{params.cluster_sample}-$epocsec\\tSM:{params.cluster_sample}\\tLB:{params.cluster_sample}-LB-1\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
         {params.bwa_opts}  -t {params.bwa_threads}  \
         {params.huref} \
         {params.subsample_head} <( {params.igz} -q  {input.f1} )  {params.subsample_tail}  \

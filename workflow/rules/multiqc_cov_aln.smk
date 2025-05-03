@@ -4,7 +4,7 @@
 
 rule multiqc_cov_aln:  # TARGET : Run Alignment and Generate Alignment and Coverage Multiqc Report. No Variant Calling Happens, Progress Stops Here.
     input:
-        f"{MDIR}other_reports/norm_cov_evenness_combo_mqc.tsv",
+        f"{MDIR}other_reports/normcovevenness_combo_mqc.tsv",
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/cov_calcs_complete.done",
             sample=SSAMPS,
@@ -38,7 +38,7 @@ localrules:
 
 rule cov_aln_qc:
     input:
-        expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.st.complete",
+        expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
                sample=SSAMPS,
                alnr=ALIGNERS,
         ),
@@ -68,10 +68,10 @@ rule cov_aln_qc:
             alnr=ALIGNERS,
         ),
         f"{MDIR}other_reports/alignstats_bsummary.tsv",
-        MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}/{sample}.{alnr}.qmap.done",
+        MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}.{alnr}/{sample}.{alnr}.qmap.done",
         expand(
             MDIR
-            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.picard.done",
+            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done",
             sample=SSAMPS,
             alnr=ALIGNERS,
         ),

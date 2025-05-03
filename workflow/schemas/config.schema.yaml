@@ -30,10 +30,6 @@ properties:
           type: object
           ref:
             type: string
-          bwa_mem_index_vanilla:
-            type: string
-          bwa_mem_index_fast:
-            type: string
           rtg_tools_genome:
             type: string
           truth_data:

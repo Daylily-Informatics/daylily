@@ -92,12 +92,14 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon bwa mem \
         -t {params.bwa_threads}  {params.sent_opts}  \
         -x {params.bwa_model} \
-        -R '@RG\\tID:{params.rgid}_$epocsec\\tSM:{params.rgsm}\\tLB:{params.cluster_sample}{params.rglb}\\tPL:{params.rgpl}\\tPU:{params.rgpu}\\tCN:{params.rgcn}\\tPG:{params.rgpg}' \
+        -R "@RG\\tID:{params.cluster_sample}-$epocsec\\tSM:{params.cluster_sample}\\tLB:{params.cluster_sample}-LB-1\\tPL:ILLUMINA" \
         {params.huref} \
          {params.subsample_head} <( {params.igz} -q  {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <( {params.igz} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer} \
-        | /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon util sort \
-        --thread_count {params.sort_threads} \
+        | /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon  util sort \
+        -t  {params.sort_threads} \
+        --reference {params.huref} \
+        --cram_write_options version=3.0,compressor=rans \
         --sortblock_thread_count {params.sort_threads} \
         --bam_compression 1 \
         --intermediate_compress_level 1  \
@@ -105,7 +107,7 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         --sam2bam \
         -o {output.bamo} - >> {log} 2>&1;
 
-        samtools index -b -@ {threads} {output.bamo}  >> {log} 2>&1;
+        #samtools index -b -@ {threads} {output.baio}  >> {log} 2>&1;
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));

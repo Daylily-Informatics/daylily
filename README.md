@@ -102,6 +102,15 @@ Daylily is a framework for setting up ephemeral AWS clusters optimized for genom
         - [Specify A Multi-Sample Manifest (in this case, all 7 GIAB samples) - 2 aligners, 1 deduper, 2 snv callers](#specify-a-multi-sample-manifest-in-this-case-all-7-giab-samples---2-aligners-1-deduper-2-snv-callers)
         - [The Whole Magilla (3 aligners, 1 deduper, 5 snv callers, 3 sv callers)](#the-whole-magilla-3-aligners-1-deduper-5-snv-callers-3-sv-callers)
   - [To Create Your Own `config/analysis_manifest.csv` File From Your Own `analysis_samples.tsv` File](#to-create-your-own-configanalysis_manifestcsv-file-from-your-own-analysis_samplestsv-file)
+  - [Supported References](#supported-references)
+    - [b37](#b37)
+    - [h38](#h38)
+    - [hg38\_broad](#hg38_broad)
+    - [Reference Artifacts](#reference-artifacts)
+      - [Supporting Files `yaml`](#supporting-files-yaml)
+      - [`/fsx/data/genomic_data/organism_references/H_sapiens/$DAY_GENOME_BUILD` Files](#fsxdatagenomic_dataorganism_referencesh_sapiensday_genome_build-files)
+      - [`/fsx/data/genomic_data/organism_annotations/H_sapiens/$DAY_GENOME_BUILD` Files](#fsxdatagenomic_dataorganism_annotationsh_sapiensday_genome_build-files)
+      - [Results Directories: `./results/day/$DAY_GENOME_BUILD/`](#results-directories-resultsdayday_genome_build)
   - [Slurm Monitoring](#slurm-monitoring)
     - [Monitor Slurm Submitted Jobs](#monitor-slurm-submitted-jobs)
     - [SSH Into Compute Nodes](#ssh-into-compute-nodes)
@@ -1279,6 +1288,37 @@ The `analysis_manifest.csv` file is required to run the daylily pipeline. It sho
 
 ---
 
+## Supported References
+
+The references supported via cloning public references s3 bucket are `b37`, `hg38`, `hg38_broad`.  You specify a reference build by setting `export DAY_GENOME_BUILD=hg38` and/or when activating a compute environment, ie: `dy-a slurm hg38`. `dy-g hg38` will also do the trick.
+
+### b37
+- with no alt contigs.
+
+### h38
+- with no alt contigs.
+
+### hg38_broad
+- all contigs
+
+
+### Reference Artifacts
+
+#### Supporting Files `yaml`
+- The build will direct daylily to choose the correct `config/supporting_files/${DAY_GENOME_BUILD}_suppoting_files.yaml` which contain the paths to resources specific to the build.
+
+#### `/fsx/data/genomic_data/organism_references/H_sapiens/$DAY_GENOME_BUILD` Files
+
+- All reference files can be found here for the build.
+
+#### `/fsx/data/genomic_data/organism_annotations/H_sapiens/$DAY_GENOME_BUILD` Files
+
+- All annotation files can be found here for the build
+
+#### Results Directories: `./results/day/$DAY_GENOME_BUILD/`
+
+- Each build has it's own results subdirectory.
+
 ## Slurm Monitoring
 
 ### Monitor Slurm Submitted Jobs
@@ -1736,4 +1776,5 @@ _named in honor of Margaret Oakley Dahoff_
 Z
 a
 A
+ 
  

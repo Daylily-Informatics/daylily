@@ -1,3 +1,4 @@
+import os
 ##### ALIGNSTATS
 # --------------
 #
@@ -12,35 +13,69 @@
 def fetch_alnr(wildcards):
     return wildcards.alnr
 
+if os.environ.get("DAY_CRAM","") == "":
 
-rule alignstats:
-    input:
-        MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-    output:
-        json=MDIR
-        + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.json",
-    benchmark:
-        MDIR + "{sample}/benchmarks/{sample}.{alnr}.alignstats.bench.tsv"
-    threads: config["alignstats"]["threads"]
-    resources:
-        attempt_n=lambda wildcards, attempt:  (attempt + 0),
-        partition=config["alignstats"]["partition"],
-        threads=config["alignstats"]["threads"],
-        vcpu=config["alignstats"]["threads"]
-    log:  MDIR + "{sample}/align/{alnr}/alignqc/alignstats/logs/{sample}.{alnr}.alignstats.log",
-    params:
-        P=50,
-        n=config["alignstats"]["num_reads_in_mem"],
-        cluster_sample=ret_sample,
-        ld_preload=" "
-        if "ld_preload" not in config["malloc_alt"]
-        else config["malloc_alt"]["ld_preload"],
-        ld_pre=" "
-        if "ld_preload" not in config["alignstats"]        else config["alignstats"]["ld_preload"],
-    conda:
-        config["alignstats"]["env_yaml"]
-    shell:
-        "alignstats  -C -U  -i {input} -o {output.json}  -j bam -v -P {threads} -p {threads} > {log};"
+    rule alignstats:
+        input:
+            MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        output:
+            json=MDIR
+            + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.json",
+        benchmark:
+            MDIR + "{sample}/benchmarks/{sample}.{alnr}.alignstats.bench.tsv"
+        threads: config["alignstats"]["threads"]
+        resources:
+            attempt_n=lambda wildcards, attempt:  (attempt + 0),
+            partition=config["alignstats"]["partition"],
+            threads=config["alignstats"]["threads"],
+            vcpu=config["alignstats"]["threads"]
+        log:  MDIR + "{sample}/align/{alnr}/alignqc/alignstats/logs/{sample}.{alnr}.alignstats.log",
+        params:
+            P=50,
+            n=config["alignstats"]["num_reads_in_mem"],
+            cluster_sample=ret_sample,
+            ld_preload=" "
+            if "ld_preload" not in config["malloc_alt"]
+            else config["malloc_alt"]["ld_preload"],
+            ld_pre=" "
+            if "ld_preload" not in config["alignstats"]        else config["alignstats"]["ld_preload"],
+        conda:
+            config["alignstats"]["env_yaml"]
+        shell:
+            "alignstats  -C -U  -i {input} -o {output.json}  -j bam -v -P {threads} -p {threads} > {log};"
+
+else:
+    
+    rule alignstats_cram:
+        input:
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+            crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        output:
+            json=MDIR
+            + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.json",
+        benchmark:
+            MDIR + "{sample}/benchmarks/{sample}.{alnr}.alignstats.bench.tsv"
+        threads: config["alignstats"]["threads"]
+        resources:
+            attempt_n=lambda wildcards, attempt:  (attempt + 0),
+            partition=config["alignstats"]["partition"],
+            threads=config["alignstats"]["threads"],
+            vcpu=config["alignstats"]["threads"]
+        log:  MDIR + "{sample}/align/{alnr}/alignqc/alignstats/logs/{sample}.{alnr}.alignstats.log",
+        params:
+            P=50,
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
+            n=config["alignstats"]["num_reads_in_mem"],
+            cluster_sample=ret_sample,
+            ld_preload=" "
+            if "ld_preload" not in config["malloc_alt"]
+            else config["malloc_alt"]["ld_preload"],
+            ld_pre=" "
+            if "ld_preload" not in config["alignstats"]        else config["alignstats"]["ld_preload"],
+        conda:
+            config["alignstats"]["env_yaml"]
+        shell:
+            "alignstats  -C -U  -i {input.cram} -T {params.huref} -o {output.json}  -j cram -v -P {threads} -p {threads} > {log};"
 
 
 localrules:
@@ -72,7 +107,7 @@ rule finish_align_stats:
 
         j = json.load(open(f"{input.json}", "r"))
         aa = "sample\taligner\t" + "\t".join([str(x) for x in sorted(j)])
-        bb = f"{params.cluster_sample}_{params.alnr_f}\t{params.alnr_f}\t" + "\t".join(
+        bb = f"{params.cluster_sample}.{params.alnr_f}\t{params.alnr_f}\t" + "\t".join(
             [str(j[x]) for x in sorted(j)]
         )
         os.system(f"echo {aa} > {output.tsv} ; echo {bb} >> {output.tsv}")

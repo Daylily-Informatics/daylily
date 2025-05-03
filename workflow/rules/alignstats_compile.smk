@@ -1,33 +1,63 @@
+import os
+
 # This rule is actually gathering up all of the sub rules completed states
 # so it can generate a final QC report, and that report will satisfy the input
 # requirement of all to run
 
 
-localrules:
-    alignstats_gather,
+if os.environ.get("DAY_CRAM", "") == "":
 
+    localrules:
+        alignstats_gather,
 
-rule alignstats_gather:
-    input:
-        expand(
-            MDIR
-            + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.tsv",
-            sample=SSAMPS,
-            alnr=ALIGNERS,
-            caller=sv_CALLERS,
-        ),
-    output:
-        f"{MDIR}other_reports/alignstats_summary_gather.done",
-        bm=MDIR + "benchmarks/all.alignstats_summary.bench.tsv",
-    benchmark:
-        MDIR + "benchmarks/all.alignstats_summary.bench.tsv"
-    threads: 1
-    log:
-        MDIR + "logs/alignstats_summary_gather.log",
-    conda:
-        config["alignstats"]["env_yaml"]
-    shell:
-        " touch {output[0]}; touch {output.bm}"
+    rule alignstats_gather:
+        input:
+            expand(
+                MDIR
+                + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.tsv",
+                sample=SSAMPS,
+                alnr=ALIGNERS,
+                caller=sv_CALLERS,
+            ),
+        output:
+            f"{MDIR}other_reports/alignstats_summary_gather.done",
+            bm=MDIR + "benchmarks/all.alignstats_summary.bench.tsv",
+        benchmark:
+            MDIR + "benchmarks/all.alignstats_summary.bench.tsv"
+        threads: 1
+        log:
+            MDIR + "logs/alignstats_summary_gather.log",
+        conda:
+            config["alignstats"]["env_yaml"]
+        shell:
+            " touch {output[0]}; touch {output.bm}"
+else:
+
+    localrules:
+        alignstats_gather_cram,
+
+    rule alignstats_gather_cram:
+        input:
+            expand(
+                MDIR
+                + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.tsv",
+                sample=SSAMPS,
+                alnr=CRAM_ALIGNERS,
+                caller=sv_CALLERS,
+            ),
+        output:
+            f"{MDIR}other_reports/alignstats_summary_gather.done",
+            bm=MDIR + "benchmarks/all.alignstats_summary.bench.tsv",
+        benchmark:
+            MDIR + "benchmarks/all.alignstats_summary.bench.tsv"
+        threads: 1
+        log:
+            MDIR + "logs/alignstats_summary_gather.log",
+        conda:
+            config["alignstats"]["env_yaml"]
+        shell:
+            " touch {output[0]}; touch {output.bm}"
+
 
 
 localrules:
@@ -59,8 +89,7 @@ rule alignstats_compile:
         "find {MDIR}*/align/*/alignqc/alignstats/*alignstats.tsv | head -n 1 | parallel -j 1 'head -n 1 {params.l}{params.r} > {output[0]}; echo a_{params.l}{params.r} >> {log}' >> {log} 2>&1; "
         "find {MDIR}*/align/*/alignqc/alignstats/*alignstats.tsv | parallel -j 1 'tail -n 1 {params.l}{params.r} >> {output[0]}; echo b_{params.l}{params.r}  >> {log} ' >> {log} 2>&1;  "
         "cp {output[0]} {output[1]};"
-        "cp {output[0]} {output[2]};"
-        "perl -pi -e 's/_DBC0_0//g;' {output};"
+        "cp {output[0]} {output[2]};" #         "perl -pi -e 's/_DBC0_0//g;' {output};"
         ") || touch logs/ALIGNSTATSCOMPIEFAILEDw_$? ; "
         "perl -pi -e 's/ /\t/g;' {output[2]};"
         "cp {output[2]} {output[3]};"

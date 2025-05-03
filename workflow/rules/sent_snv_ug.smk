@@ -1,18 +1,17 @@
 import sys
 import os
 
-# snv=["sentdug"]
+
+ALIGNERS_UG = "ug"
 
 rule sent_snv_ug:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.vcf"),
-        tvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.vcf.tmp"),
         gvcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.{alnr}.sentdug.{dchrm}.snv.gvcf"),
         gvcfindex=temp(MDIR
@@ -21,9 +20,9 @@ rule sent_snv_ug:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdug/log/vcfs/{sample}.{alnr}.sentdug.{dchrm}.snv.log",
     threads: config['sentdug']['threads']
-    conda:
-        "../envs/sentd_v0.2.yaml"
     priority: 45
+    conda:
+        "../envs/sentieon_v0.1.yaml"
     benchmark:
         repeat(
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.sentdug.{dchrm}.bench.tsv",
@@ -36,12 +35,13 @@ rule sent_snv_ug:
         partition=config['sentdug']['partition'],
         threads=config['sentdug']['threads'],
         vcpu=config['sentdug']['threads'],
-	mem_mb=config['sentdug']['mem_mb'],
+	    mem_mb=config['sentdug']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdug"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
+        use_threads=config["sentdug"]["use_threads"],
     shell:
         """
 
@@ -67,26 +67,35 @@ rule sent_snv_ug:
         echo "INSTANCE TYPE: $itype" > {log};
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
+        
+        ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
+        # Find the jemalloc library in the active conda environment
+        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
+
+        # Check if jemalloc was found and set LD_PRELOAD accordingly
+        if [[ -n "$jemalloc_path" ]]; then
+            LD_PRELOAD="$jemalloc_path";
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
+        else
+            echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
+            exit 3;
+        fi
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {params.use_threads} \
             -r {params.huref} \
             -i {input.cram} \
             --interval {params.schrm_mod} \
             --read_filter UltimaReadFilter \
-            --algo DNAscope --model "{params.model}/dnascope.model" \
+            --algo DNAscope --model "{params.model}" \
             --pcr_indel_model none \
-            --emit_mode gvcf \
+            --emit_mode variant \
             {output.gvcf} >> {log} 2>&1;
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
-            -r {input.ref} \
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {params.use_threads} \
+            -r {params.huref} \
             --algo DNAModelApply \
             --model {params.model} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;
-
-        #/fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver --thread_count {threads} --interval ##{params.schrm_mod} --reference {params.huref} --input {input.b} --algo DNAscope --pcr_indel_model none #--model {params.model}  {output.tvcf} >> {log} 2>&1;
-        #/fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} -r {params.huref} --algo DNAModelApply --model {params.model} -v {output.tvcf} {output.vcf} >> {log} 2>&1;
-
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));
@@ -115,18 +124,25 @@ rule sentdug_sort_index_chunk_vcf:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/log/{sample}.{alnr}.sentdug.{dchrm}.snv.sort.vcf.gz.log",
     resources:
-        vcpu=1,
-        threads=1,
+        vcpu=64,
+        threads=64,
         partition="i192,i192mem"
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdugna_chunk_vcf"]['threads']
+    threads: 64 #config["config"]["sort_index_sentdugna_chunk_vcf"]['threads']
     shell:
         """
-        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
-        
-        bgzip {output.vcfsort} >> {log} 2>&1;
+        #bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
+        #awk 'BEGIN{{header=1}} 
+        #    header && /^#/ {{print; next}} 
+        #    header && /^[^#]/ {{header=0; exit}}' {input.vcf} > {output.vcfsort} 2>> {log};
+        #awk '/^[^#]/' {input.vcf} | sort --buffer-size=210G -T /fsx/scratch/ --parallel={threads} -k1,1V -k2,2n >> {output.vcfsort} 2>> {log};
+
+        cp {input.vcf} {output.vcfsort} >> {log} 2>&1;
+        touch {input.vcf};
+        sleep 1;
+        bgzip -@ {threads} {output.vcfsort} >> {log} 2>&1;
         touch {output.vcfsort};
 
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
@@ -188,14 +204,14 @@ rule sentdug_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/sentdug/{sample}.{alnr}.sentdug.snv.sort.vcf.gz.tbi"
         ),
-    threads: 4
+    threads: 64
     resources:
-        vcpu=4,
-        threads=4,
-        partition="i192,i192mem"
+        vcpu=64,
+        threads=64,
+        partition="i192,i192mem,i128"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
@@ -212,9 +228,14 @@ rule sentdug_concat_index_chunks:
         touch {log};
         mkdir -p $(dirname {log});
         # This is acceptable bc I am concatenating from the same tools output, not across tools
-        touch {output.vcfgztemp};
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
-        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
+        #touch {output.vcfgztemp};
+
+        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
+
+        export oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        echo -e "${{oldname}}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
+        bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
+        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
 
@@ -229,7 +250,7 @@ rule clear_combined_sentdug_vcf:  # TARGET:  clear combined sentdug vcf so the c
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdug/{sample}.{alnr}.sentdug.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_UG,
         ),
     threads: 2
     priority: 42
@@ -249,7 +270,7 @@ rule produce_sentdug_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdug/{sample}.{alnr}.sentdug.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_UG,
         ),
     output:
         "gatheredall.sentdug",
@@ -270,7 +291,8 @@ localrules:
 
 rule prep_sentdug_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdug/vcfs/{dchrm}/{{sample}}.ready",

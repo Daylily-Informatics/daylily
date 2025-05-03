@@ -1,28 +1,30 @@
 import sys
 import os
 
-# snv=["sentdont"]
+#
+# This pipeline will use the ONT aligned cram directly and call variants
+#
+
+ALIGNERS_ONT = ["ont"]
 
 rule sent_snv_ont:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.ready",
     output:
-        vcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.vcf"),
-        tvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.vcf.tmp"),
-        gvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf"),
-        gvcfindex=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf.idx"),
+        vcf=MDIR
+        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.vcf",
+        gvcf=MDIR
+        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf",
+        gvcfindex=MDIR
+        + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.{alnr}.sentdont.{dchrm}.snv.gvcf.idx",
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdont/log/vcfs/{sample}.{alnr}.sentdont.{dchrm}.snv.log",
     threads: config['sentdont']['threads']
     conda:
-        "../envs/sentd_v0.2.yaml"
+        "../envs/sentieon_v0.1.yaml"
     priority: 45
     benchmark:
         repeat(
@@ -39,8 +41,10 @@ rule sent_snv_ont:
 	mem_mb=config['sentdont']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        use_threads=config['sentdont']['use_threads'],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdont"]["dna_scope_snv_model"],
+	model_2=config["sentdont"]["dna_scope_apply_model"],
         cluster_sample=ret_sample,
     shell:
         """
@@ -68,18 +72,33 @@ rule sent_snv_ont:
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
+
+        ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
+        
+        # Find the jemalloc library in the active conda environment
+        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
+
+        # Check if jemalloc was found and set LD_PRELOAD accordingly
+        if [[ -n "$jemalloc_path" ]]; then
+            LD_PRELOAD="$jemalloc_path";
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
+        else
+            echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
+            exit 3;
+        fi
+        
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {params.use_threads} \
             -r {params.huref} \
             -i {input.cram} \
             --interval {params.schrm_mod} \
-            --algo DNAscope --model "{params.model}/dnascope.model" \
-            --emit_mode gvcf \
+            --algo DNAscope --model {params.model} \
+            --emit_mode variant \
             {output.gvcf} >> {log} 2>&1;
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} \
-            -r {input.ref} \
+         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {params.use_threads} \
+            -r {params.huref} \
             --algo DNAModelApply \
-            --model {params.model} \
+	    --model {params.model_2} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;
 
         end_time=$(date +%s);
@@ -115,12 +134,21 @@ rule sentdont_sort_index_chunk_vcf:
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdontna_chunk_vcf"]['threads']
+    threads: 64 #config["config"]["sort_index_sentdontna_chunk_vcf"]['threads']
     shell:
         """
-        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
         
-        bgzip {output.vcfsort} >> {log} 2>&1;
+        #bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
+        #awk 'BEGIN{{header=1}} 
+        #    header && /^#/ {{print; next}} 
+        #    header && /^[^#]/ {{header=0; exit}}' {input.vcf} > {output.vcfsort} 2>> {log};
+        #awk '/^[^#]/' {input.vcf} | sort --buffer-size=210G -T /fsx/scratch/ --parallel={threads} -k1,1V -k2,2n >> {output.vcfsort} 2>> {log};
+
+        cp {input.vcf} {output.vcfsort} 2>> {log};
+        touch {input.vcf};
+        sleep 1;
+        touch {output.vcfsort};
+        bgzip  -@ {threads} {output.vcfsort} >> {log} 2>&1;
         touch {output.vcfsort};
 
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
@@ -183,14 +211,14 @@ rule sentdont_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/sentdont/{sample}.{alnr}.sentdont.snv.sort.vcf.gz.tbi"
         ),
-    threads: 4
+    threads: 64
     resources:
-        vcpu=4,
-        threads=4,
-        partition="i192,i192mem"
+        vcpu=64,
+        threads=64,
+        partition="i192,i192mem,i128"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
@@ -207,9 +235,14 @@ rule sentdont_concat_index_chunks:
         touch {log};
         mkdir -p $(dirname {log});
         # This is acceptable bc I am concatenating from the same tools output, not across tools
-        touch {output.vcfgztemp};
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
-        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
+        #touch {output.vcfgztemp};
+
+        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
+
+        export oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        echo -e "${{oldname}}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
+        bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
+        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
 
@@ -224,7 +257,7 @@ rule clear_combined_sentdont_vcf:  # TARGET:  clear combined sentdont vcf so the
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdont/{sample}.{alnr}.sentdont.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_ONT,
         ),
     threads: 2
     priority: 42
@@ -237,14 +270,14 @@ rule clear_combined_sentdont_vcf:  # TARGET:  clear combined sentdont vcf so the
 localrules:
     produce_sentdont_vcf,
 
-
+ 
 rule produce_sentdont_vcf:  # TARGET: sentieon dnascope vcf
     input:
         expand(
             MDIR
             + "{sample}/align/{alnr}/snv/sentdont/{sample}.{alnr}.sentdont.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_ONT,
         ),
     output:
         "gatheredall.sentdont",
@@ -265,7 +298,8 @@ localrules:
 
 rule prep_sentdont_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdont/vcfs/{dchrm}/{{sample}}.ready",

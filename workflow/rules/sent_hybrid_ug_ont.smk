@@ -1,12 +1,15 @@
 import sys
 import os
 
+ALIGNERS_UG = ["ug"]
 
-
-rule sentdhuohuo_snv:
+rule sentdhuo_snv:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
+        r1=getR1s,
+        r2=getR2s,
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=temp(MDIR
@@ -18,7 +21,7 @@ rule sentdhuohuo_snv:
         + "{sample}/align/{alnr}/snv/sentdhuo/log/vcfs/{sample}.{alnr}.sentdhuo.{dchrm}.snv.log",
     threads: config['sentdhuo']['threads']
     conda:
-        "../envs/sentdhuo_v0.2.yaml"
+        "../envs/sentieonHybrid_v0.1.yaml"
     priority: 45
     benchmark:
         repeat(
@@ -32,23 +35,24 @@ rule sentdhuohuo_snv:
         partition=config['sentdhuo']['partition'],
         threads=config['sentdhuo']['threads'],
         vcpu=config['sentdhuo']['threads'],
-	mem_mb=config['sentdhuo']['mem_mb'],
+	    mem_mb=config['sentdhuo']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdhuo"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
+        haploid_bed=get_haploid_bed_arg,
+        diploid_bed=get_diploid_bed_arg,
+        use_threads=config["sentdhuo"]["use_threads"],
     shell:
         """
-
-
+        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503/bin/
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/sentdhuo_tmp_$timestamp;
+        export TMPDIR=/fsx/scratch/sentdontr_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
-        tdir=$TMPDIR;
 
         if [ -z "$SENTIEON_LICENSE" ]; then
             echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well." >> {log} 2>&1;
@@ -66,8 +70,37 @@ rule sentdhuohuo_snv:
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver --thread_count {threads} --interval {params.schrm_mod} --reference {params.huref} --input {input.b} --algo DNAscope --pcr_indel_model none --model {params.model}  {output.tvcf} >> {log} 2>&1;
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} -r {params.huref} --algo DNAModelApply --model {params.model} -v {output.tvcf} {output.vcf} >> {log} 2>&1;
+        ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
+        
+        # Find the jemalloc library in the active conda environment
+        jemalloc_path=$(find "$CONDA_PREFIX" -name "libjemalloc*" | grep -E '\.so|\.dylib' | head -n 1); 
+
+        # Check if jemalloc was found and set LD_PRELOAD accordingly
+        if [[ -n "$jemalloc_path" ]]; then
+            LD_PRELOAD="$jemalloc_path";
+            echo "LD_PRELOAD set to: $LD_PRELOAD" >> {log};
+        else
+            echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
+            exit 3;
+        fi
+
+        
+        LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
+            -t {params.use_threads} \
+            -r  {params.huref} \
+            --sr_r1_fastq {input.r1} \
+            --sr_r2_fastq {input.r2} \
+            --sr_readgroups "@RG\tID:{params.cluster_sample}-1\tSM:{params.cluster_sample}\tLB:{params.cluster_sample}-LB-1\tPL:ILLUMINA" \
+            --lr_aln {input.cram} \
+            --lr_align_input \
+            --lr_input_ref {params.huref} \
+            -m {params.model} \
+            --longread_tech ONT \
+            --skip_svs \
+            --skip_mosdepth \
+            --skip_cnv \
+            --skip_multiqc \
+            {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
 
         end_time=$(date +%s);
@@ -75,7 +108,6 @@ rule sentdhuohuo_snv:
 	    echo "Elapsed-Time-min:\t$itype\t$elapsed_time\n";
         echo "Elapsed-Time-min:\t$itype\t$elapsed_time" >> {log} 2>&1;
 
-        touch {output.vcf};
         """
 
 
@@ -103,14 +135,17 @@ rule sentdhuo_sort_index_chunk_vcf:
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdhuona_chunk_vcf"]['threads']
+    threads: 64 #config["config"]["sort_index_sentdhuona_chunk_vcf"]['threads']
     shell:
         """
-        bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
         
-        bgzip {output.vcfsort} >> {log} 2>&1;
+        cp {input.vcf} {output.vcfsort} 2>> {log};
+        touch {input.vcf};
+        sleep 1;
         touch {output.vcfsort};
-
+        bgzip  -@ {threads} {output.vcfsort} >> {log} 2>&1;
+        touch {output.vcfsort};
+        
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
         
         """
@@ -171,14 +206,14 @@ rule sentdhuo_concat_index_chunks:
             MDIR
             + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz.tbi"
         ),
-    threads: 4
+    threads: 64
     resources:
-        vcpu=4,
-        threads=4,
-        partition="i192,i192mem"
+        vcpu=64,
+        threads=64,
+        partition="i192,i192mem,i128"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
@@ -192,12 +227,18 @@ rule sentdhuo_concat_index_chunks:
     shell:
         """
 
+       
         touch {log};
         mkdir -p $(dirname {log});
         # This is acceptable bc I am concatenating from the same tools output, not across tools
-        touch {output.vcfgztemp};
-        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgz};
-        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz};
+        #touch {output.vcfgztemp};
+
+        bcftools concat -a -d all --threads {threads} -f {input.fofn}  -O z -o {output.vcfgztemp} >> {log} 2>&1;
+
+        export oldname=$(bcftools query -l {output.vcfgztemp} | head -n1) >> {log} 2>&1;
+        echo -e "${{oldname}}\t{params.cluster_sample}" > {output.vcfgz}.rename.txt
+        bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
+        bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
         rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
 
@@ -212,7 +253,7 @@ rule clear_combined_sentdhuo_vcf:  # TARGET:  clear combined sentdhuo vcf so the
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_UG,
         ),
     threads: 2
     priority: 42
@@ -232,7 +273,7 @@ rule produce_sentdhuo_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALIGNERS_UG,
         ),
     output:
         "gatheredall.sentdhuo",
@@ -253,7 +294,8 @@ localrules:
 
 rule prep_sentdhuo_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhuo/vcfs/{dchrm}/{{sample}}.ready",
