@@ -24,7 +24,7 @@ supporting_files:   ## All of this structure was for an exploratory, now depreca
       hisat2:
         name: /fsx/data/genomic_data/organism_references/H_sapiens/hg38/blah.createme.note
       rtg_tools_genome:
-        name:  /fsx/data/genomic_data/organism_references/H_sapiens/hg38_broad/rtg/Homo_sapiens_assembly38.sdf
+        name:  /fsx/data/genomic_data/organism_references/H_sapiens/hg38_broad/Homo_sapiens_assembly38.sdf
     vep:
       vep_genome_build: 113_GRCh38
       vep_cache:
