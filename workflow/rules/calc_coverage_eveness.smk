@@ -61,7 +61,7 @@ localrules:
 
 rule produce_cov_uniformity:  # TARGET: Produce cov eveness calcs, swapping out sambamba for mosdepth
     input:
-        expand(MDIR       + "{sample}/align/{alnr}/alignqc/norm_cov_eveness/{sample}.{alnr}.md", sample=SSAMPS, alnr=ALIGNERS)
+        expand(MDIR       + "{sample}/align/{alnr}/alignqc/norm_cov_eveness/{sample}.{alnr}.md", sample=SSAMPS, alnr=ALL_ALIGNERS)
     container: None
     threads: 8
     output:

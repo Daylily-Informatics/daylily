@@ -70,7 +70,7 @@ rule cov_aln_qc:
         MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}.{alnr}/{sample}.{alnr}.qmap.done",
         expand(
             MDIR
-            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done",
+            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.sort.done",
             sample=SSAMPS,
             alnr=ALIGNERS,
         ),

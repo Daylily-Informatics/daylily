@@ -51,7 +51,7 @@ rule aggregate_report_components:
         ),
         expand(
             MDIR
-            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done",
+            + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.sort.done",
             sample=SSAMPS,
             alnr=ALL_ALIGNERS,
         ),
