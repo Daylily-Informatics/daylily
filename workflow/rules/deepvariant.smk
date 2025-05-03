@@ -31,8 +31,8 @@ def get_dvchrm_day(wildcards):
 
 rule deepvariant:
     input:
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/deep/vcfs/{dvchrm}/{sample}.ready",
     output:
         vcf=temp(MDIR
@@ -91,7 +91,7 @@ rule deepvariant:
         {params.numa} \
         /opt/deepvariant/bin/run_deepvariant \
         --model_type=WGS --ref={params.huref} \
-        --reads={input.bam} \
+        --reads={input.cram} \
         --regions=$dchr \
         --output_vcf={output.vcf} \
         --num_shards={params.deep_threads} \
@@ -319,7 +319,8 @@ localrules:
 
 rule prep_deep_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        i=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/deep/vcfs/{dvchrm}/{{sample}}.ready",

@@ -7,8 +7,8 @@ import os
 
 rule sent_DNAscope:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        c=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentd/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=temp(MDIR
@@ -65,7 +65,7 @@ rule sent_DNAscope:
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
 
-        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver --thread_count {threads} --interval {params.schrm_mod} --reference {params.huref} --input {input.b} --algo DNAscope --pcr_indel_model none --model {params.model}  {output.tvcf} >> {log} 2>&1;
+        /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver --thread_count {threads} --interval {params.schrm_mod} --reference {params.huref} --input {input.c} --algo DNAscope --pcr_indel_model none --model {params.model}  {output.tvcf} >> {log} 2>&1;
         /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon driver -t {threads} -r {params.huref} --algo DNAModelApply --model {params.model} -v {output.tvcf} {output.vcf} >> {log} 2>&1;
 
 
@@ -256,7 +256,8 @@ localrules:
 
 rule prep_sentD_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        c=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        i=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentd/vcfs/{dchrm}/{{sample}}.ready",

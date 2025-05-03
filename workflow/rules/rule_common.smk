@@ -622,6 +622,9 @@ def get_samp_name(wildcards):
     return wildcards.sample
 
 
+def get_instrument(wildcards):
+    return samples[samples["samp"] == wildcards.sample]["instrument"][0]
+
 
 def get_diploid_bed_arg(wildcards):
 

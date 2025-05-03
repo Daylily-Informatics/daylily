@@ -37,11 +37,11 @@ def get_lofreq_chrm(wildcards):
 
 rule lfq2_indelqual:
     input:
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
-        bam=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam",
-        bai=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam.bai",
+        cram=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.indelqual.cram",
+        crai=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.indelqual.cram.crai",
     log:
         MDIR + "{sample}/align/{alnr}/snv/lfq2/log/{sample}.{alnr}.indelqual.log",
     conda:
@@ -58,18 +58,18 @@ rule lfq2_indelqual:
     shell:
         """
         touch {log};
-        #lofreq indelqual --dindel -f {params.huref} -o {output.bam} {input.bam} >> {log} 2>&1;
-        #samtools index {output.bam} >> {log} 2>&1;
+        #lofreq indelqual --dindel -f {params.huref} -o {output.cram} {input.cram} >> {log} 2>&1;
+        #samtools index {output.cram} >> {log} 2>&1;
         touch {output};
         """
 
 
 rule lofreq2:
     input:
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
-        ibam=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam",
-        ibai=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam.bai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        icram=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.indelqual.cram",
+        icrai=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.indelqual.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.ready",
     output:
         vcf=MDIR + "{sample}/align/{alnr}/snv/lfq2/vcfs/{lfqchrm}/{sample}.{alnr}.lfq2.{lfqchrm}.snv.vcf",
@@ -95,6 +95,7 @@ rule lofreq2:
         cluster_sample=ret_sample,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
+        samview_threads=config['lofreq2']['samview_threads'],
         mem_mb=config['lofreq2']['mem_mb'],
         dchrm=get_lofreq_chrm,
         cpre="" if "b37" == config['genome_build'] else "chr",
@@ -112,14 +113,14 @@ rule lofreq2:
             lofreq call-parallel --pp-threads {threads}  --max-depth 10000 \
             --force-overwrite \
             -f {params.huref} \
-            -o {output.vcf} {input.bam} >> {log} 2>&1;
+            -o {output.vcf} {input.cram}  >> {log} 2>&1;
         else
             echo "lofreq single thread" >> {log} 2>&1;
             lofreq call \
             --force-overwrite \
             -f {params.huref} \
             -r $dchr \
-            -o {output.vcf} {input.bam} >> {log} 2>&1;
+            -o {output.vcf} {input.cram} >> {log} 2>&1;
         fi;
 
         end_time=$(date +%s);
@@ -301,7 +302,8 @@ rule produce_lofreq2_vcf:  # TARGET: lofreq2 vcfs
 
 rule prep_lofreq2_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.mrkdup.sort.indelqual.bam",
+        b=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.indelqual.cram",
+        i=MDIR + "{sample}/align/{alnr}/snv/lfq2/{sample}.{alnr}.indelqual.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/lfq2/vcfs/{lfqchrm}/{{sample}}.ready",

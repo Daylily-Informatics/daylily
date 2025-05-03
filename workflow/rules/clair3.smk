@@ -4,6 +4,50 @@ import os
 ##### Clair3
 # ---------------------------
 
+def get_clair_model_path(wildcards):
+    # using the aligner is a hack, should move this to config and pulled from seq technology
+    instrument = samples[samples["samp"] == wildcards.sample]["instrument"][0].lower()
+    
+    model_path = "/opt/models/ilmn"
+    if instrument == "ont":
+        model_path = "/opt/models/ont"
+    elif instrument == "pacbio":
+        model_path = "/opt/models/pacbio"
+    elif instrument in ["illumina","novaseq","ilmn"]:
+        model_path = "/opt/models/ilmn"
+    elif instrument == "ultima":
+         model_path = "/opt/models/ultima"
+    else:
+        model_path = f"/opt/models/{instrument}"
+        print(
+            f"Unknown instrument {instrument}, going to take a shot and set the clair3 model path to: {model_path} !!!",
+            file=sys.stderr,
+        )
+    return model_path
+
+def get_clair_platform(wildcards):
+    # using the aligner is a hack, should move this to config and pulled from seq technology
+    instrument = samples[samples["samp"] == wildcards.sample]["instrument"][0].lower()
+    
+    platform = "ilmn"
+
+    if instrument == "ont":
+        platform = "ont"
+    elif instrument in ["pacbio","hifi"]:
+        platform = "hifi"
+    elif instrument in ["illumina","novaseq","ilmn"]:
+        platform = "ilmn"
+    elif instrument == "ultima":
+        platform = "ilmn"
+    else:
+        platform = f"{instrument}"
+        print(
+            f"Unknown instrument {instrument}, going to take a shot and set the clair3 model path to: {platform} !!!",
+            file=sys.stderr,
+        )
+    return platform
+
+
 def get_clair3_chrom(wildcards):
     pchr="" #prefix handled already
     ret_str = ""
@@ -29,8 +73,8 @@ def get_clair3_chrom(wildcards):
 
 rule clair3:
     input:
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/clair3/vcfs/{clairchrm}/{sample}.ready",
     output:
         vcf=MDIR
@@ -64,6 +108,8 @@ rule clair3:
         clair3_threads=config['clair3']['clair3_threads'],  
         cpre="" if "b37" == config['genome_build'] else "chr",
         mito_code="MT" if "b37" == config['genome_build'] else "M",
+        model_path=get_clair_model_path,
+        platform=get_clair_platform,
     shell:
         """
         touch {log};
@@ -85,14 +131,14 @@ rule clair3:
         echo "Start-Time-sec:$itype\t0" >> {log} 2>&1;
 
         cchr=$(echo {params.cpre}{params.cchrm} | sed 's/~/\:/g' | sed 's/23\:/X\:/' | sed 's/24\:/Y\:/' | sed 's/25\:/{params.mito_code}\:/');
-
+        ##--bam_fn=<(samtools view -@ {params.samview_threads} -b -T {params.huref} {input.cram}) 
         echo "CCHRM: $cchr" >> {log} 2>&1;
         {params.numa}   /opt/bin/run_clair3.sh \
-        --bam_fn=<(samtools view -@ {params.samview_threads} -b -T {params.huref} {input.cram}) \
+        --bam_fn={input.cram} \
         --ref_fn={params.huref} \
         --threads={params.clair3_threads} \
-        --platform='ilmn' \
-        --model_path=/opt/models/ilmn \
+        --platform={params.platform} \
+        --model_path={params.model_path}  \
         --sample_name={params.cluster_sample} \
         --ctg_name=$cchr \
         --output=$(dirname {input.d})  >> {log} 2>&1;
@@ -302,7 +348,8 @@ localrules:
 
 rule prep_clair3_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        ba=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/clair3/vcfs/{clairchrm}/{{sample}}.ready",

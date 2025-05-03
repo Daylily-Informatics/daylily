@@ -8,3 +8,4 @@ dependencies:
   - lofreq
   - pigz
   - bcftools
+  - samtools

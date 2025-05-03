@@ -75,8 +75,8 @@ def ret_oct_clust_samp(wildcards):
 rule octopus:
     """https://github.com/luntergroup/octopus"""
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam.bai",
+        c=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/oct/vcfs/{ochrm}/{sample}.ready",
     output:
         #oct_tmpd=directory(MDIR + "{sample}/align/{alnr}/snv/oct/vcfs/{ochrm}/oct_tmp"),
@@ -120,7 +120,7 @@ rule octopus:
         {params.ld_pre} /opt/octopus/bin/octopus -T $oochrm_mod --threads {threads}    \
         --reference {params.huref}  \
         --temp-directory $TMPDIR \
-        --reads {input.b}   \
+        --reads {input.c}   \
         --annotations {params.anno}   \
         --skip-regions-file {params.skr}  {params.addl_options} > {output.vcf};
         
@@ -304,7 +304,8 @@ localrules:
 
 rule oct_prep_chunkdirs:
     input:
-        b=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.mrkdup.sort.bam",
+        c=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        i=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/oct/vcfs/{ochrm}/{{sample}}.ready",

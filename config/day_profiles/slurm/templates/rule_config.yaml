@@ -238,6 +238,7 @@ kat:
 
 lofreq2:
     threads: 1  #only set to > 1 if lofreq_chrms == 1-24 or 1-25!!  also set OMP_THREADS BELOW
+    samview_threads: 1
     lofreq_threads: 1
     partition: "i128,i192,i192mem"
     mem_mb: 1100 ## Potentially this can be dynmoic by input BAM size
