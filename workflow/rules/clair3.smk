@@ -5,7 +5,7 @@ import os
 # ---------------------------
 
 def get_clair3_chrom(wildcards):
-    pchr=""
+    pchr=GENOME_CHR_PREFIX
     ret_str = ""
     sl = wildcards.clairchrm.replace('chr','').split("-")
     sl2 = wildcards.clairchrm.replace('chr','').split("~")
