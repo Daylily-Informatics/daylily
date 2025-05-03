@@ -185,7 +185,7 @@ doppelmark:
     compress_mem: "2750M"
     env_yaml: "../envs/vanilla_v0.1.yaml"
     dop_opts:  " -max-depth 10000 "
-    numa: " OMP_NUM_THREADS=184 OMP_PROC_BIND=close OMP_PLACES=threads OMP_DYNAMIC=true OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
+    numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_DYNAMIC=true OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
     constraint: ""  # " --constraint 'm7gb768|r7gb1536' "
 
 dysgu:
