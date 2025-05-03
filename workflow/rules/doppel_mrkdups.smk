@@ -56,11 +56,12 @@ if "dppl" in DDUP:
 
             
             timestamp=$(date +%Y%m%d%H%M%S);
-            TMPDIR=/fsx/scratch/doppel_tmp_$timestamp;
-            mkdir -p $TMPDIR;
+
+            TMPDIR=/dev/shm/ #/fsx/scratch/doppel_tmp_$timestamp;
+            #mkdir -p $TMPDIR;
             APPTAINER_HOME=$TMPDIR;
-            trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
-            tdir=$TMPDIR;
+            #trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
+            tdir=$TMPDIR; 
 
             {params.numa} resources/DOPPLEMARK/doppelmark \
              -parallelism {params.doppelmark_threads} \
