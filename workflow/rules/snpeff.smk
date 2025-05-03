@@ -48,7 +48,7 @@ rule produce_snpeff:  # TARGET: just produce snpeff results
             MDIR
             + "{sample}/align/{alnr}/snv/{snv}/snpeff/{sample}.{alnr}.{snv}.snpeff.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
             snv=snv_CALLERS,
         ),
     output:

@@ -75,7 +75,7 @@ if "dppl" in DDUP:
              -queue-length {params.queue_length} \
              -shard-size {params.shard_size}   \
             | mbuffer -m {params.mbuffer_mem} \
-            | samtools view -@ {params.view_threads} -m {params.view_mem} --output-fmt-option level={params.cram_compression} -C -T {params.huref_fasta}   --write-index  -o  {output.cram}.cram - >> {log} 2>&1; 
+            | samtools view -@ {params.view_threads} -m {params.view_mem} --output-fmt-option level={params.cram_compression} -C -T {params.huref_fasta}   --write-index  -o  {output.cram} - >> {log} 2>&1; 
 
 
             end_time=$(date +%s);
