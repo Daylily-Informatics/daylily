@@ -173,13 +173,13 @@ duphold:
 
 doppelmark:
     threads: 192
-    doppelmark_threads: 184
+    doppelmark_threads: 192
     partition: "i192mem"
     mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
-    clip_padding: 5000  # 600000
+    clip_padding: 1000  # 600000
     shard_size: 70000000
     min_bases: 20000
-    queue_length: 1000  # 5000
+    queue_length: 1500  # 5000
     ld_preload: "  "
     compress_threads: 96
     compress_mem: "2750M"
