@@ -179,7 +179,7 @@ doppelmark:
     clip_padding: 5000  # 600000
     shard_size: 70000000
     min_bases: 20000
-    queue_length: 500  # 5000
+    queue_length: 1000  # 5000
     ld_preload: "  "
     compress_threads: 96
     compress_mem: "2750M"
