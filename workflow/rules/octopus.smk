@@ -38,7 +38,7 @@ def get_ploidy(wildcards):
 
 
 def get_ochrm_mod(wildcards):
-    pchr=""
+    pchr=GENOME_CHR_PREFIX
     ret_str = ""
     sl = wildcards.ochrm.split("-")
     sl2 = wildcards.ochrm.split("~")
@@ -106,6 +106,7 @@ rule octopus:
         ld_pre=config['octopus']['ld_pre'],
         mdir=MDIR,
         mito_code="MT" if "b37" == config['genome_build'] else "M",
+        chrm_prefix=GENOME_CHR_PREFIX,
     shell:
         """ 
         touch {output.vcf};
