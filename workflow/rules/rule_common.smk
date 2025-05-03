@@ -673,7 +673,7 @@ def get_alnr(wildcards):
     return wildcards.alnr
 
 def get_dchrm_day(wildcards):
-    pchr=GENOME_CHR_PREFIX
+    pchr=""
 
     ret_str = ""
     sl = wildcards.dchrm.replace('chr','').split("-")

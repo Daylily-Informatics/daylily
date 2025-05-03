@@ -6,7 +6,7 @@ import os
 #
  
 def get_dvchrm_day(wildcards):
-    pchr=GENOME_CHR_PREFIX
+    pchr=""
     ret_str = ""
     sl = wildcards.dvchrm.replace('chr','').split("-")
     sl2 = wildcards.dvchrm.replace('chr','').split("~")
