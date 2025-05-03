@@ -7,7 +7,7 @@ rule multiqc_cov_aln:  # TARGET : Run Alignment and Generate Alignment and Cover
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/cov_calcs_complete.done",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
         ),
     output:
         html=f"{MDIRreportsd}ALNandSeqQC_{RU[0]}_{EX[0]}.multiqc.html",
@@ -39,32 +39,32 @@ rule cov_aln_qc:
     input:
         expand(MDIR + "{sample}/align/{alnr}/alignqc/samtmetrics/{sample}.{alnr}.complete",
                sample=SSAMPS,
-               alnr=ALIGNERS,
+               alnr=ALL_ALIGNERS,
         ),
         expand(
             MDIR
             + "{sample}/align/{alnr}/alignqc/norm_cov_eveness/{sample}.{alnr}.md",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
         ),
         expand(
             MDIR
             + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.json",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
             snv_caller=snv_CALLERS,
         ),
         expand(
             MDIR
             + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.tsv",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
             snv_caller=snv_CALLERS,
         ),
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
         ),
         f"{MDIR}other_reports/alignstats_bsummary.tsv",
         MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}.{alnr}/{sample}.{alnr}.qmap.done",
@@ -72,23 +72,23 @@ rule cov_aln_qc:
             MDIR
             + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.sort.done",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
         ),
         expand(
             MDIR
             + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
         ),
         expand(
             MDIR + "{sample}/align/{alnr}/alignqc/goleft.done",
             sample=SSAMPS,
-            alnr=ALIGNERS,
+            alnr=ALL_ALIGNERS,
         ),
 	#        expand(
         #    MDIR + "{sample}/align/{alnr}/alignqc/sentmetrics/sm/{sample}.{alnr}.mrkdup.metrics.complete",
         #    sample=SSAMPS,
-        #    alnr=ALIGNERS
+        #    alnr=ALL_ALIGNERS
         #),
 	#        expand(MDIR + "{sample}/seqqc/fastv/{sample}.fastv.html", sample=SSAMPS),
         #expand(MDIR + "{sample}/seqqc/fastqc/{sample}.fastqc.done", sample=SSAMPS),
