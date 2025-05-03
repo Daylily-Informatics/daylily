@@ -66,7 +66,3 @@ required:
     - sample_type
     - merge_single
     - external_sample_id
-    - cram
-    - cram_generator
-    - cram_aligner
-    - cram_snv_caller
