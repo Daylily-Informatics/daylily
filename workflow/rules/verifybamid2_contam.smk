@@ -36,7 +36,7 @@ if os.environ.get("DAY_CRAM", "") == "":
             huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
             alnr=get_alnr,
-            chrm_prefix="chr" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "",
+            chrm_prefix=GENOME_CHR_PREFIX,
         shell:
             """
             set +euo pipefail;
@@ -103,7 +103,7 @@ else:
             alnr=get_alnr,
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
-            chrm_prefix="chr" if os.environ.get("DAY_GENOME_BUILD", "") == "hg38" else "",
+            chrm_prefix=GENOME_CHR_PREFIX,
         shell:
             """
             set +euo pipefail;

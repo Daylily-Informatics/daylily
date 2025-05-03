@@ -52,7 +52,7 @@ else:
             donetwo=touch(MDIR + "{sample}/align/{alnr}/alignqc/goleft/golefttwo.done"),
         params:
             cluster_sample=ret_sample,
-            sexchrms="chrX,chrY" if os.environ.get('DAY_GENOME_BUILD','') == 'hg38' else "X,Y",
+            sexchrms="X,Y" if os.environ.get('DAY_GENOME_BUILD','') == 'b37' else "chrX,chrY",
             huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
         benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.goleft.bench.tsv"

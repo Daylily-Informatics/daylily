@@ -38,9 +38,7 @@ def get_ploidy(wildcards):
 
 
 def get_ochrm_mod(wildcards):
-    pchr=""
-    if config['genome_build'] not in ['b37']:
-        pchr="chr"
+    pchr=GENOME_CHR_PREFIX
     ret_str = ""
     sl = wildcards.ochrm.split("-")
     sl2 = wildcards.ochrm.split("~")

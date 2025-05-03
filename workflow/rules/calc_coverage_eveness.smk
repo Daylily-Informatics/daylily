@@ -33,7 +33,7 @@ if os.environ.get("DAY_CRAM","") == "":
             chrm_regions="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22",
             l="{",
             r="}",
-            chr="" if config['genome_build'] in ['b37'] else "chr",
+            chrm=GENOME_CHR_PREFIX,
         shell:
             """
             set +euo pipefail;
@@ -45,10 +45,10 @@ if os.environ.get("DAY_CRAM","") == "":
             echo "Sample\tCHRM\tmeanRawCov\tmedianRawCov\tstdevRawCov\tRawCovCoefofvar\tNCmean\tNCmedian\tstdevNC\tNCcoefofvar\tpctEQ0\tpctLT5\tpctLT10\taligner" > {output.mos_pre}.norm_cov_eveness.mqc.tsv;
             for i in {params.l}1..22{params.r};
             do
-                echo "Processing {params.cluster_sample} Chrm:{params.chr}$i";
-                mosdepth -x  -Q 1 -T 0 -m --by 50 -c {params.chr}$i --threads 20 {output.mos_pre}.{params.chr}$i {input.bam};
-                touch {output.mos_pre}.{params.chr}$i.regions.bed.gz;
-                Rscript workflow/scripts/calc_norm_cov_sd.R {output.mos_pre}.{params.chr}$i.regions.bed.gz  "{params.cluster_sample}" {params.chr}$i $alnr | sed 's/\\"//g;' >> {output.mos_pre}.norm_cov_eveness.mqc.tsv ;
+                echo "Processing {params.cluster_sample} Chrm:{params.chrm}$i";
+                mosdepth -x  -Q 1 -T 0 -m --by 50 -c {params.chrm}$i --threads 20 {output.mos_pre}.{params.chrm}$i {input.bam};
+                touch {output.mos_pre}.{params.chrm}$i.regions.bed.gz;
+                Rscript workflow/scripts/calc_norm_cov_sd.R {output.mos_pre}.{params.chrm}$i.regions.bed.gz  "{params.cluster_sample}" {params.chrm}$i $alnr | sed 's/\\"//g;' >> {output.mos_pre}.norm_cov_eveness.mqc.tsv ;
             done;
             {latency_wait};
             ls {output};
@@ -104,8 +104,8 @@ else:
             chrm_regions="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22",
             l="{",
             r="}",
-            chr="" if config['genome_build'] in ['b37'] else "chr",
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+            chrm=GENOME_CHR_PREFIX,
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         shell:
             """
             set +euo pipefail;
@@ -117,10 +117,10 @@ else:
             echo "Sample\tCHRM\tmeanRawCov\tmedianRawCov\tstdevRawCov\tRawCovCoefofvar\tNCmean\tNCmedian\tstdevNC\tNCcoefofvar\tpctEQ0\tpctLT5\tpctLT10\taligner" > {output.mos_pre}.norm_cov_eveness.mqc.tsv;
             for i in {params.l}1..22{params.r};
             do
-                echo "Processing {params.cluster_sample} Chrm:{params.chr}$i";                            
-                mosdepth -x  -Q 1 -T 0 -m -f {params.huref}  --by 50 -c {params.chr}$i --threads 20 {output.mos_pre}.{params.chr}$i {input.cram};
-                touch {output.mos_pre}.{params.chr}$i.regions.bed.gz;
-                Rscript workflow/scripts/calc_norm_cov_sd.R {output.mos_pre}.{params.chr}$i.regions.bed.gz  "{params.cluster_sample}" {params.chr}$i $alnr | sed 's/\\"//g;' >> {output.mos_pre}.norm_cov_eveness.mqc.tsv ;
+                echo "Processing {params.cluster_sample} Chrm:{params.chrm}$i";                            
+                mosdepth -x  -Q 1 -T 0 -m -f {params.huref}  --by 50 -c {params.chrm}$i --threads 20 {output.mos_pre}.{params.chrm}$i {input.cram};
+                touch {output.mos_pre}.{params.chrm}$i.regions.bed.gz;
+                Rscript workflow/scripts/calc_norm_cov_sd.R {output.mos_pre}.{params.chrm}$i.regions.bed.gz  "{params.cluster_sample}" {params.chrm}$i $alnr | sed 's/\\"//g;' >> {output.mos_pre}.norm_cov_eveness.mqc.tsv ;
             done;
             {latency_wait};
             ls {output};

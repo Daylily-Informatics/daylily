@@ -57,7 +57,29 @@ config["supporting_files"] = {
     "files": files_yaml_file["supporting_files"]["files"],
     "root": files_yaml_file["supporting_files"]["root"],
 }
- 
+
+genome_build_chrm_prefix_map = {
+    "b37": "chr",
+    "hg38": "chr", 
+    "hg38_broad": "",
+} 
+
+GENOME_CHR_PREFIX="na"
+if os.environ.get("DAY_GENOME_BUILD","na") in genome_build_chrm_prefix_map:
+    GENOME_CHR_PREFIX = genome_build_chrm_prefix_map[os.environ.get("DAY_GENOME_BUILD")]
+    print(
+        f"INFO::: The genome build {os.environ.get('DAY_GENOME_BUILD')} is supported.  The genome build prefix is '{GENOME_CHR_PREFIX}''.",
+        file=sys.stderr,
+    )
+else:
+    err_msg=f"ERROR::: The genome build {os.environ.get('DAY_GENOME_BUILD')} is not supported.  Please check the config file and try again. No genome build prefix was set."
+    print(
+        err_msg,
+        file=sys.stderr,
+    )
+    raise Exception(
+        err_msg
+    )
 
 # SNV caller chunk arrays
 SENTD_CHRMS = config["sentD"][f"{config['genome_build']}_sentD_chrms"].split(",")
@@ -649,3 +671,28 @@ def print_wildcards_etc(wildcards):
 
 def get_alnr(wildcards):
     return wildcards.alnr
+
+def get_dchrm_day(wildcards):
+    pchr=GENOME_CHR_PREFIX
+
+    ret_str = ""
+    sl = wildcards.dchrm.replace('chr','').split("-")
+    sl2 = wildcards.dchrm.replace('chr','').split("~")
+    
+    if len(sl2) == 2:
+        ret_str = pchr + wildcards.dchrm + ':'
+    elif len(sl) == 1:
+        ret_str = pchr + sl[0] + ':'
+    elif len(sl) == 2:
+        start = int(sl[0])
+        end = int(sl[1])
+        while start <= end:
+            ret_str = str(ret_str) + "," + pchr + str(start) + ':'
+            start = start + 1
+    else:
+        raise Exception(
+            "sentD chunks can only be one contiguous range per chunk : ie: 1-4 with the non numerical chrms assigned 23=X, 24=Y, 25=MT"
+        )
+    mito_code="MT" if "b37" == config['genome_build'] else "M",
+
+    return ret_mod_chrm(ret_str).lstrip(',').replace('chr23','chrX').replace('chr24','chrY').replace('chr25','chrMT').replace('23:','X:').replace('24:','Y:').replace('25:',f'{mito_code}:')
