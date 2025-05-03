@@ -60,7 +60,7 @@ rule deepvariant:
     params:
         dchrm=get_dvchrm_day,
         cluster_sample=ret_sample, #
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
         mdir=MDIR,
         mem_mb=config['deepvariant']['mem_mb'],
         numa=config['deepvariant']['numa'],
@@ -209,7 +209,7 @@ rule deep_concat_index_chunks:
         partition=config['deepvariant']['partition_other'],
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)

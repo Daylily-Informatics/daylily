@@ -58,7 +58,7 @@ else:
         benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.samt.bench.tsv"
         params:
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             cluster_sample=ret_sample,
         shell:
             "samtools stats -@  {threads} --reference {params.huref} {input.cram} > {output.stats};"

@@ -64,7 +64,7 @@ else:
         log:  MDIR + "{sample}/align/{alnr}/alignqc/alignstats/logs/{sample}.{alnr}.alignstats.log",
         params:
             P=50,
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             n=config["alignstats"]["num_reads_in_mem"],
             cluster_sample=ret_sample,
             ld_preload=" "

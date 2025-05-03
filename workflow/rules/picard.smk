@@ -66,7 +66,7 @@ else:
             "../envs/picard_v0.1.yaml"
         params:
             cluster_sample=ret_sample,
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             metric_accumulation_level="SAMPLE" if 'metric_accumulation_level' not in config['picard'] else config['picard']['metric_accumulation_level'],
             alnr=get_alnr,
             stop_after="2000000" if 'stop_after' not in config['picard'] else config['picard']['stop_after'],

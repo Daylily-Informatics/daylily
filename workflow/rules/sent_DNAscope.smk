@@ -37,7 +37,7 @@ rule sent_DNAscope:
 	mem_mb=config['sentD']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
         model=config["sentD"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
     shell:
@@ -180,7 +180,7 @@ rule sentD_concat_index_chunks:
         partition="i192,i192mem"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["namenogz"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)

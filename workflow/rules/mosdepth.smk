@@ -31,7 +31,7 @@ if os.environ.get("DAY_CRAM","") == "":
             if "depth_bins" not in config["mosdepth"]
             else config["mosdepth"]["depth_bins"],
             cluster_sample=ret_sample,
-            core_bed=config["supporting_files"]["files"]["huref"]["broad_fasta"]["bed"],
+            core_bed=config["supporting_files"]["files"]["huref"]["fasta"]["bed"],
         shell:
             "rm -rf {log.b}* || echo rmlogFailedMosDepth;"
             "mosdepth --threads {threads} --by {params.core_bed} --use-median  -n  --fast-mode --mapq {params.mapq} -T {params.T} $(dirname {log.b}) {input} > {log.a} 2>&1; "
@@ -69,8 +69,8 @@ else:
             config["mosdepth"]["env_yaml"]
         params:
             win_size=1000,
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
-            core_bed=config["supporting_files"]["files"]["huref"]["broad_fasta"]["bed"],
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
+            core_bed=config["supporting_files"]["files"]["huref"]["fasta"]["bed"],
             mapq=0,
             T="0,10,20,30"
             if "depth_bins" not in config["mosdepth"]

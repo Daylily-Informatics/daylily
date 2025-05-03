@@ -53,7 +53,7 @@ else:
         params:
             cluster_sample=ret_sample,
             sexchrms="X,Y" if os.environ.get('DAY_GENOME_BUILD','') == 'b37' else "chrX,chrY",
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         benchmark:
             MDIR + "{sample}/benchmarks/{sample}.{alnr}.goleft.bench.tsv"
         resources:

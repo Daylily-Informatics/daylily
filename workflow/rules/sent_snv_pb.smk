@@ -38,7 +38,7 @@ rule sent_snv_pacbio:
 	mem_mb=config['sentdpb']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
-        huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdpb"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
     shell:
@@ -211,7 +211,7 @@ rule sentdpb_concat_index_chunks:
         partition="i192,i192mem,i128"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)

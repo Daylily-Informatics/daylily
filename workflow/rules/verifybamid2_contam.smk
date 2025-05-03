@@ -101,7 +101,7 @@ else:
         params:
             cluster_sample=ret_sample,
             alnr=get_alnr,
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
             db_prefix=config["supporting_files"]["files"]["verifybam2"]["dat_files"]["name"],
             chrm_prefix=GENOME_CHR_PREFIX,
         shell:

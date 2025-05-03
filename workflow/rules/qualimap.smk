@@ -59,7 +59,7 @@ else:
         params:
             java_mem_size=config["qualimap"]["java_mem_size"],
             cluster_sample=ret_sample,
-            huref=config["supporting_files"]["files"]["huref"]["broad_fasta"]["name"],
+            huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         conda:
             config["qualimap"]["env_yaml"]
         threads: config["qualimap"]["threads"]
