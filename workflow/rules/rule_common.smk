@@ -59,9 +59,9 @@ config["supporting_files"] = {
 }
 
 genome_build_chrm_prefix_map = {
-    "b37": "chr",
+    "b37": "",
     "hg38": "chr", 
-    "hg38_broad": "",
+    "hg38_broad": "chr",
 } 
 
 GENOME_CHR_PREFIX="na"
