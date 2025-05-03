@@ -45,8 +45,8 @@ if os.environ.get('DAY_CRAM','') =='':
 else:
     rule goleft_cram:
         input:
-            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-            crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+            crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         output:
             done=touch(MDIR + "{sample}/align/{alnr}/alignqc/goleft.done"),
             donetwo=touch(MDIR + "{sample}/align/{alnr}/alignqc/goleft/golefttwo.done"),

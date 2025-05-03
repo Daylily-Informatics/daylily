@@ -46,8 +46,8 @@ else:
     rule qualimap_cram:
         """Run Qualimap on CRAMs"""
         input:
-            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-            crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+            crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         output:
             d=MDIR + "{sample}/align/{alnr}/alignqc/qmap/{sample}.{alnr}/{sample}.{alnr}.qmap.done",
         benchmark:

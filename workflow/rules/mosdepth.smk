@@ -51,8 +51,8 @@ else:
         
     rule mosdepth_cram:
         input:
-            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-            crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+            crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         output:
             MDIR
             + "{sample}/align/{alnr}/alignqc/mosdepth/{sample}.{alnr}.mosdepth.summary.sort.bed",

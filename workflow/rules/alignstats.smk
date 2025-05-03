@@ -48,8 +48,8 @@ else:
     
     rule alignstats_cram:
         input:
-            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-            crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+            crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         output:
             json=MDIR
             + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.json",

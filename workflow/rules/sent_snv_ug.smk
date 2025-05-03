@@ -6,8 +6,8 @@ ALIGNERS_UG = "ug"
 
 rule sent_snv_ug:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdug/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=temp(MDIR
@@ -291,8 +291,8 @@ localrules:
 
 rule prep_sentdug_chunkdirs:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdug/vcfs/{dchrm}/{{sample}}.ready",

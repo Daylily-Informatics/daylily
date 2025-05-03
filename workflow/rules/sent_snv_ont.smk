@@ -9,8 +9,8 @@ ALIGNERS_ONT = ["ont"]
 
 rule sent_snv_ont:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdont/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=MDIR
@@ -298,8 +298,8 @@ localrules:
 
 rule prep_sentdont_chunkdirs:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdont/vcfs/{dchrm}/{{sample}}.ready",

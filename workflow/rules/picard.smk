@@ -51,7 +51,7 @@ else:
 
     rule picard_cram:
         input:
-            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
         output:
             sent=touch(MDIR + "{sample}/align/{alnr}/alignqc/picard/picard/{sample}.{alnr}.mrkdup.sort.done"),
         threads: config["picard"]["threads"]

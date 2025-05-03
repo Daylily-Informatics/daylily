@@ -5,8 +5,8 @@ ALIGNERS_ONT = ["ont"]
 
 rule sentdhio_snv:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         r1=getR1s,
         r2=getR2s,
@@ -296,8 +296,8 @@ rule prep_sentdhio_chunkdirs:
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         r1=getR1s,
         r2=getR2s,
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhio/vcfs/{dchrm}/{{sample}}.ready",

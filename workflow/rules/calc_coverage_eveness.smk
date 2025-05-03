@@ -83,8 +83,8 @@ else:
 
     rule calc_coverage_evenness_cram:
         input:
-            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-            crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+            crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         output:
             # tsv=MDIR  + "{sample}/align/{alnr}/norm_cov_eveness/{sample}.{alnr}.norm_cov_eveness.mqc.tsv",
             mos_pre=MDIR   + "{sample}/align/{alnr}/alignqc/norm_cov_eveness/{sample}.{alnr}.md",

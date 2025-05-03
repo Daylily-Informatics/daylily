@@ -5,8 +5,8 @@ ALIGNERS_UG = ["ug"]
 
 rule sentdhuo_snv:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         r1=getR1s,
         r2=getR2s,
@@ -294,8 +294,8 @@ localrules:
 
 rule prep_sentdhuo_chunkdirs:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhuo/vcfs/{dchrm}/{{sample}}.ready",

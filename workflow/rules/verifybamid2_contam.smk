@@ -80,7 +80,7 @@ else:
 
     rule verifybamid2_contam_cram:
         input:
-            cram=MDIR + "{sample}/align/{alnr}/{sample}.cram",
+            cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
         output:
             vb_prefix=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2",
             vb_tsv=MDIR + "{sample}/align/{alnr}/alignqc/contam/vb2/{sample}.{alnr}.vb2.tsv",
