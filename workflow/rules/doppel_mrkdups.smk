@@ -85,5 +85,5 @@ if "dppl" in DDUP:
 	        cram_cmd="samtools view -@ {threads} -m 2G  -C -T {params.huref_fasta}   --write-index  -o  {output.bamo}.cram  {output.bamo}";
 	        echo "$cram_cmd";
 	        echo "$cram_cmd" >> {log};
-            rm -rf $tdir;
+            
             """ 
