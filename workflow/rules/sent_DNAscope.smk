@@ -42,9 +42,6 @@ rule sent_DNAscope:
         cluster_sample=ret_sample,
     shell:
         """
-
-
-
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentd_tmp_$timestamp;
         mkdir -p $TMPDIR;
