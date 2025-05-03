@@ -12,7 +12,7 @@ import os
 
 
 def get_lofreq_chrm(wildcards):
-    pchr = GENOME_CHR_PREFIX
+    pchr = "" #prefix handled already
     ret_str = ""
     sl = wildcards.lfqchrm.replace('chr','').split("-")
     sl2 = wildcards.lfqchrm.replace('chr','').split("~")
