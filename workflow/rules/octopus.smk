@@ -101,7 +101,7 @@ rule octopus:
         ochrm_mod=get_ochrm_mod,
         anno=config["octopus"]["anno"],
         addl_options=" " if "addl_options" not in config["octopus"] else config["octopus"]["addl_options"],
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         skr=config['supporting_files']['files']['ucsc']['build_gaps']['name'],
         ld_pre=config['octopus']['ld_pre'],
         mdir=MDIR,
@@ -225,7 +225,7 @@ rule oct_concat_index_chunks:
         partition="i192,i192mem"
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)

@@ -53,7 +53,7 @@ rule lfq2_indelqual:
         partition=config['lofreq2']['partition'],
         mem_mb=config['lofreq2']['mem_mb'],
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
     	cluster_sample=ret_sample, 
     shell:
         """
@@ -93,7 +93,7 @@ rule lofreq2:
         )
     params:
         cluster_sample=ret_sample,
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         mdir=MDIR,
         mem_mb=config['lofreq2']['mem_mb'],
         dchrm=get_lofreq_chrm,
@@ -232,7 +232,7 @@ rule lofreq2_concat_index_chunks:
         partition=config['lofreq2']['partition'],
     priority: 47
     params:
-        huref=config["supporting_files"]["files"]["huref"]["fasta"]["fasta"],
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     resources:
         attempt_n=lambda wildcards, attempt: (attempt + 0)
