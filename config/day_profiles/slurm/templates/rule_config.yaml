@@ -176,6 +176,8 @@ doppelmark:
     threads: 192
     doppelmark_threads: 192
     view_threads: 32
+    view_mem: "80G"
+    mbuffer_mem: "8G"
     partition: "i192mem"
     mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
     clip_padding: 1000  # 600000

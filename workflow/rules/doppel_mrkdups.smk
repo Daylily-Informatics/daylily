@@ -42,6 +42,9 @@ if "dppl" in DDUP:
 	        huref_fasta=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
 	        compress_mem=config["doppelmark"]["compress_mem"],
 	        compress_threads=config["doppelmark"]["compress_threads"],
+            view_threads=config["doppelmark"]["view_threads"],
+            view_mem=config["doppelmark"]["view_mem"],
+            mbuffer_mem=config["doppelmark"]["mbuffer_mem"],
         log:
             "{MDIR}{sample}/align/{alnr}/logs/dedupe.{sample}.{alnr}.log",
         shell:
@@ -71,8 +74,8 @@ if "dppl" in DDUP:
              -min-bases {params.min_bases} \
              -queue-length {params.queue_length} \
              -shard-size {params.shard_size}   \
-            | mbuffer -m 8G \
-            | samtools view -@ {view_threads} -m {params.view_mem} --output-fmt-option level={params.cram_compression} -C -T {params.huref_fasta}   --write-index  -o  {output.cram}.cram - >> {log} 2>&1; 
+            | mbuffer -m {params.mbuffer_mem} \
+            | samtools view -@ {params.view_threads} -m {params.view_mem} --output-fmt-option level={params.cram_compression} -C -T {params.huref_fasta}   --write-index  -o  {output.cram}.cram - >> {log} 2>&1; 
 
 
             end_time=$(date +%s);

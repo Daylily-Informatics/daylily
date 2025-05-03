@@ -176,6 +176,8 @@ duphold:
 doppelmark:
     threads: 7
     view_threads: 2
+    view_mem: "8G"
+    mbuffer_mem: "1G"
     doppelmark_threads: 7
     partition: "i8"
     clip_padding: 600000
