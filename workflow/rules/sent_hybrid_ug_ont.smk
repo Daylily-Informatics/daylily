@@ -54,7 +54,7 @@ rule sentdhuo_snv:
     shell:
         """
 
-        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/
+        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdontr_tmp_$timestamp;
