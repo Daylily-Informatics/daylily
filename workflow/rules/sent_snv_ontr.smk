@@ -85,7 +85,7 @@ rule sent_snv_ontr:
             exit 3;
         fi
 
-        LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-longread \
+        LD_PRELOAD=$LD_PRELOAD sentieon-cli  dnascope-longread \
             -t {params.use_threads} \
             -r {params.huref} \
             -i {input.cram} \

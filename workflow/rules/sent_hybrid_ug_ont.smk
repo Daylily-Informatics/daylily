@@ -92,7 +92,7 @@ rule sentdhuo_snv:
             exit 3;
         fi
         
-        LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
+        LD_PRELOAD=$LD_PRELOAD sentieon-cli  dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
             --sr_aln {params.ug_cram[0]} \
