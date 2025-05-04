@@ -15,7 +15,6 @@ rule sentdhuo_snv:
     input:
         ont_cram=MDIR + "{sample}/align/ont/{sample}.ont.cram",
         ont_crai=MDIR + "{sample}/align/ont/{sample}.ont.cram.crai",
-        ug_cram=MDIR + "{sample}/align/ug/{sample}.ug.cram",
         d=MDIR + "{sample}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=MDIR
@@ -43,7 +42,7 @@ rule sentdhuo_snv:
         vcpu=config['sentdhuo']['threads'],
 	    mem_mb=config['sentdhuo']['mem_mb'],
     params:
-        ug_cram=get_ug_cram,
+        ug_cram=get_ultima_crams,
         ug_crai=get_ug_crai,
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
