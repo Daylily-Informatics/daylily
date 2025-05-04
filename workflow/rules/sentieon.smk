@@ -72,7 +72,7 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
         
         timestamp=$(date +%Y%m%d%H%M%S);
-        TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
+        TMPDIR=/dev/shm/sentieon_tmp_$timestamp;
         mkdir -p $TMPDIR;
         APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
@@ -89,14 +89,14 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
         fi
-        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon bwa mem \
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon bwa mem \
         -t {params.bwa_threads}  {params.sent_opts}  \
         -x {params.bwa_model} \
         -R "@RG\\tID:{params.cluster_sample}-$epocsec\\tSM:{params.cluster_sample}\\tLB:{params.cluster_sample}-LB-1\\tPL:ILLUMINA" \
         {params.huref} \
          {params.subsample_head} <( {params.igz} -q  {input.f1} )  {params.subsample_tail}  \
          {params.subsample_head} <( {params.igz} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer} \
-        | /fsx/data/cached_envs/sentieon-genomics-202503/bin/sentieon  util sort \
+        | /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon  util sort \
         -t  {params.sort_threads} \
         --reference {params.huref} \
         --cram_write_options version=3.0,compressor=rans \

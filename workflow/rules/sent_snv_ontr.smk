@@ -47,7 +47,7 @@ rule sent_snv_ontr:
         diploid_bed=get_diploid_bed_arg,
     shell:
         """
-        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503/bin/
+        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdontr_tmp_$timestamp;
@@ -239,7 +239,7 @@ rule sentdontr_concat_index_chunks:
         bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
-        rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
+        #rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
 
         """
 

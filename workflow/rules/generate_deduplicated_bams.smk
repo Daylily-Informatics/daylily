@@ -6,7 +6,7 @@ localrules:
     produce_deduplicated_crams,
 
 
-rule produce_deduplicated_bams:  # TARGET : Generate Just BAMs with Dups Marked .
+rule produce_deduplicated_crams:  # TARGET : Generate Just BAMs with Dups Marked .
     input:
         expand(
             MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",

@@ -12,5 +12,5 @@ ephemeral_cluster:
     cluster_template_yaml: config/day_cluster/prod_cluster.yaml
     spot_instance_allocation_strategy: price-capacity-optimized # lowest-price, price-capacity-optimized,capacity-optimized - lowest price can be very interrrupt'y
     max_count_8I: 1 # max number of spots of this cpu size to request
-    max_count_128I: 6 # max number of spots of this cpu size to request
-    max_count_192I: 10 # max number of spots of this cpu size to request
+    max_count_128I: 10 # max number of spots of this cpu size to request
+    max_count_192I: 15 # max number of spots of this cpu size to request

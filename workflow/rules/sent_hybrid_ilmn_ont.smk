@@ -46,7 +46,7 @@ rule sentdhio_snv:
         diploid_bed=get_diploid_bed_arg,
     shell:
         """
-        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503/bin/
+        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdontr_tmp_$timestamp;
@@ -99,7 +99,6 @@ rule sentdhio_snv:
             --skip_cnv \
             --skip_multiqc \
             -m {params.model} \
-            --longread_tech ONT \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
 
@@ -239,7 +238,7 @@ rule sentdhio_concat_index_chunks:
         bcftools reheader -s {output.vcfgz}.rename.txt -o {output.vcfgz} {output.vcfgztemp} >> {log} 2>&1;
         bcftools index -f -t --threads {threads} -o {output.vcfgztbi} {output.vcfgz} >> {log} 2>&1;
 
-        rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
+        #rm -rf $(dirname {output.vcfgz})/vcfs >> {log} 2>&1;
 
         """
 
