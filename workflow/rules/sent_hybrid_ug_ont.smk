@@ -97,7 +97,7 @@ rule sentdhuo_snv:
             -t {params.use_threads} \
             -r  {params.huref} \
             --sr_aln {params.ug_cram} \
-            --lr_aln  {input.cram} \
+            --lr_aln  {input.ont_cram} \
             -m  {params.model} \
             --lr_input_ref {params.huref} \
             --skip_svs \
