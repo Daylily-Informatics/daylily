@@ -25,13 +25,37 @@ if [[ -z ${INPUT_CRAM+x} || -z ${REFERENCE_FASTA+x} || -z ${OUTPUT_CRAM+x} ]]; t
     usage
 fi
 
-samtools view -@ "$THREADS" -H "$INPUT_CRAM" | sed 's/PP:[^\t]*/PP:dummy/' > tmp_header.sam
+# Detect missing PP program ID automatically from warnings
+MISSING_PP=$(samtools view -@ "$THREADS" -T "$REFERENCE_FASTA" "$INPUT_CRAM" 2>&1 >/dev/null | \
+    grep "has a PP link to missing program" | \
+    head -n1 | sed -E "s/.*PP link to missing program '([^']+)'.*/\1/")
 
-samtools reheader -P tmp_header.sam "$INPUT_CRAM" | \
+if [[ -z "$MISSING_PP" ]]; then
+    echo "No missing PP field detected. Exiting."
+    exit 0
+else
+    echo "Missing PP detected: '$MISSING_PP'"
+fi
+
+# Generate a new header with the missing PG line added
+samtools view -@ "$THREADS" -H "$INPUT_CRAM" | \
+awk -v dummy_id="$MISSING_PP" '
+    BEGIN {dummy_added=0}
+    /^@PG/ && dummy_added==0 {
+        printf("@PG\tID:%s\tPN:%s\tVN:unknown\tCL:\"%s (dummy entry)\"\n", dummy_id, dummy_id, dummy_id)
+        dummy_added=1
+    }
+    {print}
+' > tmp_fixed_header.sam
+
+# Reheader and rewrite CRAM using corrected header
+samtools reheader -P tmp_fixed_header.sam "$INPUT_CRAM" | \
     samtools view -@ "$THREADS" -C -T "$REFERENCE_FASTA" -o "$OUTPUT_CRAM"
 
+# Index the fixed CRAM
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
-rm tmp_header.sam
+# Clean temporary header
+rm tmp_fixed_header.sam
 
-echo "Output CRAM with dummy PP field written and indexed: $OUTPUT_CRAM"
+echo "✅ Output CRAM written and indexed with missing PP field '$MISSING_PP' resolved: $OUTPUT_CRAM"
