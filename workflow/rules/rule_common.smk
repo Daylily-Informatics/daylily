@@ -323,18 +323,27 @@ for i in samples.iterrows():
             else:
                 val = "na"
             sample_info[samp][iix] = val
-        elif iix in ["cram"]:
+        elif iix in ["ultima_cram"]:
             sample_info[samp][iix] = val
-        elif iix in ["cram_generator"]:
+        elif iix in ["ont_cram"]:
             sample_info[samp][iix] = val
-        elif iix in ["cram_aligner"]:
+        elif iix in ["ultima_cram_aligner"]:
             sample_info[samp][iix] = val
             if val not in CRAM_ALIGNERS:
                 if val in ['','na',None,'None']:
                     pass
                 else: 
                     CRAM_ALIGNERS.append(val)
-        elif iix in ["cram_snv_caller"]:
+        elif iix in ["ont_cram_aligner"]:
+            sample_info[samp][iix] = val
+            if val not in CRAM_ALIGNERS:
+                if val in ['','na',None,'None']:
+                    pass
+                else: 
+                    CRAM_ALIGNERS.append(val)
+        elif iix in ["ultima_cram_snv_caller"]:
+            sample_info[samp][iix] = val
+        elif iix in ["ont_cram_snv_caller"]:
             sample_info[samp][iix] = val
         elif iix in ["concordance_control_path"]:
             sample_info[samp][iix] = val
@@ -368,7 +377,7 @@ for i in samples.iterrows():
 
 config["sample_info"] = sample_info
 
-
+CRAM_ALIGNERS = list(set(CRAM_ALIGNERS))
 # Aspirationally hoping to adopt PEPs...
 # http://pep.databio.org/en/latest/
 

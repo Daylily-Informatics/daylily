@@ -382,13 +382,23 @@ else:
 # LOCAL FASTQS
 # Fetch and stage our input data, but only as links. deal with fastqs seperately until BAM creation
 
-def get_crams(wildcards):
-    # cam_gen == cram_ultima, cram_ont, etc
+def get_ont_crams(wildcards):
     crams = []
 
     cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['cram'][0])
+    if os.path.exists(cram):
+        pass
+    else:
+        raise Exception(f"ERROR:  {cram} does not exist. Please check your manifest and try again.")
     crai=f"{cram}.crai"
-    cram_aligner=samples[samples['sample_lane'] == wildcards.sample]['cram_aligner'][0]
+    cram_aligner=samples[samples['sample_lane'] == wildcards.sample]['ont_cram_aligner'][0]
+    if cram_aligner in ['na','',None,'None']:
+        return []
+    elif cram_aligner in ['ont']:
+        pass
+    else:
+        raise Exception(f"ERROR:  {cram_aligner} is not a valid CRAM aligner. Only 'ont' is supported. Please check your manifest and try again.")
+  
     cram_aligner_dir = f"{MDIR}/{wildcards.sample}/align/{cram_aligner}/"
     print(f"PREP CRAM:: {cram_aligner_dir} ... ",file=sys.stderr)
     os.system(f"mkdir -p {cram_aligner_dir}")
@@ -396,23 +406,69 @@ def get_crams(wildcards):
     crams.append(cram)
     crams.append(crai)
 
+    return crams
+
+
+def get_ultima_crams(wildcards):
+    crams = []
+
+    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['cram'][0])
+    if os.path.exists(cram):
+        pass
+    else:
+        raise Exception(f"ERROR:  {cram} does not exist. Please check your manifest and try again.")
+    crai=f"{cram}.crai"
+    cram_aligner=samples[samples['sample_lane'] == wildcards.sample]['ultima_cram_aligner'][0]
+    if cram_aligner in ['na','',None,'None']:
+        return []
+    elif cram_aligner in ['ug']:
+        pass
+    else:
+        raise Exception(f"ERROR:  {cram_aligner} is not a valid CRAM aligner. Only 'ug' is supported. Please check your manifest and try again.")
+  
+    cram_aligner_dir = f"{MDIR}/{wildcards.sample}/align/{cram_aligner}/"
+    print(f"PREP CRAM:: {cram_aligner_dir} ... ",file=sys.stderr)
+    os.system(f"mkdir -p {cram_aligner_dir}")
+    os.system(f"touch {cram_aligner_dir}/.ok")
+    crams.append(cram)
+    crams.append(crai)
 
     return crams
 
+
  
 localrules:
-    pre_prep_raw_cram,
+    pre_prep_ultima_cram,
 
-rule pre_prep_raw_cram:
+rule pre_prep_ultima_cram:
     input:
-        get_crams,
+        get_ultima_crams,
     output:
-        cram=MDIR + "{sample}/align/{alnr}/{sample_lane}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample_lane}.cram.crai",
+        cram=MDIR + "{sample}/align/ug/{sample_lane}.cram",
+        crai=MDIR + "{sample}/align/ug/{sample_lane}.cram.crai",
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
     log:
-        MDIR + "{sample}/align/{alnr}/logs/{sample_lane}.cram.log",
+        MDIR + "{sample}/align/ug/logs/{sample_lane}.cram.log",
+    shell:
+        "(mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;"
+        "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
+        "{params.c} {input[1]} {output.crai} >> {log} 2>&1;"
+
+
+localrules:
+    pre_prep_ont_cram,
+
+rule pre_prep_ont_cram:
+    input:
+        get_ont_crams,
+    output:
+        cram=MDIR + "{sample}/align/ont/{sample_lane}.cram",
+        crai=MDIR + "{sample}/align/ont/{sample_lane}.cram.crai",
+    params:
+        c=config["prep_input_sample_files"]["source_read_method"],
+    log:
+        MDIR + "{sample}/align/ont/logs/{sample_lane}.cram.log",
     shell:
         "(mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;"
         "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
@@ -425,8 +481,8 @@ rule prep_cram_inputs:  # TARGET: Just Pre
     input:
         ##cram=MDIR + "{sample}/{sample_lane}.cram",
         #crai=MDIR + "{sample}/{sample_lane}.cram.crai",
-        cram=expand(MDIR + "{sample}/align/{alnr}/{sample_lane}.cram",sample=SAMPS, sample_lane=SAMPS, alnr=ALIGNERS),
-        crai=expand(MDIR + "{sample}/align/{alnr}/{sample_lane}.cram.crai",sample=SAMPS, sample_lane=SAMPS,alnr=ALIGNERS)
+        cram=expand(MDIR + "{sample}/align/{alnr}/{sample_lane}.cram",sample=SAMPS, sample_lane=SAMPS, alnr=CRAM_ALIGNERS),
+        crai=expand(MDIR + "{sample}/align/{alnr}/{sample_lane}.cram.crai",sample=SAMPS, sample_lane=SAMPS,alnr=CRAM_ALIGNERS)
     output:
         "crams_staged",
     shell:
