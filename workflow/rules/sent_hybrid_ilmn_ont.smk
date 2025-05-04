@@ -85,7 +85,7 @@ rule sentdhio_snv:
         fi
         export cram_sid=$(samtools view -H {input.cram} | grep  '^@RG' | tr '\t' '\n' | grep '^SM:' | cut -f2 -d':' | sort | uniq)
 
-        LD_PRELOAD=$LD_PRELOAD sentieon-cli  dnascope-hybrid \
+        LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
             --sr_r1_fastq {input.r1} \
