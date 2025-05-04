@@ -330,7 +330,7 @@ for i in samples.iterrows():
         elif iix in ["ultima_cram_aligner"]:
             sample_info[samp][iix] = val
             if val not in CRAM_ALIGNERS:
-                if val in ['','na',None,'None']:
+                if val in ['','na',None,'None','hyb']:
                     pass
                 else: 
                     CRAM_ALIGNERS.append(val)

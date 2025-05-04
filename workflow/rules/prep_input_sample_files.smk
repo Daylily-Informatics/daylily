@@ -419,7 +419,7 @@ def get_ultima_crams(wildcards):
     cram_aligner=samples[samples['sample_lane'] == wildcards.sample]['ultima_cram_aligner'][0]
     if cram_aligner in ['na','',None,'None']:
         return []
-    elif cram_aligner in ['ug']:
+    elif cram_aligner in ['ug','hyb']:
         pass
     else:
         raise Exception(f"ERROR:  {cram_aligner} is not a valid CRAM aligner. Only 'ug' is supported. Please check your manifest and try again.")
