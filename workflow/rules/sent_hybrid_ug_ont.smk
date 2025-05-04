@@ -96,8 +96,10 @@ rule sentdhuo_snv:
             -t {params.use_threads} \
             -r  {params.huref} \
             --sr_aln {params.ug_cram[0]} \
-            --lr_aln  {input.ont_cram} \
             -m  {params.model} \
+            --lr_input_ref {params.huref} \
+            --lr_aln {input.ont_cram} \
+            --lr_align_input \
             --lr_input_ref {params.huref} \
             --skip_svs \
             --skip_mosdepth \
