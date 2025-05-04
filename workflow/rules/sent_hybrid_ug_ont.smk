@@ -15,6 +15,7 @@ rule sentdhuo_snv:
     input:
         ont_cram=MDIR + "{sample}/align/ont/{sample}.ont.cram",
         ont_crai=MDIR + "{sample}/align/ont/{sample}.ont.cram.crai",
+        ug_cram=MDIR + "{sample}/align/ug/{sample}.ug.cram",
         d=MDIR + "{sample}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=MDIR
