@@ -385,11 +385,7 @@ else:
 def get_ont_crams(wildcards):
     crams = []
 
-    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['cram'][0])
-    if os.path.exists(cram):
-        pass
-    else:
-        raise Exception(f"ERROR:  {cram} does not exist. Please check your manifest and try again.")
+    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['ont_cram'][0])
     crai=f"{cram}.crai"
     cram_aligner=samples[samples['sample_lane'] == wildcards.sample]['ont_cram_aligner'][0]
     if cram_aligner in ['na','',None,'None']:
@@ -399,6 +395,12 @@ def get_ont_crams(wildcards):
     else:
         raise Exception(f"ERROR:  {cram_aligner} is not a valid CRAM aligner. Only 'ont' is supported. Please check your manifest and try again.")
   
+    
+    if os.path.exists(cram) and os.path.exists(crai):
+        pass
+    else:
+        raise Exception(f"ERROR:  {cram} or {crai} does not exist. Please check your manifest and try again.")
+
     cram_aligner_dir = f"{MDIR}/{wildcards.sample}/align/{cram_aligner}/"
     print(f"PREP CRAM:: {cram_aligner_dir} ... ",file=sys.stderr)
     os.system(f"mkdir -p {cram_aligner_dir}")
@@ -412,11 +414,7 @@ def get_ont_crams(wildcards):
 def get_ultima_crams(wildcards):
     crams = []
 
-    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['cram'][0])
-    if os.path.exists(cram):
-        pass
-    else:
-        raise Exception(f"ERROR:  {cram} does not exist. Please check your manifest and try again.")
+    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['ultima_cram'][0])
     crai=f"{cram}.crai"
     cram_aligner=samples[samples['sample_lane'] == wildcards.sample]['ultima_cram_aligner'][0]
     if cram_aligner in ['na','',None,'None']:
@@ -425,7 +423,12 @@ def get_ultima_crams(wildcards):
         pass
     else:
         raise Exception(f"ERROR:  {cram_aligner} is not a valid CRAM aligner. Only 'ug' is supported. Please check your manifest and try again.")
-  
+    
+    if os.path.exists(cram) and os.path.exists(crai):
+        pass
+    else:
+        raise Exception(f"ERROR:  {cram} or {crai} does not exist. Please check your manifest and try again.")
+
     cram_aligner_dir = f"{MDIR}/{wildcards.sample}/align/{cram_aligner}/"
     print(f"PREP CRAM:: {cram_aligner_dir} ... ",file=sys.stderr)
     os.system(f"mkdir -p {cram_aligner_dir}")
