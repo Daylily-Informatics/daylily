@@ -43,11 +43,17 @@ properties:
         type: string
     external_sample_id:
         type: string
-    cram_generator:
+    ultima_cram:
         type: string
-    cram_aligner:
+    ultima_cram_aligner:
         type: string
-    cram_snv_caller:
+    ultima_cram_snv_caller:
+        type: string
+    ont_cram:
+        type: string
+    ont_cram_aligner:
+        type: string
+    ont_cram_snv_caller:
         type: string
 required:
     - sample
