@@ -91,8 +91,7 @@ rule sentdhuo_snv:
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
         fi
-        #export cram_sid=$(samtools view -H {input.ont_cram} | grep  '^@RG' | tr '\t' '\n' | grep '^SM:' | cut -f2 -d':' | sort | uniq)
-
+        
         LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
@@ -104,6 +103,7 @@ rule sentdhuo_snv:
             --skip_mosdepth \
             --skip_cnv \
             --skip_multiqc \
+            --rgsm "@RG\\tID:{params.cluster_sample}-1\\tSM:{params.cluster_sample}\\tLB:{params.cluster_sample}-LB-1\\tPL:ILLUMINA" \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
 
