@@ -30,28 +30,44 @@ echo "  Comment    : $COMMENT"
 echo "  Partition  : $PARTITION"
 echo "  Threads    : $THREADS"
 
-sbcmd= """sbatch --cpus-per-task "$THREADS" \
+sbcmd="""sbatch --cpus-per-task "$THREADS" \
        --comment "$COMMENT" \
        --partition "$PARTITION" \
-       /opt/slurm/bin/sleep_test.sh
-"""
+       /opt/slurm/bin/sleep_test.sh"""
 
-echo "running : $sbcmd"
+echo "running sbatch command:"
+echo "-------"
+echo "$sbcmd"
 
 $sbcmd
 
 
 sinfocmd="sinfo"
 echo "running sinfo command:"
+echo "-------"
 echo $sinfo
-$sinfo
+$sinfocmd
 
 sleep 0.5
 
 sqcmd="squeue"
 
 echo "running queue monitor command:"
+echo "-------"
 echo $sqcmd
 $sqcmd
 
+sleep 1
 
+echo ""
+echo ""
+echo "you may kill jobs with: 'qdel <jobid>'"
+echo ""
+sleep 0.5
+
+
+echo ""
+echo ""
+echo "AND, importantly, you may ssh to the compute nodes with: 'ssh <nodelist-name-from-squeue>' (ie: i8-dy-r6gb64-1)"
+echo ""
+sleep 1
