@@ -3,13 +3,19 @@ import os
 
 ALIGNERS_UG = ["ug"]
 
+
+def get_ug_cram(wildcards):
+    return MDIR + wildcards.sample + "/align/ug" + "/" + wildcards.sample + ".ug" + ".cram"
+
+def get_ug_crai(wildcards):
+    return MDIR + wildcards.sample + "/align/ug"  + "/" + wildcards.sample + ".ug" + ".cram.crai"
+
+
 rule sentdhuo_snv:
     input:
         ont_cram=MDIR + "{sample}/align/ont/{sample}.ont.cram",
         ont_crai=MDIR + "{sample}/align/ont/{sample}.ont.cram.crai",
-        ultima_cram=MDIR + "{sample}/align/ug/{sample}.ug.cram",
-        ultima_crai=MDIR + "{sample}/align/ug/{sample}.ug.cram.crai",
-        d=MDIR + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
+        d=MDIR + "{sample}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=temp(MDIR
         + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.{alnr}.sentdhuo.{dchrm}.snv.vcf"),
@@ -36,6 +42,8 @@ rule sentdhuo_snv:
         vcpu=config['sentdhuo']['threads'],
 	    mem_mb=config['sentdhuo']['mem_mb'],
     params:
+        ug_cram=get_ug_cram,
+        ug_crai=get_ug_crai,
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdhuo"]["dna_scope_snv_model"],
