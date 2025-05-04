@@ -382,7 +382,7 @@ else:
 # LOCAL FASTQS
 # Fetch and stage our input data, but only as links. deal with fastqs seperately until BAM creation
 
-def get_ont_crams(wildcards):
+def get_ont_cramsx(wildcards):
     crams = []
 
     cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['ont_cram'][0])
@@ -411,7 +411,7 @@ def get_ont_crams(wildcards):
     return crams
 
 
-def get_ultima_crams(wildcards):
+def get_ultima_cramsx(wildcards):
     crams = []
 
     cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['ultima_cram'][0])
@@ -445,7 +445,7 @@ localrules:
 
 rule pre_prep_ultima_cram:
     input:
-        get_ultima_crams,
+        get_ultima_cramsx,
     output:
         cram=MDIR + "{sample}/align/ug/{sample_lane}.cram",
         crai=MDIR + "{sample}/align/ug/{sample_lane}.cram.crai",
@@ -464,7 +464,7 @@ localrules:
 
 rule pre_prep_ont_cram:
     input:
-        get_ont_crams,
+        get_ont_cramsx,
     output:
         cram=MDIR + "{sample}/align/ont/{sample_lane}.cram",
         crai=MDIR + "{sample}/align/ont/{sample_lane}.cram.crai",

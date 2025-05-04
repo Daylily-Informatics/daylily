@@ -42,7 +42,7 @@ rule sentdhuo_snv:
         vcpu=config['sentdhuo']['threads'],
 	    mem_mb=config['sentdhuo']['mem_mb'],
     params:
-        ug_cram=get_ultima_crams,
+        ug_cram=get_ultima_cramsx,
         ug_crai=get_ug_crai,
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
