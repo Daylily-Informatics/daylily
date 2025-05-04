@@ -537,7 +537,7 @@ sentieon:
     mem_mb: 200000 
     igz:   " igzip -cd -T 2 "
     mbuffer: " | mbuffer -m 1G -q -s 128k "
-    bwa_model: "/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/SentieonIlluminaWGS2.2.bundle"
+    bwa_model: "/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/SentieonIlluminaWGS2.2.bundle/bwa.model"
     constraint: ""
 
 
