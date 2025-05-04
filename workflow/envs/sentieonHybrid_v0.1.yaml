@@ -18,4 +18,4 @@ dependencies:
   - mosdepth==0.3.2
   - pip
   - pip:
-      - https://github.com/Sentieon/sentieon-cli/releases/download/v1.2.1/sentieon_cli-1.2.2.tar.gz
+      - https://github.com/Sentieon/sentieon-cli/releases/download/v1.2.2/sentieon_cli-1.2.2.tar.gz

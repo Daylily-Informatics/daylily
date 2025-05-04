@@ -5,11 +5,10 @@ ALIGNERS_UG = ["ug"]
 
 rule sentdhuo_snv:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
-        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
-        r1=getR1s,
-        r2=getR2s,
+        ont_cram=MDIR + "{sample}/align/ont/{sample}.ont.cram",
+        ont_crai=MDIR + "{sample}/align/ont/{sample}.ont.cram.crai",
+        ultima_cram=MDIR + "{sample}/align/ug/{sample}.ug.cram",
+        ultima_crai=MDIR + "{sample}/align/ug/{sample}.ug.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=temp(MDIR
