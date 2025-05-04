@@ -17,10 +17,10 @@ rule sentdhuo_snv:
         ont_crai=MDIR + "{sample}/align/ont/{sample}.ont.cram.crai",
         d=MDIR + "{sample}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
-     vcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.{alnr}.sentdhuo.{dchrm}.snv.vcf"),
-     tvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.{alnr}.sentdhuo.{dchrm}.snv.vcf.tmp"),
+     vcf=MDIR
+        + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.{alnr}.sentdhuo.{dchrm}.snv.sort.vcf.gz",
+     vcftbi=MDIR
+        + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.{alnr}.sentdhuo.{dchrm}.snv.sort.vcf.gz.tbi",
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdhuo/log/vcfs/{sample}.{alnr}.sentdhuo.{dchrm}.snv.log",
