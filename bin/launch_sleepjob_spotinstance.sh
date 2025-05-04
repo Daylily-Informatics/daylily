@@ -30,7 +30,28 @@ echo "  Comment    : $COMMENT"
 echo "  Partition  : $PARTITION"
 echo "  Threads    : $THREADS"
 
-sbatch --cpus-per-task "$THREADS" \
+sbcmd= """sbatch --cpus-per-task "$THREADS" \
        --comment "$COMMENT" \
        --partition "$PARTITION" \
        /opt/slurm/bin/sleep_test.sh
+"""
+
+echo "running : $sbcmd"
+
+$sbcmd
+
+
+sinfocmd="sinfo"
+echo "running sinfo command:"
+echo $sinfo
+$sinfo
+
+sleep 0.5
+
+sqcmd="squeue"
+
+echo "running queue monitor command:"
+echo $sqcmd
+$sqcmd
+
+
