@@ -96,7 +96,7 @@ rule sentdhuo_snv:
         LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
-            --sr_aln {params.ug_cram} \
+            --sr_aln {params.ug_cram[0]} \
             --lr_aln  {input.ont_cram} \
             -m  {params.model} \
             --lr_input_ref {params.huref} \
