@@ -96,17 +96,14 @@ rule sentdhuo_snv:
         LD_PRELOAD=$LD_PRELOAD sentieon-cli -v dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
-            --sr_r1_fastq {input.r1} \
-            --sr_r2_fastq {input.r2} \
-            --sr_readgroups "@RG\\tID:${{cram_sid}}-1\\tSM:${{cram_sid}}\\tLB:${{cram_sid}}-LB-1\\tPL:ILLUMINA" \
-            --lr_aln {input.cram} \
-            --lr_align_input \
+            --sr_aln {params.ug_cram} \
+            --lr_aln  {input.cram} \
+            -m  {params.model} \
             --lr_input_ref {params.huref} \
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
             --skip_multiqc \
-            -m {params.model} \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
 
