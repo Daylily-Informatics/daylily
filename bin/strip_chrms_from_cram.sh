@@ -61,6 +61,6 @@ sleep 62
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
 # Cleanup temporary directory (optional but recommended)
-rm ${TMPDIR}/filtered_header.sam
+rm ${TMPDIR}/filtered_header.sam ${TMPDIR}/filtered.cram
 
 echo "✅ Output CRAM written and indexed: $OUTPUT_CRAM"
