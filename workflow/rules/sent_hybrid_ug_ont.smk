@@ -100,7 +100,7 @@ rule sentdhuo_snv:
             -r {params.huref} \
             --sr_aln {input.ug_cram}
             --rgsm {params.cluster_sample} \
-            --lr_aln {input.cram} \
+            --lr_aln {input.ont_cram} \
             --sr_duplicate_marking none \
             --skip_svs \
             --skip_mosdepth \
