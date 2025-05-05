@@ -8,8 +8,7 @@ rule sentdhio_snv:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
-        r1=getR1s,
-        r2=getR2s,
+        sr_cram=MDIR + "{sample}/align/sent/{sample}.sent.cram",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=MDIR
@@ -89,13 +88,10 @@ rule sentdhio_snv:
         LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
-            --sr_r1_fastq {input.r1} \
-            --sr_r2_fastq {input.r2} \
-            --sr_readgroups "@RG\\tID:${{cram_sid}}-1\\tSM:${{cram_sid}}\\tLB:${{cram_sid}}-LB-1\\tPL:ILLUMINA" \
+            --sr_aln {input.sr_cram} \
+            --rgsm {params.cluster_sample} \
             --lr_aln {input.cram} \
-            --lr_align_input \
             --sr_duplicate_marking none \
-            --lr_input_ref {params.huref} \
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
