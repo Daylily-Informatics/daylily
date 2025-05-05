@@ -414,8 +414,8 @@ sentdont:
     bench_repeat: 0
     numactl: " "
     partition: "i192,i192mem"
-    dna_scope_snv_model: /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/DNAscopeONT2.1.bundle
-    dna_scope_apply_model: /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/DNAscopeONT2.1.bundle
+    dna_scope_snv_model: /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/DNAscopeONT2.1.bundle/diploid_model
+    dna_scope_apply_model: /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/DNAscopeONT2.1.bundle/diploid_model
     mem_mb: 200000
 
 sentdontr:
