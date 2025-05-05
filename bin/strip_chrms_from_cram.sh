@@ -9,7 +9,6 @@ usage() {
     exit 1
 }
 
-# Parse command-line options
 CORE_CHROMS=""
 while getopts ":i:n:o:c:t:x:" opt; do
     case ${opt} in
@@ -23,12 +22,10 @@ while getopts ":i:n:o:c:t:x:" opt; do
     esac
 done
 
-# Verify required arguments
 if [[ -z ${INPUT_CRAM+x} || -z ${NEW_REF+x} || -z ${OUTPUT_CRAM+x} ]]; then
     usage
 fi
 
-# Create temporary directory
 mkdir -p "$TMPDIR"
 
 # Create allowed chromosomes list if not provided
@@ -45,8 +42,11 @@ samtools view -H "$INPUT_CRAM" | \
         !/^@SQ/ {print}
     ' > "${TMPDIR}/filtered_header.sam"
 
-# Corrected final step (read from stdin "-")
-samtools reheader "${TMPDIR}/filtered_header.sam" "$INPUT_CRAM" | \
+# Reheader CRAM first (with header filtered)
+samtools reheader "${TMPDIR}/filtered_header.sam" "$INPUT_CRAM" > "${TMPDIR}/reheadered.cram"
+samtools index -@ "$THREADS" "${TMPDIR}/reheadered.cram"
+
+# Now correctly filter by chromosomes and remove XA/SA tags
 samtools view \
     -@ "$THREADS" \
     -C \
@@ -55,7 +55,9 @@ samtools view \
     --remove-tag SA \
     --write-index \
     -o "$OUTPUT_CRAM" \
-    - \
+    "${TMPDIR}/reheadered.cram" \
     $(cat "$CORE_CHROMS")
+
+# Cleanup intermediate files (optional)
 
 echo "✅ Output CRAM written and indexed: $OUTPUT_CRAM"
