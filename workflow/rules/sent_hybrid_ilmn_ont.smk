@@ -83,7 +83,7 @@ rule sentdhio_snv:
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
         fi
-        export cram_sid=$(samtools view -H results/day/hg38/ONT2_IOhyb-HG007_DBC0_0/align/ont/ONT2_IOhyb-HG007_DBC0_0.ont.cram | grep  '^@RG' | perl -pe 's/(^.*SM\:)(.*)(\w.*$)/$2/g;' | cut -d $'\t' -f 1 )
+        export cram_sid=$(samtools view -H {input.cram} | grep  '^@RG' | perl -pe 's/(^.*SM\:)(.*)(\w.*$)/$2/g;' | cut -d $'\t' -f 1 )
                 
 
         LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \

@@ -101,10 +101,11 @@ rule sentdhuo_snv:
             --lr_aln {input.ont_cram} \
             --lr_align_input \
             --lr_input_ref {params.huref} \
+            --sr_duplicate_marking none \
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
-            --rgsm "@RG\\tID:{params.cluster_sample}-1\\tSM:{params.cluster_sample}\\tLB:{params.cluster_sample}-LB-1\\tPL:ILLUMINA" \
+            --rgsm {params.cluster_sample} \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
 
