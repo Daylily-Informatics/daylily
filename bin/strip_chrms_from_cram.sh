@@ -46,8 +46,6 @@ samtools view -H "$INPUT_CRAM" | awk -v keep="$CORE_CHROMS" '
 ' > "${TMPDIR}/filtered_header.sam"
 
 # Directly stream reads through awk to samtools CRAM (FAST!)
-
-### START DO I REMOPVE ALL OF TIS
 (
     cat "${TMPDIR}/filtered_header.sam"
     samtools view -@ "$THREADS" -T "$ORIGINAL_REF" "$INPUT_CRAM" | \
@@ -65,14 +63,8 @@ samtools view -H "$INPUT_CRAM" | awk -v keep="$CORE_CHROMS" '
             } else print
         }'
 ) | samtools view -@ "$THREADS" -C -T "$NEW_REF" -o "$OUTPUT_CRAM"
-###END
 
-samtools view -@ "$THREADS" -C \
-  -T "$NEW_REF" \
-  -o "$OUTPUT_CRAM" \
-  --write-index \
-  "$INPUT_CRAM" $(grep '^>' "$NEW_REF" | sed 's/>//' | cut -f1 -d' ')
-
+sleep 62
 
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
