@@ -42,6 +42,7 @@ rule sent_snv_ug:
         model=config["sentdug"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
         use_threads=config["sentdug"]["use_threads"],
+        ug_ref="/fsx/data/genomic_data/organism_references/H_sapiens/hg38_broad/Homo_sapiens_assembly38.fasta",
     shell:
         """
 
@@ -82,7 +83,7 @@ rule sent_snv_ug:
             exit 3;
         fi
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon driver -t {params.use_threads} \
-            -r {params.huref} \
+            -r {params.ug_ref} \
             -i {input.cram} \
             --interval {params.schrm_mod} \
             --read_filter UltimaReadFilter \
@@ -92,7 +93,7 @@ rule sent_snv_ug:
             {output.gvcf} >> {log} 2>&1;
 
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon driver -t {params.use_threads} \
-            -r {params.huref} \
+            -r {params.ug_ref} \
             --algo DNAModelApply \
             --model {params.model} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;
