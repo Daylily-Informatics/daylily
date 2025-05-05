@@ -66,6 +66,5 @@ samtools view -H "$INPUT_CRAM" | awk -v keep="$CORE_CHROMS" '
 
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
-rm -rf "$TMPDIR"
 
 echo "✅ Output CRAM written and indexed: $OUTPUT_CRAM"
