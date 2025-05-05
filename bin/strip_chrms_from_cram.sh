@@ -56,6 +56,7 @@ samtools view \
 # Step 4: Apply new header to filtered CRAM (safe now that reads match header)
 samtools reheader "${TMPDIR}/filtered_header.sam" "${TMPDIR}/filtered.cram" > "$OUTPUT_CRAM"
 
+sleep 62
 # Step 5: Index your fully sanitized output
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
