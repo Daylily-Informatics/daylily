@@ -57,7 +57,7 @@ samtools view -H "$INPUT_CRAM" | awk -v keep="$CORE_CHROMS" '
                 $3="*";$4=0;$6="*";$7="*";$8=0
                 tags=""
                 for(i=12;i<=NF;i++)
-                    if($i!~/^(XA|SA|MC|NM|MD|AS|XS|RG|MQ|ms|ts):/)
+                    if($i!~/^(XA|SA):/)
                         tags=tags"\t"$i
                 print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11 tags
             } else print
