@@ -456,6 +456,7 @@ rule pre_prep_ultima_cram:
     shell:
         "(mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;"
         "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
+        "sleep 2;"
         "{params.c} {input[1]} {output.crai} >> {log} 2>&1;"
 
 
@@ -475,6 +476,7 @@ rule pre_prep_ont_cram:
     shell:
         "(mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;"
         "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
+        "sleep 2;"
         "{params.c} {input[1]} {output.crai} >> {log} 2>&1;"
 
 
@@ -489,4 +491,6 @@ rule prep_cram_inputs:  # TARGET: Just Pre
     output:
         "crams_staged",
     shell:
-        "touch  {output}"
+        "touch  {output.cram};"
+        "sleep 2;"
+        "touch {output.crai};"
