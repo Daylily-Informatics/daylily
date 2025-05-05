@@ -71,7 +71,6 @@ awk -v OFS='\t' -v keep="$CORE_CHROMS" '
 
 # Merge filtered header and alignments, convert to CRAM with increased memory for compression
 cat "${TMPDIR}/filtered_header.sam" "${TMPDIR}/filtered_alignments.sam" | \
-    samtools sort -@ "$THREADS" -m "$MEMORY" -T "$TMPDIR/sort_tmp" | \
     samtools view -@ "$THREADS" -C -T "$NEW_REF" -o "$OUTPUT_CRAM"
 
 sleep 2
