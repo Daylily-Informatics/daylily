@@ -28,13 +28,13 @@ fi
 
 mkdir -p "$TMPDIR"
 
-# Create allowed chromosomes list if not provided
+# Step 1: Create allowed chromosomes list
 if [[ -z "$CORE_CHROMS" ]]; then
     CORE_CHROMS="${TMPDIR}/allowed_chrms.txt"
     grep '^>' "$NEW_REF" | sed 's/>//' | cut -f1 -d' ' > "$CORE_CHROMS"
 fi
 
-# Create filtered header
+# Step 2: Create filtered header (only allowed chromosomes)
 samtools view -H "$INPUT_CRAM" | \
     awk -v keep="$CORE_CHROMS" '
         BEGIN {while(getline < keep) allowed[$1]=1}
@@ -42,22 +42,24 @@ samtools view -H "$INPUT_CRAM" | \
         !/^@SQ/ {print}
     ' > "${TMPDIR}/filtered_header.sam"
 
-# Reheader CRAM first (with header filtered)
-samtools reheader "${TMPDIR}/filtered_header.sam" "$INPUT_CRAM" > "${TMPDIR}/reheadered.cram"
-samtools index -@ "$THREADS" "${TMPDIR}/reheadered.cram"
-
-# Now correctly filter by chromosomes and remove XA/SA tags
+# Step 3: Filter alignments BEFORE reheadering and indexing (IMPORTANT!)
 samtools view \
     -@ "$THREADS" \
-    -C \
     -T "$NEW_REF" \
     --remove-tag XA \
     --remove-tag SA \
-    --write-index \
-    -o "$OUTPUT_CRAM" \
-    "${TMPDIR}/reheadered.cram" \
+    -C \
+    -o "${TMPDIR}/filtered.cram" \
+    "$INPUT_CRAM" \
     $(cat "$CORE_CHROMS")
 
-# Cleanup intermediate files (optional)
+# Step 4: Apply new header to filtered CRAM (safe now that reads match header)
+samtools reheader "${TMPDIR}/filtered_header.sam" "${TMPDIR}/filtered.cram" > "$OUTPUT_CRAM"
+
+# Step 5: Index your fully sanitized output
+samtools index -@ "$THREADS" "$OUTPUT_CRAM"
+
+# Cleanup temporary directory (optional but recommended)
+
 
 echo "✅ Output CRAM written and indexed: $OUTPUT_CRAM"
