@@ -94,6 +94,7 @@ rule sentdhio_snv:
             --sr_readgroups "@RG\\tID:${{cram_sid}}-1\\tSM:${{cram_sid}}\\tLB:${{cram_sid}}-LB-1\\tPL:ILLUMINA" \
             --lr_aln {input.cram} \
             --lr_align_input \
+            --sr_duplicate_marking none \
             --lr_input_ref {params.huref} \
             --skip_svs \
             --skip_mosdepth \
