@@ -89,8 +89,8 @@ rule sentdhio_snv:
             -t {params.use_threads} \
             -r  {params.huref} \
             --sr_aln {input.sr_cram} \
-            --rgsm {params.cluster_sample} \
             --lr_aln {input.cram} \
+            --rgsm {params.cluster_sample} \
             --sr_duplicate_marking none \
             --skip_svs \
             --skip_mosdepth \

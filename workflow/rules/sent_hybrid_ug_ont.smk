@@ -44,8 +44,6 @@ rule sentdhuo_snv:
         vcpu=config['sentdhuo']['threads'],
 	    mem_mb=config['sentdhuo']['mem_mb'],
     params:
-        ug_cram=get_ultima_cramsx,
-        ug_crai=get_ug_crai,
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdhuo"]["dna_scope_snv_model"],
@@ -92,39 +90,20 @@ rule sentdhuo_snv:
         else
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
-        fi
-        
+        fi   
 
         LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \
             -t {params.use_threads} \
             -r {params.huref} \
             --sr_aln {input.ug_cram}
-            --rgsm {params.cluster_sample} \
             --lr_aln {input.ont_cram} \
+            --rgsm {params.cluster_sample} \
             --sr_duplicate_marking none \
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
             -m {params.model} \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
-
-        #LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \
-        #    -t {params.use_threads} \
-        #    -r  {params.huref} \
-        #    --sr_aln {params.ug_cram[0]} \
-        #    -m  {params.model} \
-        #    --lr_input_ref {params.huref} \
-        #    --lr_aln {input.ont_cram} \
-        #    --lr_align_input \
-        #    --lr_input_ref {params.huref} \
-        #    --sr_duplicate_marking none \
-        #    --skip_svs \
-        #    --skip_mosdepth \
-        #    --skip_cnv \
-        #    --rgsm {params.cluster_sample} \
-        #    {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
-
-
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));
