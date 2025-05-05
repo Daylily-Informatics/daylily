@@ -79,7 +79,5 @@ sleep 2
 # Index the final CRAM
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
-# Cleanup
-rm -rf "${TMPDIR}"
 
 echo "✅ Output CRAM written and indexed: $OUTPUT_CRAM"
