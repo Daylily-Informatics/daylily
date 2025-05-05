@@ -91,6 +91,7 @@ rule sentdhio_snv:
             --sr_aln {input.sr_cram} \
             --lr_aln {input.cram} \
             --rgsm {params.cluster_sample} \
+            --sr_readgroups "@RG\\tID:{params.cluster_sample}\\tSM:{params.cluster_sample}\\tLB:{params.cluster_sample}-LB-1\\tPL:ILLUMINA" \
             --sr_duplicate_marking none \
             --skip_svs \
             --skip_mosdepth \
