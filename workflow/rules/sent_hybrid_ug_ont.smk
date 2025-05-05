@@ -15,6 +15,8 @@ rule sentdhuo_snv:
     input:
         ont_cram=MDIR + "{sample}/align/ont/{sample}.ont.cram",
         ont_crai=MDIR + "{sample}/align/ont/{sample}.ont.cram.crai",
+        ug_cram=MDIR + "{sample}/align/ug/{sample}.ug.cram",
+        ug_crai=MDIR + "{sample}/align/ug/{sample}.ug.cram.crai",
         d=MDIR + "{sample}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=MDIR
@@ -95,7 +97,7 @@ rule sentdhuo_snv:
 
         LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \
             -t {params.use_threads} \
-            -r  {params.huref} \
+            -r {params.huref} \
             --sr_aln {input.sr_cram}
             --rgsm {params.cluster_sample} \
             --lr_aln {input.cram} \
