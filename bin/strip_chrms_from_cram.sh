@@ -18,6 +18,7 @@ while getopts ":i:n:o:t:x:" opt; do
         o ) OUTPUT_CRAM=$OPTARG ;;
         t ) THREADS=$OPTARG ;;
         x ) TMPDIR=$OPTARG ;;
+        r) RG_ID=$OPTARG ;;
         * ) usage ;;
     esac
 done
