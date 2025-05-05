@@ -90,11 +90,9 @@ rule sent_snv_ontr:
             -r {params.huref} \
             -i {input.cram} \
             -m  {params.model} \
-            --tech ONT \
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
-            --skip_multiqc \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
         end_time=$(date +%s);

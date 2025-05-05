@@ -104,7 +104,6 @@ rule sentdhuo_snv:
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
-            --skip_multiqc \
             --rgsm "@RG\\tID:{params.cluster_sample}-1\\tSM:{params.cluster_sample}\\tLB:{params.cluster_sample}-LB-1\\tPL:ILLUMINA" \
             {params.diploid_bed} {params.haploid_bed} {output.vcf} >> {log} 2>&1;
 
