@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-# Usage: sanitize_core_chroms.sh -i <input.cram> -r <original_ref.fasta> -n <new_ref.fasta> -o <output.cram> [-c core_chromosomes.txt] [-t threads]
+# Usage: sanitize_core_chroms.sh -i <input.cram> -r <original_ref.fasta> -n <new_ref.fasta> -o <output.cram> [-c core_chromosomes.txt] [-t threads] [-m memory] [-x tmpdir]
 
 set -euo pipefail
 
+# Default parameters
 THREADS=$(nproc)
 CORE_CHROMS=""
-TMPDIR=$(mktemp -d)
+MEMORY="4G"
+TMPDIR="/fsx/scratch/sanitize_cram_$(date +%s)"
 
 usage() {
-    echo "Usage: $0 -i <input.cram> -r <original_ref.fasta> -n <new_ref.fasta> -o <output.cram> [-c core_chromosomes.txt] [-t threads]"
+    echo "Usage: $0 -i <input.cram> -r <original_ref.fasta> -n <new_ref.fasta> -o <output.cram> [-c core_chromosomes.txt] [-t threads] [-m memory] [-x tmpdir]"
     exit 1
 }
 
-while getopts ":i:r:n:o:c:t:" opt; do
+while getopts ":i:r:n:o:c:t:m:x:" opt; do
     case ${opt} in
         i ) INPUT_CRAM=$OPTARG ;;
         r ) ORIGINAL_REF=$OPTARG ;;
@@ -21,6 +23,8 @@ while getopts ":i:r:n:o:c:t:" opt; do
         o ) OUTPUT_CRAM=$OPTARG ;;
         c ) CORE_CHROMS=$OPTARG ;;
         t ) THREADS=$OPTARG ;;
+        m ) MEMORY=$OPTARG ;;
+        x ) TMPDIR=$OPTARG ;;
         * ) usage ;;
     esac
 done
@@ -28,6 +32,8 @@ done
 if [[ -z ${INPUT_CRAM+x} || -z ${ORIGINAL_REF+x} || -z ${NEW_REF+x} || -z ${OUTPUT_CRAM+x} ]]; then
     usage
 fi
+
+mkdir -p "$TMPDIR"
 
 # Generate allowed chromosome list from new reference if no explicit list provided
 if [[ -z "$CORE_CHROMS" ]]; then
@@ -63,10 +69,13 @@ awk -v OFS='\t' -v keep="$CORE_CHROMS" '
         } else print
     }' > "${TMPDIR}/filtered_alignments.sam"
 
-# Merge filtered header and filtered alignments
+# Merge filtered header and alignments, convert to CRAM with increased memory for compression
 cat "${TMPDIR}/filtered_header.sam" "${TMPDIR}/filtered_alignments.sam" | \
-samtools view -@ "$THREADS" -C -T "$NEW_REF" -o "$OUTPUT_CRAM"
+    samtools sort -@ "$THREADS" -m "$MEMORY" -T "$TMPDIR/sort_tmp" | \
+    samtools view -@ "$THREADS" -C -T "$NEW_REF" -o "$OUTPUT_CRAM"
+
 sleep 2
+
 # Index the final CRAM
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
