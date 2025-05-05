@@ -95,7 +95,7 @@ rule sentdhuo_snv:
         LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \
             -t {params.use_threads} \
             -r {params.huref} \
-            --sr_r1_fastq  <(samtools fastq -@ 6 {input.ug_cram}) \
+            --sr_aln {input.ug_cram} \
             --lr_aln {input.ont_cram} \
             --rgsm {params.cluster_sample} \
             --sr_readgroups "@RG\\tID:{params.cluster_sample}\\tSM:{params.cluster_sample}\\tLB:{params.cluster_sample}-LB-1\\tPL:ILLUMINA" \
