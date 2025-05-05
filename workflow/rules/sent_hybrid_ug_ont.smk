@@ -99,7 +99,7 @@ rule sentdhuo_snv:
             --sr_aln {input.ug_cram} \
             --lr_aln {input.ont_cram} \
             --rgsm {params.cluster_sample} \
-            --sr_duplicate_marking markdup \
+            --sr_duplicate_marking none \
             --skip_svs \
             --skip_mosdepth \
             --skip_cnv \
