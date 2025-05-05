@@ -27,6 +27,8 @@ fi
 samtools view -@ "$THREADS" -H "$INPUT_CRAM" | sed 's/PP:[^\t]*/PP:dummy/' > tmp_header.sam
 
 samtools reheader -P tmp_header.sam "$INPUT_CRAM" > "$OUTPUT_CRAM"
+
+sleep 2
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
 rm tmp_header.sam

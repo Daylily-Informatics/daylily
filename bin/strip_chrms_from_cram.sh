@@ -66,7 +66,7 @@ awk -v OFS='\t' -v keep="$CORE_CHROMS" '
 # Merge filtered header and filtered alignments
 cat "${TMPDIR}/filtered_header.sam" "${TMPDIR}/filtered_alignments.sam" | \
 samtools view -@ "$THREADS" -C -T "$NEW_REF" -o "$OUTPUT_CRAM"
-
+sleep 2
 # Index the final CRAM
 samtools index -@ "$THREADS" "$OUTPUT_CRAM"
 
