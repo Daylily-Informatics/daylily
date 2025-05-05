@@ -37,7 +37,16 @@ if [[ -z "$CORE_CHROMS" ]]; then
     grep '^>' "$NEW_REF" | sed 's/>//' | cut -f1 -d' ' > "$CORE_CHROMS"
 fi
 
-# Generate filtered CRAM file, removing unwanted tags and contigs
+# Create filtered header
+samtools view -H "$INPUT_CRAM" | \
+    awk -v keep="$CORE_CHROMS" '
+        BEGIN {while(getline < keep) allowed[$1]=1}
+        /^@SQ/ {split($2,a,":"); if(a[2] in allowed) print; next}
+        !/^@SQ/ {print}
+    ' > "${TMPDIR}/filtered_header.sam"
+
+# Corrected final step (read from stdin "-")
+samtools reheader "${TMPDIR}/filtered_header.sam" "$INPUT_CRAM" | \
 samtools view \
     -@ "$THREADS" \
     -C \
@@ -46,7 +55,7 @@ samtools view \
     --remove-tag SA \
     --write-index \
     -o "$OUTPUT_CRAM" \
-    "$INPUT_CRAM" \
+    - \
     $(cat "$CORE_CHROMS")
 
 echo "✅ Output CRAM written and indexed: $OUTPUT_CRAM"
