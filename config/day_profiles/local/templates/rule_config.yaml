@@ -125,6 +125,7 @@ strobe_align_sort:
     threads: 7
     strobe_threads: 7
     sort_threads: 7
+    tofq_threads: 2
     benchmark_runs: 0
     cmd: " OMP_NUM_THREADS=8 OMP_PROC_BIND=close OMP_PLACES=threads OMP_PROC_BIND=TRUE OMP_DYNAMIC=TRUE OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign "
     strobe_opts: "   -N 5   " 

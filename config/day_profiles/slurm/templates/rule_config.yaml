@@ -126,6 +126,7 @@ strobe_align_sort:
     threads: 192
     strobe_threads: 192
     sort_threads: 192
+    tofq_threads: 2
     mem_mb: 200000  # Should be set to calculate dyanamically by FASTQsize
     benchmark_runs: 0
     igz: "  igzip -cd -T 96 " #  was OMP_BIND_PROC=TRUE OMP_DYNAMIC=TRUE
