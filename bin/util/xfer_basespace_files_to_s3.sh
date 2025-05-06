@@ -1850,39 +1850,3 @@ fi
 echo "🧹 [$(date)] Cleaning up ${TMPDIR}"
 rm -rf "${TMPDIR}"
 echo "✅ [$(date)] Done for ${GIAB_SAMPLE}"
-Make it executable:
-
-chmod +x concat_upload_giab.sh
-🚨 Usage Example:
-Let's say you're uploading to s3://lsmc-illumina-public-data/concatenated_fastqs:
-
-./concat_upload_giab.sh NA24695 s3://lsmc-illumina-public-data/concatenated_fastqs
-Repeat for each GIAB sample (e.g., NA24695, NA24143, NA24694, etc.).
-
-You can parallelize multiple GIAB samples safely:
-
-echo -e "NA24695\nNA24143\nNA24694\nNA24631\nNA24149\nNA24385\nNA12878" \
- | parallel -j4 ./concat_upload_giab.sh {} s3://your-bucket/path/
-Adjust parallelism as desired.
-
-⚡ Why this is optimal:
-No disk bottlenecks (100% RAM)
-
-Direct streaming (minimal memory overhead)
-
-Simple cleanup (RAM space recovered immediately)
-
-You're now set up with a highly efficient, scalable, robust pipeline clearly tailored for your powerful hardware and desired workflow.
-
-
-
-
-
-
-Search
-
-Deep research
-
-
-
-ChatGPT can make mistakes. Check important info.
