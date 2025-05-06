@@ -51,7 +51,6 @@ rule sentdhuo_snv:
         haploid_bed=get_haploid_bed_arg,
         diploid_bed=get_diploid_bed_arg,
         use_threads=config["sentdhuo"]["use_threads"],
-        ug_ref="/fsx/data/genomic_data/organism_references/H_sapiens/hg38_broad/Homo_sapiens_assembly38.fasta",
     shell:
         """
 
