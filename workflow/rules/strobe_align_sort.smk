@@ -2,7 +2,7 @@ import os
 ####### strobe aligner
 
 
-if os.environ.get("DAY_STROBE_TOGGLE") == "":
+if os.environ.get("DAY_STROBE_TOGGLE","") == "":
 
 
     rule strobe_align_sort_bam:
