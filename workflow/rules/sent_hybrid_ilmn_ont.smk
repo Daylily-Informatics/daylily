@@ -7,7 +7,6 @@ rule sentdhio_snv:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
-        DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         sr_cram=MDIR + "{sample}/align/sent/{sample}.sent.cram",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.ready",
     output:
