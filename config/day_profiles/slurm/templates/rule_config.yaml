@@ -116,7 +116,7 @@ bwa_mem2a_aln_sort:
     benchmark_runs: 0
     cmd: " OMP_NUM_THREADS=192 OMP_PLACES=threads OMP_PROC_BIND=close OMP_DYNAMIC=true OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE  resources/bwa-mem2/bwa-mem2 "  # removed  OMP_PROC_BIND=close 
     bwa_opts: "  -k 19 -Y -M -K 1000000000  "
-    sort_thread_mem: "3640M"
+    sort_thread_mem: "1024M"
     mbuffer: " | mbuffer -m 10G -q -s 1M " 
     constraint: ""  # --constraint 'm7gb768|r7gb1536' 
 
@@ -132,7 +132,7 @@ strobe_align_sort:
     igz: "  igzip -cd -T 96 " #  was OMP_BIND_PROC=TRUE OMP_DYNAMIC=TRUE
     cmd: "  OMP_NUM_THREADS=192 OMP_PLACES=threads OMP_PROC_BIND=close OMP_DYNAMIC=true OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE resources/strobealign/bin/strobealign  " # removed  OMP_PROC_BIND=close
     strobe_opts: " -N 5   " 
-    sort_thread_mem: "3640M"  
+    sort_thread_mem: "1024M"  
     mbuffer: "  | mbuffer -m 10G -q -s 1M "
     constraint: ""  # " --constraint 'm7gb768|r7gb1536' "
 
@@ -553,7 +553,7 @@ sentieon:
     partition: "i192mem"
     sort_threads: 192
     igz: "  igzip -cd -T 32 "
-    sort_thread_mem: "2600M" 
+    sort_thread_mem: "1024M" 
     mbuffer: " | mbuffer -m 10G -q -s 1M "
     bwa_model: "/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/SentieonIlluminaWGS2.2.bundle/bwa.model"
     constraint: ""  # " --constraint 'm7gb768|r7gb1536' "
