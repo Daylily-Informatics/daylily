@@ -19,6 +19,8 @@ if "dppl" in DDUP:
         output:
             cram="{MDIR}{sample}/align/{alnr}/{sample}.{alnr}.cram",
             crai="{MDIR}{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        wildcard_constraints:
+            alnr="|".join(OG_ALIGNERS)
         threads: config["doppelmark"]["threads"]
         benchmark:
             repeat("{MDIR}{sample}/benchmarks/{sample}.{alnr}.mrkdup.bench.tsv", 0)
