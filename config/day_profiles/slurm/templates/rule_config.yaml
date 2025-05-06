@@ -176,21 +176,21 @@ duphold:
 doppelmark:
     threads: 192
     doppelmark_threads: 192
-    view_threads: 32
+    view_threads: 8
     view_mem: "80G"
-    mbuffer_mem: "8G"
+    mbuffer_mem: "1G"
     partition: "i192mem"
     mem_mb: 200000 ## potentially this can be set to by dynamic by input bam size
-    clip_padding: 1000  # 600000
-    shard_size: 70000000
+    clip_padding: 800  # 600000
+    shard_size: 50000000
     min_bases: 20000
-    queue_length: 1500  # 5000
+    queue_length: 1250  # 5000
     cram_compression: 1
     ld_preload: "  "
     compress_threads: 96
     compress_mem: "2750M"
     env_yaml: "../envs/vanilla_v0.1.yaml"
-    dop_opts:  " -max-depth 10000 "
+    dop_opts:  " -max-depth 3000 "
     numa: " OMP_NUM_THREADS=192 OMP_PROC_BIND=close OMP_PLACES=threads OMP_DYNAMIC=true OMP_MAX_ACTIVE_LEVELS=1 OMP_SCHEDULE=dynamic OMP_WAIT_POLICY=ACTIVE "
     constraint: ""  # " --constraint 'm7gb768|r7gb1536' "
 
