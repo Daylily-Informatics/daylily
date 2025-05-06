@@ -1,6 +1,6 @@
 ####### strobe aligner
 
-rule strobe_align_sort:
+rule strobe_align_sort_bam:
     """https://github.com/ksahlin/strobealign"""
     
     input:
@@ -90,7 +90,7 @@ rule strobe_align_sort:
         """
 
 
-rule strobe_align_sort:
+rule strobe_align_sort_cram:
     """https://github.com/ksahlin/strobealign"""
     
     input:
