@@ -15,7 +15,7 @@ rule sentdhio_snv:
         tbi=MDIR
             + "{sample}/align/{alnr}/snv/sentdhio/vcfs/{dchrm}/{sample}.{alnr}.sentdhio.{dchrm}.snv.sort.vcf.gz.tbi",           
     wildcard_constraints:
-        alnr="|".join(CRAM_ALIGNERS)
+        alnr="|".join(ALIGNERS_ONT)
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdhio/log/vcfs/{sample}.{alnr}.sentdhio.{dchrm}.snv.log",
@@ -126,6 +126,8 @@ rule sentdhio_concat_fofn:
         + "{sample}/align/{alnr}/snv/sentdhio/{sample}.{alnr}.sentdhio.snv.concat.vcf.gz.fofn",
         tmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/sentdhio/{sample}.{alnr}.sentdhio.snv.concat.vcf.gz.fofn.tmp",
     threads: 1
+    wildcard_constraints:
+        alnr="|".join(ALIGNERS_ONT)
     resources:
         threads=1
     params:
@@ -169,6 +171,8 @@ rule sentdhio_concat_index_chunks:
         threads=64,
         partition="i192,i192mem,i128"
     priority: 47
+    wildcard_constraints:
+        alnr="|".join(ALIGNERS_ONT)
     params:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
@@ -263,7 +267,7 @@ rule prep_sentdhio_chunkdirs:
         ),
     threads: 1
     wildcard_constraints:
-        alnr="|".join(CRAM_ALIGNERS)
+        alnr="|".join(ALIGNERS_ONT)
     log:
         MDIR + "{sample}/align/{alnr}/snv/sentdhio/logs/{sample}.{alnr}.chunkdirs.log",
     shell:
