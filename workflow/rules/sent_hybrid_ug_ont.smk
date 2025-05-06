@@ -20,19 +20,19 @@ rule sentdhuo_snv:
         d=MDIR + "{sample}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{sample}.ready",
     output:
      vcf=MDIR
-        + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.{alnr}.sentdhuo.{dchrm}.snv.sort.vcf.gz",
+        + "{sample}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{sample}.ont.sentdhuo.{dchrm}.snv.sort.vcf.gz",
      vcftbi=MDIR
-        + "{sample}/align/{alnr}/snv/sentdhuo/vcfs/{dchrm}/{sample}.{alnr}.sentdhuo.{dchrm}.snv.sort.vcf.gz.tbi",
+        + "{sample}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{sample}.ont.sentdhuo.{dchrm}.snv.sort.vcf.gz.tbi",
     log:
         MDIR
-        + "{sample}/align/{alnr}/snv/sentdhuo/log/vcfs/{sample}.{alnr}.sentdhuo.{dchrm}.snv.log",
+        + "{sample}/align/ont/snv/sentdhuo/log/vcfs/{sample}.ont.sentdhuo.{dchrm}.snv.log",
     threads: config['sentdhuo']['threads']
     conda:
         "../envs/sentieonHybrid_v0.1.yaml"
     priority: 45
     benchmark:
         repeat(
-            MDIR + "{sample}/benchmarks/{sample}.{alnr}.sentdhuo.{dchrm}.bench.tsv",
+            MDIR + "{sample}/benchmarks/{sample}.ont.sentdhuo.{dchrm}.bench.tsv",
             0
             if "bench_repeat" not in config["sentdhuo"]
             else config["sentdhuo"]["bench_repeat"],
@@ -123,25 +123,25 @@ rule sentdhuo_concat_fofn:
         chunk_tbi=sorted(
             expand(
                 MDIR
-                + "{{sample}}/align/{{alnr}}/snv/sentdhuo/vcfs/{ochm}/{{sample}}.{{alnr}}.sentdhuo.{ochm}.snv.sort.vcf.gz.tbi",
+                + "{{sample}}/align/ont/snv/sentdhuo/vcfs/{ochm}/{{sample}}.ont.sentdhuo.{ochm}.snv.sort.vcf.gz.tbi",
                 ochm=SENTDHUO_CHRMS,            ),            key=lambda x: float(                str(x.replace("~", ".").replace(":", "."))               .split("vcfs/")[1]                .split("/")[0]                .split("-")[0]            ),        ),
     # This expand pattern is neat.  the escaped {} remain acting as a snakemake wildcard and expect to be derived from the dag, while th dchrm wildcard is effectively being constrained by the values in the sentdhuo_CHRMS array;  So you produce 1 input array of files for every sample+dchrm parir, with one list string/file name per array.  The rule will only begin when all array members are produced. It's then sorted by first sentdhuochrm so they can be concatenated w/out another soort as all the chunks had been sorted already.
     priority: 44
     output:
         fin_fofn=MDIR
-        + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.concat.vcf.gz.fofn",
-        tmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.concat.vcf.gz.fofn.tmp",
+        + "{sample}/align/ont/snv/sentdhuo/{sample}.ont.sentdhuo.snv.concat.vcf.gz.fofn",
+        tmp_fofn=MDIR        + "{sample}/align/ont/snv/sentdhuo/{sample}.ont.sentdhuo.snv.concat.vcf.gz.fofn.tmp",
     threads: 1
     resources:
         threads=1
     params:
-        fn_stub="{sample}.{alnr}.sentdhuo."
+        fn_stub="{sample}.ont.sentdhuo."
     benchmark:
-        MDIR + "{sample}/benchmarks/{sample}.{alnr}.sentdhuo.concat.fofn.bench.tsv"
+        MDIR + "{sample}/benchmarks/{sample}.ont.sentdhuo.concat.fofn.bench.tsv"
     conda:
         "../envs/vanilla_v0.1.yaml"
     log:
-        MDIR + "{sample}/align/{alnr}/snv/sentdhuo/log/{sample}.{alnr}.sentdhuo.cocncat.fofn.log",
+        MDIR + "{sample}/align/ont/snv/sentdhuo/log/{sample}.ont.sentdhuo.cocncat.fofn.log",
     shell:
         """
 
@@ -157,17 +157,17 @@ rule sentdhuo_concat_fofn:
 rule sentdhuo_concat_index_chunks:
     input:
         fofn=MDIR
-        + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.concat.vcf.gz.fofn",
+        + "{sample}/align/ont/snv/sentdhuo/{sample}.ont.sentdhuo.snv.concat.vcf.gz.fofn",
     output:
         vcfgz=touch(
-            MDIR + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz"
+            MDIR + "{sample}/align/ont/snv/sentdhuo/{sample}.ont.sentdhuo.snv.sort.vcf.gz"
         ),
         vcfgztemp=temp(
-            MDIR + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.temp.vcf.gz"
+            MDIR + "{sample}/align/ont/snv/sentdhuo/{sample}.ont.sentdhuo.snv.sort.temp.vcf.gz"
         ),
         vcfgztbi=touch(
             MDIR
-            + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz.tbi"
+            + "{sample}/align/ont/snv/sentdhuo/{sample}.ont.sentdhuo.snv.sort.vcf.gz.tbi"
         ),
     threads: 64
     resources:
@@ -181,12 +181,12 @@ rule sentdhuo_concat_index_chunks:
     resources:
         attempt_n=lambda wildcards, attempt:  (attempt + 0)
     benchmark:
-        MDIR + "{sample}/benchmarks/{sample}.{alnr}.sentdhuo.merge.bench.tsv"
+        MDIR + "{sample}/benchmarks/{sample}.ont.sentdhuo.merge.bench.tsv"
     conda:
         "../envs/vanilla_v0.1.yaml"
     log:
         MDIR
-        + "{sample}/align/{alnr}/snv/sentdhuo/log/{sample}.{alnr}.sentdhuo.snv.merge.sort.gatherered.log",
+        + "{sample}/align/ont/snv/sentdhuo/log/{sample}.ont.sentdhuo.snv.merge.sort.gatherered.log",
     shell:
         """
 
@@ -214,9 +214,8 @@ localrules:
 rule clear_combined_sentdhuo_vcf:  # TARGET:  clear combined sentdhuo vcf so the chunks can be re-evaluated if needed.
     input:
         expand(
-            MDIR + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz",
-            sample=SSAMPS,
-            alnr=ALIGNERS_UG,
+            MDIR + "{sample}/align/ont/snv/sentdhuo/{sample}.ont.sentdhuo.snv.sort.vcf.gz",
+            sample=SSAMPS
         ),
     threads: 2
     priority: 42
@@ -234,9 +233,8 @@ rule produce_sentdhuo_vcf:  # TARGET: sentieon dnascope vcf
     input:
         expand(
             MDIR
-            + "{sample}/align/{alnr}/snv/sentdhuo/{sample}.{alnr}.sentdhuo.snv.sort.vcf.gz.tbi",
+            + "{sample}/align/ont/snv/sentdhuo/{sample}.ont.sentdhuo.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS_UG,
         ),
     output:
         "gatheredall.sentdhuo",
@@ -257,16 +255,16 @@ localrules:
 
 rule prep_sentdhuo_chunkdirs:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        cram=MDIR + "{sample}/align/ont/{sample}.ont.cram",
+        crai=MDIR + "{sample}/align/ont/{sample}.ont.cram.crai",
     output:
         expand(
-            MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhuo/vcfs/{dchrm}/{{sample}}.ready",
+            MDIR + "{{sample}}/align/ont/snv/sentdhuo/vcfs/{dchrm}/{{sample}}.ready",
             dchrm=SENTDHUO_CHRMS,
         ),
     threads: 1
     log:
-        MDIR + "{sample}/align/{alnr}/snv/sentdhuo/logs/{sample}.{alnr}.chunkdirs.log",
+        MDIR + "{sample}/align/ont/snv/sentdhuo/logs/{sample}.ont.chunkdirs.log",
     shell:
         """
         ( echo {output}  ;
