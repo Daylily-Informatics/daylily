@@ -262,6 +262,8 @@ rule prep_sentdhio_chunkdirs:
             dchrm=SENTDHIO_CHRMS,
         ),
     threads: 1
+    wildcard_constraints:
+        alnr="|".join(CRAM_ALIGNERS)
     log:
         MDIR + "{sample}/align/{alnr}/snv/sentdhio/logs/{sample}.{alnr}.chunkdirs.log",
     shell:
