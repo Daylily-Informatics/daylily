@@ -94,7 +94,7 @@ rule strobe_align_sort_cram:
     """https://github.com/ksahlin/strobealign"""
     
     input:
-        cram=MDIR+"{sample}/ug/{alnr}/{sample}.ug.cram",
+        cram=MDIR+"{sample}/align/ug/{sample}.ug.cram",
         crai=MDIR+"{sample}/align/ug/{sample}.ug.cram.crai",
     output:
         bami=temp(MDIR + "{sample}/align/strobe/{sample}.strobe.sort.bam.bai"),
