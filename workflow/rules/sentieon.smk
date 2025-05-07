@@ -98,11 +98,11 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
          {params.subsample_head} <( {params.igz} -q  {input.f2} )  {params.subsample_tail} {params.mbuffer} \
         | /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon  util sort \
         -t  {params.sort_threads} \
-        --temp-directory $TMPDIR \
         --reference {params.huref} \
         --cram_write_options version=3.0,compressor=rans,lazy_quality=true \
         --sortblock_thread_count {params.sort_threads} \
         --bam_compression 1 \
+	--temp_dir $tdir \
         --intermediate_compress_level 1  \
         --block_size {params.sort_thread_mem}   \
         --sam2bam \
