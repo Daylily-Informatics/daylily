@@ -15,7 +15,7 @@ rule alignstats_gather:
             MDIR
             + "{sample}/align/{alnr}/alignqc/alignstats/{sample}.{alnr}.alignstats.tsv",
             sample=SSAMPS,
-            alnr=CRAM_ALIGNERS,
+            alnr=ALL_ALIGNERS,
             caller=sv_CALLERS,
         ),
     output:
