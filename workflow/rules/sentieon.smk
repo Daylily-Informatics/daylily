@@ -72,7 +72,7 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
         
         timestamp=$(date +%Y%m%d%H%M%S);
-        TMPDIR=/tmp/shm/sentieon_tmp_$timestamp;
+        TMPDIR=/dev/shm/sentieon_tmp_$timestamp;
         mkdir -p $TMPDIR;
         APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
@@ -102,7 +102,7 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         --cram_write_options version=3.0,compressor=rans,lazy_quality=true \
         --sortblock_thread_count {params.sort_threads} \
         --bam_compression 1 \
-	--temp_dir $tdir \
+	    --temp_dir $TMPDIR \
         --intermediate_compress_level 1  \
         --block_size {params.sort_thread_mem}   \
         --sam2bam \
