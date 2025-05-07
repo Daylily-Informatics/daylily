@@ -236,14 +236,15 @@ for s in samples["sample"]:
     if s not in config["samp_fq_size"]:
         config["samp_fq_size"][s] = 0.0
         for r1f in samples.loc[s, ("r1_path")]:
-            try:
-                config["samp_fq_size"][s] += float(
-                    float(os.path.getsize(r1f)) / 1000000000.0
-                )  # Norm to GB
-            except Exception as e:
-                print(e, file=sys.stderr)
-
- 
+            if rif in ["","na", None]:
+                pass
+            else:
+                try:
+                    config["samp_fq_size"][s] += float(
+                        float(os.path.getsize(r1f)) / 1000000000.0
+                    )  # Norm to GB
+                except Exception as e:
+                    print(e, file=sys.stderr)
 
 # added to cluster name to uniquely identify sets of jobs from the same snakemake execution
 ri2 = random.randint(0, 999)
@@ -432,9 +433,9 @@ def get_raw_R2s(wildcards):
 def get_fastq_r1_r2(wildcards):
     # generate filepaths corresponding to {sample} : {RR} combos
     if wildcards.RR == "R1":
-        return os.path.abspath(samples.loc[wildcards.sample, "r1_path"])
+        return None if samples.loc[wildcards.sample, "r1_path"] in ["na","",None] else os.path.abspath(samples.loc[wildcards.sample, "r1_path"])
     elif wildcards.RR == "R2":
-        return os.path.abspath(samples.loc[wildcards.sample, "r2_path"])
+        return  None if samples.loc[wildcards.sample, "r1_path"] in ["na","",None] else os.path.abspath(samples.loc[wildcards.sample, "r2_path"])
     else:
         raise ValueError(f"invalid value: {wildcards.RR}")
 
