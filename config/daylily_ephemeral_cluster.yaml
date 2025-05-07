@@ -14,3 +14,4 @@ ephemeral_cluster:
     max_count_8I: 1 # max number of spots of this cpu size to request
     max_count_128I: 12 # max number of spots of this cpu size to request
     max_count_192I: 16 # max number of spots of this cpu size to request
+    headnode_instance_type: r7i.2xlarge # r7i.2xlarge(tested with this) r7i.4xlarge r7i.8xlarge r7i.16xlarge
