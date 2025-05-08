@@ -73,6 +73,8 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         
         timestamp=$(date +%Y%m%d%H%M%S);
         TMPDIR=/dev/shm/sentieon_tmp_$timestamp;
+        export SENTIEON_TEMP_DIR=$TMPDIR;
+
         mkdir -p $TMPDIR;
         APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;

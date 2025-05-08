@@ -53,6 +53,8 @@ rule sent_snv_ugr:
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdugr_tmp_$timestamp;
+        export SENTIEON_TEMP_DIR=$TMPDIR;
+
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
