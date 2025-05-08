@@ -337,7 +337,7 @@ octopus:
 
 sentdhio:
     threads: 192
-    use_threads: 190
+    use_threads: 188
     hg38_sentdhio_chrms: "1-24"
     hg38_broad_sentdhio_chrms: "1-24"
     b37_sentdhio_chrms: "1-24" #"19,21" # "1-24"
@@ -353,7 +353,7 @@ sentdhio:
 
 sentdhuo:
     threads: 192
-    use_threads: 190
+    use_threads: 188
     hg38_sentdhuo_chrms: "1-24"
     hg38_broad_sentdhuo_chrms: "1-24"
     b37_sentdhuo_chrms: "1-24" #"19,21" # "1-24"
