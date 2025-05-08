@@ -101,7 +101,7 @@ rule sentdhuo_snv:
             exit 3;
         fi   
 
-        LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \
+        LD_PRELOAD=$LD_PRELOAD sentieon-cli --debug --verbose dnascope-hybrid \
             -t {params.use_threads} \
             -r {params.huref} \
             --sr_aln {input.ug_cram} \
@@ -112,7 +112,7 @@ rule sentdhuo_snv:
             --skip_mosdepth \
             --skip_cnv \
             -m {params.model} \
-            {params.diploid_bed} {output.vcf} >> {log} 2>&1;
+            {params.diploid_bed} {output.vcf};
 
         end_time=$(date +%s);
     	elapsed_time=$((($end_time - $start_time) / 60));
