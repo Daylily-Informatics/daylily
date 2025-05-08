@@ -51,10 +51,12 @@ rule sentdhuo_snv:
         haploid_bed=get_haploid_bed_arg,
         diploid_bed=get_diploid_bed_arg,
         use_threads=config["sentdhuo"]["use_threads"],
+        max_mem=config["sentdhuo"]["max_mem"],
     shell:
         """
 
         export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/
+        bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/dev/shm/sentdhuo_tmp_$timestamp;

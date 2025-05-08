@@ -356,6 +356,7 @@ sentdhio:
     partition: "i192,i192mem"
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/HybridIlluminaONT1.1.bundle"
     mem_mb: 200000
+    max_mem: "4G"
 
 sentdhuo:
     threads: 7
@@ -371,6 +372,7 @@ sentdhuo:
     partition: "i192,i192mem"
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/HybridUltimaONT1.0.model.bundle"
     mem_mb: 200000
+    max_mem: "4G"
 
 sentdug:
     threads: 7
