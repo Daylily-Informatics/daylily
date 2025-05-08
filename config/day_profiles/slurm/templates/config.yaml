@@ -27,7 +27,6 @@ default-resources:
   - constraint=''
   - exclude=''
   - include=''
-  - tmpdir='/dev/shm'
 jobs: 300
 cores: 4608  # SET TO AWS QUOTA LIMIT minus HEADNODE and other running ec2 spot instances
 latency-wait: 100
