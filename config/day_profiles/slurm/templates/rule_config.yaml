@@ -346,7 +346,7 @@ sentdhio:
     sentD_gather_env: "../envs/sentieon_v0.1.yaml"
     bench_repeat: 0
     numactl: " "
-    partition: "i192bigmem"
+    partition: "i192mem"
     dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/HybridIlluminaONT1.1.bundle"
     mem_mb: 200000
     max_mem: "140G"
