@@ -591,7 +591,9 @@ verifybamid2_contam:
     partition: "i8"
 
 gen_samstats:
-    threads: 7
+    threads: 8
+    run_threadsa: 6
+    run_threadsb: 1 # will be x2
     ld_preload: "   "
     partition: "i8"
 
