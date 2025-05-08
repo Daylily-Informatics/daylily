@@ -44,8 +44,9 @@ rule sent_snv_ont:
         use_threads=config['sentdont']['use_threads'],
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdont"]["dna_scope_snv_model"],
-	model_2=config["sentdont"]["dna_scope_apply_model"],
+    	model_2=config["sentdont"]["dna_scope_apply_model"],
         cluster_sample=ret_sample,
+        max_mem="180G"
     shell:
         """
 
@@ -55,6 +56,7 @@ rule sent_snv_ont:
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         tdir=$TMPDIR;
+        export bwt_max_mem={params.max_mem} ;
 
         if [ -z "$SENTIEON_LICENSE" ]; then
             echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well." >> {log} 2>&1;

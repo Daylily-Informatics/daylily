@@ -48,7 +48,7 @@ rule sentdhio_snv:
     shell:
         """
         export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/
-        bwt_max_mem={params.max_mem} ;
+        export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdhio_tmp_$timestamp;

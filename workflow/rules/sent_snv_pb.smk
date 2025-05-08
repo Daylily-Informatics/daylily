@@ -41,8 +41,10 @@ rule sent_snv_pacbio:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdpb"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
+        max_mem="180G"
     shell:
         """
+        export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdpb_tmp_$timestamp;

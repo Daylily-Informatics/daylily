@@ -29,10 +29,13 @@ if "sent" in DDUP:
             threads=config['sentieon']['threads'],
             partition=config['sentieon']['partition'],
             vcpu=config['sentieon']['threads'],
+            mem_mb="160G",
         log:
             "{MDIR}{sample}/align/{alnr}/logs/dedupe.{sample}.{alnr}.log",
         shell:
             """     
+            export bwt_max_mem={params.max_mem} ;
+
             if [ -z "$SENTIEON_LICENSE" ]; then
                 echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well." >> {log} 2>&1;
                 exit 3;

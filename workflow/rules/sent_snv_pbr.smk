@@ -43,8 +43,10 @@ rule sent_snv_pacbio:
         cluster_sample=ret_sample,
         haploid_bed=get_haploid_bed_arg,
         diploid_bed=get_diploid_bed_arg,
+        max_mem="180G"
     shell:
         """
+        export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdpbr_tmp_$timestamp;

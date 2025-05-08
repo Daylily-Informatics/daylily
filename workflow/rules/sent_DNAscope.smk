@@ -40,8 +40,10 @@ rule sent_DNAscope:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentD"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
+        max_mem="100G"
     shell:
         """
+        export bwt_max_mem={params.max_mem} ;
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentd_tmp_$timestamp;
         mkdir -p $TMPDIR;

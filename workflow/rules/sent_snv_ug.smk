@@ -42,8 +42,10 @@ rule sent_snv_ug:
         model=config["sentdug"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
         use_threads=config["sentdug"]["use_threads"],
+        max_mem="180G",
     shell:
         """
+        export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdug_tmp_$timestamp;

@@ -66,7 +66,7 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         itype=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type);
         echo "INSTANCE TYPE: $itype" > {log};
         start_time=$(date +%s);
-        bwt_max_mem={params.max_mem} ;
+        export bwt_max_mem={params.max_mem} ;
         epocsec=$(date +'%s');
 
         ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
