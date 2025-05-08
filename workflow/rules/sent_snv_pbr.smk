@@ -47,7 +47,7 @@ rule sent_snv_pacbio:
         """
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/sentdpb_tmp_$timestamp;
+        export TMPDIR=/fsx/scratch/sentdpbr_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
