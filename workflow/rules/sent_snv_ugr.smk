@@ -53,7 +53,7 @@ rule sent_snv_ugr:
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdugr_tmp_$timestamp;
-        export SENTIEON_TEMP_DIR=$TMPDIR;
+        export SENTIEON_TMPDIR=$TMPDIR;
 
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;

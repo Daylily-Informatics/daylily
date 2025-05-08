@@ -53,6 +53,11 @@ rule sentdhio_snv:
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/dev/shm/sentdhio_tmp_$timestamp;
         export SENTIEON_TEMP_DIR=$TMPDIR;
+        export SENTIEON_TMPDIR=$TMPDIR;
+        export TEMPDIR=$TMPDIR;
+        export TEMP_DIR=$TMPDIR;
+        export SENTIEON_TMP_DIR=$TMPDIR;
+        export SENTIEON_TMPDIR=$TMPDIR;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;

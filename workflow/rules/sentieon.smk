@@ -73,7 +73,7 @@ rule sentieon_bwa_sort:  #TARGET: sent bwa sort
         
         timestamp=$(date +%Y%m%d%H%M%S);
         TMPDIR=/dev/shm/sentieon_tmp_$timestamp;
-        export SENTIEON_TEMP_DIR=$TMPDIR;
+        export SENTIEON_TMPDIR=$TMPDIR;
 
         mkdir -p $TMPDIR;
         APPTAINER_HOME=$TMPDIR;

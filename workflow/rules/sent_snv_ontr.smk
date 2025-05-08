@@ -54,7 +54,7 @@ rule sent_snv_ontr:
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdontr_tmp_$timestamp;
         mkdir -p $TMPDIR;
-        export SENTIEON_TEMP_DIR=$TMPDIR;
+        export SENTIEON_TMPDIR=$TMPDIR;
 
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
