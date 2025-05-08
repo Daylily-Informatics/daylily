@@ -104,7 +104,7 @@ ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -
     " $daylily_image_cmd " 
 
 # Clone the Daylily repository to the head node
-echo "Cloning Daylily repository usibng https to the head node ~/projects"
+echo "Cloning Daylily repository using https to the head node ~/projects"
 ssh -i "$pem_file" ubuntu@"$cluster_ip_address"  -o StrictHostKeyChecking=no   -o UserKnownHostsFile=/dev/null \
     "sudo su - $duser -c 'mkdir -p ~/projects && cd ~/projects &&  git clone -b ${git_tag} ${git_repo} daylily'"
 
