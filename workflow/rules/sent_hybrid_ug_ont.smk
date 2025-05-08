@@ -43,6 +43,7 @@ rule sentdhuo_snv:
         threads=config['sentdhuo']['threads'],
         vcpu=config['sentdhuo']['threads'],
 	    mem_mb=config['sentdhuo']['mem_mb'],
+        tmpdir="/dev/shm",
     params:
         schrm_mod=get_dchrm_day,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
