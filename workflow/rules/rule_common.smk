@@ -236,7 +236,7 @@ for s in samples["sample"]:
     if s not in config["samp_fq_size"]:
         config["samp_fq_size"][s] = 0.0
         for r1f in samples.loc[s, ("r1_path")]:
-            if rif in ["","na", None]:
+            if r1f in ["","na", None]:
                 pass
             else:
                 try:
