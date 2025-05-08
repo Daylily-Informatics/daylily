@@ -62,6 +62,7 @@ rule sentdhuo_snv:
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/dev/shm/sentdhuo_tmp_$timestamp;
         export SENTIEON_TEMP_DIR=$TMPDIR;
+        export SENTIEON_TMPDIR=$TMPDIR;
         export TEMPDIR=$TMPDIR;
         export TEMP_DIR=$TMPDIR;
         export SENTIEON_TMP_DIR=$TMPDIR;
