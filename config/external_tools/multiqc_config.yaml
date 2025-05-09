@@ -2,7 +2,7 @@ intro_text: ""
 
 custom_logo: "resources/mqcimg/lsmc_git.jpeg"
 custom_logo_url: "https://github.com/Daylily-Informatics/daylily"
-custom_logo_title: "daylily ephemeral informatics framework"
+custom_logo_title: "daylily ephemeral cluster"
 
 max_table_rows: 2200
 decimalPoint_format: "."
