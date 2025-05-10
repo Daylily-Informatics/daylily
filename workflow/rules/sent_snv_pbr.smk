@@ -41,6 +41,7 @@ rule sent_snv_pacbio_realign:
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdpbr"]["dna_scope_snv_model"],
         cluster_sample=ret_sample,
+        use_threads=config["sentdpbr"]["use_threads"],
         haploid_bed=get_haploid_bed_arg,
         diploid_bed=get_diploid_bed_arg,
         max_mem="180G"
