@@ -48,7 +48,7 @@ rule sent_snv_ug:
         export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/sentdug_tmp_$timestamp;
+        export TMPDIR=/dev/shm/sentdug_tmp_$timestamp;
         export SENTIEON_TMPDIR=$TMPDIR;
 
         mkdir -p $TMPDIR;

@@ -52,7 +52,7 @@ rule sent_snv_ontr:
         export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/sentdontr_tmp_$timestamp;
+        export TMPDIR=/dev/shm/sentdontr_tmp_$timestamp;
         mkdir -p $TMPDIR;
         export SENTIEON_TMPDIR=$TMPDIR;
 

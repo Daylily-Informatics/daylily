@@ -51,7 +51,7 @@ rule sent_snv_ont:
         """
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/sentdont_tmp_$timestamp;
+        export TMPDIR=/dev/shm/sentdont_tmp_$timestamp;
         export SENTIEON_TMPDIR=$TMPDIR;
         mkdir -p $TMPDIR;
         export APPTAINER_HOME=$TMPDIR;

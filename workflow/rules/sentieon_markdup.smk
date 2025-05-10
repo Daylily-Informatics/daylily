@@ -54,8 +54,8 @@ if "sent" in DDUP:
             ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
             
             timestamp=$(date +%Y%m%d%H%M%S);
-            TMPDIR=/fsx/scratch/sentieon_tmp_$timestamp;
-        export SENTIEON_TMPDIR=$TMPDIR;
+            TMPDIR=/dev/shm/sentieon_mkduo_tmp_$timestamp;
+            export SENTIEON_TMPDIR=$TMPDIR;
             mkdir -p $TMPDIR;
             APPTAINER_HOME=$TMPDIR;
             trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;

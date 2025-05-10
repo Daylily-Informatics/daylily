@@ -52,7 +52,7 @@ rule sent_snv_ugr:
         export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
-        export TMPDIR=/fsx/scratch/sentdugr_tmp_$timestamp;
+        export TMPDIR=/dev/shm/sentdugr_tmp_$timestamp;
         export SENTIEON_TMPDIR=$TMPDIR;
 
         mkdir -p $TMPDIR;
