@@ -494,3 +494,54 @@ rule prep_cram_inputs:  # TARGET: Just Pre
         "touch  {output.cram};"
         "sleep 2;"
         "touch {output.crai};"
+
+
+
+def get_pb_bam(wildcards):
+    bams = []
+
+    bam=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['pb_bam'][0])
+    bai=f"{bam}.bai"
+    bam_aligner=samples[samples['sample_lane'] == wildcards.sample]['pb_bam_aligner'][0]
+    if bam_aligner in ['na','',None,'None']:
+        return []
+    elif bam_aligner in ['pb']:
+        pass
+    else:
+        raise Exception(f"ERROR:  {bam_aligner} is not a valid BAM aligner. Only 'pb' is supported. Please check your manifest and try again.")
+    
+    if os.path.exists(bam) and os.path.exists(bai):
+        pass
+    else:
+        raise Exception(f"ERROR:  {bam} or {bai} does not exist. Please check your manifest and try again.")
+
+    bam_aligner_dir = f"{MDIR}/{wildcards.sample}/align/{bam_aligner}/"
+    print(f"PREP BAM:: {bam_aligner_dir} ... ",file=sys.stderr)
+    os.system(f"mkdir -p {bam_aligner_dir}")
+    os.system(f"touch {bam_aligner_dir}/.ok")
+    bams.append(bam)
+    bams.append(bai)
+
+    return bams
+
+
+ 
+localrules:
+    pre_prep_pb_bam,
+
+rule pre_prep_pb_bam:
+    input:
+        get_ultima_bamsx,
+    output:
+        bam=MDIR + "{sample}/align/pb/{sample_lane}.bam",
+        bai=MDIR + "{sample}/align/pb/{sample_lane}.bam.bai",
+    params:
+        c=config["prep_input_sample_files"]["source_read_method"],
+    log:
+        MDIR + "{sample}/align/pb/logs/{sample_lane}.bam.log",
+    shell:
+        "(mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;"
+        "{params.c} {input[0]} {output.bam} >> {log} 2>&1;"
+        "sleep 2;"
+        "{params.c} {input[1]} {output.bai} >> {log} 2>&1;"
+

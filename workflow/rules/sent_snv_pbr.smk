@@ -6,8 +6,8 @@ ALIGNERS_PB = ["pb"]
 
 rule sent_snv_pacbio_realign:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam.bai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=temp(MDIR
@@ -91,7 +91,7 @@ rule sent_snv_pacbio_realign:
         LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-longread \
             -t {params.use_threads} \
             -r {params.huref} \
-            -i {input.cram} \
+            -i {input.bam} \
             -m  {params.model} \
             --skip_svs \
             --skip_mosdepth \
@@ -293,8 +293,8 @@ localrules:
 
 rule prep_sentdpbr_chunkdirs:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdpbr/vcfs/{dchrm}/{{sample}}.ready",

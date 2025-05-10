@@ -5,8 +5,8 @@ ALIGNERS_ONT = ["pb"]
 
 rule sentdhip_snv:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        bam=MDIR + "{sample}/align/pb/{sample}.bam",
+        bai=MDIR + "{sample}/align/pb/{sample}.bam.bai",
         sr_cram=MDIR + "{sample}/align/sent/{sample}.sent.cram",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhip/vcfs/{dchrm}/{sample}.ready",
     output:
@@ -91,14 +91,14 @@ rule sentdhip_snv:
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
         fi
-        export cram_sid=$(samtools view -H {input.cram} | grep  '^@RG' | perl -pe 's/(^.*SM\:)(.*)(\w.*$)/$2/g;' | cut -d $'\t' -f 1 )
+        export cram_sid=$(samtools view -H {input.bam} | grep  '^@RG' | perl -pe 's/(^.*SM\:)(.*)(\w.*$)/$2/g;' | cut -d $'\t' -f 1 )
                 
 
         LD_PRELOAD=$LD_PRELOAD sentieon-cli --verbose dnascope-hybrid \
             -t {params.use_threads} \
             -r  {params.huref} \
             --sr_aln {input.sr_cram} \
-            --lr_aln {input.cram} \
+            --lr_aln {input.bam} \
             --rgsm {params.cluster_sample} \
             --sr_duplicate_marking none \
             --skip_svs \
@@ -266,8 +266,8 @@ rule prep_sentdhip_chunkdirs:
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         r1=getR1s,
         r2=getR2s,
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam.bai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhip/vcfs/{dchrm}/{{sample}}.ready",

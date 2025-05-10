@@ -2,15 +2,15 @@ import sys
 import os
 
 #
-# This pipeline will use the ONT aligned cram directly and call variants
+# This pipeline will use the ONT aligned bam directly and call variants
 #
 
 ALIGNERS_ONT = ["pb"]
 
 rule sent_snv_pb:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        bam=MDIR + "{sample}/align/pb/{sample}.bam",
+        bai=MDIR + "{sample}/align/pb/{sample}.bam.bai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=MDIR
@@ -92,7 +92,7 @@ rule sent_snv_pb:
         
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon driver -t {params.use_threads} \
             -r {params.huref} \
-            -i {input.cram} \
+            -i {input.bam} \
             --interval {params.schrm_mod} \
             --algo DNAscope --model {params.model} \
             --emit_mode variant \
@@ -301,8 +301,8 @@ localrules:
 
 rule prep_sentdpb_chunkdirs:
     input:
-        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam.bai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdpb/vcfs/{dchrm}/{{sample}}.ready",
