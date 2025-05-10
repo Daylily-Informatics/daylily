@@ -72,7 +72,7 @@ rule deepvariant:
         cpre="" if "b37" == config['genome_build'] else "chr",
         deep_threads=config['deepvariant']['deep_threads'],
         mito_code="MT" if "b37" == config['genome_build'] else "M",
-        deep_model=get_model,
+        deep_model=get_deep_model,
     shell:
         """
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');

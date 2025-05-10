@@ -369,7 +369,7 @@ for i in samples.iterrows():
                 "ONT_R104",
                 "ONT_R941",
             ]
-            if val not in models:
+            if val not in deep_models:
                 print(
                     f"\n\n\tWARNING::: The model {val} is not in the supported set of {deep_models} .  WGS will be selected!!!\n\n\n",file=sys.stderr
                 )
