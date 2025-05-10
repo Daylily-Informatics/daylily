@@ -45,6 +45,7 @@ rule sent_snv_pacbio_realign:
         max_mem="180G"
     shell:
         """
+        export PATH=$PATH:/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/
         export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
