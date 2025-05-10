@@ -531,7 +531,7 @@ localrules:
 
 rule pre_prep_pb_bam:
     input:
-        get_ultima_bamsx,
+        get_pb_bams,
     output:
         bam=MDIR + "{sample}/align/pb/{sample_lane}.bam",
         bai=MDIR + "{sample}/align/pb/{sample_lane}.bam.bai",
