@@ -345,7 +345,6 @@ for i in samples.iterrows():
                     pass
                 else: 
                     CRAM_ALIGNERS.append(val)
-        
         elif iix in ["pb_bam_aligner"]:
             sample_info[samp][iix] = val
             if val not in CRAM_ALIGNERS:
@@ -353,6 +352,30 @@ for i in samples.iterrows():
                     pass
                 else: 
                     CRAM_ALIGNERS.append(val)
+        elif iix in ["deep_model"]:
+            """supported models
+                WGS: Whole-genome sequencing data, typically for human genomes sequenced to around 30x coverage.
+                WES: Whole-exome sequencing data.
+                PACBIO: Long-read PacBio data.
+                HYBRID_PACBIO_ILLUMINA: Hybrid PacBio and Illumina data.
+                ONT_R104: Oxford Nanopore Technologies data (model optimized for R10.4 chemistry).
+                ONT_R941: Oxford Nanopore Technologies data (model optimized for R9.4.1 chemistry).
+            """
+            deep_models = [
+                "WGS",
+                "WES",
+                "PACBIO",
+                "HYBRID_PACBIO_ILLUMINA",
+                "ONT_R104",
+                "ONT_R941",
+            ]
+            if val not in models:
+                print(
+                    f"\n\n\tWARNING::: The model {val} is not in the supported set of {deep_models} .  WGS will be selected!!!\n\n\n",file=sys.stderr
+                )
+                sample_info[samp][iix] = "WGS"
+            else:
+                sample_info[samp][iix] = val
         elif iix in ["ultima_cram_snv_caller"]:
             sample_info[samp][iix] = val
         elif iix in ["ont_cram_snv_caller"]:

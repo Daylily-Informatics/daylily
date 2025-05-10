@@ -29,6 +29,11 @@ def get_dvchrm_day(wildcards):
     return ret_mod_chrm(ret_str)
 
 
+def get_deep_model(wildcards):
+    deep_model = samples[samples["samp"] == wildcards.sample]["deep_model"][0]
+    return deep_model
+
+
 rule deepvariant:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
@@ -67,6 +72,7 @@ rule deepvariant:
         cpre="" if "b37" == config['genome_build'] else "chr",
         deep_threads=config['deepvariant']['deep_threads'],
         mito_code="MT" if "b37" == config['genome_build'] else "M",
+        deep_model=get_model,
     shell:
         """
         TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600');
@@ -90,7 +96,7 @@ rule deepvariant:
         
         {params.numa} \
         /opt/deepvariant/bin/run_deepvariant \
-        --model_type=WGS --ref={params.huref} \
+        --model_type={params.deep_model} --ref={params.huref} \
         --reads={input.cram} \
         --regions=$dchr \
         --output_vcf={output.vcf} \
