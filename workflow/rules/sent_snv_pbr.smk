@@ -294,7 +294,7 @@ localrules:
 rule prep_sentdpbr_chunkdirs:
     input:
         bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam.crai",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam.bai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdpbr/vcfs/{dchrm}/{{sample}}.ready",
