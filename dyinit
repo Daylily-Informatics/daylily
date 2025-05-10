@@ -20,13 +20,12 @@ if [[ -f "/etc/parallelcluster/cfnconfig" ]]; then
     region="$cfn_region"
 else
     echo "Error: AWS ParallelCluster config not found at /etc/parallelcluster/cfnconfig"
-    return 3
 fi
 
 # Check if region is set
 if [[ -z "$region" ]]; then
     echo "Error: cfn_region is not set or is empty."
-    return 3
+
 fi
 
 # Function to display usage
@@ -105,7 +104,7 @@ if [[ -z "$PROJECT" ]]; then
         echo "Notice: --project not set. Using default project name: $PROJECT"
     else
         echo "Error: Cluster config file not found at /opt/parallelcluster/shared/cluster-config.yaml"
-        return 3
+
     fi
 fi
 
@@ -156,7 +155,7 @@ create_budget() {
     echo "bash bin/create_budget.sh --help"
     echo "Then append the new project/budget name to /fsx/data/budget_tags/pcluster-project-budget-tags.tsv."
     echo "Note: /fsx/data is read-only; update the file via S3."
-    return 3
+
 }
 
 # Query AWS budgets
@@ -164,7 +163,7 @@ BUDGETS=$(aws budgets describe-budgets --account-id "$AWS_ACCOUNT_ID" --region "
 
 if [[ -z "$BUDGETS" && "$SKIP_PROJECT_CHECK" != "true" ]]; then
     echo "Error: Unable to retrieve any budgets from AWS. Please check your AWS permissions or configuration."
-    return 3
+
 fi
 
 # Check if the specified project budget exists
