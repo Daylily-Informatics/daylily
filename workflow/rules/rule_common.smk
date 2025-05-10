@@ -345,6 +345,14 @@ for i in samples.iterrows():
                     pass
                 else: 
                     CRAM_ALIGNERS.append(val)
+        
+        elif iix in ["pb_bam_aligner"]:
+            sample_info[samp][iix] = val
+            if val not in CRAM_ALIGNERS:
+                if val in ['','na',None,'None']:
+                    pass
+                else: 
+                    CRAM_ALIGNERS.append(val)
         elif iix in ["ultima_cram_snv_caller"]:
             sample_info[samp][iix] = val
         elif iix in ["ont_cram_snv_caller"]:
