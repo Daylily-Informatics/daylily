@@ -358,6 +358,22 @@ sentdhio:
     mem_mb: 200000
     max_mem: "4G"
 
+sentdhip:
+    threads: 7
+    use_threads: 7
+    hg38_sentdhip_chrms: "19-20"
+    hg38_broad_sentdhip_chrms: "19-20"
+    b37_sentdhip_chrms: "19-20" #"19,21" # "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: " "
+    partition: "i192,i192mem"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/HybridIlluminaPacBio1.0.bundle"
+    mem_mb: 200000
+    max_mem: "4G"
+
 sentdhuo:
     threads: 7
     use_threads: 7
@@ -396,6 +412,21 @@ sentdpb:
     hg38_sentdpb_chrms: "19-20"
     hg38_broad_sentdpb_chrms: "19-20"    
     b37_sentdpb_chrms: "19-20" #"19,21" # "1-24"
+    ld_preload: " " 
+    env_yaml: "../envs/vanilla_v0.1.yaml"
+    sentD_gather_env: "../envs/vanilla_v0.1.yaml"
+    bench_repeat: 0
+    numactl: " "
+    partition: "i192,i192mem"
+    dna_scope_snv_model: "/fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bundles/DNAscopePacBio2.1.bundle/diploid_model"
+    mem_mb: 200000
+
+sentdpbr:
+    threads: 7
+    use_threads: 7
+    hg38_sentdpbr_chrms: "19-20"
+    hg38_broad_sentdpbr_chrms: "19-20"    
+    b37_sentdpbr_chrms: "19-20" #"19,21" # "1-24"
     ld_preload: " " 
     env_yaml: "../envs/vanilla_v0.1.yaml"
     sentD_gather_env: "../envs/vanilla_v0.1.yaml"

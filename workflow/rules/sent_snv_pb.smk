@@ -1,21 +1,24 @@
 import sys
 import os
 
+#
+# This pipeline will use the ONT aligned cram directly and call variants
+#
 
-ALIGNERS_PB = ["pb"]
+ALIGNERS_ONT = ["pb"]
 
-rule sent_snv_pacbio:
+rule sent_snv_pb:
     input:
         cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
         crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.ready",
     output:
-        vcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.vcf"),
-        gvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.gvcf"),
-        gvcfindex=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.gvcf.idx"),
+        vcf=MDIR
+        + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.vcf",
+        gvcf=MDIR
+        + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.gvcf",
+        gvcfindex=MDIR
+        + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.{alnr}.sentdpb.{dchrm}.snv.gvcf.idx",
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdpb/log/vcfs/{sample}.{alnr}.sentdpb.{dchrm}.snv.log",
@@ -38,13 +41,14 @@ rule sent_snv_pacbio:
 	mem_mb=config['sentdpb']['mem_mb'],
     params:
         schrm_mod=get_dchrm_day,
+        use_threads=config['sentdpb']['use_threads'],
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         model=config["sentdpb"]["dna_scope_snv_model"],
+    	model_2=config["sentdpb"]["dna_scope_apply_model"],
         cluster_sample=ret_sample,
         max_mem="180G"
     shell:
         """
-        export bwt_max_mem={params.max_mem} ;
 
         timestamp=$(date +%Y%m%d%H%M%S);
         export TMPDIR=/fsx/scratch/sentdpb_tmp_$timestamp;
@@ -53,6 +57,7 @@ rule sent_snv_pacbio:
         export APPTAINER_HOME=$TMPDIR;
         trap "rm -rf \"$TMPDIR\" || echo '$TMPDIR rm fails' >> {log} 2>&1" EXIT;
         tdir=$TMPDIR;
+        export bwt_max_mem={params.max_mem} ;
 
         if [ -z "$SENTIEON_LICENSE" ]; then
             echo "SENTIEON_LICENSE not set. Please set the SENTIEON_LICENSE environment variable to the license file path & make this update to your dyinit file as well." >> {log} 2>&1;
@@ -70,7 +75,7 @@ rule sent_snv_pacbio:
         echo "INSTANCE TYPE: $itype";
         start_time=$(date +%s);
 
-        
+
         ulimit -n 65536 || echo "ulimit mod failed" > {log} 2>&1;
         
         # Find the jemalloc library in the active conda environment
@@ -84,18 +89,19 @@ rule sent_snv_pacbio:
             echo "libjemalloc not found in the active conda environment $CONDA_PREFIX.";
             exit 3;
         fi
-        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon driver -t {param.use_threads} \
+        
+        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon driver -t {params.use_threads} \
             -r {params.huref} \
             -i {input.cram} \
             --interval {params.schrm_mod} \
-            --algo DNAscope --model "{params.model}" \
+            --algo DNAscope --model {params.model} \
             --emit_mode variant \
             {output.gvcf} >> {log} 2>&1;
 
-        LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon driver -t {params.use_threads} \
+         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon driver -t {params.use_threads} \
             -r {params.huref} \
             --algo DNAModelApply \
-            --model {params.model} \
+	    --model {params.model_2} \
             -v {output.gvcf} {output.vcf} >> {log} 2>&1;
 
         end_time=$(date +%s);
@@ -131,7 +137,7 @@ rule sentdpb_sort_index_chunk_vcf:
     params:
         x='y',
         cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdpbna_chunk_vcf"]['threads']
+    threads: 64 #config["config"]["sort_index_sentdpbna_chunk_vcf"]['threads']
     shell:
         """
         
@@ -141,10 +147,11 @@ rule sentdpb_sort_index_chunk_vcf:
         #    header && /^[^#]/ {{header=0; exit}}' {input.vcf} > {output.vcfsort} 2>> {log};
         #awk '/^[^#]/' {input.vcf} | sort --buffer-size=210G -T /fsx/scratch/ --parallel={threads} -k1,1V -k2,2n >> {output.vcfsort} 2>> {log};
 
-        cp {input.vcf} {output.vcfsort} >> {log} 2>&1;
+        cp {input.vcf} {output.vcfsort} 2>> {log};
         touch {input.vcf};
         sleep 1;
-        bgzip -@ {threads} {output.vcfsort} >> {log} 2>&1;
+        touch {output.vcfsort};
+        bgzip  -@ {threads} {output.vcfsort} >> {log} 2>&1;
         touch {output.vcfsort};
 
         tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
@@ -227,6 +234,7 @@ rule sentdpb_concat_index_chunks:
         + "{sample}/align/{alnr}/snv/sentdpb/log/{sample}.{alnr}.sentdpb.snv.merge.sort.gatherered.log",
     shell:
         """
+
         touch {log};
         mkdir -p $(dirname {log});
         # This is acceptable bc I am concatenating from the same tools output, not across tools
@@ -252,7 +260,7 @@ rule clear_combined_sentdpb_vcf:  # TARGET:  clear combined sentdpb vcf so the c
         expand(
             MDIR + "{sample}/align/{alnr}/snv/sentdpb/{sample}.{alnr}.sentdpb.snv.sort.vcf.gz",
             sample=SSAMPS,
-            alnr=ALIGNERS_PB,
+            alnr=ALIGNERS_ONT,
         ),
     threads: 2
     priority: 42
@@ -272,7 +280,7 @@ rule produce_sentdpb_vcf:  # TARGET: sentieon dnascope vcf
             MDIR
             + "{sample}/align/{alnr}/snv/sentdpb/{sample}.{alnr}.sentdpb.snv.sort.vcf.gz.tbi",
             sample=SSAMPS,
-            alnr=ALIGNERS_PB,
+            alnr=ALIGNERS_ONT,
         ),
     output:
         "gatheredall.sentdpb",
