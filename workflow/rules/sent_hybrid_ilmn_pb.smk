@@ -5,8 +5,8 @@ ALIGNERS_ONT = ["pb"]
 
 rule sentdhip_snv:
     input:
-        bam=MDIR + "{sample}/align/pb/{sample}.cram",
-        bai=MDIR + "{sample}/align/pb/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/pb/{sample}.cram",
+        crai=MDIR + "{sample}/align/pb/{sample}.cram.crai",
         sr_cram=MDIR + "{sample}/align/sent/{sample}.sent.cram",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdhip/vcfs/{dchrm}/{sample}.ready",
     output:
@@ -266,8 +266,8 @@ rule prep_sentdhip_chunkdirs:
         DR=MDIR + "{sample}/{sample}.dirsetup.ready",
         r1=getR1s,
         r2=getR2s,
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdhip/vcfs/{dchrm}/{{sample}}.ready",

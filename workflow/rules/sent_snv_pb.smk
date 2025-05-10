@@ -9,8 +9,8 @@ ALIGNERS_ONT = ["pb"]
 
 rule sent_snv_pb:
     input:
-        bam=MDIR + "{sample}/align/pb/{sample}.cram",
-        bai=MDIR + "{sample}/align/pb/{sample}.cram.crai",
+        cram=MDIR + "{sample}/align/pb/{sample}.cram",
+        crai=MDIR + "{sample}/align/pb/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=MDIR
@@ -301,8 +301,8 @@ localrules:
 
 rule prep_sentdpb_chunkdirs:
     input:
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
+        cram=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        crai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdpb/vcfs/{dchrm}/{{sample}}.ready",
