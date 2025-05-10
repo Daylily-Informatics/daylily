@@ -497,51 +497,51 @@ rule prep_cram_inputs:  # TARGET: Just Pre
 
 
 
-def get_pb_bam(wildcards):
-    bams = []
+def get_pb_cram(wildcards):
+    crams = []
 
-    bam=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['pb_bam'][0])
-    bai=f"{bam}.bai"
-    bam_aligner=samples[samples['sample_lane'] == wildcards.sample]['pb_bam_aligner'][0]
-    if bam_aligner in ['na','',None,'None']:
+    cram=os.path.abspath(samples[samples['sample_lane'] == wildcards.sample]['pb_bam'][0])
+    crai=f"{cram}.crai"
+    cram_aligner=samples[samples['sample_lane'] == wildcards.sample]['pb_bam_aligner'][0]
+    if cram_aligner in ['na','',None,'None']:
         return []
-    elif bam_aligner in ['pb']:
+    elif cram_aligner in ['pb']:
         pass
     else:
-        raise Exception(f"ERROR:  {bam_aligner} is not a valid BAM aligner. Only 'pb' is supported. Please check your manifest and try again.")
+        raise Exception(f"ERROR:  {cram_aligner} is not a valid cram aligner. Only 'pb' is supported. Please check your manifest and try again.")
     
-    if os.path.exists(bam) and os.path.exists(bai):
+    if os.path.exists(cram) and os.path.exists(crai):
         pass
     else:
-        raise Exception(f"ERROR:  {bam} or {bai} does not exist. Please check your manifest and try again.")
+        raise Exception(f"ERROR:  {cram} or {crai} does not exist. Please check your manifest and try again.")
 
-    bam_aligner_dir = f"{MDIR}/{wildcards.sample}/align/{bam_aligner}/"
-    print(f"PREP BAM:: {bam_aligner_dir} ... ",file=sys.stderr)
-    os.system(f"mkdir -p {bam_aligner_dir}")
-    os.system(f"touch {bam_aligner_dir}/.ok")
-    bams.append(bam)
-    bams.append(bai)
+    cram_aligner_dir = f"{MDIR}/{wildcards.sample}/align/{cram_aligner}/"
+    print(f"PREP cram:: {cram_aligner_dir} ... ",file=sys.stderr)
+    os.system(f"mkdir -p {cram_aligner_dir}")
+    os.system(f"touch {cram_aligner_dir}/.ok")
+    crams.append(cram)
+    crams.append(crai)
 
-    return bams
+    return crams
 
 
  
 localrules:
-    pre_prep_pb_bam,
+    pre_prep_pb_cram,
 
-rule pre_prep_pb_bam:
+rule pre_prep_pb_cram:
     input:
-        get_pb_bam,
+        get_pb_cram,
     output:
-        bam=MDIR + "{sample}/align/pb/{sample_lane}.bam",
-        bai=MDIR + "{sample}/align/pb/{sample_lane}.bam.bai",
+        cram=MDIR + "{sample}/align/pb/{sample_lane}.cram",
+        crai=MDIR + "{sample}/align/pb/{sample_lane}.cram.crai",
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
     log:
-        MDIR + "{sample}/align/pb/logs/{sample_lane}.bam.log",
+        MDIR + "{sample}/align/pb/logs/{sample_lane}.cram.log",
     shell:
         "(mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;"
-        "{params.c} {input[0]} {output.bam} >> {log} 2>&1;"
+        "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
         "sleep 2;"
-        "{params.c} {input[1]} {output.bai} >> {log} 2>&1;"
+        "{params.c} {input[1]} {output.crai} >> {log} 2>&1;"
 

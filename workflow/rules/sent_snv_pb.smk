@@ -9,8 +9,8 @@ ALIGNERS_ONT = ["pb"]
 
 rule sent_snv_pb:
     input:
-        bam=MDIR + "{sample}/align/pb/{sample}.bam",
-        bai=MDIR + "{sample}/align/pb/{sample}.bam.bai",
+        bam=MDIR + "{sample}/align/pb/{sample}.cram",
+        bai=MDIR + "{sample}/align/pb/{sample}.cram.crai",
         d=MDIR + "{sample}/align/{alnr}/snv/sentdpb/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=MDIR
@@ -92,7 +92,7 @@ rule sent_snv_pb:
         
         LD_PRELOAD=$LD_PRELOAD /fsx/data/cached_envs/sentieon-genomics-202503.01.rc1/bin/sentieon driver -t {params.use_threads} \
             -r {params.huref} \
-            -i {input.bam} \
+            -i {input.cram} \
             --interval {params.schrm_mod} \
             --algo DNAscope --model {params.model} \
             --emit_mode variant \
@@ -301,8 +301,8 @@ localrules:
 
 rule prep_sentdpb_chunkdirs:
     input:
-        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam",
-        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.bam.bai",
+        bam=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram",
+        bai=MDIR + "{sample}/align/{alnr}/{sample}.{alnr}.cram.crai",
     output:
         expand(
             MDIR + "{{sample}}/align/{{alnr}}/snv/sentdpb/vcfs/{dchrm}/{{sample}}.ready",
