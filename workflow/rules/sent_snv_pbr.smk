@@ -11,11 +11,7 @@ rule sent_snv_pacbio_realign:
         d=MDIR + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.ready",
     output:
         vcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.{alnr}.sentdpbr.{dchrm}.snv.vcf"),
-        gvcf=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.{alnr}.sentdpbr.{dchrm}.snv.gvcf"),
-        gvcfindex=temp(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.{alnr}.sentdpbr.{dchrm}.snv.gvcf.idx"),
+        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.{alnr}.sentdpbr.{dchrm}.snv.sort.vcf.gz"),
     log:
         MDIR
         + "{sample}/align/{alnr}/snv/sentdpbr/log/vcfs/{sample}.{alnr}.sentdpbr.{dchrm}.snv.log",
@@ -107,50 +103,6 @@ rule sent_snv_pacbio_realign:
         touch {output.vcf};
         """
 
-
-rule sentdpbr_sort_index_chunk_vcf:
-    input:
-        vcf=MDIR
-        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.{alnr}.sentdpbr.{dchrm}.snv.vcf",
-    priority: 46
-    output:
-        vcfsort=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.{alnr}.sentdpbr.{dchrm}.snv.sort.vcf"),
-        vcfgz=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.{alnr}.sentdpbr.{dchrm}.snv.sort.vcf.gz"),
-        vcftbi=touch(MDIR
-        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/{sample}.{alnr}.sentdpbr.{dchrm}.snv.sort.vcf.gz.tbi"),
-    conda:
-        "../envs/vanilla_v0.1.yaml"
-    log:
-        MDIR
-        + "{sample}/align/{alnr}/snv/sentdpbr/vcfs/{dchrm}/log/{sample}.{alnr}.sentdpbr.{dchrm}.snv.sort.vcf.gz.log",
-    resources:
-        vcpu=1,
-        threads=1,
-        partition="i192,i192mem"
-    params:
-        x='y',
-        cluster_sample=ret_sample,
-    threads: 1 #config["config"]["sort_index_sentdpbrna_chunk_vcf"]['threads']
-    shell:
-        """
-        
-        #bedtools sort -header -i {input.vcf} > {output.vcfsort} 2>> {log};
-        #awk 'BEGIN{{header=1}} 
-        #    header && /^#/ {{print; next}} 
-        #    header && /^[^#]/ {{header=0; exit}}' {input.vcf} > {output.vcfsort} 2>> {log};
-        #awk '/^[^#]/' {input.vcf} | sort --buffer-size=210G -T /fsx/scratch/ --parallel={threads} -k1,1V -k2,2n >> {output.vcfsort} 2>> {log};
-
-        cp {input.vcf} {output.vcfsort} >> {log} 2>&1;
-        touch {input.vcf};
-        sleep 1;
-        bgzip -@ {threads} {output.vcfsort} >> {log} 2>&1;
-        touch {output.vcfsort};
-
-        tabix -f -p vcf {output.vcfgz} >> {log} 2>&1;
-        
-        """
 
 
 localrules:
