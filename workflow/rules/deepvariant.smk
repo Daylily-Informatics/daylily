@@ -30,7 +30,13 @@ def get_dvchrm_day(wildcards):
 
 
 def get_deep_model(wildcards):
-    deep_model = samples[samples["samp"] == wildcards.sample]["deep_model"][0]
+    deep_model="WGS"
+
+    try:
+        deep_model = samples[samples["samp"] == wildcards.sample]["deep_model"][0]
+    except Exception as e:
+        print(f"'deep_model' key not found" + str(e), file=sys.stderr)
+
     return deep_model
 
 
@@ -161,7 +167,7 @@ rule deep_concat_fofn:
         fin_fofn=MDIR
         + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn",
         tmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn.tmp",
-    	#gfin_fofn=MDIR+ "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn",
+        #gfin_fofn=MDIR+ "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn",
         #gtmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp",
     threads: 2
     resources:
@@ -194,7 +200,7 @@ rule deep_concat_index_chunks:
         fofn=MDIR
         + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn",
         tmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.concat.vcf.gz.fofn.tmp",
-    	#gfofn=MDIR
+        #gfofn=MDIR
         #+ "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn",
         #gtmp_fofn=MDIR        + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.concat.vcf.gz.fofn.tmp",
     output:
@@ -207,7 +213,7 @@ rule deep_concat_index_chunks:
         vcfgztbi=touch(
             MDIR
             + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.sort.vcf.gz.tbi"
-        ),	    #gvcf=touch(            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf"),        #gvcfgz=touch(            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf.gz"),
+        ),   #gvcf=touch(            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf"),        #gvcfgz=touch(            MDIR + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf.gz"),
     threads: 4
     resources:
         vcpu=4,
@@ -284,7 +290,7 @@ rule produce_deep_vcf:  # TARGET: deep variant vcf
         #    sample=SSAMPS,
         #    alnr=ALIGNERS,
         #),
-	    #gvcftbi=expand(
+        #gvcftbi=expand(
         #    MDIR
         #    + "{sample}/align/{alnr}/snv/deep/{sample}.{alnr}.deep.snv.g.sort.vcf.gz.tbi",
         #    sample=SSAMPS,
