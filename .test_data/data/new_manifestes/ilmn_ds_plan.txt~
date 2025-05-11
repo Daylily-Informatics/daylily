@@ -1,0 +1,15 @@
+SampleID	cov	subsample_pct
+HG001	full	1.0
+HG001	30x	0.2563
+HG002	full	1.0
+HG002	30x	0.2471
+HG003	full	1.0
+HG003	30x	0.2314
+HG003   full    1.0
+HG00    30x	0.2728
+HG00    full    1.0
+HG00    30x
+HG00    full    1.0
+HG00    30x
+HG00    full    1.0
+HG00    30x	
