@@ -456,9 +456,6 @@ def get_ultima_downsample(wildcards):
         except:
             raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage or 'na'. Please check your manifest and try again.")
         
-
-    else:
-        raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage or 'na'. Please check your manifest and try again.")
     if type(ss_pct) == float:
         if ss_pct <= 0.0 or ss_pct >= 1.0:
             raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage, >0.0 to <1.0 or 'na'. Please check your manifest and try again.")
@@ -478,14 +475,13 @@ def get_ont_downsample(wildcards):
 
     if ss_pct in ['na','',None,'None',"1","1.0",1.0,1]:
         ss_pct = "na"
-    elif type(ss_pct) == str:
-        ss_pct = float(ss_pct)
-    elif type(ss_pct) == int:
-        ss_pct = float(ss_pct)
-    elif type(ss_pct) == float:
-        pass
+ 
     else:
-        raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage or 'na'. Please check your manifest and try again.")
+        try:
+            ss_pct = float(ss_pct)
+        except:
+            raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage or 'na'. Please check your manifest and try again.")
+            
     if type(ss_pct) == float:
         if ss_pct <= 0.0 or ss_pct >= 1.0:
             raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage, >0.0 to <1.0 or 'na'. Please check your manifest and try again.")
