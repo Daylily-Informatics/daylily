@@ -500,6 +500,7 @@ rule pre_prep_ultima_cram:
         downsample=get_ultima_downsample,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
+        use_threads=config["prep_input_sample_files"]["use_threads"],
     threads: config["prep_input_sample_files"]["threads"],
     log:
         MDIR + "{sample}/align/ug/logs/{sample_lane}.cram.log",
@@ -512,7 +513,7 @@ rule pre_prep_ultima_cram:
 
         if [[ '{params.downsample}' != 'na' ]]; then
             echo "downsampling to {params.downsample} >> {log} 2>&1";            
-            samtools view -@ {threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            samtools view -@ {params.use_threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             
             sleep 5;
             samtools index {output.cram} >> {log} 2>&1;
@@ -545,6 +546,7 @@ rule pre_prep_ont_cram:
         downsample=get_ont_downsample,
         huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
+        use_threads=config["prep_input_sample_files"]["use_threads"],
     log:
         MDIR + "{sample}/align/ont/logs/{sample_lane}.cram.log",
     conda:
@@ -557,7 +559,7 @@ rule pre_prep_ont_cram:
         if [[ '{params.downsample}' != 'na' ]]; then
             echo "downsampling to {params.downsample} >> {log} 2>&1";
             
-            samtools view -@ {threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            samtools view -@ {params.use_threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             sleep 5;
             samtools index {output.cram} >> {log} 2>&1;
 
