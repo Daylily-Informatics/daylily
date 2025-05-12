@@ -447,24 +447,20 @@ def get_ultima_downsample(wildcards):
     except:
         print(f"WARNING: ultima_subsample_pct for {wildcards.sample} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
 
+    
     if ss_pct in ['na','',None,'None',"1","1.0",1.0,1]:
         ss_pct = "na"
-
+ 
     else:
         try:
             ss_pct = float(ss_pct)
+            ss_pct_as_int = str(ss_pct).split(".")[1]
+
         except:
             raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage or 'na'. Please check your manifest and try again.")
         
-    if type(ss_pct) == float:
-        if ss_pct <= 0.0 or ss_pct >= 1.0:
-            raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage, >0.0 to <1.0 or 'na'. Please check your manifest and try again.")
-        else:
-            pct_as_int = str(ss_pct).split(".")[1]
-    else:
-        pass
-        
-    return ss_pct
+    return ss_pct_as_int
+    
 
 def get_ont_downsample(wildcards):
     ss_pct = 'na'
@@ -479,18 +475,14 @@ def get_ont_downsample(wildcards):
     else:
         try:
             ss_pct = float(ss_pct)
+            ss_pct_as_int = str(ss_pct).split(".")[1]
+
         except:
             raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage or 'na'. Please check your manifest and try again.")
-            
-    if type(ss_pct) == float:
-        if ss_pct <= 0.0 or ss_pct >= 1.0:
-            raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage, >0.0 to <1.0 or 'na'. Please check your manifest and try again.")
-        else:
-            pct_as_int = str(ss_pct).split(".")[1]
-    else:
-        pass
         
-    return ss_pct
+    return ss_pct_as_int
+
+
 
 rule pre_prep_ultima_cram:
     input:
