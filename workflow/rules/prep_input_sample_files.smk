@@ -508,6 +508,7 @@ rule pre_prep_ultima_cram:
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
         downsample=get_ultima_downsample,
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     threads: config["prep_input_sample_files"]["threads"],
     log:
@@ -523,7 +524,7 @@ rule pre_prep_ultima_cram:
             echo "downsampling to {{params.downsample}}"
             {params.c} -s {params.downsample} {input[0]} {output.cram} >> {log} 2>&1;
             
-            samtools view -@ {threads} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            samtools view -@ {threads} -T {params.huref} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             sleep 5;
             samtools index {output.cram} >> {log} 2>&1;
 
@@ -539,7 +540,7 @@ rule pre_prep_ultima_cram:
 
 
 localrules:
-    pre_prep_ont_cram,
+    pre_prep_ont_cram, 
 
 rule pre_prep_ont_cram:
     input:
@@ -556,6 +557,7 @@ rule pre_prep_ont_cram:
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
         downsample=get_ont_downsample,
+        huref=config["supporting_files"]["files"]["huref"]["fasta"]["name"],
         cluster_sample=ret_sample,
     log:
         MDIR + "{sample}/align/ont/logs/{sample_lane}.cram.log",
@@ -569,7 +571,7 @@ rule pre_prep_ont_cram:
         if [[ '{params.downsample}' != 'na' ]]; then
             echo "downsampling to {{params.downsample}}"
             
-            samtools view -@ {threads} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            samtools view -@ {threads} -T {params.huref} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             sleep 5;
             samtools index {output.cram} >> {log} 2>&1;
 
