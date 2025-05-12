@@ -46,7 +46,7 @@ valid_biome: AWSPC
 prep_input_sample_files:
     source_read_method: " ln -s  "
     partition: "i192,i192mem,i128"
-    threads: 16
+    threads: 32
     mem_mb: 20000
     env_yaml: "../envs/prep_input_sample_files_v0.1.yaml"
 
