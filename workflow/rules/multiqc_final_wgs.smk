@@ -160,6 +160,7 @@ report_header_info:
         --config  ./config/external_tools/multiqc_config.yaml  \
         --custom-css-file ./config/external_tools/multiqc.css \
         --ignore "*/norm_cov_eveness/*" \
+	--ignore "*sort_metrics/*" \
         --template default \
         --filename {output[0]} \
         -i '{params.rtitle} Multiqc Report ' \

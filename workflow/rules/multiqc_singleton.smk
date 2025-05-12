@@ -88,6 +88,8 @@ report_header_info:
         --config  ./config/external_tools/multiqc_config.yaml  \
         --custom-css-file ./config/external_tools/multiqc.css \
         --template default \
+        --ignore "*sort_metrics/*" \
+        --ignore "*/norm_cov_eveness/*" \
         --filename {output[0]} \
         -i '{params.rtitle} Multiqc Report' \
         -b 'https://github.com/Daylily-Informatics/daylily (BRANCH:{params.gbranch}) (TAG:{params.gtag}) (HASH:{params.ghash}) ' \
