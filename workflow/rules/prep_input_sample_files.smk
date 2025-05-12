@@ -440,10 +440,10 @@ def get_ultima_cramsx(wildcards):
 
 
 
-def get_ultima_downsample(sample_id):
+def get_ultima_downsample(wildcards):
     ss_pct = 'na'
     try:
-        ss_pct = samples.loc[(sample_id), "ultima_subsample_pct"][0]
+        ss_pct = samples.loc[(wildcards.sample), "ultima_subsample_pct"][0]
     except:
         print(f"WARNING: ultima_subsample_pct for {sample_id} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
 
@@ -467,10 +467,10 @@ def get_ultima_downsample(sample_id):
         
     return ss_pct
 
-def get_ont_downsample(sample_id):
+def get_ont_downsample(widcards):
     ss_pct = 'na'
     try:
-        ss_pct = samples.loc[(sample_id), "ont_subsample_pct"][0]
+        ss_pct = samples.loc[(wildcards.sample), "ont_subsample_pct"][0]
     except:
         print(f"WARNING: ont_subsample_pct for {sample_id} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
 
