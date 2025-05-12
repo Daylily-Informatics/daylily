@@ -439,9 +439,60 @@ def get_ultima_cramsx(wildcards):
     return crams
 
 
- 
-localrules:
-    pre_prep_ultima_cram,
+
+def get_ultima_downsample(sample_id):
+    ss_pct = 'na'
+    try:
+        ss_pct = samples.loc[(sample_id), "ultima_subsample_pct"][0]
+    except:
+        print(f"WARNING: ultima_subsample_pct for {sample_id} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
+
+    if ss_pct in ['na','',None,'None',"1","1.0",1.0,1]:
+        ss_pct = "na"
+    elif type(ss_pct) == str:
+        ss_pct = float(ss_pct)
+    elif type(ss_pct) == int:
+        ss_pct = float(ss_pct)
+    elif type(ss_pct) == float:
+        pass
+    else:
+        raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage or 'na'. Please check your manifest and try again.")
+    if type(ss_pct) == float:
+        if ss_pct <= 0.0 or ss_pct >= 1.0:
+            raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage, >0.0 to <1.0 or 'na'. Please check your manifest and try again.")
+        else:
+            pct_as_int = str(ss_pct).split(".")[1]
+    else:
+        pass
+        
+    return ss_pct
+
+def get_ont_downsample(sample_id):
+    ss_pct = 'na'
+    try:
+        ss_pct = samples.loc[(sample_id), "ont_subsample_pct"][0]
+    except:
+        print(f"WARNING: ont_subsample_pct for {sample_id} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
+
+    if ss_pct in ['na','',None,'None',"1","1.0",1.0,1]:
+        ss_pct = "na"
+    elif type(ss_pct) == str:
+        ss_pct = float(ss_pct)
+    elif type(ss_pct) == int:
+        ss_pct = float(ss_pct)
+    elif type(ss_pct) == float:
+        pass
+    else:
+        raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage or 'na'. Please check your manifest and try again.")
+    if type(ss_pct) == float:
+        if ss_pct <= 0.0 or ss_pct >= 1.0:
+            raise Exception(f"ERROR:  {ss_pct} is not a valid downsample percentage, >0.0 to <1.0 or 'na'. Please check your manifest and try again.")
+        else:
+            pct_as_int = str(ss_pct).split(".")[1]
+    else:
+        pass
+        
+    return ss_pct
 
 rule pre_prep_ultima_cram:
     input:
@@ -449,15 +500,42 @@ rule pre_prep_ultima_cram:
     output:
         cram=MDIR + "{sample}/align/ug/{sample_lane}.cram",
         crai=MDIR + "{sample}/align/ug/{sample_lane}.cram.crai",
+     resources:
+        partition=config['prep_input_sample_files']['partition'],
+        threads=config['prep_input_sample_files']['threads'],
+        vcpu=config['prep_input_sample_files']['threads'],
+	    mem_mb=config['prep_input_sample_files']['mem_mb'],
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
+        downsample=get_ultima_downsample,
+        cluster_sample=ret_sample,
+    threads: config["prep_input_sample_files"]["threads"],
     log:
         MDIR + "{sample}/align/ug/logs/{sample_lane}.cram.log",
+    conda:
+        config["prep_input_sample_files"]["env_yaml"]
     shell:
-        "(mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;"
-        "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
-        "sleep 2;"
-        "{params.c} {input[1]} {output.crai} >> {log} 2>&1;"
+        """
+        (mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;
+        export TMPDIR=/dev/shm/;
+
+        if [[ '{params.downsample}' != 'na' ]]; then
+            echo "downsampling to {{params.downsample}}"
+            {params.c} -s {params.downsample} {input[0]} {output.cram} >> {log} 2>&1;
+            
+            samtools view -@ {threads} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            sleep 5;
+            samtools index {output.cram} >> {log} 2>&1;
+
+        else
+            echo 'not downsampling: {params.downsample}';
+            {params.c} {input[0]} {output.cram} >> {log} 2>&1;
+            {params.c} {input[0]} {output.cram} >> {log} 2>&1;
+            sleep 5;
+            {params.c} {input[1]} {output.crai} >> {log} 2>&1;
+        fi
+        """
+
 
 
 localrules:
@@ -469,15 +547,41 @@ rule pre_prep_ont_cram:
     output:
         cram=MDIR + "{sample}/align/ont/{sample_lane}.cram",
         crai=MDIR + "{sample}/align/ont/{sample_lane}.cram.crai",
+    threads: config["prep_input_sample_files"]["threads"],
+    resources:
+        partition=config['prep_input_sample_files']['partition'],
+        threads=config['prep_input_sample_files']['threads'],
+        vcpu=config['prep_input_sample_files']['threads'],
+	    mem_mb=config['prep_input_sample_files']['mem_mb'],
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
+        downsample=get_ont_downsample,
+        cluster_sample=ret_sample,
     log:
         MDIR + "{sample}/align/ont/logs/{sample_lane}.cram.log",
+    conda:
+        config["prep_input_sample_files"]["env_yaml"]
     shell:
-        "(mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;"
-        "{params.c} {input[0]} {output.cram} >> {log} 2>&1;"
-        "sleep 2;"
-        "{params.c} {input[1]} {output.crai} >> {log} 2>&1;"
+        """
+        (mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;
+
+        export TMPDIR=/dev/shm;
+        if [[ '{params.downsample}' != 'na' ]]; then
+            echo "downsampling to {{params.downsample}}"
+            
+            samtools view -@ {threads} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            sleep 5;
+            samtools index {output.cram} >> {log} 2>&1;
+
+        else
+            echo 'not downsampling, {params.downsample}';
+            {params.c} {input[0]} {output.cram} >> {log} 2>&1;
+            {params.c} {input[0]} {output.cram} >> {log} 2>&1;
+            sleep 5;
+            {params.c} {input[1]} {output.crai} >> {log} 2>&1;
+        fi
+
+        """
 
 
 localrules: prep_cram_inputs,
