@@ -1,0 +1,10 @@
+Sample	Aligned Bases
+Ods10xUds10x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	34784029182.0
+Ods10xUds15x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	52173673411.0
+Ods10xUds5x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	17389535639.0
+Ods15xUds10x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	34654763980.0
+Ods15xUds15x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	17811541076.0
+Ods15xUds20x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	69730175132.0
+Ods5xUds10x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	34784029182.0
+Ods5xUds15x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	52173673411.0
+Ods5xUds5x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	17389535639.0

@@ -1,0 +1,10 @@
+Sample	Mean Read Length
+Ods10xUds10x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.611778
+Ods10xUds15x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.613985
+Ods10xUds5x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.614229
+Ods15xUds10x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.611556
+Ods15xUds15x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.61676
+Ods15xUds20x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.612787
+Ods5xUds10x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.611778
+Ods5xUds15x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.613985
+Ods5xUds5x_HG006_sup-PAY77227_0.ont.sentdhuo.1-24.snv.sort	293.614229
