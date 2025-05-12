@@ -303,23 +303,23 @@ for i in samples.iterrows():
     if samp in sample_info and merge_single in ["single"]:
         raise (
             "\n\nMANIFEST ERROR:: "
-            + samp
+            + samp + " ... " + sample_lane
             + f"appears 2+ times in the sample sheet. This should only occur if 'merge' has been specified. {merge_single} has been set. Also.. column order is sadly important: samp,sample,sample_lane,SQ,RU,EX,LANE,r1_path,r2_path,biological_sex,iddna_uid,concordance_control_path,is_positive_control,is_negative_control,sample_type,merge_single,external_sample_id,instrument,lib_prep,bwa_kmer"
             )
 
     if merge_single in ["single"]:
         raise Exception(
-            "\n\nMANIFEST ERROR: This feature was implemented, then unusued and has not been vetted to work properly again, so if you wish to run per lane, create a manifest with the sample and sample_lane column having the same id.  merge will create symlinks for each sample_lane pair of fastqs, then use these via process substitution to appear as one file for those tools expecting 1 R1 and 1 R2. Also.. column order is sadly important: samp,sample,sample_lane,SQ,RU,EX,LANE,r1_path,r2_path,biological_sex,iddna_uid,concordance_control_path,is_positive_control,is_negative_control,sample_type,merge_single,external_sample_id,instrument,lib_prep,bwa_kmer"
+            f"\n\nMANIFEST ERROR '{sample}, {sample_lane}': This feature was implemented, then unusued and has not been vetted to work properly again, so if you wish to run per lane, create a manifest with the sample and sample_lane column having the same id.  merge will create symlinks for each sample_lane pair of fastqs, then use these via process substitution to appear as one file for those tools expecting 1 R1 and 1 R2. Also.. column order is sadly important: samp,sample,sample_lane,SQ,RU,EX,LANE,r1_path,r2_path,biological_sex,iddna_uid,concordance_control_path,is_positive_control,is_negative_control,sample_type,merge_single,external_sample_id,instrument,lib_prep,bwa_kmer"
         )
 
     if len(sq_i.split(".")) > 1 or len(sq_i.split("_")) > 1 or len(ru_i.split(".")) > 1 or len(ru_i.split("_")) > 1 or len(ex_i.split(".")) > 1 or len(ex_i.split("_")) > 1 or len(str(lane_i).split(".")) > 1 or len(str(lane_i).split("_")) > 1:
         raise Exception(
-            "\n\nMANIFEST ERROR: The SQ & RU & EX & LANE cols may not contain a period or '-' in the name.  Please check the sample name and try again. Also.. column order is sadly important: samp,sample,sample_lane,SQ,RU,EX,LANE,r1_path,r2_path,biological_sex,iddna_uid,concordance_control_path,is_positive_control,is_negative_control,sample_type,merge_single,external_sample_id,instrument,lib_prep,bwa_kmer"
+            f"\n\nMANIFEST ERROR {sample} ... {sample_lane}: The SQ & RU & EX & LANE cols may not contain a period or '-' in the name.  Please check the sample name and try again. Also.. column order is sadly important: samp,sample,sample_lane,SQ,RU,EX,LANE,r1_path,r2_path,biological_sex,iddna_uid,concordance_control_path,is_positive_control,is_negative_control,sample_type,merge_single,external_sample_id,instrument,lib_prep,bwa_kmer"
         )
 
     if sample_lane in sample_info or len(sample.split(".")) > 1:
         raise Exception(
-            '\n\nMANIFEST ERROR: It is not allowed for the sample entry to be present in the sample_lane column and vice versa.  sample can be any string, excluding containing a period or "-", and does not need to be unique w/in the sample column. it may not end in "_[1-9]+", howevr, it may end in "_0"'
+            f'\n\nMANIFEST ERROR  {sample} ... {sample_lane}: It is not allowed for the sample entry to be present in the sample_lane column and vice versa.  sample can be any string, excluding containing a period or "-", and does not need to be unique w/in the sample column. it may not end in "_[1-9]+", howevr, it may end in "_0"'
         )
 
     
