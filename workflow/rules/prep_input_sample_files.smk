@@ -509,10 +509,11 @@ rule pre_prep_ultima_cram:
     shell:
         """
         (mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;
-        export TMPDIR=/dev/shm/;
+        export TMPDIR=$(dirname {log})/tmpdir;
+        mkdir -p $TMPDIR || echo {log} dir exists >> {log} 2>&1;
 
         if [[ '{params.downsample}' != 'na' ]]; then
-            echo "downsampling to {params.downsample} >> {log} 2>&1";            
+            echo 'downsampling to {params.downsample}' >> {log} 2>&1;            
             samtools view -@ {params.use_threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             
             sleep 5;
@@ -554,10 +555,11 @@ rule pre_prep_ont_cram:
     shell:
         """
         (mkdir -p $(dirname {log}) || echo {log} dir exists) >> {log} 2>&1;
+        export TMPDIR=$(dirname {log})/tmpdir;
+        mkdir -p $TMPDIR || echo {log} dir exists >> {log} 2>&1;
 
-        export TMPDIR=/dev/shm;
         if [[ '{params.downsample}' != 'na' ]]; then
-            echo "downsampling to {params.downsample} >> {log} 2>&1";
+            echo 'downsampling to {params.downsample}' >> {log} 2>&1;
             
             samtools view -@ {params.use_threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             sleep 5;
