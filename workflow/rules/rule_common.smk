@@ -300,7 +300,7 @@ for i in samples.iterrows():
     lane_i= i[1][6]
     sample_lane = i[1][1]
     merge_single = i[1][14]
-    print(f"sample: {samp} sample_lane: {sample_lane} SQ: {sq_i} RU: {ru_i} EX: {ex_i} LANE: {lane_i}", file=sys.stderr)
+    print(f"sample: {samp} sample_lane: {sample_lane} SQ: {type(sq_i)} RU: {type(ru_i)} EX: {type(ex_i)} LANE: {type(lane_i)}", file=sys.stderr)
     if samp in sample_info and merge_single in ["single"]:
         raise (
             "\n\nMANIFEST ERROR:: "
