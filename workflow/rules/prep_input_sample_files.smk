@@ -524,7 +524,7 @@ rule pre_prep_ultima_cram:
             echo "downsampling to {{params.downsample}}"
             {params.c} -s {params.downsample} {input[0]} {output.cram} >> {log} 2>&1;
             
-            samtools view -@ {threads} -T {params.huref} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            samtools view -@ {threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             sleep 5;
             samtools index {output.cram} >> {log} 2>&1;
 
@@ -568,7 +568,7 @@ rule pre_prep_ont_cram:
         if [[ '{params.downsample}' != 'na' ]]; then
             echo "downsampling to {{params.downsample}}"
             
-            samtools view -@ {threads} -T {params.huref} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            samtools view -@ {threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             sleep 5;
             samtools index {output.cram} >> {log} 2>&1;
 
