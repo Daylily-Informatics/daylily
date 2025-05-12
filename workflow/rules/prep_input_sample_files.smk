@@ -500,11 +500,11 @@ rule pre_prep_ultima_cram:
     output:
         cram=MDIR + "{sample}/align/ug/{sample_lane}.cram",
         crai=MDIR + "{sample}/align/ug/{sample_lane}.cram.crai",
-     resources:
+    resources:
         partition=config['prep_input_sample_files']['partition'],
         threads=config['prep_input_sample_files']['threads'],
         vcpu=config['prep_input_sample_files']['threads'],
-	    mem_mb=config['prep_input_sample_files']['mem_mb'],
+        mem_mb=config['prep_input_sample_files']['mem_mb'],
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
         downsample=get_ultima_downsample,
@@ -524,7 +524,7 @@ rule pre_prep_ultima_cram:
             echo "downsampling to {params.downsample}"
             {params.c} -s {params.downsample} {input[0]} {output.cram} >> {log} 2>&1;
             
-            samtools view -@ {threads} -T {params.huref} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            samtools view -@ {threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             sleep 5;
             samtools index {output.cram} >> {log} 2>&1;
 
@@ -539,9 +539,6 @@ rule pre_prep_ultima_cram:
 
 
 
-localrules:
-    pre_prep_ont_cram, 
-
 rule pre_prep_ont_cram:
     input:
         get_ont_cramsx,
@@ -553,7 +550,7 @@ rule pre_prep_ont_cram:
         partition=config['prep_input_sample_files']['partition'],
         threads=config['prep_input_sample_files']['threads'],
         vcpu=config['prep_input_sample_files']['threads'],
-	    mem_mb=config['prep_input_sample_files']['mem_mb'],
+        mem_mb=config['prep_input_sample_files']['mem_mb'],
     params:
         c=config["prep_input_sample_files"]["source_read_method"],
         downsample=get_ont_downsample,
@@ -571,7 +568,7 @@ rule pre_prep_ont_cram:
         if [[ '{params.downsample}' != 'na' ]]; then
             echo "downsampling to params.downsample}"
             
-            samtools view -@ {threads} -T {params.huref} -C -s 33.{param.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
+            samtools view -@ {threads} -T {params.huref} -C -s 33.{params.downsample} {input[0]} -o {output.cram} >> {log} 2>&1;
             sleep 5;
             samtools index {output.cram} >> {log} 2>&1;
 
