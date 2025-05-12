@@ -1,0 +1,10 @@
+Sample	Aligned Reads
+Ods10xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	178870030.0
+Ods10xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	59589843.5
+Ods10xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	107325879.0
+Ods15xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	178870030.0
+Ods15xIds20x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	238442027.0
+Ods15xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	107325879.0
+Ods5xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	178870030.0
+Ods5xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	59589843.5
+Ods5xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	107325879.0

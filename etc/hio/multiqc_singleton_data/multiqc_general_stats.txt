@@ -1,0 +1,19 @@
+Sample	picard_insertsizemetrics-summed_median	picard_insertsizemetrics-summed_mean	custom_content_alignstats_gs-InsertSizeMean	custom_content_alignstats_gs-InsertSizeMedian	custom_content_alignstats_gs-InsertSizeMode	custom_content_alignstats_gs-InsertSizeStandardDeviation	custom_content_alignstats_gs-DuplicateReadsPct	custom_content_alignstats_gs-ChimericReadPairPct
+Ods10xIds15x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods10xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.270415						
+Ods10xIds5x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods10xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.243271						
+Ods10xIds9x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods10xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.288302						
+Ods15xIds15x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods15xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.270415						
+Ods15xIds20x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods15xIds20x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.226779						
+Ods15xIds9x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods15xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.288302						
+Ods5xIds15x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods5xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.270415						
+Ods5xIds5x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods5xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.243271						
+Ods5xIds9x_HG006_sup-PAY77227_0.ont			0.0	0.0	0.0	0.0	0.0	100.0
+Ods5xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	473	477.288302						

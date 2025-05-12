@@ -1,0 +1,10 @@
+Sample	0	1	2	3	4
+Ods10xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 843)	(252, 81003)	(501, 596673)	(750, 51398)	(1000, 599)
+Ods10xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 387)	(252, 27221)	(501, 201490)	(750, 17428)	(1000, 183)
+Ods10xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 598)	(252, 48866)	(501, 361066)	(750, 31031)	(1000, 346)
+Ods15xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 843)	(252, 81003)	(501, 596673)	(750, 51398)	(1000, 599)
+Ods15xIds20x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 1063)	(252, 107867)	(501, 790210)	(750, 68214)	(1000, 802)
+Ods15xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 598)	(252, 48866)	(501, 361066)	(750, 31031)	(1000, 346)
+Ods5xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 843)	(252, 81003)	(501, 596673)	(750, 51398)	(1000, 599)
+Ods5xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 387)	(252, 27221)	(501, 201490)	(750, 17428)	(1000, 183)
+Ods5xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	(2, 598)	(252, 48866)	(501, 361066)	(750, 31031)	(1000, 346)
