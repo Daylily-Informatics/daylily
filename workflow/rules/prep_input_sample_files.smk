@@ -445,7 +445,7 @@ def get_ultima_downsample(wildcards):
     try:
         ss_pct = samples.loc[(wildcards.sample), "ultima_subsample_pct"][0]
     except:
-        print(f"WARNING: ultima_subsample_pct for {sample_id} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
+        print(f"WARNING: ultima_subsample_pct for {wildcards.sample} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
 
     if ss_pct in ['na','',None,'None',"1","1.0",1.0,1]:
         ss_pct = "na"
@@ -472,7 +472,7 @@ def get_ont_downsample(widcards):
     try:
         ss_pct = samples.loc[(wildcards.sample), "ont_subsample_pct"][0]
     except:
-        print(f"WARNING: ont_subsample_pct for {sample_id} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
+        print(f"WARNING: ont_subsample_pct for {wildcards.sample} not found in manifest. Please correct your manifest if this is not expected.",file=sys.stderr)
 
     if ss_pct in ['na','',None,'None',"1","1.0",1.0,1]:
         ss_pct = "na"
