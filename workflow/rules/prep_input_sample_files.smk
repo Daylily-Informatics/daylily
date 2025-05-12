@@ -467,7 +467,7 @@ def get_ultima_downsample(wildcards):
         
     return ss_pct
 
-def get_ont_downsample(widcards):
+def get_ont_downsample(wildcards):
     ss_pct = 'na'
     try:
         ss_pct = samples.loc[(wildcards.sample), "ont_subsample_pct"][0]
