@@ -1,10 +1,10 @@
 
 report_header_info:
   - Project/Budget: "da-us-west-2d-giab-sownsamp-test"
-  - Budget @ Runtime: "$0.0 of $200.0 spent ( 0%)"
-  - Spot Instances: "  c6i.32xlarge  c7i.48xlarge  c7i.metal-48xl  m7i.metal-48xl "
-  - Spot Costs per hr: "median: $2.97  mean: $2.79 ( avg cost per vcpu,per min: $0.000242214 ) "
+  - Budget @ Runtime: "$43.608 of $200.0 spent ( 21.804%)"
+  - Spot Instances: "  c6i.32xlarge  c7i.48xlarge  c7i.metal-48xl  m7i.48xlarge  m7i.metal-48xl  r7i.48xlarge  r7i.metal-48xl "
+  - Spot Costs per hr: "median: $2.99  mean: $2.97 ( avg cost per vcpu,per min: $0.000258112 ) "
   - FQ->BAM.sort avg Costs: ""
   - BAM mrkdup avg Cost: "0 min, costing $0.00"
-  - Results Dir (GB): "63G"
+  - Results Dir (GB): "210G"
   
