@@ -1,0 +1,10 @@
+
+report_header_info:
+  - Project/Budget: "da-eu-central-1a-ilmn-dsruns-euc1a"
+  - Budget @ Runtime: "$0.0 of $200.0 spent ( 0%)"
+  - Spot Instances: "  c7i.48xlarge  m7i.48xlarge "
+  - Spot Costs per hr: "median: $1.87  mean: $1.94 ( avg cost per vcpu,per min: $0.000168095 ) "
+  - FQ->BAM.sort avg Costs: "sent.alNsort: $0.63"
+  - BAM mrkdup avg Cost: "3.34 min, costing $0.11"
+  - Results Dir (GB): "76G"
+  
