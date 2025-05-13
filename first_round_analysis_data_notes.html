@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Who Shot Who In The What Now</title>
+    <style>
+        body { font-family: Dosis, sans-serif; margin: 40px; }
+        h1, h2, h3 { color: #333; }
+        ul { line-height: 1.6; }
+        .section { margin-bottom: 40px; }
+        pre { background: #d8d9db; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        table, th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #d8d9db; }
+    </style>
+    <link rel="icon" type="image/x-icon" href="/static/favicon/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<h1>ILMN / ONT / Ultima Fist Round Analysis</h1>
+<small>Who Shot Who In The What Now</small>
+<ul>
+<p><em>This is meant to direct folks to where data lives... distillation analysis next (also, now you have it all to DIY!)</em></p>
+
+<br>
+
+<quote>
+    The links found in this document will corespond to the s3 bucket root <b>s3://lsmc-dayoa-omics-analysis-us-west-2</b>, so the ILMN full ref multiqc report <B>https://lsmc.bio/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_fullref/reports//DAY_final_multiqc.html</B>  , can also be found at <b>s3://lsmc-dayoa-omics-analysis-us-west-2/first_round_results/illumina_solo_fullref/reports//DAY_final_multiqc.html</b> .
+</quote>  
+
+<ul><li><b><a href="/serve_endpoint/">--you can http navigate these files/directories here--</a></b> <i>(if you wish to download large files, please do this via s3 and not by dragging them over http please)</i>    </li></ul>
+</ul>
+<hr>
+<hr>
+<div class="section">
+    <h2>GIAB Concordance w/ 7 GIAB Samples</h2>
+<ul>
+    <h3>Source Datasets</h3>
+<hr>
+    <h4>ILMN 7 Datasets (~30x)</h4>
+    <ul>
+        <li>google brain data (old 2x151, analysis to be re-run with updated fastqs), 1 pair of fastqs per HG###.</li>
+        <li>paired fastqs.</li>
+
+        <ul>
+            <h4>Sample IDs  </h4>
+            <li>RIH0_ANA0-HG001-19_DBC0_0</li>
+            <li>RIH0_ANA0-HG002-19_DBC0_0</li>
+            <li>RIH0_ANA0-HG003-19_DBC0_0</li>
+            <li>RIH0_ANA0-HG004-19_DBC0_0</li>
+            <li>RIH0_ANA0-HG005-19_DBC0_0</li>
+            <li>RIH0_ANA0-HG006-19_DBC0_0</li>
+            <li>RIH0_ANA0-HG007-19_DBC0_0</li>
+        </ul>
+        </ul>
+<hr>
+    <h4>Ultima 9 Datasets (42x-44x)</h4>
+    <ul>
+        <li>pre-aligned CRAMs.</li>
+        <li>A few HG### had 2 datasets independently processed.</li>
+
+        <ul>
+            <h4>Sample IDs  </h4>
+<li>U3_HG001_408622-Z0025_0</li>
+    <li>U3_HG002_408622-Z0032_0</li>
+        <li>U3_HG003_408622-Z0008_0</li>
+<li>U3_HG004_408622-Z0022_0</li>
+    <li>U3_HG004_408622-Z0113_0</li>
+        <li>U3_HG005_408622-Z0016_0</li>
+            <li>U3_HG005_408622-Z0115_0</li>
+                <li>U3_HG006_408622-Z0116_0</li>
+                    <li>U3_HG007_408622-Z0120_0</li>
+        </ul>
+        </ul>
+
+
+<hr>
+    <h4>ONT 13 Datasets (26x-49x)</h4>
+    <ul>
+        <li>pre-aligned CRAMs.</li>
+        <li>Two datasets per HG###, processed independently (one dropped out for HG007).</li>
+
+<h4>Sample IDs  </h4>
+<ul>
+    <li>O3_HG001_sup-PAW79146_0</li>
+    <li>O3_HG001_sup-PAW81754_0</li>
+    <li>O3_HG002_sup-PAW70337_0</li>
+    <li>O3_HG002_sup-PAW71238_0</li>
+    <li>O3_HG003_sup-PAY87794_0</li>
+    <li>O3_HG003_sup-PAY87954_0</li>
+    <li>O3_HG004_sup-PAY87778_0</li>
+    <li>O3_HG004_sup-PAY88428_0</li>
+    <li>O3_HG005_sup-PAW87816_0</li>
+    <li>O3_HG005_sup-PAW88001_0</li>
+    <li>O3_HG006_sup-PAY77227_0</li>
+    <li>O3_HG006_sup-PBA16846_0</li>
+    <li>O3_HG007_sup-PAY12990_0</li>
+</ul>
+
+    </ul>
+<hr>
+    <h4>Hybrid ILMN+ONT</h4>
+    <ul>
+        <li>All ONT crams matched with ILMN fastqs, producing hybrid results.</li>
+
+        <h4>Sample IDs  </h4>
+    <ul>
+<li>HIO1_HG001_sup-PAW79146_0</li>
+<li>HIO1_HG001_sup-PAW81754_0</li>
+<li>HIO1_HG002_sup-PAW70337_0</li>
+<li>HIO1_HG002_sup-PAW71238_0</li>
+<li>HIO1_HG003_sup-PAY87794_0</li>
+<li>HIO1_HG003_sup-PAY87954_0</li>
+<li>HIO1_HG004_sup-PAY87778_0</li>
+<li>HIO1_HG004_sup-PAY88428_0</li>
+<li>HIO1_HG005_sup-PAW87816_0</li>
+<li>HIO1_HG005_sup-PAW88001_0</li>
+<li>HIO1_HG006_sup-PAY77227_0</li>
+<li>HIO1_HG006_sup-PBA16846_0</li>
+<li>HIO1_HG007_sup-PAY12990_0</li>
+<li>HIO1_HG007_sup-PBA20413_0</li>
+        </ul>
+
+</ul>
+</ul>
+</div>
+<hr>
+<hr>
+<div class="section">
+    <h2>Pipelines and Results</h2>
+<ul>
+<quote>
+    The links found in this document will corespond to the s3 bucket root <b>s3://lsmc-dayoa-omics-analysis-us-west-2</b>, so the ILMN full ref multiqc report <B>https://lsmc.bio/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_fullref/reports//DAY_final_multiqc.html</B>  , can also be found at <b>s3://lsmc-dayoa-omics-analysis-us-west-2/first_round_results/illumina_solo_fullref/reports//DAY_final_multiqc.html</b> .
+</quote>    
+
+    <h3>Illumina <code>illumina_solo_minref</code> (aligner: sentieon bwa, snv_caller: sentieon DNAscope_ilm)</h3>
+
+    This alignment uses the `hg38` ref with no alt contigs, which gives slightly better performance in SNV calling. The longread and hybrid pipelines all use the hg38 fullref, so comparisons to this should be made cautiously.
+    <ul>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_minref/reports/multiqc_singleton.html">MultiQC Report</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_minref/other_reports/giab_concordance_mqc.tsv">GIAB Concordance TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/FSxLustre20250428T182818Z/analysis_results/ubuntu/illumina_solo_minref/daylily/results/day/hg38/">Full Pipeline Results Directory</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ultima_solo_minref/other_reports/alignstats_combo_mqc.tsv">Alignment Stats TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_minref/other_reports/rules_benchmark_data_mqc.tsv">Per Job Performance Benchmarks & Costs TSV</a></li>
+
+    </ul>
+<hr>
+    <h3>Illumina <code>illumina_solo_fullref</code> (aligner: sentieon bwa, snv_callers: sentieon DNAscope_ilm &amp; deepvariant)</h3>
+
+    This pipeline used the hg38 full ref, and is comprable to the longread and hybrid references.  In addition, I ran both DNAscope_ilmn and deepvariant SNV callers.
+    
+    <ul>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_fullref/reports/DAY_final_multiqc.html">MultiQC Report</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_fullref/other_reports/giab_concordance_mqc.tsv">GIAB Concordance TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/FSxLustre20250428T182818Z/analysis_results/ubuntu/illumina_solo_fullref/daylily/results/day/hg38_broad/">Full Pipeline Results Directory</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_fullref/other_reports/alignstats_combo_mqc.tsv">Alignment Stats TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/illumina_solo_fullref/other_reports/rules_benchmark_data_mqc.tsv">Per Job Performance Benchmarks & Costs TSV</a></li>
+    </ul>
+<hr>
+    <h3>ONT v1 <code>ont_v1_solo_fullref</code> (aligner: ont's aligned CRAMs, snv_caller: sentieon DNAscope_ont)</h3>
+
+    This dataset ran SNV calling directly from the aligned crams provided by ONT.
+
+    <ul>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ont_v1_solo_fullref/reports/multiqc_singleton.html">MultiQC Report</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ont_v1_solo_fullref/other_reports/giab_concordance_mqc.tsv">GIAB Concordance TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/FSxLustre20250428T182818Z/analysis_results/ubuntu/ont_v1_solo_fullref/daylily/results/day/hg38/">Full Pipeline Results Directory</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ont_v1_solo_fullref/other_reports/alignstats_combo_mqc.tsv">Alignment Stats TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ont_v1_solo_fullref/other_reports/rules_benchmark_data_mqc.tsv">Per Job Performance Benchmarks & Costs TSV</a></li>
+    </ul>
+<hr>
+    <h3>ONT v2 <code>ont_v2_solo_fullref</code> (aligner: sentieon minimal realigned, snv_caller: sentieon DNAscope_ont)</h3>
+
+    This dataset realigned reads & variant called from the newly aligned cram.
+
+
+    <ul>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ont_v2_solo_fullref/reports/DAY_final_multiqc_cram.html">MultiQC Report</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ont_v2_solo_fullref/other_reports/giab_concordance_mqc.tsv">GIAB Concordance TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/FSxLustre20250428T182818Z/analysis_results/ubuntu/ont_v2_solo_fullref/daylily/results/day/hg38/">Full Pipeline Results Directory</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ont_v2_solo_fullref/other_reports/alignstats_combo_mqc.tsv">Alignment Stats TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ont_v2_solo_fullref/other_reports/rules_benchmark_data_mqc.tsv">Per Job Performance Benchmarks & Costs TSV</a></li>
+    </ul>
+<hr>
+    <h3>Ultima <code>ultima_solo_fullref</code> (aligner: ultima aligned cram, snv_caller: sentieon DNAscope_ultima)</h3>
+
+    Var called directly from ultima provided crams.
+
+
+    <ul>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ultima_solo_fullref/reports/multiqc_singleton.html">MultiQC Report</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ultima_solo_fullref/other_reports/giab_concordance_mqc.tsv">GIAB Concordance TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/FSxLustre20250428T182818Z/analysis_results/ubuntu/ultima_solo_fullref/daylily/results/day/hg38/">Full Pipeline Results Directory</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ultima_solo_fullref/other_reports/alignstats_combo_mqc.tsv">Alignment Stats TSV</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/ultima_solo_fullref/other_reports/rules_benchmark_data_mqc.tsv">Per Job Performance Benchmarks & Costs TSV</a></li>
+    </ul>
+<hr>
+    <h3>Hybrid ILMN+ONT <code>hybrid_ilmn_ont_solo_fullref</code> (aligner: sentieon, snv_caller: sentieon DNAscope_hybrid_ilmn_ont)</h3>
+
+    ILMN fastqs were aligned by sentieon as were the reads from ONT, generating a hybrid aligned dataset to SNV call from.
+
+    <ul>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/hybrid_ilmn_ont_solo_fullref/reports/multiqc_singleton.html">MultiQC Report</a></li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/hybrid_ilmn_ont_solo_fullref/other_reports/giab_concordance_mqc.tsv">GIAB Concordance TSV</a></li>
+        <li>I realized I did not save the hybrid raw data dir -- the giab and multiqc data are from the full hybrid run.</li>
+        <li>I realized I did not save the hybrid raw cram, so the alignstats will be the same as the ont solo alignstats.</li>
+        <li><a href="/serve_endpoint/first_round_analysis_results/first_round_results/hybrid_ilmn_ont_solo_fullref/other_reports/rules_benchmark_data_mqc.tsv">Per Job Performance Benchmarks & Costs TSV</a></li>
+    </ul>
+</ul>
+</div>
+
+<hr>
+<hr>
+<div class="section">
+    <h2>Combined Results Files</h2>
+<ul>
+    <h3>COMBINED CONCORDANCE TSV</h3>
+    <ul>
+        <li>
+            <a href="/serve_endpoint/first_round_analysis_results/first_round_results/giab_concordance_COMBINED.tsv">Combined Concordance TSV</a> ::: note ::: the ilmn_minref sampleIDs have had _min appended to them so they do not clash with the fullref sampleIDs. Similarly, the ONT sampleIDs have _x appended to them in v1 so as not to clash with v2. (the naming will be clear in the future once standardized).
+        </li>
+    </ul>
+   <hr>
+    <h3>COMBINED ALIGNSTATS TSV</h3>
+    <ul>
+        <li>
+            <a href="/serve_endpoint/first_round_analysis_results/first_round_results/alignstats_COMBINED_ALL.tsv">Combined Alignstats TSV</a> ::: note ::: the ilmn_minref sampleIDs have had _min appended to them so they do not clash with the fullref sampleIDs. Similarly, the ONT sampleIDs have _x appended to them in v1 so as not to clash with v2. (the naming will be clear in the future once standardized).
+        </li>
+    </ul>
+    <hr>
+    <h3>COMBINED PERFORMANCE BENCHMARKS & COSTS TSV</h3>
+    <ul>
+        <li>
+            <a href="/serve_endpoint/first_round_analysis_results/first_round_results/rules_benchmark_data_mqc_COMBINED.tsv">Combined Benchmarks&Costs TSV</a> ::: note ::: the ilmn_minref sampleIDs have had _min appended to them so they do not clash with the fullref sampleIDs. Similarly, the ONT sampleIDs have _x appended to them in v1 so as not to clash with v2. (the naming will be clear in the future once standardized).
+        </li>
+    </ul>
+</ul>
+</div>
+
+<hr>
+<hr>
+<div class="section">
+    <h2>Bed Regions Used For Concordance</h2>
+    <ul>
+<p>We defined 4 core bed regions to calculate statistics within, and three additional regions representing shared footprints of some of the core regions:</p>
+<ul>
+    <li><strong>hg38 (entire genome)</strong>: global bed, chromosomes 1-22 + chrX, chrY, chrM of the hg38 build.</li>
+    <li><strong>giabHC</strong>: per-GIAB sample bed, GIAB-defined high-confidence callable regions for short reads.</li>
+    <li><strong>ultima</strong>: global bed, Ultima-defined high-confidence regions across the genome.</li>
+    <li><strong>clinvar_genes</strong>: global bed, created by selecting all CDS+UTR (+/- 500bp) for genes with ≥1 ClinVar variant. Non-genic regions extracted +/- 500bp if variants did not hit a gene.</li>
+    <li><strong>giabHC_x_ultima</strong>: per-GIAB sample bed, shared footprint of giabHC + ultima.</li>
+    <li><strong>giabHC_x_clinvar_genes</strong>: per-GIAB sample bed, shared footprint of giabHC + clinvar_genes.</li>
+    <li><strong>giabHC_x_ultima_x_clinvar_genes</strong>: per-GIAB sample bed, shared footprint of giabHC + ultima + clinvar_genes.</li>
+</ul>
+
+<h3>Region Sizes Per GIAB Sample</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Genomic Footprint (bp)</th>
+            <th>Sample</th>
+            <th>Bed Region Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>377862616</td><td>HG001</td><td>clinvar_genes</td></tr>
+        <tr><td>2512291789</td><td>HG001</td><td>giabHC</td></tr>
+        <tr><td>334933992</td><td>HG001</td><td>giabHC_x_clinvar_genes</td></tr>
+        <tr><td>2490378273</td><td>HG001</td><td>giabHC_x_ultima</td></tr>
+        <tr><td>330063947</td><td>HG001</td><td>giabHC_x_ultima_x_clinvar_genes</td></tr>
+        <tr><td>3088286401</td><td>HG001</td><td>hg38</td></tr>
+        <tr><td>2799325643</td><td>HG001</td><td>ultima</td></tr>
+
+        <tr><td>377862616</td><td>HG002</td><td>clinvar_genes</td></tr>
+        <tr><td>2542242843</td><td>HG002</td><td>giabHC</td></tr>
+        <tr><td>339556068</td><td>HG002</td><td>giabHC_x_clinvar_genes</td></tr>
+        <tr><td>2518602953</td><td>HG002</td><td>giabHC_x_ultima</td></tr>
+        <tr><td>334331262</td><td>HG002</td><td>giabHC_x_ultima_x_clinvar_genes</td></tr>
+        <tr><td>3088286401</td><td>HG002</td><td>hg38</td></tr>
+        <tr><td>2799325643</td><td>HG002</td><td>ultima</td></tr>
+
+        <tr><td>377862616</td><td>HG003</td><td>clinvar_genes</td></tr>
+        <tr><td>2528531102</td><td>HG003</td><td>giabHC</td></tr>
+        <tr><td>337668665</td><td>HG003</td><td>giabHC_x_clinvar_genes</td></tr>
+        <tr><td>2505355380</td><td>HG003</td><td>giabHC_x_ultima</td></tr>
+        <tr><td>332544085</td><td>HG003</td><td>giabHC_x_ultima_x_clinvar_genes</td></tr>
+        <tr><td>3088286401</td><td>HG003</td><td>hg38</td></tr>
+        <tr><td>2799325643</td><td>HG003</td><td>ultima</td></tr>
+
+        <tr><td>377862616</td><td>HG004</td><td>clinvar_genes</td></tr>
+        <tr><td>2524487531</td><td>HG004</td><td>giabHC</td></tr>
+        <tr><td>336900298</td><td>HG004</td><td>giabHC_x_clinvar_genes</td></tr>
+        <tr><td>2524487531</td><td>HG004</td><td>giabHC_x_ultima</td></tr>
+        <tr><td>336900298</td><td>HG004</td><td>giabHC_x_ultima_x_clinvar_genes</td></tr>
+        <tr><td>3088286401</td><td>HG004</td><td>hg38</td></tr>
+        <tr><td>2524487531</td><td>HG004</td><td>ultima</td></tr>
+
+        <tr><td>377862616</td><td>HG005</td><td>clinvar_genes</td></tr>
+        <tr><td>2503728811</td><td>HG005</td><td>giabHC</td></tr>
+        <tr><td>334484186</td><td>HG005</td><td>giabHC_x_clinvar_genes</td></tr>
+        <tr><td>2484521656</td><td>HG005</td><td>giabHC_x_ultima</td></tr>
+        <tr><td>329898164</td><td>HG005</td><td>giabHC_x_ultima_x_clinvar_genes</td></tr>
+        <tr><td>3088286401</td><td>HG005</td><td>hg38</td></tr>
+        <tr><td>2799325643</td><td>HG005</td><td>ultima</td></tr>
+
+        <tr><td>377862616</td><td>HG007</td><td>clinvar_genes</td></tr>
+        <tr><td>2517124728</td><td>HG007</td><td>giabHC</td></tr>
+        <tr><td>336298106</td><td>HG007</td><td>giabHC_x_clinvar_genes</td></tr>
+        <tr><td>2495800245</td><td>HG007</td><td>giabHC_x_ultima</td></tr>
+        <tr><td>331415837</td><td>HG007</td><td>giabHC_x_ultima_x_clinvar_genes</td></tr>
+        <tr><td>3088286401</td><td>HG007</td><td>hg38</td></tr>
+        <tr><td>2799325643</td><td>HG007</td><td>ultima</td></tr>
+    </tbody>
+</table>
+</ul>
+</div>
+
+
+</body>
+</html>

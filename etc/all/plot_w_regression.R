@@ -69,6 +69,7 @@ dev.off()
 # Optionally create zoomed-in plot
 if (zoom_limits_provided) {
   pdf(zoomed_pdf, width=1200/72, height=800/72)
+
   ggplot(coverage_long, aes(x=.data[[x_var]], y=.data[[y_var]], color=SNPClass, shape=Pipeline)) +
     geom_point(size=2) +
     facet_grid(CmpFootprint ~ Coverage_Type, scales="free_x") +
@@ -82,6 +83,7 @@ if (zoom_limits_provided) {
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     coord_cartesian(xlim=c(xlim_min, xlim_max), ylim=c(ylim_min, ylim_max))
+
   dev.off()
 }
 

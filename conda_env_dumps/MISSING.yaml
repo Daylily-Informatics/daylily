@@ -1,0 +1,5 @@
+name: /Users/daylily/projects/daylily_repos/daylily/MISSING
+channels:
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+prefix: /Users/daylily/projects/daylily_repos/daylily/MISSING

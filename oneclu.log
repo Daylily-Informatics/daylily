@@ -1,0 +1,2 @@
+ ssh -i /Users/daylily/.ssh/lsmc-omics-us-west-2.pem ubuntu@44.240.160.72
+ 
