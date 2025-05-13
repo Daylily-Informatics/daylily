@@ -12,6 +12,7 @@ if (length(args) != 2) {
 input_tsv <- args[1]
 output_pdf <- args[2]
 zoomed_pdf <- sub("\\.pdf$", "_zoomed.pdf", output_pdf)
+zoomed2_pdf <- sub("\\.pdf$", "_zoomed_again.pdf", output_pdf)
 
 # Read input data
 d <- read.csv(input_tsv, sep='\t', header=TRUE)
@@ -76,3 +77,24 @@ ggplot(d_filtered, aes(x=Coverage, y=mean_Fscore, color=SNPClass, shape=Pipeline
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   coord_cartesian(ylim=c(0.990,1.0))
 dev.off()
+
+
+# Create zoomed-in plot
+pdf(zoomed2_pdf, width=1200/72, height=800/72)
+ggplot(d_filtered, aes(x=Coverage, y=mean_Fscore, color=SNPClass, shape=Pipeline, linetype=Pipeline)) +
+  geom_line(size=0.25) +
+  geom_point(size=0.75) +
+  facet_wrap(~CmpFootprint) +
+  labs(
+    x = "Coverage",
+    y = "Mean F-score",
+    title = "Zoomed Again, Mean F-score by Coverage and SNP Class across Pipelines",
+    color = "SNP Class",
+    shape = "Pipeline",
+    linetype = "Pipeline"
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  coord_cartesian(ylim=c(0.996,1.0))
+dev.off()
+
