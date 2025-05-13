@@ -1,10 +1,26 @@
 Sample	Mean Read Length
 Ods10xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405253
+Ods10xIds20x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405177
+Ods10xIds30x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405029
 Ods10xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.404797
 Ods10xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405022
 Ods15xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405253
 Ods15xIds20x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405177
+Ods15xIds30x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405029
+Ods15xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.404808
 Ods15xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405022
+Ods20xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405251
+Ods20xIds20x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405177
+Ods20xIds30x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405029
+Ods20xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.404808
+Ods20xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.40424
+Ods30xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405251
+Ods30xIds20x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405177
+Ods30xIds30x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405029
+Ods30xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.404808
+Ods30xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.40424
 Ods5xIds15x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405253
+Ods5xIds20x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405177
+Ods5xIds30x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405029
 Ods5xIds5x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.404797
 Ods5xIds9x_HG006_sup-PAY77227_0.ont.sentdhio.1-24.snv.sort	150.405022
