@@ -1,14 +1,9 @@
 #!/usr/bin/env Rscript
 
-
 library(ggplot2)
 library(dplyr)
 
 args <- commandArgs(trailingOnly = TRUE)
-
-
-d<-read.csv('./giab_all_downsampled_proc.tsv',sep='\t',header=TRUE)
-
 
 # Check if two arguments are provided
 if (length(args) != 2) {
