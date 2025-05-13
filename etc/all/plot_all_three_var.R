@@ -82,7 +82,7 @@ dev.off()
 
 # Create zoomed-in plot
 pdf(zoomed2_pdf, width=1200/72, height=800/72)
-ggplot(d_filtered, aes(x=Coverage, y=mean_Fscore, color=SNPClass, shape=Pipeline, linetype=Pipeline)) +
+ggplot(d_filtered, aes(x=Coverage, y=mean_Var, color=SNPClass, shape=Pipeline, linetype=Pipeline)) +
   geom_line(size=0.75) +
   geom_point(size=1.25) +
   facet_wrap(~CmpFootprint) +
