@@ -7,9 +7,6 @@ library(dplyr)
 args <- commandArgs(trailingOnly = TRUE)
 
 
-d<-read.csv('./giab_all_downsampled_proc.tsv',sep='\t',header=TRUE)
-
-
 # Check if two arguments are provided
 if (length(args) != 2) {
   stop("Usage: Rscript script_name.R <input_tsv> <output_pdf>")
