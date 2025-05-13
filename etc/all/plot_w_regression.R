@@ -2,6 +2,7 @@
 
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -44,15 +45,20 @@ d_filtered <- d %>%
     )
   )
 
-# Create overview dotplot
+# Prepare long format for coverage-specific analysis
+coverage_long <- d_filtered %>%
+  pivot_longer(cols = c(ILMN_cov, ONT_cov, UG_cov), names_to = "Coverage_Type", values_to = "Coverage") %>%
+  filter(Coverage > 0)
+
+# Create overview dotplot explicitly by coverage type
 pdf(output_pdf, width=1200/72, height=800/72)
-ggplot(d_filtered, aes(x=.data[[x_var]], y=.data[[y_var]], color=SNPClass, shape=Pipeline)) +
+ggplot(coverage_long, aes(x=.data[[x_var]], y=.data[[y_var]], color=SNPClass, shape=Pipeline)) +
   geom_point(size=2) +
-  facet_wrap(~CmpFootprint) +
+  facet_grid(CmpFootprint ~ Coverage_Type, scales="free_x") +
   labs(
     x = x_var,
     y = y_var,
-    title = paste(y_var, "vs.", x_var, "by SNP Class and Pipeline"),
+    title = paste(y_var, "vs.", x_var, "by SNP Class, Pipeline, and Coverage Type"),
     color = "SNP Class",
     shape = "Pipeline"
   ) +
@@ -63,13 +69,13 @@ dev.off()
 # Optionally create zoomed-in plot
 if (zoom_limits_provided) {
   pdf(zoomed_pdf, width=1200/72, height=800/72)
-  ggplot(d_filtered, aes(x=.data[[x_var]], y=.data[[y_var]], color=SNPClass, shape=Pipeline)) +
+  ggplot(coverage_long, aes(x=.data[[x_var]], y=.data[[y_var]], color=SNPClass, shape=Pipeline)) +
     geom_point(size=2) +
-    facet_wrap(~CmpFootprint) +
+    facet_grid(CmpFootprint ~ Coverage_Type, scales="free_x") +
     labs(
       x = x_var,
       y = y_var,
-      title = paste("Zoomed", y_var, "vs.", x_var, "by SNP Class and Pipeline"),
+      title = paste("Zoomed", y_var, "vs.", x_var, "by SNP Class, Pipeline, and Coverage Type"),
       color = "SNP Class",
       shape = "Pipeline"
     ) +
@@ -78,3 +84,11 @@ if (zoom_limits_provided) {
     coord_cartesian(xlim=c(xlim_min, xlim_max), ylim=c(ylim_min, ylim_max))
   dev.off()
 }
+
+# Fit regression model and print summary
+model_formula <- as.formula(paste(y_var, "~ ILMN_cov + ONT_cov + UG_cov + SNPClass + Pipeline"))
+model <- lm(model_formula, data=d_filtered)
+
+# Output regression summary to console
+cat("\nRegression Model Summary:\n")
+print(summary(model))
