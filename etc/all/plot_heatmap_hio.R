@@ -1,8 +1,25 @@
+#!/usr/bin/env Rscript
+
 library(ggplot2)
 library(dplyr)
 library(scales)
 
-d <- read.csv('./giab_all_downsampled_proc.tsv', sep='\t', header=TRUE)
+
+# Get command-line arguments
+args <- commandArgs(trailingOnly = TRUE)
+
+# Check if two arguments are provided
+if (length(args) != 2) {
+  stop("Usage: Rscript script_name.R <input_tsv> <output_pdf>")
+}
+
+# Assign arguments to variables
+input_tsv <- args[1]
+output_pdf <- args[2]
+
+# Read input file
+d <- read.csv(input_tsv, sep='\t', header=TRUE)
+
 
 # Baseline ILMN 30x (giabHC, sent+sentd), excluding unwanted SNP classes
 baseline_ilmn <- d %>%
@@ -31,6 +48,8 @@ hybrid_ilmn_ont <- d %>%
     label = sprintf("%.3f [%.3f]", mean_Fscore, baseline_Fscore)
   )
 
+pdf(output_pdf, width=1200/72, height=800/72)
+
 # Plot ILMN+ONT hybrid
 ggplot(hybrid_ilmn_ont, aes(x=factor(ILMN_cov), y=factor(ONT_cov), fill=mean_Fscore)) +
   geom_tile(color='grey90') +
@@ -47,3 +66,6 @@ ggplot(hybrid_ilmn_ont, aes(x=factor(ILMN_cov), y=factor(ONT_cov), fill=mean_Fsc
   ) +
   theme_bw(base_size=12) +
   theme(axis.text.x=element_text(angle=45, hjust=1))
+
+dev.off()
+
