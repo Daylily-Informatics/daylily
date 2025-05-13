@@ -5,8 +5,8 @@ library(dplyr)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-if (length(args) != 2) {
-  stop("Usage: Rscript script_name.R <input_tsv> <output_pdf>")
+if (length(args) != 3) {
+  stop("Usage: Rscript script_name.R <input_tsv> <output_pdf> <plot_var>")
 }
 
 input_tsv <- args[1]
