@@ -11,6 +11,7 @@ if (length(args) != 2) {
 
 input_tsv <- args[1]
 output_pdf <- args[2]
+plot_var <- args[3]
 zoomed_pdf <- sub("\\.pdf$", "_zoomed.pdf", output_pdf)
 zoomed2_pdf <- sub("\\.pdf$", "_zoomed_again.pdf", output_pdf)
 
@@ -39,18 +40,18 @@ d_filtered <- d %>%
     )
   ) %>%
   group_by(CmpFootprint, Pipeline, SNPClass, Coverage) %>%
-  summarize(mean_Fscore = mean(Fscore, na.rm=TRUE), .groups='drop')
+  summarize(mean_Var = mean(!!sym(plot_var), na.rm=TRUE), .groups='drop')
 
 # Create overview plot
 pdf(output_pdf, width=1200/72, height=800/72)
-ggplot(d_filtered, aes(x=Coverage, y=mean_Fscore, color=SNPClass, shape=Pipeline, linetype=Pipeline)) +
+ggplot(d_filtered, aes(x=Coverage, y=mean_Var, color=SNPClass, shape=Pipeline, linetype=Pipeline)) +
   geom_line(size=0.75) +
   geom_point(size=1.25) +
   facet_wrap(~CmpFootprint) +
   labs(
     x = "Coverage",
-    y = "Mean F-score",
-    title = "Mean F-score by Coverage and SNP Class across Pipelines",
+    y = paste("Mean", plot_var),
+    title = paste("Mean", plot_var, "by Coverage and SNP Class across Pipelines"),
     color = "SNP Class",
     shape = "Pipeline",
     linetype = "Pipeline"
@@ -61,14 +62,14 @@ dev.off()
 
 # Create zoomed-in plot
 pdf(zoomed_pdf, width=1200/72, height=800/72)
-ggplot(d_filtered, aes(x=Coverage, y=mean_Fscore, color=SNPClass, shape=Pipeline, linetype=Pipeline)) +
+ggplot(d_filtered, aes(x=Coverage, y=mean_Var, color=SNPClass, shape=Pipeline, linetype=Pipeline)) +
   geom_line(size=0.75) +
   geom_point(size=1.25) +
   facet_wrap(~CmpFootprint) +
   labs(
     x = "Coverage",
-    y = "Mean F-score",
-    title = "Zoomed Mean F-score by Coverage and SNP Class across Pipelines",
+    y = paste("Mean", plot_var),
+    title = paste("Zoomed Mean", plot_var, "by Coverage and SNP Class across Pipelines"),
     color = "SNP Class",
     shape = "Pipeline",
     linetype = "Pipeline"
@@ -87,8 +88,8 @@ ggplot(d_filtered, aes(x=Coverage, y=mean_Fscore, color=SNPClass, shape=Pipeline
   facet_wrap(~CmpFootprint) +
   labs(
     x = "Coverage",
-    y = "Mean F-score",
-    title = "Zoomed Again, Mean F-score by Coverage and SNP Class across Pipelines",
+    y = paste("Mean", plot_var),
+    title = paste("Zoomed Addl, Mean", plot_var, "by Coverage and SNP Class across Pipelines"),
     color = "SNP Class",
     shape = "Pipeline",
     linetype = "Pipeline"
