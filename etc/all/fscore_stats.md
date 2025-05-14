@@ -453,3 +453,57 @@ In conclusion, your analyses successfully identified clear, statistically releva
 
 
 
+
+
+
+======
+
+
+
+# A tibble: 0 × 0
+# Rowwise:
+   Coverage ILMN_Lower ILMN_Upper  UG_Lower  UG_Upper Equivalent
+1         5  0.5878162  0.6632398 0.8183403 0.8735216      FALSE
+2         6  0.6160144  0.6887676 0.8234933 0.8764475      FALSE
+3         7  0.6438211  0.7146869 0.8286134 0.8794063      FALSE
+4         8  0.6712044  0.7410294 0.8336961 0.8824025      FALSE
+5         9  0.6981456  0.7678142 0.8387365 0.8854409      FALSE
+6        10  0.7246415  0.7950442 0.8437289 0.8885274      FALSE
+7        11  0.7507059  0.8227057 0.8486668 0.8916683      FALSE
+8        12  0.7763665  0.8507711 0.8535433 0.8948707      FALSE
+9        13  0.8016609  0.8792027 0.8583506 0.8981423       TRUE
+10       14  0.8266313  0.9079582 0.8630802 0.9014915       TRUE
+11       15  0.8513208  0.9369946 0.8677237 0.9049269       TRUE
+12       16  0.8757698  0.9662716 0.8722724 0.9084572       TRUE
+13       17  0.9000146  0.9957527 0.8767180 0.9120904       TRUE
+14       18  0.9240870  1.0254063 0.8810534 0.9158339      FALSE
+15       19  0.9480138  1.0552054 0.8852728 0.9196933      FALSE
+16       20  0.9718176  1.0851275 0.8893727 0.9236723      FALSE
+17       21  0.9955174  1.1151537 0.8933517 0.9277722      FALSE
+18       22  1.0191288  1.1452682 0.8972111 0.9319917      FALSE
+19       23  1.0426647  1.1754582 0.9009546 0.9363270      FALSE
+20       24  1.0661360  1.2057129 0.9045879 0.9407727      FALSE
+21       25  1.0895517  1.2360232 0.9081181 0.9453213      FALSE
+22       26  1.1129192  1.2663816 0.9115535 0.9499648      FALSE
+23       27  1.1362448  1.2967820 0.9149027 0.9546945      FALSE
+24       28  1.1595338  1.3272189 0.9181743 0.9595017      FALSE
+25       29  1.1827908  1.3576878 0.9213767 0.9643782      FALSE
+26       30  1.2060195  1.3881851 0.9245176 0.9693162      FALSE
+
+
+
+Corrected Interpretation of the Table:
+Coverage < 13x:
+UG (Ultima) and ILMN (Illumina) confidence intervals do not overlap, and because UG’s intervals are entirely above ILMN’s intervals, UG is statistically outperforming ILMN at these low coverage points.
+
+Coverage from 13x–17x:
+Confidence intervals overlap (Equivalent = TRUE), meaning at these points UG and ILMN are statistically indistinguishable (no significant difference).
+
+Coverage ≥ 18x:
+Confidence intervals no longer overlap, and ILMN’s confidence interval is now entirely above UG’s intervals. This means ILMN begins to significantly outperform UG at coverage ≥ 18x.
+
+Simple Summary of Findings:
+Coverage Level	Which Technology Performs Best?
+< 13x	✅ Ultima (UG)
+13x–17x	⚖️ Statistically Equivalent
+≥ 18x (to 30x)	✅ Illumina (ILMN)
