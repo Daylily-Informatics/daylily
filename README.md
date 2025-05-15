@@ -1,3 +1,17 @@
+
+# `daylily` is actively being split into 2 parts: `daylily-ephemeral-cluster` and `daylily-omics-analysis`
+## PLEASE STAND BY
+
+- [daylily-ephemeral-cluster](https://github.com/Daylily-Informatics/daylily-ephemeral-cluster)
+
+- [daylily-omics-analysis](https://github.com/Daylily-Informatics/daylily-omics-analysis)
+
+---
+
+# YOU MAY USE THE LAST STABLE TAGGED VERSION FOR THE TIME BEING (see below)
+
+---
+
 # Daylily AWS Ephemeral Cluster Setup
 _(stable tagged release to use --> 0.7.196t ... use main at own risk)_
 
