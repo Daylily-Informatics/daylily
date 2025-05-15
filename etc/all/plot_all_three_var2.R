@@ -41,6 +41,8 @@ d_filtered <- d %>%
     )
   )
 
+d_filtered[[plot_var]] <- as.numeric(as.character(d_filtered[[plot_var]]))
+
 # Plot overview with regression lines per SNPClass and Pipeline
 pdf(output_pdf, width=1200/72, height=800/72)
 ggplot(d_filtered, aes(x=Coverage, y=.data[[plot_var]], color=SNPClass, shape=Pipeline, linetype=Pipeline)) +

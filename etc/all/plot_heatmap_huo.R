@@ -10,13 +10,14 @@ library(viridis)
 args <- commandArgs(trailingOnly = TRUE)
 
 # Check if two arguments are provided
-if (length(args) != 2) {
-  stop("Usage: Rscript script_name.R <input_tsv> <output_pdf>")
+if (length(args) != 3) {
+  stop("Usage: Rscript script_name.R <input_tsv> <output_pdf> <plotvar>")
 }
 
 # Assign arguments to variables
 input_tsv <- args[1]
 output_pdf <- args[2]
+pvar <- args[3]
 
 # Read input file
 d <- read.csv(input_tsv, sep='\t', header=TRUE)
@@ -30,8 +31,10 @@ baseline_ilmn <- d %>%
     !SNPClass %in% c('Indel_gt50', 'DEL_gt50', 'INS_gt50')
   ) %>%
   group_by(SNPClass) %>%
-  summarize(baseline_Fscore = mean(Fscore, na.rm=TRUE), .groups='drop')
-
+  summarize(
+    baseline_Fscore = mean(as.numeric(as.character(.data[[pvar]])), na.rm=TRUE),
+    .groups = 'drop'
+  )
 
 # Hybrid UG+ONT data (ont+senthuo)
 hybrid_ug_ont <- d %>%
@@ -42,11 +45,13 @@ hybrid_ug_ont <- d %>%
     !SNPClass %in% c('Indel_gt50', 'DEL_gt50', 'INS_gt50')
   ) %>%
   group_by(CmpFootprint, SNPClass, UG_cov, ONT_cov) %>%
-  summarize(mean_Fscore = mean(Fscore, na.rm=TRUE), .groups='drop') %>%
-  left_join(baseline_ilmn, by='SNPClass') %>%
+  summarize(
+  mean_Fscore = mean(as.numeric(as.character(.data[[pvar]])), na.rm=TRUE),
+    .groups = 'drop'
+  ) %>%  left_join(baseline_ilmn, by='SNPClass') %>%
   mutate(
     exceeds_baseline = mean_Fscore > baseline_Fscore,
-    label = sprintf("%.3f [%.3f]", mean_Fscore, baseline_Fscore)
+    label = sprintf("%.4f [%.4f]", mean_Fscore, baseline_Fscore)
   )
 
 pdf(output_pdf, width=1200/72, height=800/72)
@@ -54,9 +59,9 @@ pdf(output_pdf, width=1200/72, height=800/72)
 # Plot UG+ONT hybrid with correct color scale
 ggplot(hybrid_ug_ont, aes(x=factor(UG_cov), y=factor(ONT_cov), fill=mean_Fscore)) +
   geom_tile(color='grey90') +
-  geom_text(aes(label=label), size=2.2, color='grey10') +
+  geom_text(aes(label=label), size=2.9, color='grey10') +
   geom_text(data=hybrid_ug_ont %>% filter(exceeds_baseline),
-            aes(label='*'), color='magenta', size=6, nudge_x=0.3) +
+            aes(label='*'), color='magenta', size=9, nudge_x=0.35) +
   facet_grid(SNPClass ~ CmpFootprint) +
   scale_fill_gradientn(
     colours = viridis(256),
@@ -68,7 +73,7 @@ ggplot(hybrid_ug_ont, aes(x=factor(UG_cov), y=factor(ONT_cov), fill=mean_Fscore)
   labs(
     x = "UG Coverage",
     y = "ONT Coverage",
-    title = "Hybrid UG+ONT Mean F-score (ont+senthuo)\n(* indicates surpassing ILMN 30x baseline (giabHC sent+sentd))"
+    title = paste("Hybrid UG+ONT, ", pvar ," (ont+senthuo)\n(* indicates surpassing ILMN 30x baseline (giabHC sent+sentd))")
   ) +
   theme_bw(base_size = 12) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))

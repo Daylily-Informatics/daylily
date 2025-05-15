@@ -40,6 +40,7 @@ d_filtered <- d %>%
   ) %>%
   group_by(CmpFootprint, Pipeline, SNPClass, Coverage) %>%
   summarize(mean_Fscore = mean(Fscore, na.rm=TRUE), .groups='drop')
+d_filtered[[plot_var]] <- as.numeric(as.character(d_filtered[[plot_var]]))
 
 # Create overview plot
 pdf(output_pdf, width=1200/72, height=800/72)

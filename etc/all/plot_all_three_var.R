@@ -18,6 +18,7 @@ zoomed_pdf <- sub("\\.pdf$", "_zoomed.pdf", output_pdf)
 
 # Read input data
 d <- read.csv(input_tsv, sep='\t', header=TRUE)
+d[[plot_var]] <- as.numeric(as.character(d[[plot_var]]))
 
 # Filter out unwanted SNP classes and prepare data
 d_filtered <- d %>%
@@ -42,6 +43,7 @@ d_filtered <- d %>%
   ) %>%
   group_by(CmpFootprint, Pipeline, SNPClass, Coverage) %>%
   summarize(mean_Var = mean(.data[[plot_var]], na.rm=TRUE), .groups='drop')
+
 
 # Create overview plot
 pdf(output_pdf, width=1200/72, height=800/72)
