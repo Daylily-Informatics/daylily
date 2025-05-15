@@ -64,6 +64,6 @@ ggplot(d_filtered, aes(x = UG_cov, y = mean_Fscore, color = SNPClass)) +
   ) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  coord_cartesian(ylim=c(0.990,1.0))
+  coord_cartesian(ylim=c(0.980,1.0))
 
 dev.off()

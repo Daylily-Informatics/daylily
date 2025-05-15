@@ -277,39 +277,6 @@ df['Aligner'] = alnr
 df['SNVCaller'] = snv_caller
 #print_cols = ['Sample'] + list(set(list(df.columns)) - set(['Sample']))
 
-
-
-def calc_fbeta(precision, recall, beta):
-    return (1 + beta**2) * precision * recall / ((beta**2 * precision) + recall) if (precision + recall) else None
-
-def calc_mcc(tp, tn, fp, fn):
-    numerator = (tp * tn - fp * fn)
-    denominator = math.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
-    return numerator / denominator if denominator else None
-
-# F-beta scores prioritizing recall
-for beta, label in [(1.22, '1.5'), (2.00, '2.0'), (2.83, '4.0')]:
-    df[f'Fbeta_recall_{label}'] = [calc_fbeta(row['Precision'], row['Sensitivity-Recall'], beta) for idx, row in df.iterrows()]
-
-# F-beta scores prioritizing precision
-for beta, label in [(0.82, '1.5'), (0.50, '2.0'), (0.35, '4.0')]:
-    df[f'Fbeta_precision_{label}'] = [calc_fbeta(row['Precision'], row['Sensitivity-Recall'], beta) for idx, row in df.iterrows()]
-
-# Standard F1 Score (beta=1)
-df['Fbeta_1'] = [calc_fbeta(row['Precision'], row['Sensitivity-Recall'], 1.0) for idx, row in df.iterrows()]
-
-# Youden's J Index
-df['Youdens_J_Index'] = [row['Sensitivity-Recall'] + row['Specificity'] - 1 if (row['Sensitivity-Recall'] is not None and row['Specificity'] is not None) else None for idx, row in df.iterrows()]
-
-# Matthews Correlation Coefficient (MCC)
-df['MCC'] = [calc_mcc(row['TP'], row['TN'], row['FP'], row['FN']) for idx, row in df.iterrows()]
-
-# Update columns to include new calculations
-print_cols.extend(['Fbeta_1',
-                   'Fbeta_recall_1.5', 'Fbeta_recall_2.0', 'Fbeta_recall_4.0',
-                   'Fbeta_precision_1.5', 'Fbeta_precision_2.0', 'Fbeta_precision_4.0',
-                   'Youdens_J_Index', 'MCC'])
-
 print_cols = ['mqc_id','Sample','TgtRegionSize','TN','FN','TP','FP','Fscore','Sensitivity-Recall','Specificity', 'FDR', 'PPV', 'Precision','AltId', 'CmpFootprint', 'AllVarMeanDP', 'CovBin', 'Aligner','SNVCaller']
 df.to_csv(even_newer_summary, sep="\t", columns=print_cols)
 
